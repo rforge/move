@@ -66,7 +66,11 @@ setMethod(f= "brownian.motion.variance.dyn",
           			l <- (1/(2*pi*v))*exp(-ztz/(2*v)) 
           			return(-sum(log(l), na.rm=TRUE))# bart check na.rm=T
           		}
-          		BMvar <- optimize(likelihood, lower=0, upper=1000000000000000, T.jump=T.jump, alpha=alpha, loc.error.1=loc.error.1, loc.error.2=loc.error.2, ztz=ztz)# implement checks if optimization worked
+          		BMvar <- optimize(likelihood, lower=(l<-0), upper=(u<-1000000000000000), T.jump=T.jump, alpha=alpha, loc.error.1=loc.error.1, loc.error.2=loc.error.2, ztz=ztz)# implement checks if optimization worked
+			if(BMvar$minimum %in% c(l,u))
+			{
+				stop("optimization failed maybe consider changing mapunits")
+			}
           		if((length(x)%%2)!=1){
           			warning("Not an even number of location in variance function")
           		}

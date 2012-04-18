@@ -16,9 +16,17 @@ setClass(Class = "Move",
             dateCreation = "numeric", #time stamp data creation ##use for the date POSIXct
             study = "character",
             citation = "character",
-            licens = "character"),
+            license = "character"),
          validity = function(object) {
-           return(TRUE)
+		 res<-T
+		 if("timestamp"%in%names(object@sdf))#check if timestamp is present and valid
+		 {
+			 if(!all(class(object@sdf$timestamp)==c("POSIXct", "POSIXt")))
+				 res<-F
+		 }else{
+			 res<-F
+		 }
+           return(res)
          }
 )
 
@@ -268,8 +276,8 @@ setMethod("show", "Move", function(object){
             cat("***** End Spatial Data Frame data   ***** \n")
             cat("***** How to cite the dataset \n")
             cat(object@citation, "\n")
-            cat("***** Usage of the data underlies the following licens \n")
-            cat(object@licens, "\n")
+            cat("***** Usage of the data underlies the following license \n")
+            cat(object@license, "\n")
             cat("******* End show (Move) ******* \n") 
             }
           )
