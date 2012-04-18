@@ -10,5 +10,5 @@ License: GPL (>=3)
 URL: http://move.r-forge.r-project.org/
 LazyLoad: yes
 Depends: sp, raster, methods, RgoogleMaps, rgdal, geosphere, R (>= 2.11.0)
-Collate: ClassMove.R ClassDBMvar.R ClassDBBMM.R main.R
+Collate: ClassMove.R ClassMoveStack.R ClassDBMvar.R ClassDBBMM.R main.R
 

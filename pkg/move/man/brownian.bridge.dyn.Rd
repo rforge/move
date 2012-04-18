@@ -10,17 +10,17 @@
 
 \title{Creates a DBBMM object}
 
-\description{The brownian.bridge.dyn function uses a Move object to calculate the utilization density of the given}
+\description{The brownian.bridge.dyn function uses a Move object to calculate the utilization density of the given track. It uses the dynamic Brownian Bridge Movement Model to do so.}
 
 \usage{
   \S4method{brownian.bridge.dyn}{Move,missing,numeric,numeric}(object, raster, dimSize, location.error,
-                 margin, time.step, window.size, ext, ...)
+                 margin=11, time.step, window.size=31, ext, ...)
   \S4method{brownian.bridge.dyn}{Move,missing,missing,numeric}(object, raster, dimSize, location.error,
-                 margin, time.step, window.size, ext, ...)
+                 margin=11, time.step, window.size=31, ext, ...)
   \S4method{brownian.bridge.dyn}{Move,numeric,missing,numeric}(object, raster, dimSize, location.error,
-                 margin, time.step, window.size, ext, ...)
+                 margin=11, time.step, window.size=31, ext, ...)
   \S4method{brownian.bridge.dyn}{Move,RasterLayer,missing,numeric}(object, raster, dimSize, location.error,
-                 margin, time.step, window.size, ext, ...)
+                 margin=11, time.step, window.size=31, ext, ...)
 }
 
 
@@ -32,7 +32,6 @@
   \item{margin}{DESCRIPTION. Default is 11}
   \item{time.step}{DESCRIPTION. Default is NULL}
   \item{window.size}{numerical. The size of the moving window along the track. Default is 31}
-  \item{dyn}{logical. If \code{TRUE} the Brownian Bridge Movement Model is calculated dynamical}
   \item{ext}{numeric value >0. Decribes the amount of extension of the bounding box of the animal track. It can be one (same extension into all four directions), two (first x, then y directional extension) or four numbers (xmin, xmax, ymin, ymax extension). Default is .25 (extends the bounding box by 25\%)}
   \item{...}{for additional arguments}
 }
@@ -50,6 +49,9 @@
 }  
 
 \author{Marco Smolla}
+\references{
+	Kranstauber, B., Kays, R., LaPoint, S. D., Wikelski, M. and Safi, K. (2012), A dynamic Brownian bridge movement model to estimate utilization distributions for heterogeneous animal movement. Journal of Animal Ecology. doi: 10.1111/j.1365-2656.2012.01955.x
+}
 
 \examples{
 

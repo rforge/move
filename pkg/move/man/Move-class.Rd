@@ -21,7 +21,7 @@ The Move object is created with the move function (see move) from a valid data f
     \item{dateCreation}{Object of class \code{"numeric"}: time stamps when the file was downloaded;  }
     \item{study}{Object of class \code{"character"}: name of the study;  }
     \item{citation}{Object of class \code{"character"}: how to cite the study;  }
-    \item{licens}{Object of class \code{"character"}: under which licens were the data publicated;  }
+    \item{license}{Object of class \code{"character"}: under which licens were the data publicated;  }
   }
 }
 
