@@ -101,12 +101,12 @@ setMethod(f="move",
 #             print(res)
 #             
 #             
-#             ###validity check for sorted time stamps
-#             if (any(df$timestamp!=sort(df$timestamp))){stop("\n Error:The data set includes unsorted time stamps")} else {}
-#             ###validity check for double time stamps
-#             if (any(duplicated(df$timestamp))){stop("\n Error: the data set includes double time stamps")} else {}
-#             ###validity check for double locations
-#             if (any(duplicated(as.numeric(coordinates(res@sdf))))){cat("\n WARNING: The data file includes double locations \n")} else {}
+            ###validity check for sorted time stamps
+            if (any(df$timestamp!=sort(df$timestamp))){stop("\n Error:The data set includes unsorted time stamps")} else {}
+            ###validity check for double time stamps
+            if (any(duplicated(df$timestamp))){stop("\n Error: the data set includes double time stamps")} else {}
+            ###validity check for double locations
+            if (any(duplicated(as.numeric(coordinates(res@sdf))))){cat("\n WARNING: The data file includes double locations \n")} else {}
             
             return(res)
           }
@@ -176,11 +176,17 @@ if (!isGeneric("SpatialLines")) {
 setMethod("SpatialLines", "Move", function(LinesList){
           xy <- (coordinates(LinesList))
           xyLine = Line(xy)
-          xyLines = Lines(list(xyLine), ID=LinesList@animal)
+          if (length(LinesList@animal)!=0){id <- LinesList@animal} else {id <- "noID"}
+          xyLines = Lines(list(xyLine), ID=id)
           return(SpatialLines(list(xyLines), proj4string=CRS(proj4string(LinesList))))
           }
           )
 
+#remove NA from a csv data set
+setMethod("remove", "data.frame", function(list){
+          return(list[-unique(sort(c(which(is.na(list$location.long)),which(is.na(list$location.lat))))),])
+          }
+          )
 
 
 
@@ -196,9 +202,9 @@ setMethod("plot", "Move", function(x, google=FALSE,...){
               center <- c(mean(lat), mean(lon))
               zoom <- min(MaxZoom(range(lat), range(lon)))
               
-              MyMap <- GetMap(center=center, zoom=zoom, destfile="move/data/MyTile.png")
+              MyMap <- GetMap(center=center, zoom=zoom, destfile="pkg/move/data/MyTile.png")
               
-              PlotOnStaticMap(destfile="move/data/MyTile.png", lon=lon, lat=lat, FUN=lines)
+              PlotOnStaticMap(destfile="pkg/move/data/MyTile.png", lon=lon, lat=lat, FUN=lines)
               PlotOnStaticMap(MyMap=MyMap, add=TRUE, FUN=lines, lwd=2, lty=5)
             }
           }

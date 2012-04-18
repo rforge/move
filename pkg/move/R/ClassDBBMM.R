@@ -3,8 +3,8 @@ require(raster)
 require(sp, quietly=TRUE)
 
 
-#source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMove.R")
-#source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassDBMvar.R")
+source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMove.R")
+source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassDBMvar.R")
 
 
 
@@ -185,7 +185,7 @@ setMethod(f = "brownian.bridge.dyn",
             probability <- rep(0, grid.size)
             T.Total <- sum(time.lag[DBMvar@interest])
             
-            dyn.load("move/src/BBMM.so")
+            dyn.load("pkg/move/src/BBMM.so")
             interest <- (c(DBMvar@interest, 0)+c(0, DBMvar@interest))[1:length(DBMvar@interest)]!=0
             compsize <- grid.size*(sum(time.lag[DBMvar@interest])/time.step)
             print(paste("Computational size:", sprintf("%.1e", compsize)))
