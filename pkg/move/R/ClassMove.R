@@ -25,17 +25,16 @@ setClass(Class = "Move",
 
 ## Making move a generic funtion
 #if (!isGeneric("move")) {
-	setGeneric("move", function(x, y, time, data, proj=CRS("+proj=longlat +ellps=WGS84"), ...)
+	setGeneric("move", function(x, y, time, data, proj=CRS("+proj=longlat +ellps=WGS84"))
 		standardGeneric("move"))
 #}
-
 
 ## Defining the funcitoin move
 
 ##Reading from a .csv file
 setMethod(f="move", 
           signature=c(x="character"), 
-          definition = function(x, ...){
+          definition = function(x, proj){
 		        df <- read.csv(x, header=TRUE, sep=",", dec=".")
             df$timestamp <- as.POSIXct(strptime(df$timestamp, format = "%Y-%m-%d %H:%M:%OS")) ## Converting the time into POSIXct format
             df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format = "%Y-%m-%d %H:%M:%OS"))
@@ -56,9 +55,7 @@ setMethod(f="move",
             if (length(levels(df$individual.taxon.canonical.name))==1) {
               res@species[1] <- as.character(df$individual.taxon.canonical.name[1])} else{stop("More than one species defined")}
 		        if (length(levels(df$study.name))==1) {
-              res@study[1] <- as.character(df$study.name[1])} else{stop("More than one study detected")}
-		        print(res)
-            
+              res@study[1] <- as.character(df$study.name[1])} else{stop("More than one study detected")}            
 		        
 		        ###validity check for sorted time stamps
 		        if (any(df$timestamp!=sort(df$timestamp))){stop("\n Error:The data set includes unsorted time stamps")} else {}
@@ -73,8 +70,8 @@ setMethod(f="move",
 
 #if non-movebank data are used, coordinates (x,y), time and the data frame must be defined
 setMethod(f="move",
-          signature=c(x="numeric",y="numeric",time="factor",data="data.frame"),
-          definition = function(x,y,time,data,proj,...){
+          signature=c(x="numeric"),#,y="numeric",time="factor",data="data.frame"),
+          definition = function(x,y,time,data,proj){
             
             df <- data
             df$timestamp <- as.POSIXct(strptime(as.vector(time), format = "%Y-%m-%d %H:%M:%OS"))
@@ -164,21 +161,21 @@ setMethod("as.data.frame", "Move", function(x,...){
           }
           )
 
-#if (!isGeneric("SpatialLines")) {
-#setGeneric("SpatialLines", function(LinesList) standardGeneric("SpatialLines"))
-#}
+if (!isGeneric("SpatialLines")) {
+setGeneric("SpatialLines", function(LinesList) standardGeneric("SpatialLines"))
+}
 
 #transform Move's spatialpoints to spatiallines
-# setMethod("SpatialLines", "Move", function(LinesList){
-#           xy <- (coordinates(LinesList))
-#           xyLine <- Line(xy)
-#           if (length(LinesList@animal)!=0){id <- LinesList@animal} else {id <- "noID"}
-#           #xyLines <- Lines(list(xyLine), ID=LinesList@animal)
-#           xyLines <- Lines(list(xyLine), ID="a")
-#           #return(SpatialLines(list(xyLines), proj4string=CRS("+proj=aeqd +ellps=WGS84")))
-#           return(SpatialLines(list(xyLines), proj4string=CRS(proj4string(LinesList))))
-#           }
-#           )
+ setMethod("SpatialLines", "Move", function(LinesList){
+           xy <- (coordinates(LinesList))
+           xyLine <- Line(xy)
+           if (length(LinesList@animal)!=0){id <- LinesList@animal} else {id <- "noID"}
+           #xyLines <- Lines(list(xyLine), ID=LinesList@animal)
+           xyLines <- Lines(list(xyLine), ID="a")
+           #return(SpatialLines(list(xyLines), proj4string=CRS("+proj=aeqd +ellps=WGS84")))
+           return(SpatialLines(list(xyLines), proj4string=CRS(proj4string(LinesList))))
+           }
+           )
 
 #remove NA from a csv data set
 setMethod("remove", "data.frame", function(list){
