@@ -167,17 +167,15 @@ setMethod("as.data.frame", "Move", function(x,...){
           }
           )
 
-if (!isGeneric("SpatialLines")) {
-		setGeneric("SpatialLines", function(LinesList)
-			   		standardGeneric("SpatialLines"))
-}
 
 #transform Move's spatialpoints to spatiallines
 setMethod("SpatialLines", "Move", function(LinesList){
           xy <- (coordinates(LinesList))
-          xyLine = Line(xy)
+          xyLine <- Line(xy)
           if (length(LinesList@animal)!=0){id <- LinesList@animal} else {id <- "noID"}
-          xyLines = Lines(list(xyLine), ID=id)
+          #xyLines <- Lines(list(xyLine), ID=LinesList@animal)
+          xyLines <- Lines(list(xyLine), ID="a")
+          #return(SpatialLines(list(xyLines), proj4string=CRS("+proj=aeqd +ellps=WGS84")))
           return(SpatialLines(list(xyLines), proj4string=CRS(proj4string(LinesList))))
           }
           )
@@ -193,7 +191,7 @@ setMethod("remove", "data.frame", function(list){
 ###plotting 
 setMethod("plot", "Move", function(x, google=FALSE,...){
             if (google==FALSE){
-              plot(x@sdf, ...) #creates points
+              #plot(x@sdf, ...) #creates points
               plot(SpatialLines(x), add=TRUE) #creates lines
             } else {
               obj <- x
