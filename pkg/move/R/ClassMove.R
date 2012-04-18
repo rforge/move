@@ -1,10 +1,7 @@
 require(sp, quietly=TRUE)  ## Including necessary classes for move package
 require(raster, quietly=TRUE)
-#require(ggplot2, quietly=TRUE)
-#install.packages("RgoogleMaps")
 require("RgoogleMaps", quietly=TRUE)
 require(rgdal, quietly=TRUE)
-#install.packages("geosphere")
 require(geosphere, quietly=TRUE)
 require(methods, quietly=TRUE)
 
@@ -167,18 +164,21 @@ setMethod("as.data.frame", "Move", function(x,...){
           }
           )
 
+#if (!isGeneric("SpatialLines")) {
+#setGeneric("SpatialLines", function(LinesList) standardGeneric("SpatialLines"))
+#}
 
 #transform Move's spatialpoints to spatiallines
-setMethod("SpatialLines", "Move", function(LinesList){
-          xy <- (coordinates(LinesList))
-          xyLine <- Line(xy)
-          if (length(LinesList@animal)!=0){id <- LinesList@animal} else {id <- "noID"}
-          #xyLines <- Lines(list(xyLine), ID=LinesList@animal)
-          xyLines <- Lines(list(xyLine), ID="a")
-          #return(SpatialLines(list(xyLines), proj4string=CRS("+proj=aeqd +ellps=WGS84")))
-          return(SpatialLines(list(xyLines), proj4string=CRS(proj4string(LinesList))))
-          }
-          )
+# setMethod("SpatialLines", "Move", function(LinesList){
+#           xy <- (coordinates(LinesList))
+#           xyLine <- Line(xy)
+#           if (length(LinesList@animal)!=0){id <- LinesList@animal} else {id <- "noID"}
+#           #xyLines <- Lines(list(xyLine), ID=LinesList@animal)
+#           xyLines <- Lines(list(xyLine), ID="a")
+#           #return(SpatialLines(list(xyLines), proj4string=CRS("+proj=aeqd +ellps=WGS84")))
+#           return(SpatialLines(list(xyLines), proj4string=CRS(proj4string(LinesList))))
+#           }
+#           )
 
 #remove NA from a csv data set
 setMethod("remove", "data.frame", function(list){
@@ -191,8 +191,8 @@ setMethod("remove", "data.frame", function(list){
 ###plotting 
 setMethod("plot", "Move", function(x, google=FALSE,...){
             if (google==FALSE){
-              #plot(x@sdf, ...) #creates points
-              plot(SpatialLines(x), add=TRUE) #creates lines
+              plot(x@sdf, ...) #creates points
+              #plot(SpatialLines(x), add=TRUE) #creates lines
             } else {
               obj <- x
               lat <-coordinates(obj)[ ,2] 

@@ -1,5 +1,4 @@
-#require(raster, quietly=TRUE)
-require(raster)
+require(raster, quietly=TRUE)
 require(sp, quietly=TRUE)
 
 
@@ -291,8 +290,8 @@ setMethod(f = "proj4string",
 ####################
 setMethod(f = plot,
           signature = "DBBMM",
-          definition = function(x){ #maybe some more variables for the desgin
-            plot(raster(x))
+          definition = function(x,...){ #maybe some more variables for the desgin
+            plot(raster(x),...)
           }
           ) 
 
