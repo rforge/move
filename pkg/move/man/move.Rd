@@ -29,7 +29,7 @@ The move method creates a Move object from a movebank file. Additional the proje
 }
 
 \details{
-\code{x} has to be a file downloaded from movebank.org. The projection method is \code{proj=CRS("+proj=longlat +ellps=WGS84")} as default.
+\code{x} has to be a file downloaded from movebank.org. The projection method must be entered, e.g. \code{proj=CRS("+proj=longlat +ellps=WGS84")}.
 }
 
 

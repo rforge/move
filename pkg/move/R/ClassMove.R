@@ -189,6 +189,7 @@ setMethod("remove", "data.frame", function(list){
 setMethod("plot", "Move", function(x, google=FALSE,...){
             if (google==FALSE){
               plot(x@sdf, ...) #creates points
+              points(coordinates(x), type="l")
               #plot(SpatialLines(x), add=TRUE) #creates lines
             } else {
               obj <- x
