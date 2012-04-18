@@ -28,12 +28,14 @@ setClass(Class = "Move",
 
 ## Making move a generic funtion
 #if (!isGeneric("move")) {
-	setGeneric("move", function(x, proj=CRS("+proj=longlat +ellps=WGS84"), ...)
+	setGeneric("move", function(x, y, time, data, proj=CRS("+proj=longlat +ellps=WGS84"), ...)
 		standardGeneric("move"))
 #}
 
 
 ## Defining the funcitoin move
+
+##Reading from a .csv file
 setMethod(f="move", 
           signature=c(x="character"), 
           definition = function(x, ...){
@@ -62,23 +64,53 @@ setMethod(f="move",
             
 		        
 		        ###validity check for sorted time stamps
-		        if (any(df$timestamp!=sort(df$timestamp))){
-		          stop("\n Error:The data set includes unsorted time stamps")
-		        } else {}
-		        
+		        if (any(df$timestamp!=sort(df$timestamp))){stop("\n Error:The data set includes unsorted time stamps")} else {}
 		        ###validity check for double time stamps
-		        if (any(duplicated(df$timestamp))){
-		          stop("\n Error: the data set includes double time stamps")
-		        } else {}
-            
+		        if (any(duplicated(df$timestamp))){stop("\n Error: the data set includes double time stamps")} else {}
             ###validity check for double locations
-		        if (any(duplicated(as.numeric(coordinates(res@sdf))))){
-		          cat("\n WARNING: The data file includes double locations \n")
-		        } else {}
+		        if (any(duplicated(as.numeric(coordinates(res@sdf))))){cat("\n WARNING: The data file includes double locations \n")} else {}
             
             return(res)
           }
-)          
+)
+
+#if non-movebank data are used, coordinates (x,y), time and the data frame must be defined
+setMethod(f="move",
+          signature=c(x="numeric",y="numeric",time="factor",data="data.frame"),
+          definition = function(x,y,time,data,proj,...){
+            
+            df <- data
+            df$timestamp <- as.POSIXct(strptime(as.vector(time), format = "%Y-%m-%d %H:%M:%OS"))
+            df$location.long <- x
+            df$location.lat <- y
+            
+            res <- new("Move")
+            
+            #if (proj@projargs=="+proj=longlat"){
+            tmp <- SpatialPointsDataFrame(
+              coords = cbind(df$location.long, df$location.lat),
+              data = df,#(df[names(df)[!names(df)%in%c("location.lat", "location.long")]]),
+              proj4string = proj, 
+              match.ID = TRUE)
+            #} else {stop("No valid CRS object entered")}
+            
+            res@sdf <- tmp
+            
+#             if (length(levels(df$individual.local.identifier))==1) {
+#               res@animal[1] <- as.character(df$individual.local.identifier[1])} else{stop("More than one animal detected")}
+#             print(res)
+#             
+#             
+#             ###validity check for sorted time stamps
+#             if (any(df$timestamp!=sort(df$timestamp))){stop("\n Error:The data set includes unsorted time stamps")} else {}
+#             ###validity check for double time stamps
+#             if (any(duplicated(df$timestamp))){stop("\n Error: the data set includes double time stamps")} else {}
+#             ###validity check for double locations
+#             if (any(duplicated(as.numeric(coordinates(res@sdf))))){cat("\n WARNING: The data file includes double locations \n")} else {}
+            
+            return(res)
+          }
+          )
 
 
 ###Checking if projection method was set for move function
@@ -223,7 +255,7 @@ setMethod("show", "Move", function(object){
             nPoints  <- length(coordinates(object)[ ,1])
             #DateCreation <- c(object@dateCreation)
             Study   <- c(object@study)
-            df <- data.frame(Animal, Species, nPoints, Receiver, Study, check.rows=FALSE)
+            df <- try(data.frame(Animal, Species, nPoints, Receiver, Study, check.rows=FALSE), silent=TRUE)
             print(df)            
             cat("***** Projection method             ***** \n")
             print(Proj)            
@@ -239,5 +271,3 @@ setMethod("show", "Move", function(object){
             cat("******* End show (Move) ******* \n") 
             }
           )
-
-
