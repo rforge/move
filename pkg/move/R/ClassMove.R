@@ -93,6 +93,10 @@ setMethod(f="move",
             df$location.lat <- y
             
             res <- new("Move")
+            #save omitted NA timestamps
+            res@timesMissedFixes <- df[(is.na(df$location.long)|is.na(df$location.lat)), "timestamp"]
+            #omitting NAs
+            df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
             
             #if (proj@projargs=="+proj=longlat"){
             tmp <- SpatialPointsDataFrame(
