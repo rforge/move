@@ -1,12 +1,12 @@
-#   source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassDBBMM.R")
-#    test <- move(x="~/Documents/Programming/Rmove/old_move/data/BCI_Ocelot_Bobby.csv", proj=CRS("+proj=longlat"))
-#     testtest <- spTransform(test, proj="+proj=longlat", center=TRUE)
-#     p <- brownian.bridge.dyn(object=testtest, location.error=23.5, dimSize=45, ext=1.8)
-#  plot(p)
-#  image(p)
-#  plot(testtest, add=TRUE, col="grey")
-#  contour(p, levels=c(.5,.9), add=T)
-#  plot(test, google=TRUE)
+# source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassDBBMM.R")
+# test <- move(x="~/Documents/Programming/Rmove/old_move/data/BCI_Ocelot_Bobby.csv", proj=CRS("+proj=longlat"))
+# testtest <- spTransform(test, proj="+proj=longlat", center=TRUE)
+# p <- brownian.bridge.dyn(object=testtest, location.error=23.5, dimSize=45, ext=1.8)
+# plot(p)
+# image(p)
+# plot(testtest, add=TRUE, col="grey")
+# contour(p, levels=c(.5,.9), add=T)
+# plot(test, google=TRUE)
 # testtest
 
 

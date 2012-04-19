@@ -54,21 +54,19 @@ With the function below the dynamic Brownian Bridge Movement Model calculates th
 
 The track or the utilizazion density can be plotted with the following functions
   \tabular{ll}{
-    \code{plot}\tab To plot the utilization density with fixed width and hight ratio (see DBBMM-class) or the track (see Move-class) \cr
+    \code{plot}\tab To plot the utilization density with fixed width and hight ratio (see DBBMM-class)\cr or the track (see Move-class) \cr
     \code{image}\tab To plot the utilization density fitted to the window \cr
     \code{contour}\tab Adds the contours of utilization densities to a plot\cr 
   }
 }
 
 \author{
-Bart Kranstauber, Marco Smolla, Kamran Safi
+Bart Kranstauber, Marco Smolla, Kamran Safi \cr \cr
 Maintainer: Bart Kranstauber \email{bkranstauber@orn.mpg.de}, Marco Smolla \email{msmolla@orn.mpg.de}
 }
+
 \references{
 CRAN: \url{http://move.r-forge.r-project.org/}
 }
 
 \keyword{package}
-\seealso{
-Optional links to other man pages, e.g.
-}

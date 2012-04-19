@@ -22,6 +22,7 @@ The Move object is created with the move function (see move) from a valid data f
     \item{study}{Object of class \code{"character"}: name of the study;  }
     \item{citation}{Object of class \code{"character"}: how to cite the study;  }
     \item{license}{Object of class \code{"character"}: under which licens were the data publicated;  }
+    \item{timesMissedFixes}{Object of class \code{"POSIXct"}: stores the timestamps of lines of the data set that were removed because they included NA locations }
   }
 }
 

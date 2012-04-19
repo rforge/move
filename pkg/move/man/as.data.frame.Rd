@@ -6,7 +6,7 @@
 
 \title{Return a Data Frame}
 
-\description{Functions to create a data.frame with the spatial data frame information from a Move object.}
+\description{Function to create a data.frame with the spatial data frame information from a Move object.}
 
 \usage{
   \S4method{as.data.frame}{Move}(x,...)
@@ -18,8 +18,16 @@
 }
 
 \details{
-  as.data.frame extracts the sdf argument from a Move object
+  as.data.frame extracts the sdf argument from a Move object.
 }
 
+\examples{
+
+## create a move object
+data <- move(system.file("data/leroy_fisher_locations_MBformat_LaPoint.csv",package="move"),proj=CRS("+proj=longlat"))
+
+## returns a data.frame with all information stored in the spatial data frame of the move object
+df <- as.data.frame(data)
+}
 
 \author{Marco Smolla}

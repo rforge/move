@@ -13,10 +13,11 @@ setClass(Class = "Move",
            sdf = "SpatialPointsDataFrame",     
             animal = "character",   #animal name
             species = "character",
-            dateCreation = "numeric", #time stamp data creation ##use for the date POSIXct
+            dateCreation = "POSIXct", #time stamp data creation ##use for the date POSIXct
             study = "character",
             citation = "character",
-            license = "character"),
+            license = "character",
+            timesMissedFixes="POSIXct"),
          validity = function(object) {
 		 res<-T
 		 if("timestamp"%in%names(object@sdf))#check if timestamp is present and valid
@@ -45,8 +46,13 @@ setMethod(f="move",
           definition = function(x, proj){
 		        df <- read.csv(x, header=TRUE, sep=",", dec=".")
             df$timestamp <- as.POSIXct(strptime(df$timestamp, format = "%Y-%m-%d %H:%M:%OS")) ## Converting the time into POSIXct format
-            df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format = "%Y-%m-%d %H:%M:%OS"))
+            df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format = "%Y-%m-%d %H:%M:%OS"))            
+            
             res <- new("Move")
+            #save omitted NA timestamps
+		        res@timesMissedFixes <- df[(is.na(df$location.long)|is.na(df$location.lat)), "timestamp"]
+            #omitting NAs
+		        df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
             
 		        #if (proj@projargs=="+proj=longlat"){
 		          tmp <- SpatialPointsDataFrame(
@@ -185,13 +191,6 @@ setGeneric("SpatialLines", function(LinesList) standardGeneric("SpatialLines"))
            }
            )
 
-#remove NA from a csv data set
-setMethod("remove", "data.frame", function(list){
-          return(list[-unique(sort(c(which(is.na(list$location.long)),which(is.na(list$location.lat))))),])
-          }
-          )
-
-
 
 ###plotting 
 setMethod("plot", "Move", function(x, google=FALSE,...){
@@ -274,6 +273,7 @@ setMethod("show", "Move", function(object){
             cat("***** Spatial Data Frame data       ***** \n")
             print(object@sdf@data[1:3, ])            
             cat("***** End Spatial Data Frame data   ***** \n")
+            cat("***** There were: ", length(object@timesMissedFixes), "fixes omitted due to NA location \n")
             cat("***** How to cite the dataset \n")
             cat(object@citation, "\n")
             cat("***** Usage of the data underlies the following license \n")
