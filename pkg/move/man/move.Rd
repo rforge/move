@@ -11,7 +11,8 @@ Create a Move object
 }
 
 \description{
-The move method creates a Move object from a movebank file. Additional the projection method of the data can be changed with the 'proj' argument.
+The move method creates a Move object from a movebank file. Additional the projection method must be set with the 'proj' argument.\cr
+Alternative to this method is to import own data, and specify the location and timestamp cloumns. 
 }
 
 \usage{
@@ -20,7 +21,7 @@ The move method creates a Move object from a movebank file. Additional the proje
 }
 
 \arguments{
-\item{x}{Full path to the file location, or column indicator for non-movebank data for the x coordinates; e.g. \code{data$x}}
+\item{x}{Full path to the file location, OR column indicator for non-movebank data for the x coordinates; e.g. \code{data$x}}
 \item{y}{column indicator for non-movebank data for the y coordinates}
 \item{time}{column indicator for non-movebank data for the time stamps}
 \item{data}{full parh of the location of the non-movebank file}
@@ -29,16 +30,18 @@ The move method creates a Move object from a movebank file. Additional the proje
 }
 
 \details{
-\code{x} has to be a file downloaded from movebank.org. The projection method must be entered, e.g. \code{proj=CRS("+proj=longlat +ellps=WGS84")}.
+  There are two ways to import data to make a Move object. Either the path to a file downloaded from \url{www.movebank.org} is set for the x argument, or the file is first imported with the base \code{\link{read.csv}} funciton and then the columns with the x and y coordinates, and the timestamp, as well as the whole data.frame of the imported data is given to the \code{move} function. 
 }
 
 
 \author{Marco Smolla }
 
 \examples{
+## create a move object
+data <- move(system.file("data/leroy_fisher_LaPoint.csv",package="move"))## create a move object
+data <- move(system.file("data/leroy_fisher_LaPoint.csv",package="move"),proj=CRS("+proj=longlat"))
 
-\dontrun{
-test <- move(x=FILE)
-test <- move(x=FILE, proj=CRS("+proj=longlat"))
-}
+## create a move object from non-movebank data
+file <- read.table(system.file("data/leroy_fisher_LaPoint.csv",package="move"), header=TRUE, sep=",", dec=".")
+data <- move(x=file$location.long, y=file$location.lat, time=file$timestamp, data=file, proj=CRS("+proj=longlat"))
 }

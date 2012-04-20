@@ -20,15 +20,24 @@
 }
 
 \details{
-  The contour function allows to displays the area where e.g. the animal is found with a 90\% probability. One or several probabilities can be set with \code{levels}. At least one level must be added, there is no default set. 
+  The contour function allows to displays the area where e.g. the animal is found with a 90\% probability. One or several probabilities can be set with \code{levels}. At least one level must be added, there is no default value set. A value of \code{0.5} creates a contour line that includes the area with 50\% probability to find the animal. 
 }
 
 \author{Marco Smolla}
 
 \examples{
-  
 \dontrun{
-#to add a 50\% and 90\% contour to a plot 
-contour(, levels=c(.5,.9), add=TRUE)
+## create a move object
+data <- move(system.file("data/leroy_fisher_LaPoint.csv",package="move"),proj=CRS("+proj=longlat"))
+
+## transform to aequd projection
+data2 <- spTransform(data, center=TRUE)
+
+## create a DBBMM object
+p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=.2)
+
+## to add a 50\% and 90\% contour to a plot from DBBMM object p
+plot(p)
+contour(p, levels=c(.5,.9), add=T)
 }
 }

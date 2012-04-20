@@ -19,15 +19,15 @@ setClass(Class = "Move",
             license = "character",
             timesMissedFixes="POSIXct"),
          validity = function(object) {
-		 res<-T
-		 if("timestamp"%in%names(object@sdf))#check if timestamp is present and valid
-		 {
-			 if(!all(class(object@sdf$timestamp)==c("POSIXct", "POSIXt")))
-				 res<-F
-		 }else{
-			 res<-F
-		 }
-           return(res)
+      		 res <- TRUE
+      		 if("timestamp"%in%names(object@sdf))#check if timestamp is present and valid
+      		 {
+      			 if(!all(class(object@sdf$timestamp)==c("POSIXct", "POSIXt")))
+      				 res <- FALSE
+      		 }else{
+      			 res <- FALSE
+      		 }
+          return(res)
          }
 )
 

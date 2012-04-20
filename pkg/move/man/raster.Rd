@@ -17,7 +17,11 @@
 }
 
 \details{
-  The raster function extraxcts the raster object from the DBBMM object. It returns an object from class RasterLayer.
+  The raster function extraxcts the raster object from the DBBMM object.
+}
+
+\value{
+  An object from class RasterLayer is returned.
 }
 
 \author{Marco Smolla}

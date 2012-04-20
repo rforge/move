@@ -22,8 +22,25 @@
 }
 
 \details{
-  The spTransform function transform the coordinates of a Move object by default from "+proj=longlat" to "+proj=aeqd". In this format the coordinates can be used by the \code{brownian.bridge.dyn} function. \cr
+  The spTransform function transforms the coordinates of a Move object by default from "+proj=longlat" to "+proj=aeqd". In this format the coordinates can be used by the \code{\link{brownian.bridge.dyn}} function. \cr
   If \code{center} is TRUE the center of the coordinate system is set to the center of the track.
+}
+
+\examples{
+## create a Move object
+data <- move(system.file("data/leroy_fisher_LaPoint.csv",package="move"),proj=CRS("+proj=longlat"))
+
+## transform the Move object by default into "+aeqd" projection method and center the coordinate system
+data2 <- spTransform(data, center=TRUE)
+
+## transform the Move object into another projection method, like mollweide
+data2 <- spTransform(data, CRSobj="+proj=moll")
+
+##check projection method
+proj4string(data)
+"[1]  +proj=longlat +ellps=WGS84"
+proj4string(data2)
+"[1]  +proj=moll +ellps=WGS84"
 }
 
 \author{Marco Smolla}

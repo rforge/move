@@ -5,22 +5,30 @@
 
 \docType{methods}
 
-\title{Calculates the probabilities at the edges}
+\title{Calculates the probabilities at the edges of a raster}
 
-\description{The outerProbability method calculates the sum of the cells at the border of the raster.}
+\description{The outerProbability method calculates the summed probabilitiy of the cells at the border of a raster}
 
 \usage{
   \S4method{outerProbability}{RasterLayer}(raster,border)
 }
 
 \arguments{
-  \item{raster}{A raster with from class RasterLayer with calculated values}
-  \item{border}{Describes the amount of columns at the border relative to the whole raster of which the summed probability should be calculated.}
+  \item{raster}{a RasterLayer object which has values for the raster cells}
+  \item{border}{numeric from 0 to 1; the amount of columns at the border relative to the whole raster of which the probabilities should be summed up}
 }
 
-\details{
-  \code{border} is not necessary
-  \code{raster} is not necessary
+\examples{
+\dontrun{
+## create a move object, transform it, and create a DBBMM object
+data <- move(system.file("data/leroy_fisher_LaPoint.csv",package="move"),proj=CRS("+proj=longlat"))
+data2 <- spTransform(data, center=TRUE)
+p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=.2)
+
+## calculate the probabilities of 20\% of the raster at the border
+outerProbability(raster(p), border=.2)
+[1] 0.06753346
+}
 }
 
 \author{Marco Smolla}

@@ -7,7 +7,7 @@
 
 \title{Get a proj4string}
 
-\description{Get the proj4string of the raster from a Move or DBBMM object.}
+\description{Get the proj4string of the raster from a Move or DBBMM object}
 
 \usage{
   \S4method{proj4string}{Move}(obj)
@@ -19,7 +19,7 @@
 }
 
 \details{
-  proj4strings are done by with the PROJ.4 library exposed by rgdal
+  proj4strings are done by the PROJ.4 library exposed by rgdal
 }
 
 \value{

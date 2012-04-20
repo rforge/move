@@ -29,7 +29,9 @@
     \item the first three lines of the spatial data frame
     \item study citation
     \item data licens
-}
+    \item number of omitted locations due to NAs in the dataset
+    }
+    If the imported data are not from the movebank database Animal, Species, nPoints, Receiver, and Study are not shown. 
 }
 
 \author{Marco Smolla}

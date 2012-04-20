@@ -274,7 +274,7 @@ setMethod(f="raster",
 setMethod(f = "proj4string",
           signature = "DBBMM", 
           definition = function(obj){
-            return(proj4string(raster(obj)))
+            return(raster(obj)@crs@projargs)
           }
           )
 

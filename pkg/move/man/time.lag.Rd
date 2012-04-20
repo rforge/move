@@ -7,19 +7,19 @@
 
 \title{Calculates the time lags between the coordinates}
 
-\description{The time.lag function calculates the time lags between coordinates.}
+\description{The time.lag function calculates the time lags between location fixex}
 
 \usage{
   \S4method{time.lag}{Move}(x,...)
 }
 
 \arguments{
-  \item{x}{A Move object}
-  \item{...}{Further arguments ...}
+  \item{x}{a Move object}
+  \item{...}{further arguments}
 }
 
-\details{
-  \code{...} there are no further arguments
+\value{
+  The function returns time lags in minutes
 }
 
 \author{Marco Smolla}

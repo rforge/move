@@ -18,7 +18,15 @@
 }
 
 \details{
-  \code{obj} needs to be a Move object. The object includes a special data frame with the track coordinates and a time stamp. 
+  \code{obj} The move object includes a special data frame with the track coordinates and a time stamp. They are returned as a matrix.
+}
+
+\examples{
+## create a move object
+data <- move(system.file("data/leroy_fisher_LaPoint.csv",package="move"),proj=CRS("+proj=longlat"))
+
+## extract the coordinates
+coords <- coordinates(data)
 }
 
 \author{Marco Smolla}
