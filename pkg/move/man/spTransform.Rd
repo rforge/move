@@ -16,13 +16,13 @@
 
 \arguments{
   \item{x}{a Move object}
-  \item{CRSobj}{a CRS like chracter that describes the projection method to which the coordinates should be transformed, if missing "+proj=aequd" is used as default value}
+  \item{CRSobj}{a CRS like chracter that describes the projection method to which the coordinates should be transformed, if missing \code{"+proj=aequd"} is used as default value}
   \item{center}{logical, if TRUE the coordinates center is the center of the track; FALSE as default}
   \item{...}{for additional arguments}
 }
 
 \details{
-  The spTransform function transforms the coordinates of a Move object by default from "+proj=longlat" to "+proj=aeqd". In this format the coordinates can be used by the \code{\link{brownian.bridge.dyn}} function. \cr
+  The spTransform function transforms the coordinates of a Move object by default from \code{"+proj=longlat"} to \code{"+proj=aeqd"}. In this format the coordinates can be used by the \code{\link{brownian.bridge.dyn}} function. \cr
   If \code{center} is TRUE the center of the coordinate system is set to the center of the track.
 }
 
@@ -30,7 +30,8 @@
 ## create a Move object
 data <- move(system.file("data/leroy_fisher_LaPoint.csv",package="move"),proj=CRS("+proj=longlat"))
 
-## transform the Move object by default into "+aeqd" projection method and center the coordinate system
+## transform the Move object by default into "+aeqd" projection method 
+## and center the coordinate system
 data2 <- spTransform(data, center=TRUE)
 
 ## transform the Move object into another projection method, like mollweide

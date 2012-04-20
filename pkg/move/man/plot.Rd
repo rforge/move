@@ -21,7 +21,7 @@
 }
 
 \details{
-  If \code{x} is a Move object a track is plotted with points and lines. The lines are created from the SpatialLines function, that extracts the coordinates from the Move object and transforms them into a SpatialLines object. The track can be added to a nother plot with the \code{add = TRUE}. \cr
+  If \code{x} is a Move object a track is plotted with points and lines. The track can be added to a nother plot with the \code{add = TRUE}. \cr
   If \code{x} is a DBBMM object its raster object is plotted with the corresponding cell values. Compared to the \code{\link{image}} function, the cell size ratio keeps the same, when the plot window is resized. \cr
   The \code{google} argument works together with a Move object. If \code{TRUE} the GetMap funciton from the RgoogleMaps package generates a URL to download a map that fits with the track. After downloading the map, the track is plotted on top of the map.
 }

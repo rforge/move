@@ -6,7 +6,7 @@
 
 \title{Contour plot}
 
-\description{Contour plot of a RasterLayer from a DBBMM object.}
+\description{Contour plot of a RasterLayer from a DBBMM object (see \code{\link{DBBMM-class}}).}
 
 \usage{
   \S4method{contour}{DBBMM}(x,levels,add,...)

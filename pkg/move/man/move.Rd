@@ -12,7 +12,7 @@ Create a Move object
 
 \description{
 The move method creates a Move object from a movebank file. Additional the projection method must be set with the 'proj' argument.\cr
-Alternative to this method is to import own data, and specify the location and timestamp cloumns. 
+An alternative to this method is to import own data, and specify the location and timestamp columns. 
 }
 
 \usage{
@@ -25,12 +25,12 @@ Alternative to this method is to import own data, and specify the location and t
 \item{y}{column indicator for non-movebank data for the y coordinates}
 \item{time}{column indicator for non-movebank data for the time stamps}
 \item{data}{full parh of the location of the non-movebank file}
-\item{proj}{projection method; requires a valid CRS object}
+\item{proj}{projection method; requires a valid CRS (see \code{\link{CRS-class}}) object, CRS("+proj=longlat +ellps=WGS84") is default}
 \item{...}{Additional arguments}  
 }
 
 \details{
-  There are two ways to import data to make a Move object. Either the path to a file downloaded from \url{www.movebank.org} is set for the x argument, or the file is first imported with the base \code{\link{read.csv}} funciton and then the columns with the x and y coordinates, and the timestamp, as well as the whole data.frame of the imported data is given to the \code{move} function. 
+  There are two ways to import data to make a Move object. Either the path to a file downloaded from \url{www.movebank.org} is set for the x argument, or the file is first imported with the base \code{\link{read.csv}} funciton and then the columns with the x and y coordinates, and the timestamp, as well as the whole data.frame of the imported data is given to the \code{\link{move}} function. 
 }
 
 

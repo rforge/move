@@ -10,7 +10,7 @@
 
 \title{Creates a DBBMM object}
 
-\description{The brownian.bridge.dyn function uses a Move object to calculate the utilization density of the given track. It uses the dynamic Brownian Bridge Movement Model to do so.}
+\description{The brownian.bridge.dyn function uses a Move object (see \code{\link{Move-class}}) to calculate the utilization density of the given track. It uses the dynamic Brownian Bridge Movement Model to do so.}
 
 \usage{
   \S4method{brownian.bridge.dyn}{Move,missing,numeric,numeric}(object, raster, dimSize, location.error,

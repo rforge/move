@@ -18,7 +18,7 @@
 }
 
 \details{
-  as.data.frame extracts the sdf argument from a Move object.
+  as.data.frame extracts the sdf argument from a Move object (see \code{\link{Move-class}})
 }
 
 \examples{
