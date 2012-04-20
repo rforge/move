@@ -271,7 +271,7 @@ setMethod(f="raster",
 
 
 ###extract projection from DBBMM
-setMethod(f = "proj4string",
+setMethod(f = proj4string,
           signature = "DBBMM", 
           definition = function(obj){
             return(raster(obj)@crs@projargs)

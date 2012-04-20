@@ -2,6 +2,7 @@
 # test <- move(x="~/Documents/Programming/Rmove/old_move/data/BCI_Ocelot_Bobby.csv", proj=CRS("+proj=longlat"))
 # testtest <- spTransform(test, proj="+proj=longlat", center=TRUE)
 # p <- brownian.bridge.dyn(object=testtest, location.error=23.5, dimSize=45, ext=1.8)
+# p
 # plot(p)
 # image(p)
 # plot(testtest, add=TRUE, col="grey")
