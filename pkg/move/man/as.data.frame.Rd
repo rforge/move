@@ -24,7 +24,7 @@
 \examples{
 
 ## create a move object
-data <- move(system.file("data/leroy_fisher_locations_MBformat_LaPoint.csv",package="move"),proj=CRS("+proj=longlat"))
+data <- move(system.file("data/leroy_fisher_LaPoint.csv",package="move"),proj=CRS("+proj=longlat"))
 
 ## returns a data.frame with all information stored in the spatial data frame of the move object
 df <- as.data.frame(data)
