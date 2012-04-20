@@ -10,7 +10,7 @@
 
 \title{Creates a DBBMM object}
 
-\description{The brownian.bridge.dyn function uses a Move object (see \code{\link{Move-class}}) to calculate the utilization density of the given track. It uses the dynamic Brownian Bridge Movement Model to do so.}
+\description{The brownian.bridge.dyn function uses a Move object (see \code{\link{Move-class}}) to calculate the utilization density (UD) of the given track. It uses the dynamic Brownian Bridge Movement Model (dBBMM) to do so. The dBBMM has the advantage over other the Brownian Bridge Movement Model that changes in behaviour are accounted for. It does so by using the behavioral change point analysis in a sliding window. For details see Kranstauber et al 2012.}
 
 \usage{
   \S4method{brownian.bridge.dyn}{Move,missing,numeric,numeric}(object, raster, dimSize, location.error,
@@ -29,9 +29,9 @@
   \item{raster}{can be a RasterLayer object or numeric. If it is a RasterObject and dimSize is not set, \code{brownian.bridge.dyn} starts to calculate the UD. If \code{raster} is numeric, it describes the cell.size of the raster. Default is 1}
   \item{dimSize}{can be numeric. If there is no input for raster, dimSize describes the number of cells of the largest x or y dimenstion. Default is 10}
   \item{location.error}{required numeric value. Describes the error of the location (sender/receiver) system}
-  \item{margin}{DESCRIPTION. Default is 11}
+  \item{margin}{The margin used for the behavioral change point analysis. }
   \item{time.step}{DESCRIPTION. Default is NULL}
-  \item{window.size}{numerical. The size of the moving window along the track. Default is 31}
+  \item{window.size}{The size of the moving window along the track. Larger window provide more stable/accurate estimates of the brownian motion variance but are less well able to capture more frequent changes in behaviour.}
   \item{ext}{numeric value >0. Decribes the amount of extension of the bounding box of the animal track. It can be one (same extension into all four directions), two (first x, then y directional extension) or four numbers (xmin, xmax, ymin, ymax extension). Default is .25 (extends the bounding box by 25\%)}
   \item{...}{for additional arguments}
 }
@@ -46,7 +46,13 @@
   To set the number of cells along the largest dimension a numeric dimSize argument is set instead of the raster argument. A RasterLayer object is created and returned to the same funciton.\cr \cr
   4. Using default raster \cr
   When there are no values set, the default raster value is used to calculate and create a RasterLayer object, which is returned to the same function. Note: depending on the size of the area of interest, the default cell size value can result in a large number of cells which may take a very long time to calculate!
+
+  The function prints an estimate of the size of the computational task ahead this can give an indication of how long the computation is going to take. It should scale roughtly linear with the duration of the computations. On our experience $1*10^9$ takes about a minute normal laptop. 
 }  
+
+\note{
+	Note that the first few and last few segments of the trajectory are omitted in the calculation of the UD since a lower number of estimates for the Brownian motion variance are obtained for those segments.
+}
 
 \author{Marco Smolla}
 \references{
