@@ -1,6 +1,6 @@
 
-#source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMove.R")
-#source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassDBMvar.R")
+source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMove.R")
+source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassDBMvar.R")
 
 
 

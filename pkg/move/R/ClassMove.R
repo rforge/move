@@ -45,8 +45,8 @@ setMethod(f="move",
           signature=c(x="character"), 
           definition = function(x, proj){
 		        df <- read.csv(x, header=TRUE, sep=",", dec=".")
-            df$timestamp <- as.POSIXct(strptime(df$timestamp, format = "%Y-%m-%d %H:%M:%OS")) ## Converting the time into POSIXct format
-            df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format = "%Y-%m-%d %H:%M:%OS"))            
+            df$timestamp <- as.POSIXct(df$timestamp, format = "%Y-%m-%d %H:%M:%S", tz="GMT") ## Converting the time into POSIXct format ### NOTE: so far GMT is set!!!
+            df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format = "%Y-%m-%d %H:%M:%OSn"))            
             
             res <- new("Move")
             #save omitted NA timestamps
@@ -88,7 +88,7 @@ setMethod(f="move",
           definition = function(x,y,time,data,proj){
             
             df <- data
-            df$timestamp <- as.POSIXct(strptime(as.vector(time), format = "%Y-%m-%d %H:%M:%OS"))
+            df$timestamp <- as.POSIXct(df$timestamp, format = "%Y-%m-%d %H:%M:%S", tz="GMT") ## Converting the time into POSIXct format ### NOTE: so far GMT is set!!!
             df$location.long <- x
             df$location.lat <- y
             
@@ -284,4 +284,10 @@ setMethod("show", "Move", function(object){
             cat(object@license, "\n")
             cat("******* End show (Move) ******* \n") 
             }
+          )
+
+### Summary of a Move object
+setMethod("summary", "Move", function(object){
+          return(list(object@sdf[1:5, ], paste("Omitted locations: ", length(object@timesMissedFixes))))
+          }
           )
