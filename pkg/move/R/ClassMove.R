@@ -273,7 +273,7 @@ setMethod("show", "Move", function(object){
           )
 
 ### Summary of a Move object
-setMethod("summary", "Move", function(object){
-          return(list(object@sdf[1:5, ], paste("Omitted locations: ", length(object@timesMissedFixes))))
-          }
-          )
+# setMethod("summary", "Move", function(object){
+#           return(list(object@sdf[1:5, ], paste("Omitted locations: ", length(object@timesMissedFixes))))
+#           }
+#           )
