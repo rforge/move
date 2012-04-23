@@ -14,7 +14,7 @@
 }
 
 \arguments{
-  \item{obj}{A Move object}
+  \item{object}{A Move object}
 }
 
 \details{

@@ -13,13 +13,7 @@
 \description{The brownian.bridge.dyn function uses a Move object (see \code{\link{Move-class}}) to calculate the utilization density (UD) of the given track. It uses the dynamic Brownian Bridge Movement Model (dBBMM) to do so. The dBBMM has the advantage over other the Brownian Bridge Movement Model that changes in behaviour are accounted for. It does so by using the behavioral change point analysis in a sliding window. For details see Kranstauber et al 2012.}
 
 \usage{
-  \S4method{brownian.bridge.dyn}{Move,missing,numeric,numeric}(object, raster, dimSize, location.error,
-                 margin=11, time.step, window.size=31, ext, ...)
-  \S4method{brownian.bridge.dyn}{Move,missing,missing,numeric}(object, raster, dimSize, location.error,
-                 margin=11, time.step, window.size=31, ext, ...)
-  \S4method{brownian.bridge.dyn}{Move,numeric,missing,numeric}(object, raster, dimSize, location.error,
-                 margin=11, time.step, window.size=31, ext, ...)
-  \S4method{brownian.bridge.dyn}{Move,RasterLayer,missing,numeric}(object, raster, dimSize, location.error,
+  brownian.bridge.dyn(object, raster, dimSize, location.error,
                  margin=11, time.step, window.size=31, ext, ...)
 }
 

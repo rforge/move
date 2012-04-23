@@ -17,24 +17,13 @@ setClass(Class = "Move",
             study = "character",
             citation = "character",
             license = "character",
-            timesMissedFixes="POSIXct"),
-         validity = function(object) {
-      		 res <- TRUE
-      		 if("timestamp"%in%names(object@sdf))#check if timestamp is present and valid
-      		 {
-      			 if(!all(class(object@sdf$timestamp)==c("POSIXct", "POSIXt")))
-      				 res <- FALSE
-      		 }else{
-      			 res <- FALSE
-      		 }
-          return(res)
-         }
+            timesMissedFixes="POSIXct")
 )
 
 
 ## Making move a generic funtion
 #if (!isGeneric("move")) {
-	setGeneric("move", function(x, y, time, data, proj=CRS("+proj=longlat +ellps=WGS84"))
+	setGeneric("move", function(x, y, time, data, tz="GMT", proj=CRS("+proj=longlat +ellps=WGS84"))
 		standardGeneric("move"))
 #}
 
@@ -43,9 +32,9 @@ setClass(Class = "Move",
 ##Reading from a .csv file
 setMethod(f="move", 
           signature=c(x="character"), 
-          definition = function(x, proj){
+          definition = function(x, tz, proj){
 		        df <- read.csv(x, header=TRUE, sep=",", dec=".")
-            df$timestamp <- as.POSIXct(df$timestamp, format = "%Y-%m-%d %H:%M:%S", tz="GMT") ## Converting the time into POSIXct format ### NOTE: so far GMT is set!!!
+		        df$timestamp <- as.POSIXct(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%S", tz=tz) ## NOTE: GMT is is default
             df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format = "%Y-%m-%d %H:%M:%OSn"))            
             
             res <- new("Move")
@@ -85,19 +74,16 @@ setMethod(f="move",
 #if non-movebank data are used, coordinates (x,y), time and the data frame must be defined
 setMethod(f="move",
           signature=c(x="numeric"),#,y="numeric",time="factor",data="data.frame"),
-          definition = function(x,y,time,data,proj){
-            
+          definition = function(x,y,time,data,tz,proj){
             df <- data
-            df$timestamp <- as.POSIXct(df$timestamp, format = "%Y-%m-%d %H:%M:%S", tz="GMT") ## Converting the time into POSIXct format ### NOTE: so far GMT is set!!!
+            df$timestamp <- as.POSIXct(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%S", tz=tz) ## NOTE: GMT is is default
             df$location.long <- x
             df$location.lat <- y
             
             res <- new("Move")
-            #save omitted NA timestamps
-            res@timesMissedFixes <- df[(is.na(df$location.long)|is.na(df$location.lat)), "timestamp"]
-            #omitting NAs
-            df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
-            
+            res@timesMissedFixes <- df[(is.na(df$location.long)|is.na(df$location.lat)), "timestamp"] #save omitted NA timestamps
+            df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ] #omitting NAsa
+           
             #if (proj@projargs=="+proj=longlat"){
             tmp <- SpatialPointsDataFrame(
               coords = cbind(df$location.long, df$location.lat),
