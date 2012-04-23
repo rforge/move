@@ -1,5 +1,5 @@
-#source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMove.R")
-#source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassDBMvar.R")
+source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMove.R")
+source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassDBMvar.R")
 
 
 
@@ -180,6 +180,17 @@ setMethod(f = "brownian.bridge.dyn",
             interest <- (c(DBMvar@interest, 0)+c(0, DBMvar@interest))[1:length(DBMvar@interest)]!=0
             compsize <- grid.size*(sum(time.lag[DBMvar@interest])/time.step)
             print(paste("Computational size:", sprintf("%.1e", compsize)))
+            if (compsize>500000000){
+              cat("\n The calculation may take longer than 5 minutes. \n")
+              cat("If you don't want to proceed, abort the funciton now! \n")
+              ## Waiting 10s
+              pb <- txtProgressBar(min = 0, max = total, style = 1)
+              for(i in 1:10){
+                Sys.sleep(1)
+                setTxtProgressBar(pb, i)
+              }
+              close(pb)
+            } else {}            
             
             #asking to continue, if ncell is to large here is the possibility to end the process
             ##############readline(prompt = "Pause. Press <Enter> to continue or <Esc> to abort.")
