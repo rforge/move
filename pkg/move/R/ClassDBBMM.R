@@ -1,5 +1,5 @@
-source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMove.R")
-source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassDBMvar.R")
+#source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMove.R")
+#source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassDBMvar.R")
 
 
 
@@ -184,7 +184,7 @@ setMethod(f = "brownian.bridge.dyn",
               cat("\n The calculation may take longer than 5 minutes. \n")
               cat("If you don't want to proceed, abort the funciton now! \n")
               ## Waiting 10s
-              pb <- txtProgressBar(min = 0, max = total, style = 1)
+              pb <- txtProgressBar(min = 0, max = 10, style = 1)
               for(i in 1:10){
                 Sys.sleep(1)
                 setTxtProgressBar(pb, i)
