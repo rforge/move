@@ -59,7 +59,7 @@
 data <- move(system.file("data/leroy_fisher_LaPoint.csv",package="move"),proj=CRS("+proj=longlat"))
 
 ## change projection method to aequd and center the coordinate system to the track
-data2 <- spTransform(data, proj="+proj=aeqd", center=TRUE)
+data2 <- spTransform(data, CRSobj="+proj=aeqd", center=TRUE)
 
 ## if x is a DBBMM object its raster object is plotted
 p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=1.8)

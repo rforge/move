@@ -195,7 +195,7 @@ setMethod("plot", "Move", function(x, google=FALSE,...){
               center <- c(mean(lat), mean(lon))
               zoom <- min(MaxZoom(range(lat), range(lon)))
               
-              MyMap <- GetMap(center=center, zoom=zoom, destfile="pkg/move/data/MyTile.png")
+              MyMap <- GetMap(center=center, zoom=zoom, destfile="pkg/move/data/MyTile.png", ...)
               
               PlotOnStaticMap(destfile="pkg/move/data/MyTile.png", lon=lon, lat=lat, FUN=lines)
               PlotOnStaticMap(MyMap=MyMap, add=TRUE, FUN=lines, lwd=2, lty=5)
