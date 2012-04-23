@@ -17,7 +17,7 @@
 \arguments{
   \item{x}{a Move object}
   \item{CRSobj}{a CRS like chracter that describes the projection method to which the coordinates should be transformed, if missing \code{"+proj=aequd"} is used as default value}
-  \item{center}{logical, if TRUE the coordinates center is the center of the track; FALSE as default}
+  \item{center}{logical, if TRUE the center of the coordinate system is the center of the track; FALSE as default}
   \item{...}{for additional arguments}
 }
 
