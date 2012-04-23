@@ -35,7 +35,8 @@ An alternative to this method is to import own data, and specify the location an
 }
 
 \note{
-Because the SpatialPointsDataFrame funciton that creates the spatial data frame (\code{sdf}) of the \code{Move} object can not process NA locatiion values, all rows with NA locations are omitted. Which timestamps rows were deleted from the data.frame are stored in the \code{timesMissedFixes} argument of the \code{Move} object.
+Because the SpatialPointsDataFrame funciton that creates the spatial data frame (\code{sdf}) of the \code{Move} object can not process NA locatiion values, all rows with NA locations are omitted. Which timestamps rows were deleted from the data.frame are stored in the \code{timesMissedFixes} argument of the \code{Move} object. \cr
+If the data includes double timestamps check you data for valitdity. You may want to consider a funciton to delete double timetamps, like: \cr \code{data <- data[which(!duplicated(data$timestamp)), ]}
 }
 
 
