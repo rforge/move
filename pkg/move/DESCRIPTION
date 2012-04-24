@@ -1,7 +1,7 @@
 Package: move
 Type: Package
 Title: Using the dynamic Brownian Bridge Movement Model (dBBMM)
-Version: 0.1
+Version: 0.1.33
 Date: 2012-03-06
 Author:   Bart Kranstauber <bart.kranstauber@uni-konstanz.de>, Kamran Safi <ksafi@orn.mpg.de>, Marco Smolla <msmolla@orn.mpg.de>
 Maintainer: Marco Smolla <msmolla@orn.mpg.de>
