@@ -1,9 +1,9 @@
-require(sp, quietly=TRUE)  ## Including necessary classes for move package
-require(raster, quietly=TRUE)
-require("RgoogleMaps", quietly=TRUE)
-require(rgdal, quietly=TRUE)
-require(geosphere, quietly=TRUE)
-require(methods, quietly=TRUE)
+# require(sp, quietly=TRUE)  ## Including necessary classes for move package
+# require(raster, quietly=TRUE)
+# require(RgoogleMaps, quietly=TRUE)
+# require(rgdal, quietly=TRUE)
+# require(geosphere, quietly=TRUE)
+# require(methods, quietly=TRUE)
 
 
 
