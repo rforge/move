@@ -22,11 +22,13 @@
 }
 
 \examples{
+\dontrun{
 ## create a move object
 data <- move(system.file("data/leroy_fisher_LaPoint.csv",package="move"),proj=CRS("+proj=longlat"))
 
 ## extract the coordinates
 coords <- coordinates(data)
+}
 }
 
 \author{Marco Smolla}

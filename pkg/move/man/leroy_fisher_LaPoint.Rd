@@ -14,8 +14,10 @@ For more information, contact Scott LaPoint \email{sdlapoint@gmail.com}
 }
 
 \examples{
+\dontrun{
 ## create a Move object from the data set
 data <- move(system.file("data/leroy_fisher_LaPoint.csv",package="move"),proj=CRS("+proj=longlat"))
+}
 }
 
 \author{Marco Smolla}

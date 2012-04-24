@@ -27,6 +27,7 @@
 }
 
 \examples{
+\dontrun{
 ## create a Move object
 data <- move(system.file("data/leroy_fisher_LaPoint.csv",package="move"),proj=CRS("+proj=longlat"))
 
@@ -44,6 +45,7 @@ proj4string(data2)
 "[1]   +proj=longlat +lon_0=-73.8871629 +lat_0=42.73884025 +ellps=WGS84"
 proj4string(data3)
 "[1]  +proj=moll +ellps=WGS84"
+}
 }
 
 \author{Marco Smolla}
