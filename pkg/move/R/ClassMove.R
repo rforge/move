@@ -183,6 +183,8 @@ setGeneric("SpatialLines", function(LinesList) standardGeneric("SpatialLines"))
 
 
 ###plotting 
+setGeneric("plot")
+
 setMethod("plot", "Move", function(x, google=FALSE,...){
             if (google==FALSE){
               plot(x@sdf, ...) #creates points
@@ -204,9 +206,6 @@ setMethod("plot", "Move", function(x, google=FALSE,...){
           )
 
 
-
-
-###Transform the Move's raster form longlat to aeqd
 setMethod(f = "spTransform", 
           signature = c(x = "Move", CRSobj = "missing"), 
           function(x, center=FALSE, ...){

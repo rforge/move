@@ -281,7 +281,7 @@ setMethod(f="raster",
 
 
 ###extract projection from DBBMM
-setMethod(f = proj4string,
+setMethod(f = "proj4string",
           signature = "DBBMM", 
           definition = function(obj){
             return(raster(obj)@crs@projargs)
@@ -291,21 +291,23 @@ setMethod(f = proj4string,
 ####################
 ## Plotting dbbmm ##
 ####################
-setMethod(f = plot,
+setMethod(f = "plot",
           signature = "DBBMM",
           definition = function(x){ #maybe some more variables for the desgin
             plot(raster(x))
           }
           ) 
 
-setMethod(f = image,
+setGeneric("image")
+setMethod(f = "image",
           signature = "DBBMM",
           definition = function(x,...){ #maybe some more variables for the desgin
             image(raster(x,...))
           }
           )
 
-setMethod(f = contour,
+setGeneric("contour")
+setMethod(f = "contour",
           signature = c(x="DBBMM"),
           definition = function(x, levels, add=F, ...){
             newRaster <- raster(x)

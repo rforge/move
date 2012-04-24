@@ -1,4 +1,5 @@
-#importFrom("graphics", plot, hist, lines, image, contour, persp, pairs, text, boxplot)
+#importFrom("graphics", plot)
 exportClasses(Move, DBBMM)
-exportMethods(move, coordinates, n.locs, time.lag,  proj4string, plot, SpatialLines, spTransform, show, outerProbability, raster, image, contour, brownian.bridge.dyn)
+exportMethods(move, coordinates, n.locs, time.lag,  proj4string, SpatialLines, spTransform, show, outerProbability, raster, brownian.bridge.dyn, plot, image, contour)
+#export(plot, image, contour)
 #useDynLib(BBMM.so)
