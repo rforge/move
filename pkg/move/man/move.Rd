@@ -16,16 +16,15 @@ An alternative to this method is to import one's own data, and specify the locat
 }
 
 \usage{
-\S4method{move}{character}(x, tz, proj)
-\S4method{move}{numeric}(x, y, time, data, tz, proj)%proj = CRS("+proj=longlat +ellps=WGS84"), ...)
+\S4method{move}{character}(x, proj)
+\S4method{move}{numeric}(x, y, time, data, proj)%proj = CRS("+proj=longlat +ellps=WGS84"), ...)
 }
 
 \arguments{
 \item{x}{Full path to the file location, OR column indicator for non-Movebank data for the x coordinates; e.g. \code{data$x}}
 \item{y}{column indicator for non-Movebank data for the y coordinates}
-\item{time}{column indicator for non-Movebank data for the time stamps}
+\item{time}{column indicator for non-Movebank data for the time stamps, with POSIXct conversion, i.e. \code{as.POSIXct(data$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC")}}
 \item{data}{full parh of the location of the non-Movebank file}
-\item{tz}{character indicating the timezone of the timestamps, e.g. \code{"GMT"}}
 \item{proj}{projection method; requires a valid CRS (see \code{\link{CRS-class}}) object, CRS("+proj=longlat +ellps=WGS84") is default}
 \item{...}{Additional arguments}  
 }

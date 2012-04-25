@@ -143,7 +143,7 @@ setMethod(f = "brownian.bridge.dyn",
           signature = c(object="Move", raster="RasterLayer",dimSize="missing", location.error="numeric"),
           definition = function(object, raster, location.error, ...){
             
-            print("brownian.bridge.dyn 1")
+            #print("brownian.bridge.dyn 1")
             #cat("extent:: ", ext)
             x <- coordinates(object)[ ,1] #extracts the xy coordinates from the Move
             y <- coordinates(object)[ ,2]
@@ -165,7 +165,7 @@ setMethod(f = "brownian.bridge.dyn",
          #     DBMvar.vec <- rep(var, length(x))
           #    BMvar <- data.frame(interest=c(rep(TRUE, length(x)-1), FALSE), in.windows=rep(1, length(x)))
            # }
-            print("brownian.bridge.dyn 2")
+            #print("brownian.bridge.dyn 2")
             
             # Use 10 units (generally minutes) as default
             if(is.null(time.step)){ 
@@ -218,7 +218,7 @@ setMethod(f = "brownian.bridge.dyn",
             
             if (outerProbability > .05){
               cat("outer probability: ", outerProbability, "\n")
-              warning("Warning: the used extent is to small. Choose a larger extent to get a bigger raster.")
+              warning("Warning: the used extent is to small. Choose an extent which includes more of the probabilities.")
             }
 
             DBBMM <- dBBMM(DBMvar=DBMvar, raster=raster 
@@ -301,8 +301,8 @@ setMethod(f = "plot",
 setGeneric("image")
 setMethod(f = "image",
           signature = "DBBMM",
-          definition = function(x){ #maybe some more variables for the desgin
-            image(raster(x))
+          definition = function(x,col=rainbow(356),...){ #maybe some more variables for the desgin
+            image(raster(x),col=col,...)
           }
           )
 

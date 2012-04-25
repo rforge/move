@@ -23,7 +23,7 @@ setClass(Class = "Move",
 
 ## Making move a generic funtion
 #if (!isGeneric("move")) {
-	setGeneric("move", function(x, y, time, data, tz="GMT", proj=CRS("+proj=longlat +ellps=WGS84"))
+	setGeneric("move", function(x, y, time, data, proj=CRS("+proj=longlat +ellps=WGS84"))
 		standardGeneric("move"))
 #}
 
@@ -32,9 +32,9 @@ setClass(Class = "Move",
 ##Reading from a .csv file
 setMethod(f="move", 
           signature=c(x="character"), 
-          definition = function(x, tz, proj){
+          definition = function(x, proj){
 		        df <- read.csv(x, header=TRUE, sep=",", dec=".")
-		        df$timestamp <- as.POSIXct(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%S", tz=tz) ## NOTE: GMT is is default
+		        df$timestamp <- as.POSIXct(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%S", tz="UTC") ## NOTE: GMT is is default
             df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format = "%Y-%m-%d %H:%M:%OSn"))            
             
             res <- new("Move")
@@ -74,9 +74,9 @@ setMethod(f="move",
 #if non-movebank data are used, coordinates (x,y), time and the data frame must be defined
 setMethod(f="move",
           signature=c(x="numeric"),#,y="numeric",time="factor",data="data.frame"),
-          definition = function(x,y,time,data,tz,proj){
+          definition = function(x,y,time,data,proj){
             df <- data
-            df$timestamp <- as.POSIXct(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%S", tz=tz) ## NOTE: GMT is is default
+            df$timestamp <- time
             df$location.long <- x
             df$location.lat <- y
             

@@ -77,7 +77,7 @@ setMethod(f= "brownian.motion.variance.dyn",
           		return(list(BMvar=BMvar$minimum, cll=-BMvar$objective))
               }
             
-        print("brownian.motion.variance.dyn 1")
+        #print("brownian.motion.variance.dyn 1")
         
         BMvar <- list()
         window.starts <- 1:(length(x)-window.size+1)
@@ -86,7 +86,7 @@ setMethod(f= "brownian.motion.variance.dyn",
         uneven.breaks <- breaks[(breaks%%2)==1]
         BMvars <- data.frame(BMvar=c(), loc=c())
         
-        print("brownian.motion.variance.dyn 2")
+        #print("brownian.motion.variance.dyn 2")
         
         if(length(breaks)<2){
          stop("Margin to window ratio not ok") #What would be necessary to change?
@@ -129,12 +129,12 @@ setMethod(f= "brownian.motion.variance.dyn",
         }
         
         
-        print("brownian.motion.variance.dyn 3")
+        #print("brownian.motion.variance.dyn 3")
         
         #CALL IT DBMvar
         DBMvar <- dBMvar(BMvars=BMvars, BMvar=BMvar, n.locs=n.locs, break.list=break.list) 
         
-        print("brownian.motion.variance.dyn 4")
+        #print("brownian.motion.variance.dyn 4")
                 
         i <- DBMvar@interest
         if((sum(i)%%2)==0){    # if even one more location can be included in bb calculations

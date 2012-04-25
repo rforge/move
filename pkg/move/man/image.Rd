@@ -10,11 +10,12 @@
 \description{Creates a grid of colored or gray-scale rectangles with colors corresponding to the values stored in the raster object of the DBBMM object.}
 
 \usage{
-  \S4method{image}{DBBMM}(x,...)
+  \S4method{image}{DBBMM}(x,col=rainbow(356),...)
 }
 
 \arguments{
   \item{x}{a DBBMM object}
+  \item{col}{a vector of continous colors, see \code{\link{grDevices}}}
   \item{...}{additional arguments}
 }
 
