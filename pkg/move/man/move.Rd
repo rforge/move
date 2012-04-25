@@ -49,6 +49,6 @@ data <- move(system.file("data/leroy_fisher_LaPoint.csv",package="move"),proj=CR
 
 ## create a move object from non-Movebank data
 file <- read.table(system.file("data/leroy_fisher_LaPoint.csv",package="move"), header=TRUE, sep=",", dec=".")
-data <- move(x=file$location.long, y=file$location.lat, time=file$timestamp, data=file, proj=CRS("+proj=longlat"))
+data <- move(x=file$location.long, y=file$location.lat, time=as.POSIXct(data$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC"), data=file, proj=CRS("+proj=longlat"))
 }
 }
