@@ -1,5 +1,6 @@
 \name{coordinates}
 
+\alias{coordinates}
 \alias{coordinates,Move-method}
 
 \docType{methods}

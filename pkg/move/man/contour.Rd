@@ -1,5 +1,6 @@
 \name{contour}
 
+\alias{contour}
 \alias{contour,DBBMM-method}
 
 \docType{methods}
@@ -20,7 +21,7 @@
 }
 
 \details{
-  The contour function allows to displays the area where e.g. the animal is found with a 90\% probability. One or several probabilities can be set with \code{levels}. At least one level must be added, there is no default value set. A value of \code{0.5} creates a contour line that includes the area with 50\% probability to find the animal. 
+  The contour function creates a shape of the area in which there is a 90\% probability that the animal will be located. One or several probabilities can be set with \code{levels}. At least one level must be added, there is no default value set.
 }
 
 \author{Marco Smolla}

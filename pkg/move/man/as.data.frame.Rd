@@ -1,5 +1,6 @@
 \name{as.data.frame}
 
+\alias{as.data.frame}
 \alias{as.data.frame,Move-method}
 
 \docType{methods}

@@ -1,5 +1,6 @@
 \name{proj4string}
 
+\alias{proj4string}
 \alias{proj4string,Move-method}
 \alias{proj4string,DBBMM-method}
 

@@ -183,24 +183,39 @@ setGeneric("SpatialLines", function(LinesList) standardGeneric("SpatialLines"))
 
 
 ###plotting 
-setGeneric("plot")
+setGeneric("points")
+setMethod("points", "Move", function(x,add=FALSE,...){
+          if (add==FALSE) {plot(coordinates(x), type="p", ...)}
+          else {points(coordinates(x), type="p", ...)}
+          }          
+          )
 
+setGeneric("lines")
+setMethod("lines", "Move", function(x,add=FALSE,...){
+          if (add==FALSE) {plot(coordinates(x), type="l", ...)}
+          else {lines(coordinates(x), type="l", ...)}
+          }          
+          )
+
+setGeneric("plot")
 setMethod("plot", "Move", function(x, google=FALSE,...){
             if (google==FALSE){
-              plot(x@sdf, ...) #creates points
-              points(coordinates(x), type="l")
-              #plot(SpatialLines(x), add=TRUE) #creates lines
+              plot(coordinates(x), type="p", ...)#creates points
+              lines(x, add=TRUE, ...)
             } else {
+              require(RgoogleMaps)
               obj <- x
               lat <-coordinates(obj)[ ,2] 
               lon <- coordinates(obj)[ ,1]
               center <- c(mean(lat), mean(lon))
               zoom <- min(MaxZoom(range(lat), range(lon)))
               
-              MyMap <- GetMap(center=center, zoom=zoom, destfile="pkg/move/data/MyTile.png", ...)
+              MyMap <- GetMap(center=center, zoom=zoom, destfile=paste(getwd(),"MyTile.png",sep="/"), ...)
               
-              PlotOnStaticMap(destfile="pkg/move/data/MyTile.png", lon=lon, lat=lat, FUN=lines)
+              PlotOnStaticMap(destfile=paste(getwd(),"MyTile.png",sep="/"), lon=lon, lat=lat, FUN=lines)
               PlotOnStaticMap(MyMap=MyMap, add=TRUE, FUN=lines, lwd=2, lty=5)
+              file.remove(paste(getwd(),"MyTile.png",sep="/"))
+              file.remove(paste(getwd(),"MyTile.png.rda",sep="/"))
             }
           }
           )

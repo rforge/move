@@ -9,17 +9,17 @@ An overview of the functions in this package
 }
 
 \description{
-move is a package that contains functions to access movement data stored in \url{www.movebank.org} as well as tools to visualize and statistically analyse animal movement data. Move addresses movement ecological questions.
+move is a package that contains functions to access movement data stored at \url{www.movebank.org} as well as tools to visualize and statistically analyse animal movement data. Move addresses movement ecological questions.
 }
 
 \details{
  The package implements classes for movement data and supports
   \itemize{
     \item Creation of Move objects (see Move-class) representing animals and their track
-    \item Calculation of utilization densities using the dynamic Brownian briedge Movement Model
+    \item Calculation of utilization densities using the dynamic Brownian bridge Movement Model
     \item Plotting tracks, utilization densities and contours
     \item Access to raster, n.col, projection and coordinates
-    \item Different CRS projection methods like longlat or aequd
+    \item Different CRS projection methods such as longlat or aeqd
   }
 }
 
@@ -33,7 +33,7 @@ Move objects can be created from files with the function:
 
 \section{II. Calculation of the utilization density}{
 
-With the function below the dynamic Brownian Bridge Movement Model calculates the utilitzation density from a Move object:
+With the function below the dynamic Brownian Bridge Movement Model calculates the utilization density from a Move object:
   \tabular{ll}{
     \code{brownian.bridge.dyn}\tab To calculate the utilization density\cr
   }
@@ -52,11 +52,11 @@ With the function below the dynamic Brownian Bridge Movement Model calculates th
 
 \section{IV. Plotting data}{
 
-The track or the utilizazion density can be plotted with the following functions
+The track or the utilization density can be plotted with the following functions:
   \tabular{ll}{
-    \code{plot}\tab To plot the utilization density with fixed width and hight ratio (see DBBMM-class)\cr or the track (see Move-class) \cr
-    \code{image}\tab To plot the utilization density fitted to the window \cr
-    \code{contour}\tab Adds the contours of utilization densities to a plot\cr 
+    \code{plot}\tab plots the utilization density with fixed width and height ratio (see DBBMM-class)\cr or the track (see Move-class) \cr
+    \code{image}\tab plots the utilization density fitted to the window \cr
+    \code{contour}\tab adds the contours of utilization densities to a plot\cr 
   }
 }
 

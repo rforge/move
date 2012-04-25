@@ -14,8 +14,8 @@
 }
 
 \arguments{
-  \item{raster}{a RasterLayer object which has values for the raster cells}
-  \item{border}{numeric from 0 to 1; the amount of columns at the border relative to the whole raster of which the probabilities should be summed up}
+  \item{raster}{a RasterLayer object that has values for the raster cells}
+  \item{border}{numeric from 0 to 1; ratio of the number of columns at the border relative to the whole raster from which the probabilities should be summed up}
 }
 
 \examples{

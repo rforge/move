@@ -218,7 +218,7 @@ setMethod(f = "brownian.bridge.dyn",
             
             if (outerProbability > .05){
               cat("outer probability: ", outerProbability, "\n")
-              warning("Error: the used extent is to small. Choose a larger extent to get a bigger raster.")
+              warning("Warning: the used extent is to small. Choose a larger extent to get a bigger raster.")
             }
 
             DBBMM <- dBBMM(DBMvar=DBMvar, raster=raster 
@@ -301,8 +301,8 @@ setMethod(f = "plot",
 setGeneric("image")
 setMethod(f = "image",
           signature = "DBBMM",
-          definition = function(x,...){ #maybe some more variables for the desgin
-            image(raster(x,...))
+          definition = function(x){ #maybe some more variables for the desgin
+            image(raster(x))
           }
           )
 
@@ -313,10 +313,8 @@ setMethod(f = "contour",
             newRaster <- raster(x)
             
             rank <- (1:length(values(newRaster)))[rank(values(newRaster))]
-            values(newRaster)<-cumsum(sort(values(newRaster)))[rank]
+            values(newRaster)<-1-cumsum(sort(values(newRaster)))[rank]
             
             contour(x = newRaster, levels = levels, add = add, ...)
           }
           )
-
-

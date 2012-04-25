@@ -9,5 +9,6 @@ Description: move is a package that contains functions to access movement data s
 License: GPL (>=3)
 URL: http://move.r-forge.r-project.org/
 LazyLoad: yes
-Depends: sp, raster, methods, RgoogleMaps, rgdal, geosphere, R (>= 2.11.0)
+Depends: sp, raster, methods, rgdal, geosphere, R (>= 2.14.0)
+Suggests: RgoogleMaps
 Collate: ClassMove.R ClassMoveStack.R ClassDBMvar.R ClassDBBMM.R main.R

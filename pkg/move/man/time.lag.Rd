@@ -7,7 +7,7 @@
 
 \title{Calculates the time lags between the coordinates}
 
-\description{The time.lag function calculates the time lags between location fixex}
+\description{The time.lag function calculates the time lags between locations.}
 
 \usage{
   \S4method{time.lag}{Move}(x,...)

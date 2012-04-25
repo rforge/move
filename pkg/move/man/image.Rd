@@ -1,5 +1,6 @@
 \name{image}
 
+\alias{image}
 \alias{image,DBBMM-method}
 
 \docType{methods}
@@ -18,7 +19,7 @@
 }
 
 \details{
- Other than the \code{\link{plot}} function of a DBBMM object, the image function keeps not the ratio of cell dimensions of the raster after resizing the plot window. Yet, if a track is added with \code{plot(x=Move, add=TRUE)} the spatial coherence remains after resizing the ploting window.
+ Unlike than the \code{\link{plot}} function of a DBBMM object, the image function does not keep the ratio of cell dimensions of the raster after resizing the plot window. Yet, if a track is added with \code{plot(x=Move, add=TRUE)} the spatial coherence remains after resizing the plotting window.
 }
 
 \author{Marco Smolla}

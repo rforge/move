@@ -1,5 +1,6 @@
 \name{spTransform}
 
+\alias{spTransform}
 \alias{spTransform,Move,character-method}
 \alias{spTransform,Move,missing-method}
 
@@ -7,7 +8,7 @@
 
 \title{Transform Move object projection method}
 
-\description{The spTransform function transforms the coordinates stored in the Move object from the defcault longlat coordinates to the default aequd projection method or a different projection.}
+\description{The spTransform function transforms the coordinates stored in the Move object from the default longlat coordinates to the default aequd projection method or a different projection.}
 
 \usage{
   \S4method{spTransform}{Move,character}(x,CRSobj,center=FALSE)
@@ -16,8 +17,8 @@
 
 \arguments{
   \item{x}{a Move object}
-  \item{CRSobj}{a CRS like chracter that describes the projection method to which the coordinates should be transformed, if missing \code{"+proj=aequd"} is used as default value}
-  \item{center}{logical, if TRUE the center of the coordinate system is the center of the track; FALSE as default}
+  \item{CRSobj}{a CRS like character that describes the projection method to which the coordinates should be transformed, if missing \code{"+proj=aequd"} is used as default value}
+  \item{center}{logical, if TRUE the center of the coordinate system is the center of the track; FALSE is default}
   \item{...}{for additional arguments}
 }
 

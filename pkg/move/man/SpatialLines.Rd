@@ -18,7 +18,7 @@
 }
 
 \details{
-  The SpatialLines function transforms the SpatialPoints from the Move object to a SpatialLines object which can be used to plot a track or for further analysation. 
+  The SpatialLines function transforms the SpatialPoints from the Move object to a SpatialLines object which can be used to plot a track or for further analysis. 
 }
 
 \author{Marco Smolla}

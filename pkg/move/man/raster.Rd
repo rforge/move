@@ -1,5 +1,6 @@
 \name{raster}
 
+\alias{raster}
 \alias{raster,DBBMM-method}
 
 \docType{methods}
