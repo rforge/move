@@ -47,6 +47,7 @@ setMethod(f="dBBMM",
 setMethod(f="brownian.bridge.dyn", 
           signature=c(object="Move",raster="missing", dimSize="numeric",location.error="numeric"),
           function(object, raster, dimSize, location.error, ...){
+                        
             y <- coordinates(object)[ ,2]
             x <- coordinates(object)[ ,1]
             
@@ -142,9 +143,10 @@ setMethod(f = "brownian.bridge.dyn",
 setMethod(f = "brownian.bridge.dyn",
           signature = c(object="Move", raster="RasterLayer",dimSize="missing", location.error="numeric"),
           definition = function(object, raster, location.error, ...){
+                        
+            #check for aeqd projection of the coordinates
+            if (grepl("aeqd",proj4string(object)) == FALSE) {stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")} else {}
             
-            #print("brownian.bridge.dyn 1")
-            #cat("extent:: ", ext)
             x <- coordinates(object)[ ,1] #extracts the xy coordinates from the Move
             y <- coordinates(object)[ ,2]
             time.lag <- time.lag(object)
@@ -152,48 +154,41 @@ setMethod(f = "brownian.bridge.dyn",
             if(length(location.error) == 1){
               location.error <- rep(x = location.error, times = n.locs)
               } else{}
-            
-            
+                        
 #             #If a variance is not supplied brownian.motion.variance.dyn is called, which calculates the motion vriance
 #             #if a variance is supplied (see else) the single variance value is applied to the object
             #if(is.null(var)){
               DBMvar <- brownian.motion.variance.dyn(object=object, location.error=location.error, margin=margin, window.size=window.size)##<<<<<<<<<<<<<<<##Calling function##<<<<<<<<<<<<<<<<<<<<##
-              DBMvar.vec <- DBMvar@means
-              
-              
+              DBMvar.vec <- DBMvar@means              
         #    }else{
          #     DBMvar.vec <- rep(var, length(x))
           #    BMvar <- data.frame(interest=c(rep(TRUE, length(x)-1), FALSE), in.windows=rep(1, length(x)))
            # }
-            #print("brownian.bridge.dyn 2")
             
             # Use 10 units (generally minutes) as default
             if(is.null(time.step)){ 
               time.step <- (min(time.lag[-length(time.lag)])/15)
             }
             
-            grid.size <- ncell(raster)  #########BEFORE CHANGING: grid.size <- nrow(area.grid)
+            grid.size <- ncell(raster)
             probability <- rep(0, grid.size)
             T.Total <- sum(time.lag[DBMvar@interest])
             
-            dyn.load("pkg/move/src/BBMM.so")
+            #dyn.load("pkg/move/src/BBMM.so")
+            library.dynam("DBBMM", "move", lib.loc=.libPaths())
             interest <- (c(DBMvar@interest, 0)+c(0, DBMvar@interest))[1:length(DBMvar@interest)]!=0
             compsize <- grid.size*(sum(time.lag[DBMvar@interest])/time.step)
             print(paste("Computational size:", sprintf("%.1e", compsize)))
             if (compsize>500000000){
               cat("\n The calculation may take longer than 5 minutes. \n")
               cat("If you don't want to proceed, abort the funciton now! \n")
-              ## Waiting 10s
               pb <- txtProgressBar(min = 0, max = 10, style = 1)
               for(i in 1:10){
-                Sys.sleep(1)
+                Sys.sleep(1)# Waiting 10s
                 setTxtProgressBar(pb, i)
               }
               close(pb)
             } else {}            
-            
-            #asking to continue, if ncell is to large here is the possibility to end the process
-            ##############readline(prompt = "Pause. Press <Enter> to continue or <Esc> to abort.")
                         
             ans <- .Fortran("DBBMM",
                             as.integer(1+sum(DBMvar@interest)), 
@@ -204,21 +199,20 @@ setMethod(f = "brownian.bridge.dyn",
                             as.double(y[interest]), 
                             as.double(c(DBMvar.vec[DBMvar@in.windows==max(DBMvar@in.windows)],0)), 
                             as.double(location.error[interest]), 
-                            as.double(coordinates(raster)[ ,1]), #rasterX 
-                            as.double(coordinates(raster)[ ,2]), #rasterY
+                            as.double(coordinates(raster)[ ,1]), 
+                            as.double(coordinates(raster)[ ,2]),
                             as.double(time.step), 
                             as.double(probability))
             
             print("done with FORTRAN")
             cat("Probability: ", head(ans[[12]]), "\n")
             raster <- setValues(raster, ans[[12]])
-            #print(raster)
             
             outerProbability <- outerProbability(raster=raster)
             
             if (outerProbability > .05){
               cat("outer probability: ", outerProbability, "\n")
-              warning("Warning: the used extent is to small. Choose an extent which includes more of the probabilities.")
+              warning("The used extent is to small. Choose an extent which includes more of the probabilities.")
             }
 
             DBBMM <- dBBMM(DBMvar=DBMvar, raster=raster 

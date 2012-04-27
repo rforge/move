@@ -33,6 +33,12 @@ setClass(Class = "Move",
 setMethod(f="move", 
           signature=c(x="character"), 
           definition = function(x, proj){
+            #check wheter rgdal is installed
+            if (any(.packages(all=T)=="rgdal")==FALSE){
+              setRepositories(ind=1:2)
+              install.packages('rgdal')
+            } else {}
+            
 		        df <- read.csv(x, header=TRUE, sep=",", dec=".")
 		        df$timestamp <- as.POSIXct(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%S", tz="UTC") ## NOTE: GMT is is default
             df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format = "%Y-%m-%d %H:%M:%OSn"))            
@@ -75,8 +81,16 @@ setMethod(f="move",
 setMethod(f="move",
           signature=c(x="numeric"),#,y="numeric",time="factor",data="data.frame"),
           definition = function(x,y,time,data,proj){
+            #check wheter rgdal is installed
+            if (any(.packages(all=T)=="rgdal")==FALSE){
+              setRepositories(ind=1:2)
+              install.packages('rgdal')
+            } else {}
+            
             df <- data
             df$timestamp <- time
+            #check for valid POSIXct timestamp
+            if (grepl("POSIXct", class(df$timestamp))[1]==FALSE) {stop("\n The timestamps need to be transformed to a POSIXct class.")} else {}
             df$location.long <- x
             df$location.lat <- y
             
@@ -84,21 +98,17 @@ setMethod(f="move",
             res@timesMissedFixes <- df[(is.na(df$location.long)|is.na(df$location.lat)), "timestamp"] #save omitted NA timestamps
             df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ] #omitting NAsa
            
-            #if (proj@projargs=="+proj=longlat"){
             tmp <- SpatialPointsDataFrame(
               coords = cbind(df$location.long, df$location.lat),
               data = df,#(df[names(df)[!names(df)%in%c("location.lat", "location.long")]]),
               proj4string = proj, 
               match.ID = TRUE)
-            #} else {stop("No valid CRS object entered")}
             
             res@sdf <- tmp
             
 #             if (length(levels(df$individual.local.identifier))==1) {
 #               res@animal[1] <- as.character(df$individual.local.identifier[1])} else{stop("More than one animal detected")}
-#             print(res)
-#             
-#             
+  
             ###validity check for sorted time stamps
             if (any(df$timestamp!=sort(df$timestamp))){stop("\n Error:The data set includes unsorted time stamps")} else {}
             ###validity check for double time stamps
