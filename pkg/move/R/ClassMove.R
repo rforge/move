@@ -34,10 +34,7 @@ setMethod(f="move",
           signature=c(x="character"), 
           definition = function(x, proj){
             #check wheter rgdal is installed
-            if (any(.packages(all=T)=="rgdal")==FALSE){
-              setRepositories(ind=1:2)
-              install.packages('rgdal')
-            } else {}
+            if (any(.packages(all=T)=="rgdal")==FALSE){stop("You need the 'rgdl' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
             
 		        df <- read.csv(x, header=TRUE, sep=",", dec=".")
 		        df$timestamp <- as.POSIXct(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%S", tz="UTC") ## NOTE: GMT is is default
@@ -82,10 +79,7 @@ setMethod(f="move",
           signature=c(x="numeric"),#,y="numeric",time="factor",data="data.frame"),
           definition = function(x,y,time,data,proj){
             #check wheter rgdal is installed
-            if (any(.packages(all=T)=="rgdal")==FALSE){
-              setRepositories(ind=1:2)
-              install.packages('rgdal')
-            } else {}
+            if (any(.packages(all=T)=="rgdal")==FALSE){stop("You need the 'rgdl' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
             
             df <- data
             df$timestamp <- time
