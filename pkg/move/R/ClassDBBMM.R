@@ -210,7 +210,7 @@ setMethod(f = "brownian.bridge.dyn",
             
             if (outerProbability > .05){
               cat("outer probability: ", outerProbability, "\n")
-              warning("The used extent is to small. Choose an extent which includes more of the probabilities.")
+              warning("The used extent is too small. Choose an extent which includes more of the probabilities.")
             }
 
             DBBMM <- dBBMM(DBMvar=DBMvar, raster=raster 

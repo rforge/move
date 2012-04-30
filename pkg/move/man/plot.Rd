@@ -36,7 +36,7 @@
 \examples{
 \dontrun{
 ## create a move object
-data <- move(system.file("data/leroy_fisher_LaPoint.csv",package="move"),proj=CRS("+proj=longlat"))
+data <- move(system.file("data/leroy.csv",package="move"),proj=CRS("+proj=longlat"))
 
 ## plot a Move object
 plot(data)

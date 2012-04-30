@@ -56,7 +56,7 @@
 \examples{
 \dontrun{
 ## create a move object
-data <- move(system.file("data/leroy_fisher_LaPoint.csv",package="move"),proj=CRS("+proj=longlat"))
+data <- move(system.file("data/leroy.csv",package="move"),proj=CRS("+proj=longlat"))
 
 ## change projection method to aequd and center the coordinate system to the track
 data2 <- spTransform(data, CRSobj="+proj=aeqd", center=TRUE)
