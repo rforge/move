@@ -16,7 +16,7 @@ For more information, contact Scott LaPoint \email{sdlapoint@gmail.com}
 \examples{
 \dontrun{
 ## create a Move object from the data set
-data <- move(system.file("data/leroy.csv",package="move"),proj=CRS("+proj=longlat"))
+data <- move(system.file("data","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
 }
 }
 

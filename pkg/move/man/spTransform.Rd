@@ -30,7 +30,7 @@
 \examples{
 \dontrun{
 ## create a Move object
-data <- move(system.file("data/leroy.csv",package="move"),proj=CRS("+proj=longlat"))
+data <- move(system.file("data","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
 
 ## transform the Move object by default into "+aeqd" projection method 
 ## and center the coordinate system
