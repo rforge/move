@@ -34,9 +34,8 @@
 }
 
 \examples{
-\dontrun{
 ## create a move object
-data <- move(system.file("data/leroy.csv",package="move"),proj=CRS("+proj=longlat"))
+data <- move(system.file("extdata","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
 
 ## plot a Move object
 plot(data)
@@ -45,7 +44,7 @@ plot(data)
 plot(data, google=TRUE)
 
 ## add a track from a Move object to a plot
-plot(data, add=TRUE)
+lines(data, add=TRUE)
 
 ## transform the Move object and create a DBBMM object
 data2 <- spTransform(data, center=TRUE)
@@ -53,5 +52,4 @@ p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=.2)
 
 ## plot the raster of a DBBMM object
 plot(p)
-}
 }

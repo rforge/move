@@ -54,14 +54,12 @@
 }
 
 \examples{
-\dontrun{
 ## create a move object
-data <- move(system.file("data","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
+data <- move(system.file("extdata","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
 
 ## change projection method to aequd and center the coordinate system to the track
 data2 <- spTransform(data, CRSobj="+proj=aeqd", center=TRUE)
 
 ## create a DBBMM object
 p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=1.8)
-}
 }

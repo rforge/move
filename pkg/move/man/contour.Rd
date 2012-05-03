@@ -27,9 +27,8 @@
 \author{Marco Smolla}
 
 \examples{
-\dontrun{
 ## create a move object
-data <- move(system.file("data","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
+data <- move(system.file("extdata","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
 
 ## transform to aequd projection and center the map
 data2 <- spTransform(data, center=TRUE)
@@ -40,5 +39,4 @@ p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=.2)
 ## to add a 50\% and 90\% contour to a plot from DBBMM object p
 plot(p)
 contour(p, levels=c(.5,.9), add=TRUE)
-}
 }
