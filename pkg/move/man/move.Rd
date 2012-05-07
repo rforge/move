@@ -17,7 +17,7 @@ An alternative to this method is to import one's own data, and specify the locat
 
 \usage{
 \S4method{move}{character}(x, proj)
-\S4method{move}{numeric}(x, y, time, data, proj)%proj = CRS("+proj=longlat +ellps=WGS84"), ...)
+\S4method{move}{numeric}(x, y, time, data, proj)
 }
 
 \arguments{
@@ -25,7 +25,7 @@ An alternative to this method is to import one's own data, and specify the locat
 \item{y}{column indicator for non-Movebank data for the y coordinates}
 \item{time}{column indicator for non-Movebank data for the time stamps, with POSIXct conversion, i.e. \code{as.POSIXct(data$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC")}}
 \item{data}{full parh of the location of the non-Movebank file}
-\item{proj}{projection method; requires a valid CRS (see \code{\link{CRS-class}}) object, CRS("+proj=longlat +ellps=WGS84") is default}
+\item{proj}{projection method for non-Movebank data; requires a valid CRS (see \code{\link{CRS-class}}) object, like CRS("+proj=longlat +ellps=WGS84")}
 \item{...}{Additional arguments}  
 }
 

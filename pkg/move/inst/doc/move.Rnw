@@ -91,7 +91,7 @@ When the \fct{brownian.bridge.dyn} function issues the warning, the extent of yo
 p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=.3)
 @
 
-Running the \fct{brownian.bridge.dyn} creates an object of the \class{DBBMM} class, which amonge others stores the raster of the map with the values from the UD. 
+Running the \fct{brownian.bridge.dyn} creates an object of the \class{DBBMM} class, which among others stores the raster of the map with the values from the UD. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Plotting data}

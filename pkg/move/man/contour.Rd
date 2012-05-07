@@ -34,7 +34,7 @@ data <- move(system.file("extdata","leroy.csv",package="move"),proj=CRS("+proj=l
 data2 <- spTransform(data, center=TRUE)
 
 ## create a DBBMM object
-p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=.2)
+p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=.3)
 
 ## to add a 50\% and 90\% contour to a plot from DBBMM object p
 plot(p)

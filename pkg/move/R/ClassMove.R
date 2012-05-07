@@ -23,7 +23,7 @@ setClass(Class = "Move",
 
 ## Making move a generic funtion
 #if (!isGeneric("move")) {
-	setGeneric("move", function(x, y, time, data, proj=CRS("+proj=longlat +ellps=WGS84"))
+	setGeneric("move", function(x, y, time, data, proj)
 		standardGeneric("move"))
 #}
 
@@ -35,6 +35,10 @@ setMethod(f="move",
           definition = function(x, proj){
             #check wheter rgdal is installed
             if (any(.packages(all=T)=="rgdal")==FALSE){stop("You need the 'rgdl' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
+            
+            #check whether data are really from movebank
+            
+            #stop("The entered file does not seem to be from Movebank.")
             
 		        df <- read.csv(x, header=TRUE, sep=",", dec=".")
 		        df$timestamp <- as.POSIXct(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%S", tz="UTC") ## NOTE: GMT is is default
@@ -50,7 +54,7 @@ setMethod(f="move",
 		          tmp <- SpatialPointsDataFrame(
 		            coords = cbind(df$location.long,df$location.lat),
 		            data = data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long")]]), ## incude all data from the data.frame except the coordinats (which are already stored in coords)
-		            proj4string = proj, 
+		            proj4string = CRS("+proj=longlat +ellps=WGS84"), 
 		            match.ID = TRUE)
 		        #} else {stop("No valid CRS object entered")}
 		        
