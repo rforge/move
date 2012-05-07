@@ -34,6 +34,7 @@ An alternative to this method is to import one's own data, and specify the locat
 }
 
 \note{
+The imported data set is checked whether it is in a Movebank format. If this is not the case, you have to use the alternative import for non-Movebank data. \cr
 Because the SpatialPointsDataFrame function that creates the spatial data frame (\code{sdf}) of the \code{Move} object can not process NA location values, all rows with NA locations are omitted. A list of the omitted timestamps is stored in the \code{timesMissedFixes} argument of the \code{Move} object. \cr
 If the data include double timestamps check your data for valitdity. You may want to consider a function to delete double timetamps, like: \cr \code{data <- data[which(!duplicated(data$timestamp)), ]}
 }

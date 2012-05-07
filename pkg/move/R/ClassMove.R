@@ -36,11 +36,11 @@ setMethod(f="move",
             #check wheter rgdal is installed
             if (any(.packages(all=T)=="rgdal")==FALSE){stop("You need the 'rgdl' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
             
-            #check whether data are really from movebank
-            
-            #stop("The entered file does not seem to be from Movebank.")
-            
 		        df <- read.csv(x, header=TRUE, sep=",", dec=".")
+
+            #check whether data are really from movebank
+           if (all(any(colnames(df)=="timestamp"), any(colnames(df)=="location.long"), any(colnames(df)=="location.lat"), any(colnames(df)=="study.timezone"), any(colnames(df)=="study.local.timestamp"), any(colnames(df)=="sensor.type"))==TRUE){print("")} else {stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")}
+            
 		        df$timestamp <- as.POSIXct(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%S", tz="UTC") ## NOTE: GMT is is default
             df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format = "%Y-%m-%d %H:%M:%OSn"))            
             
