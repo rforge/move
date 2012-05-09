@@ -262,13 +262,61 @@ setMethod(f = "image",
 
 setGeneric("contour")
 setMethod(f = "contour",
+          signature = c(x="DBBMM"), ## enter nlevel for the number of levels, or levels for the correct levels!!
+          definition = function(x, y, add=F, plot=F, google=F, track=F, col="blue", lcol="brown", lwd=2, llwd=2, ...){
+            newRaster <- raster(x)            
+            rank <- (1:length(values(newRaster)))[rank(values(newRaster))]
+            values(newRaster)<-1-cumsum(sort(values(newRaster)))[rank]
+            
+            #return the contour as SLDF object: plot=F, google=F
+            if (plot==F && google==F && track==F){
+              raster2contour(x,...)
+            } else {
+                #plot the contour line: plot=T, google=F
+                if (plot==T && google==F){
+                contour(x = newRaster, add = add, ...)
+                }
+                #add track to contour+google map: plot=T, google=T
+                if (google==T){
+                  if (class(y)!="Move"){stop("y must be the corresponding Move object to the DBBMM object")}
+                  if (grepl(pattern="longlat", x=proj4string(y))==FALSE){stop("Use a Move object with longlat projection method")}
+                  require(RgoogleMaps)
+                  MyMap <- GetMap.bbox(lonR=range(coordinates(y)[ ,1]), latR=range(coordinates(y)[ ,2]))
+                  rst1 <- raster2contour(x, ...)
+                  sldf <- spTransform.SpatialLinesDataFrame(rst1, CRSobj=CRS("+proj=longlat"))
+                  add <- F
+                  for (i in 1:length(sldf@lines)){
+                    for (j in 1:length(sldf@lines[[i]]@Lines)){
+                      lon <- sldf@lines[[i]]@Lines[[j]]@coords[,1]
+                      lat <- sldf@lines[[i]]@Lines[[j]]@coords[,2]
+                      PlotOnStaticMap(MyMap=MyMap, lon=lon, lat=lat, FUN=lines,add=add, col=col, lwd=lwd)
+                      add <- T
+                    }
+                  }
+                  #add a track: track=T
+                  if (track==T) {
+                    PlotOnStaticMap(MyMap=MyMap, lon=coordinates(y)[,1], lat=coordinates(y)[,2], add=TRUE, FUN=lines, lwd=llwd, col=lcol)
+                  }
+                  file.remove(paste(getwd(),"MyTile.png",sep="/"))
+                  file.remove(paste(getwd(),"MyTile.png.rda",sep="/"))
+                }
+                }})
+
+### Contour to SpatialLinesDataFrame conversion
+#if (!isGeneric("outerProbability")){
+setGeneric("raster2contour", function(x, add=F, ...){standardGeneric("raster2contour")})
+# #}
+setMethod(f = "raster2contour",
           signature = c(x="DBBMM"),
-          definition = function(x, levels, add=F, ...){
+          definition = function(x, add=F, ...){
             newRaster <- raster(x)
             
             rank <- (1:length(values(newRaster)))[rank(values(newRaster))]
             values(newRaster)<-1-cumsum(sort(values(newRaster)))[rank]
             
-            contour(x = newRaster, levels = levels, add = add, ...)
+            rasterToContour(newRaster, ...)
           }
           )
+
+### SUMMARY FOR THE DBBMM OBJECT
+###

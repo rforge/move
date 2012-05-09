@@ -10,18 +10,26 @@
 \description{Contour plot of a RasterLayer from a DBBMM object (see \code{\link{DBBMM-class}}).}
 
 \usage{
-  \S4method{contour}{DBBMM}(x,levels,add,...)
+  \S4method{contour}{DBBMM}(x, y, add=F, plot=F, google=F, track=F, col="blue", lcol="brown", lwd=2, llwd=2, ...)
 }
 
 \arguments{
   \item{x}{a DBBMM object}
-  \item{levels}{numeric, between 0 and 1; describes the levels to be displayed}
-  \item{add}{logical, if TRUE the contour is added to a plot}
-  \item{...}{additional arguments}
+  \item{y}{corresponding Move object if you want to plot the track on a google map}
+  \item{plot}{logical, if FALSE, the contour is returned as a SpatialLinesDataFrame. If TRUE, the contour is plotted. Default is FALSE}
+  \item{add}{logical, if TRUE the contour is added to a plot, default is FALSE}
+  \item{google}{logical, if TRUE plot is ommitted and the contour is plotted on top of a google map}
+  \item{track}{logical, if track and google is TRUE, a track is plotted on top of the contour google map plot}
+  \item{col}{color of the contour line}
+  \item{lcol}{color of the track}
+  \item{lwd}{line width of the contour line}
+  \item{llwd}{line width of the track}
+  \item{...}{additional arguments, see details}
 }
 
 \details{
-  The contour function creates a shape of the area in which there is a 90\% probability that the animal will be located. One or several probabilities can be set with \code{levels}. At least one level must be added, there is no default value set.
+The contour function creates a shape of the area in which there is a 90\% probability that the animal will be located. One or several probabilities can be set with \code{levels}. Choose values between 0 and 1. At least one level must be added, there is no default value set. You can also use \code{nlevel} to set a number of fixed distance levels. \cr
+To change parameters of the contour or line plotting use the usual parameters of the \code{plot} function.
 }
 
 \author{Marco Smolla}
@@ -38,5 +46,13 @@ p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=.3)
 
 ## to add a 50\% and 90\% contour to a plot from DBBMM object p
 plot(p)
-contour(p, levels=c(.5,.9), add=TRUE)
+contour(p, levels=c(.5,.9), add=TRUE, plot=TRUE)
+
+##to store the contours as a SpatialLinesDataFrame use
+cnt  <- contour(p, levels=c(.4,.9))
+
+##print the contour on a google map +add the track
+require("RgoogleMaps")
+cnt  <- contour(x=p, y=data, levels=c(.4,.9), google=TRUE)
+cnt  <- contour(x=p, y=data, levels=c(.4,.9), google=TRUE, track=TRUE)
 }

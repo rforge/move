@@ -173,21 +173,21 @@ setMethod("as.data.frame", "Move", function(x,...){
           }
           )
 
-if (!isGeneric("SpatialLines")) {
-setGeneric("SpatialLines", function(LinesList) standardGeneric("SpatialLines"))
-}
-
-#transform Move's spatialpoints to spatiallines
- setMethod("SpatialLines", "Move", function(LinesList){
-           xy <- (coordinates(LinesList))
-           xyLine <- Line(xy)
-           if (length(LinesList@animal)!=0){id <- LinesList@animal} else {id <- "noID"}
-           #xyLines <- Lines(list(xyLine), ID=LinesList@animal)
-           xyLines <- Lines(list(xyLine), ID="a")
-           #return(SpatialLines(list(xyLines), proj4string=CRS("+proj=aeqd +ellps=WGS84")))
-           return(SpatialLines(list(xyLines), proj4string=CRS(proj4string(LinesList))))
-           }
-           )
+# if (!isGeneric("SpatialLines")) {
+# setGeneric("SpatialLines", function(LinesList) standardGeneric("SpatialLines"))
+# }
+# 
+# #transform Move's spatialpoints to spatiallines
+#  setMethod("SpatialLines", "Move", function(LinesList){
+#            xy <- (coordinates(LinesList))
+#            xyLine <- Line(xy)
+#            if (length(LinesList@animal)!=0){id <- LinesList@animal} else {id <- "noID"}
+#            #xyLines <- Lines(list(xyLine), ID=LinesList@animal)
+#            xyLines <- Lines(list(xyLine), ID="a")
+#            #return(SpatialLines(list(xyLines), proj4string=CRS("+proj=aeqd +ellps=WGS84")))
+#            return(SpatialLines(list(xyLines), proj4string=CRS(proj4string(LinesList))))
+#            }
+#            )
 
 
 ###plotting 
@@ -215,18 +215,19 @@ setMethod("plot", "Move", function(x, google=FALSE,...){
               obj <- x
               lat <-coordinates(obj)[ ,2] 
               lon <- coordinates(obj)[ ,1]
-              center <- c(mean(lat), mean(lon))
-              zoom <- min(MaxZoom(range(lat), range(lon)))
+              #center <- c(mean(lat), mean(lon))
+              #zoom <- min(MaxZoom(range(lat), range(lon)))
+              MyMap <- GetMap.bbox(lonR=range(coordinates(obj)[ ,1]), latR=range(coordinates(obj)[ ,2]))
+              #MyMap <- GetMap(center=center, zoom=zoom, destfile=paste(getwd(),"MyTile.png",sep="/"), ...)
               
-              MyMap <- GetMap(center=center, zoom=zoom, destfile=paste(getwd(),"MyTile.png",sep="/"), ...)
-              
-              PlotOnStaticMap(destfile=paste(getwd(),"MyTile.png",sep="/"), lon=lon, lat=lat, FUN=lines)
-              PlotOnStaticMap(MyMap=MyMap, add=TRUE, FUN=lines, lwd=2, lty=5)
+              PlotOnStaticMap(MyMap=MyMap, lon=lon, lat=lat, FUN=lines, ...)
               file.remove(paste(getwd(),"MyTile.png",sep="/"))
               file.remove(paste(getwd(),"MyTile.png.rda",sep="/"))
             }
           }
           )
+
+
 
 
 setMethod(f = "spTransform", 
