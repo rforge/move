@@ -1,12 +1,3 @@
-# require(sp, quietly=TRUE)  ## Including necessary classes for move package
-# require(raster, quietly=TRUE)
-# require(RgoogleMaps, quietly=TRUE)
-# require(rgdal, quietly=TRUE)
-# require(geosphere, quietly=TRUE)
-# require(methods, quietly=TRUE)
-
-
-
 ###Defining the class of the Move
 setClass(Class = "Move",
          representation = representation (
@@ -206,7 +197,7 @@ setMethod("lines", "Move", function(x,add=FALSE,...){
           )
 
 setGeneric("plot")
-setMethod("plot", "Move", function(x, google=FALSE,...){
+setMethod("plot", "Move", function(x, google=FALSE, maptype="terrain",...){
             if (google==FALSE){
               plot(coordinates(x), type="p", ...)#creates points
               lines(x, add=TRUE, ...)
@@ -215,9 +206,10 @@ setMethod("plot", "Move", function(x, google=FALSE,...){
               obj <- x
               lat <-coordinates(obj)[ ,2] 
               lon <- coordinates(obj)[ ,1]
+              #maptype <- maptype
               #center <- c(mean(lat), mean(lon))
               #zoom <- min(MaxZoom(range(lat), range(lon)))
-              MyMap <- GetMap.bbox(lonR=range(coordinates(obj)[ ,1]), latR=range(coordinates(obj)[ ,2]))
+              MyMap <- GetMap.bbox(lonR=range(coordinates(obj)[ ,1]), latR=range(coordinates(obj)[ ,2]), maptype=maptype)
               #MyMap <- GetMap(center=center, zoom=zoom, destfile=paste(getwd(),"MyTile.png",sep="/"), ...)
               
               PlotOnStaticMap(MyMap=MyMap, lon=lon, lat=lat, FUN=lines, ...)

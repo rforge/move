@@ -108,7 +108,7 @@ par(mfrow=c(2,2))
 plot(data2)
 points(data2, col="blue")
 lines(data2, col="green")
-plot(data, google=TRUE)
+plot(data, google=T)
 @
 
 \begin{figure}

@@ -17,6 +17,7 @@ The DBBMM object is created within the brownian.bridge.dyn function from a Move 
   \describe{
     \item{DBMvar}{Object of class \code{"DBMvar"}: includes the break.list and points of interest, ...; }
     \item{raster}{Object of class \code{"character"}: the raster object with probability values  }
+    \item{ext}{the extension factor set by the user}
   }
 }
 

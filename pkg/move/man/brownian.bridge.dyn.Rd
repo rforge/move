@@ -26,7 +26,7 @@
   \item{margin}{The margin used for the behavioral change point analysis.}
   \item{time.step}{The size of the time steps taken for the calculation of the utilization density in minutes, if left null 15 steps are taken in the shortest time interval.}
   \item{window.size}{The size of the moving window along the track. Larger windows provide more stable/accurate estimates of the brownian motion variance but are less well able to capture more frequent changes in behaviour.}
-  \item{ext}{numeric value >0. Decribes the amount of extension of the bounding box of the animal track. It can be one (same extension into all four directions), two (first x, then y directional extension) or four numbers (xmin, xmax, ymin, ymax extension). Default is .25 (extends the bounding box by 25\%)}
+  \item{ext}{numeric value >0; extension factor. Decribes the amount of extension of the bounding box of the animal track. It can be one (same extension into all four directions), two (first x, then y directional extension) or four numbers (xmin, xmax, ymin, ymax extension). Default is .25 (extends the bounding box by 25\%)}
   \item{...}{for additional arguments}
 }
 

@@ -7,22 +7,24 @@
 setClass(Class = "DBBMM",
          representation = representation (
            DBMvar= "DBMvar", 
-           raster= "RasterLayer" #storing the raster and the probabilities as values
+           raster= "RasterLayer", #storing the raster and the probabilities as values
+           ext= "numeric" #storing the extent of the map
            )
          )
 
 ## Making dBBMM a generic funtion
 #if (!isGeneric("dBBMM")) {  
-  setGeneric("dBBMM", function(DBMvar, raster) standardGeneric("dBBMM"))
+  setGeneric("dBBMM", function(DBMvar, raster, ext) standardGeneric("dBBMM"))
   #}
 
 ## Defining the funcitoin dBBMM
 setMethod(f="dBBMM", 
-          signature=c(DBMvar="DBMvar", raster ="RasterLayer"), 
-          definition = function(DBMvar, raster){
+          signature=c(DBMvar="DBMvar", raster ="RasterLayer", ext="numeric"), 
+          definition = function(DBMvar, raster, ext){
             res <- new(Class="DBBMM")
             res@DBMvar <- DBMvar
             res@raster <- raster 
+            res@ext <- ext
             return(res)
             }
           )
@@ -77,7 +79,7 @@ setMethod(f="brownian.bridge.dyn",
           })
 
 
-###if neither a raster nor the dimSize is given, then the sell size is calculated by the defauled dimSize and the largest dimension
+###if neither a raster nor the dimSize is given, then the cell size is calculated by the defauled dimSize and the largest dimension
 setMethod(f="brownian.bridge.dyn", 
           signature=c(object="Move",raster="missing", dimSize="missing",location.error="numeric"),
           function(object, raster, dimSize, location.error,...){
@@ -122,7 +124,7 @@ setMethod(f = "brownian.bridge.dyn",
             #cat("raster from brownian.bridge.dyn pre loop")
             print(rst)
             #cat("extention factor is: ", ext, "\n")
-            return(brownian.bridge.dyn(object=object, raster=rst, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,...))
+            return(brownian.bridge.dyn(object=object, raster=rst, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext,...))
           }
 )
 
@@ -200,7 +202,7 @@ setMethod(f = "brownian.bridge.dyn",
               } else {}
             }
 
-            DBBMM <- dBBMM(DBMvar=DBMvar, raster=raster 
+            DBBMM <- dBBMM(DBMvar=DBMvar, raster=raster, ext=ext 
                          )
           
             print("DBBMM successfully created")
@@ -278,18 +280,24 @@ setMethod(f = "contour",
                 }
                 #add track to contour+google map: plot=T, google=T
                 if (google==T){
+                  print(newRaster)
                   if (class(y)!="Move"){stop("y must be the corresponding Move object to the DBBMM object")}
                   if (grepl(pattern="longlat", x=proj4string(y))==FALSE){stop("Use a Move object with longlat projection method")}
                   require(RgoogleMaps)
-                  MyMap <- GetMap.bbox(lonR=range(coordinates(y)[ ,1]), latR=range(coordinates(y)[ ,2]))
+                  lon <- coordinates(y)[,1]
+                  lat <- coordinates(y)[,2]
+                  lonRange <- c(min(range(lon))-abs(diff(range(lon))*x@ext[1]), max(range(lon))+abs(diff(range(lon))*x@ext[2]))                 
+                  latRange <- c(min(range(lat))-abs(diff(range(lat))*x@ext[3]), max(range(lat))+abs(diff(range(lat))*x@ext[4]))
+                  MyMap <- GetMap.bbox(lonR=lonRange, latR=latRange)
+#                  MyMap <- GetMap.bbox(lonR=range(coordinates(y)[ ,1]), latR=range(coordinates(y)[ ,2]))
                   rst1 <- raster2contour(x, ...)
                   sldf <- spTransform.SpatialLinesDataFrame(rst1, CRSobj=CRS("+proj=longlat"))
                   add <- F
                   for (i in 1:length(sldf@lines)){
                     for (j in 1:length(sldf@lines[[i]]@Lines)){
-                      lon <- sldf@lines[[i]]@Lines[[j]]@coords[,1]
-                      lat <- sldf@lines[[i]]@Lines[[j]]@coords[,2]
-                      PlotOnStaticMap(MyMap=MyMap, lon=lon, lat=lat, FUN=lines,add=add, col=col, lwd=lwd)
+                      sldflon <- sldf@lines[[i]]@Lines[[j]]@coords[,1]
+                      sldflat <- sldf@lines[[i]]@Lines[[j]]@coords[,2]
+                      PlotOnStaticMap(MyMap=MyMap, lon=sldflon, lat=sldflat, FUN=lines,add=add, col=col, lwd=lwd)
                       add <- T
                     }
                   }
