@@ -11,13 +11,14 @@
 \description{Function for plotting a recorded track from a Move object or the probability values from a DBBMM object}
 
 \usage{
-  \S4method{plot}{Move,ANY}(x,google,...)
+  \S4method{plot}{Move,ANY}(x,google=FALSE,maptype="terrain",...)
   \S4method{plot}{DBBMM,ANY}(x)
 }
 
 \arguments{
   \item{x}{Move or a DBBMM object}
   \item{google}{logical argument for a Move object. If TRUE, a map from googlemaps is downloaded and the track is plotted on top}
+  \item{maptype}{defines the type of map to construct. There are several possible maptype values, including satellite, terrain, hybrid, and mobile.}
   \item{...}{arguments to be passed to methods, such as graphical parameters, and the logical add argument (see \code{\link{par}})}
 }
 

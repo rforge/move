@@ -286,9 +286,138 @@ setMethod("show", "Move", function(object){
             cat("******* End show (Move) ******* \n") 
             }
           )
+#    install.packages("adehabitat")
+#    install.packages("circular")
+#    install.packages("gpclib")
 
 ### Summary of a Move object
-# setMethod("summary", "Move", function(object){
-#           return(list(object@sdf[1:5, ], paste("Omitted locations: ", length(object@timesMissedFixes))))
-#           }
-#           )
+setGeneric("summary")
+setMethod("summary", "Move", function(object){
+    
+    require(adehabitat)
+    require(circular)
+    require(gpclib)
+  
+    track <- as.data.frame(coordinates(object))
+    date <- object@sdf@data$timestamp
+    animalID <- as.data.frame(object@sdf@data$individual.local.identifier[1])
+    names(animalID)  <- "animalID"
+    tagID  <- as.data.frame(object@sdf@data$tag.local.identifier[1])
+    names(tagID) <- "tagID" 
+    species <- object@sdf@data$individual.taxon.canonical.name
+    trackProj <- proj4string(object)    
+    #check whether trac is in long/lat
+    if (grepl("longlat",proj4string(object)) == FALSE) {stop("\n The projeciton of the coordinates needs to be \"longlat\". \n")}else{}
+    
+    trackTraj <- as.ltraj(as.data.frame(coordinates(object)), date=date, id=animalID)
+    
+      
+      tempSpecies <- levels(object@sdf@data$individual.taxon.canonical.name)  #species name
+      tempReloc <- nrow(track)    #number of relocations
+      tempStart <- as.character(min(date)) #start date and time of tracking
+      tempEnd <- as.character(max(date))  # end date and time of tracking
+      tempRelpd <- NA  #relocations per day
+      tempSEDist <- NA  #start to end straight distance
+      tempTravDist <- NA    #travel distance
+      tempMaxDist <- NA
+      tempMinDist <- NA
+      temp.dt <- NA
+      oult <- NA
+      dupl <- NA
+      multseason <- NA
+      tempMaxDist <- NA  # farthest distance from the start
+      tempAverDist <- NA   #mean distance between relocations
+      tempSDDist <- NA   #standard deviation of distances between relocations
+      temp.Dur <- NA  # total duration of the track in hours
+      tempAverDur <- NA    #mean time difference between relocations
+      tempSDDur <- NA      #standard deviation of time differences between relocations
+      tempAverSpeed <- NA #mean speed in meters per second derived from segment length / time diff
+      tempMaxSpeed <- NA #max speed in meters per second
+      tempVarSpeed <- NA #variance in speed in meters per second
+      tempAngles <- NA #contains absolute angle in radians with zero=pi/2 (angle between each move and north)
+      tempAverAngles <- NA #mean absolute direction
+      tempRhoAngles <- NA #mean resultant length of absolute direction
+      tempVarAngles <- NA #one minus the mean resultant length divided by the sample size of a vector of circular data
+      temp.SEAngleAngle <- NA #start to end angle
+      tempFPTcoeff <- NA #the coefficient of log(first_passage_time)=a*log(radius) + b
+      tempFPTintercept <- NA #the intercept of the above fpt equation.
+      tempHBrown <- NA #the Brownian motion variance estimated from the trajectory
+      tempMCPArea <- NA #area of the MCP
+    
+    if((max(floor(as.numeric(julian(date))))-min(floor(as.numeric(julian(date)))))>0)
+      {
+        tempRelpd <- nrow(track) / (max(floor(as.numeric(julian(date)))) - min(floor(as.numeric(julian(date)))))  #relocations per day
+      }else{
+        tempRelpd <- NA
+      }
+    
+      tempSEDist <- distHaversine(p1 = track[1, ], p2=track[nrow(track), ])  #start to end straight distance in meters
+      tempDists <- distHaversine(p1 = track[-nrow(track), ], p2=track[-1, ]) #vector of all distances in meters
+      tempTravDist <- sum(distHaversine(p1 = track[-nrow(track), ], p2=track[-1, ]))    #travel distance in meters
+      tempMaxDist <- max(tempDists) #largest distance
+      tempMinDist <- min(tempDists) #shortest distance
+      tempFarthDist <- max(spDistsN1(pts=coordinates(object),pt=coordinates(object)[1,],longlat=TRUE))*1000 #farthest distance from the start in meters
+      tempAverDist <- mean(tempDists)    #mean distance between relocations in meters
+      tempSDDist <- sd(tempDists)      #standard deviation of distances between relocations
+      
+      tempTimeDiff <- difftime(time2=date[-length(date)], time1=date[-1]) #time differences in minutes
+      out <- boxplot(tempDists/(as.numeric(tempTimeDiff+0.0000001)), range=10, plot=F)$out  #unit: meters per minute
+      outliners <- length(out[out > median(out)])>0   #check whether there are strong outliers in speed
+      dupl <- any((tempTimeDiff)<(1/3600))            #check whether any two relocations are closer than a second to each other
+      multseason <-  any(tempTimeDiff > (24*30))      #check whether any two subsequent relocations are more than one month apart
+      
+      tempDur <- difftime(date[length(date)], date[1], units="hours") #total duration of the track in hours
+      tempAverDur <- mean(tempTimeDiff)       #mean time difference between relocations
+      tempSDDur <- sd(tempTimeDiff)           #standard deviation of time differences between relocations
+      
+      tempSpeed <- as.numeric(tempDists)/as.numeric(tempTimeDiff)
+      tempAverSpeed <- mean(tempSpeed, na.rm=TRUE)
+      tempMaxSpeed <- max(tempSpeed)          #in meters per minute
+      tempVarSpeed <- var(tempSpeed, na.rm=T)
+      
+      options(warn=-1)
+      tempAngles <- as.circular(bearing(p1 = track[-nrow(track), ], p2=track[-1, ]), units="degree", zero=pi/2, rotation="clock")
+      tempAverAngles <- summary(tempAngles)[2]  #mean direction
+      tempRhoAngles <- summary(tempAngles)[3]  #mean resultant length
+      tempVarAngles <- var(tempAngles)  #one minus the mean resultant length divided by the sample size of a vector of circular data  ????
+      tempSEAngle <- bearing(round(track[1,],5), round(track[nrow(track),],5))  #start to end straight angle
+      options(warn=0)
+      
+#       FPTSeq <- seq(max(tempDists*1000)/10000,max(tempDists*1000), length=10000)   ### ???? what happens here ¿¿¿¿
+#       trackFPT <- fpt(trackTraj, FPTSeq, units="seconds")
+#       FPT <- as.data.frame(trackFPT[[1]][,names(trackFPT[[1]])[colSums(!is.na(trackFPT[[1]]))>=12]])
+#       if(ncol(FPT)>0)
+#       {
+#         colSumFPT <- colSums(FPT, na.rm=T) / colSums(!is.na(FPT))
+#         radii <- attr(trackFPT, "radii")[1:length(colSumFPT)]
+#         lmFPT <- lm(log(colSumFPT)~log(radii))
+#         tempFPTcoeff <- lmFPT[1]$coefficients[2]
+#         tempFPTintercept <- lmFPT[1]$coefficients[1]
+#       }else{
+        tempFPTcoeff <- NA
+        tempFPTintercept <- NA
+#      }
+    
+      tempHBrown <- hbrown(trackTraj)
+    
+      if(nrow(track)>4)
+      {#area of the MCP
+        tempMCPArea <- mcp.area(track, percent=100, id=rep(as.numeric(tagID),length.out=length(track[,1])), unin="m", unout="m2",plotit=FALSE)  ###???? what area ¿¿¿¿
+      }else{
+        tempMCPArea <- NA
+      }
+      names(tempMCPArea)  <- "MCPArea"
+
+         
+  
+          
+          
+    tempRes <- as.data.frame(cbind(animalID, tagID, tempSpecies, tempRelpd, tempSEDist, tempTravDist, tempMaxDist, tempMinDist, tempFarthDist, tempAverDist, tempSDDist, outliners, dupl, multseason, tempDur, tempAverDur, tempSDDur, tempAverSpeed, tempMaxSpeed, tempVarSpeed, tempAverAngles, tempRhoAngles, tempVarAngles, tempSEAngle, tempFPTcoeff, tempFPTintercept, tempHBrown, tempMCPArea))
+    results <- tempRes
+    
+  cat("*** Move Object Summary *** \n")
+  print(results)
+  cat("\nProjection is    : ",proj4string(object),"\n")
+  cat("Omitted locations:  ", length(object@timesMissedFixes))
+}
+)

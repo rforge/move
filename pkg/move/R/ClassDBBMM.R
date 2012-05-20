@@ -312,11 +312,11 @@ setMethod(f = "contour",
 
 ### Contour to SpatialLinesDataFrame conversion
 #if (!isGeneric("outerProbability")){
-setGeneric("raster2contour", function(x, add=F, ...){standardGeneric("raster2contour")})
+setGeneric("raster2contour", function(x, ...){standardGeneric("raster2contour")})
 # #}
 setMethod(f = "raster2contour",
           signature = c(x="DBBMM"),
-          definition = function(x, add=F, ...){
+          definition = function(x, ...){
             newRaster <- raster(x)
             
             rank <- (1:length(values(newRaster)))[rank(values(newRaster))]
@@ -328,3 +328,15 @@ setMethod(f = "raster2contour",
 
 ### SUMMARY FOR THE DBBMM OBJECT
 ###
+setGeneric("summary")
+setMethod(f = "summary",
+          signature = c(object="DBBMM"),
+          definition = function(object){
+            cat("Raster projection: ",object@raster@crs@projargs,"\n")
+            cat("Raster extent \n")
+            print(object@raster@extent)
+            cat("Raster maximum: ",maxValue(raster(object)),"\n")
+            cat("Raster minimum: ",minValue(raster(object)),"\n")
+          }
+          )
+
