@@ -1,7 +1,7 @@
 require(move)
 require(RCurl)
 
-
+ 
 
 #a<-getURL("https://www.movebank.org/movebank/service/direct-read?entity_type=study", curl=curl)
 #a<-getURL("https://www.movebank.org/movebank/service/direct-read?entity_type=individual&study_id=123413", curl=curl)
