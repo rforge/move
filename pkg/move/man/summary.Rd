@@ -2,19 +2,21 @@
 
 \alias{summary}
 \alias{summary,DBBMM-method}
+\alias{summary,Move-method}
 
 \docType{methods}
 
-\title{A summary of a DBBMM object}
+\title{A summary of a DBBMM or Move object}
 
-\description{Summarizes the information of the raster from a DBBMM object}
+\description{Summarizes the information of the raster from a DBBMM or the data from a Move object}
 
 \usage{
   \S4method{summary}{DBBMM}(object)
+  \S4method{summary}{Move}(object)
 }
 
 \arguments{
-  \item{object}{a DBBMM object}
+  \item{object}{a DBBMM or Move object}
 }
 
 \details{
