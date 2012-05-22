@@ -61,5 +61,5 @@ data <- move(system.file("extdata","leroy.csv",package="move"),proj=CRS("+proj=l
 data2 <- spTransform(data, CRSobj="+proj=aeqd", center=TRUE)
 
 ## create a DBBMM object
-p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=.3)
+dbbmm <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=.3)
 }

@@ -35,24 +35,20 @@ To change parameters of the contour or line plotting use the usual parameters of
 \author{Marco Smolla}
 
 \examples{
-## create a move object
-data <- move(system.file("extdata","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
+## Create a DBBMM object to use this function
+## See the examples of the brownian.bridge.dyn function
+## Here we just load a previous session, where we already created a DBBMM object
+load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
 
-## transform to aequd projection and center the map
-data2 <- spTransform(data, center=TRUE)
-
-## create a DBBMM object
-p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=.3)
-
-## to add a 50\% and 90\% contour to a plot from DBBMM object p
-plot(p)
-contour(p, levels=c(.5,.9), add=TRUE, plot=TRUE)
+## to add a 50\% and 90\% contour to a plot from DBBMM object dbbmm
+plot(dbbmm)
+contour(dbbmm, levels=c(.5,.9), add=TRUE, plot=TRUE)
 
 ##to store the contours as a SpatialLinesDataFrame use
-cnt  <- contour(p, levels=c(.4,.9))
+cnt  <- contour(dbbmm, levels=c(.4,.9))
 
 ##print the contour on a google map +add the track
 require("RgoogleMaps")
-cnt  <- contour(x=p, y=data, levels=c(.4,.9), google=TRUE)
-cnt  <- contour(x=p, y=data, levels=c(.4,.9), google=TRUE, track=TRUE)
+cnt  <- contour(x=dbbmm, y=data, levels=c(.4,.9), google=TRUE)
+cnt  <- contour(x=dbbmm, y=data, levels=c(.4,.9), google=TRUE, track=TRUE)
 }

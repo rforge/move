@@ -31,10 +31,8 @@
 
 \examples{
 ## create a move object, transform it, and create a DBBMM object
-data <- move(system.file("extdata","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
-data2 <- spTransform(data, center=TRUE)
-p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=.2)
+load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
 
 ## create a grid of colored rectangles of the raster
-image(p)
+image(dbbmm)
 }

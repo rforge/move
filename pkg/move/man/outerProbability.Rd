@@ -19,13 +19,11 @@
 }
 
 \examples{
-## create a move object, transform it, and create a DBBMM object
-data <- move(system.file("extdata","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
-data2 <- spTransform(data, center=TRUE)
-p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=.2)
+load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
 
-## calculate the probabilities of 20\% of the raster at the border
-outerProbability(raster(p), border=.2)
+## calculate the probabilities of 20\% of the raster at 
+## the border from the DBBMM object dbbmm
+outerProbability(raster(dbbmm), border=.2)
 "[1] 0.06753346"
 }
 
