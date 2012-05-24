@@ -247,24 +247,24 @@ setMethod(f="getMovebankAnimals",
 
 
 ###retrieving data from a certain individual of a study
-setGeneric("getMovebankData", function(study,animalName,login, ...) standardGeneric("getMovebankData"))
+setGeneric("getMovebankData", function(study,animalName,login, moveObject=FALSE, ...) standardGeneric("getMovebankData"))
 setMethod(f="getMovebankData", 
           signature=c(study="ANY",animalName="ANY", login="missing"),
           definition = function(study,animalName,login, ...){
             login <- movebankLogin()
-            getMovebankData(study=study, animalName=animalName, login=login, ...)
+            getMovebankData(study=study, animalName=animalName, login=login, moveObject=moveObject,...)
           })
 
 setMethod(f="getMovebankData", 
           signature=c(study="character",animalName="character", login="CURLHandle"),
           definition = function(study,animalName, login, ...){
             studyNUM <- getMovebankID(study, login)
-            getMovebankData(study=studyNUM, animalName=animalName, login=login, ...)
+            getMovebankData(study=studyNUM, animalName=animalName, login=login, moveObject=moveObject,...)
           })
           
 setMethod(f="getMovebankData", 
             signature=c(study="numeric",animalName="character", login="CURLHandle"),
-            definition = function(study, animalName, login, ...){
+            definition = function(study, animalName, login, moveObject=T, ...){
             data <- getMovebankAnimals(study=study, login)
             attribs <- paste(collapse="%2C",getMovebankSensorsAttributes(study, login)$short_name)
             ddd <- strsplit(as.character(data[data$animalName==animalName,]),split="\t")
@@ -273,10 +273,10 @@ setMethod(f="getMovebankData",
             print(data2[1:5,])
             if (moveObject==TRUE) {
               studyDF <- getMovebankStudy(study, login)
-              studyDF$sensor.type <- as.character(getMovebankSensors(,login)[getMovebankSensors(,login)$id==as.numeric(ddd[[4]][[1]]), "external_id"])
               trackDF <- data2
-              ##call move function
-              move <- move(x=trackDF, y=studyDF, animalName=animalName)
+              trackDF$sensor.type <- as.character(getMovebankSensors(,login)[getMovebankSensors(,login)$id==as.numeric(ddd[[4]][[1]]), "external_id"])
+              print(moveObject)
+              move <- move(x=trackDF, y=studyDF, animal=animalName)
               return(move)
             }
             else{return(data2)}

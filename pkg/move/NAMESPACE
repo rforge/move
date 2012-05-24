@@ -1,6 +1,6 @@
 #importFrom("graphics", plot)
 exportClasses(Move, DBBMM)
-exportMethods(move, coordinates, n.locs, time.lag,  points, lines, proj4string, spTransform, summary, show, outerProbability, raster, brownian.bridge.dyn, plot, image, contour, getMovebankAnimals, getMovebankID, getMovebankSensors, getMovebankSensorsAttributes, getMovebankStudies, getMovebankStudy, movebankLogin, searchMovebankStudies)
+exportMethods(move, coordinates, n.locs, time.lag,  points, lines, proj4string, spTransform, summary, show, outerProbability, raster, brownian.bridge.dyn, plot, image, contour, getMovebankAnimals, getMovebankData, getMovebankID, getMovebankSensors, getMovebankSensorsAttributes, getMovebankStudies, getMovebankStudy, movebankLogin, searchMovebankStudies)
 useDynLib(move)
 
 

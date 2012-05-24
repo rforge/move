@@ -112,10 +112,10 @@ setMethod(f="move",
 
 setMethod(f="move",
           signature=c(x="data.frame", y="data.frame"),
-          definition = function(x,y,proj, ...){
+          definition = function(x,y, animal,...){
             #check wheter rgdal is installed
             if (any(.packages(all=T)=="rgdal")==FALSE){stop("You need the 'rgdl' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
-            
+
             df <- x
             df$timestamp <-  as.POSIXct(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%S", tz="UTC")
             #check for valid POSIXct timestamp
@@ -132,9 +132,9 @@ setMethod(f="move",
               data = df,#(df[names(df)[!names(df)%in%c("location.lat", "location.long")]]),
               proj4string = CRS("+proj=longlat +ellps=WGS84"), 
               match.ID = TRUE)
-            
+
             res@sdf <- tmp
-            res@animal <- animalName
+            res@animal <- animal
             res@species <- ""
             res@study <- as.character(y$name)
             res@citation <- as.character(y$citation)
