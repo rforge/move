@@ -4,7 +4,7 @@ setClass(Class = "Move",
            sdf = "SpatialPointsDataFrame",     
             animal = "character",   #animal name
             species = "character",
-            dateCreation = "POSIXct", #time stamp data creation ##use for the date POSIXct
+            #dateCreation = "POSIXct", #time stamp data creation ##use for the date POSIXct
             study = "character",
             citation = "character",
             license = "character",
@@ -14,8 +14,7 @@ setClass(Class = "Move",
 
 ## Making move a generic funtion
 #if (!isGeneric("move")) {
-	setGeneric("move", function(x, y, time, data, proj)
-		standardGeneric("move"))
+	setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))
 #}
 
 ## Defining the funcitoin move
@@ -109,6 +108,47 @@ setMethod(f="move",
           }
           )
 
+
+
+setMethod(f="move",
+          signature=c(x="data.frame", y="data.frame"),
+          definition = function(x,y,proj, ...){
+            #check wheter rgdal is installed
+            if (any(.packages(all=T)=="rgdal")==FALSE){stop("You need the 'rgdl' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
+            
+            df <- x
+            df$timestamp <-  as.POSIXct(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%S", tz="UTC")
+            #check for valid POSIXct timestamp
+            if (grepl("POSIXct", class(df$timestamp))[1]==FALSE) {stop("\n The timestamps need to be transformed to a POSIXct class.")} else {}
+#            df$location.long <- x
+#            df$location.lat <- y
+            
+            res <- new("Move")
+            res@timesMissedFixes <- df[(is.na(df$location_long)|is.na(df$location_lat)), "timestamp"] #save omitted NA timestamps
+            df <- df[!(is.na(df$location_long)|is.na(df$location_lat)), ] #omitting NAsa
+            
+            tmp <- SpatialPointsDataFrame(
+              coords = cbind(df$location_long, df$location_lat),
+              data = df,#(df[names(df)[!names(df)%in%c("location.lat", "location.long")]]),
+              proj4string = CRS("+proj=longlat +ellps=WGS84"), 
+              match.ID = TRUE)
+            
+            res@sdf <- tmp
+            res@animal <- animalName
+            res@species <- ""
+            res@study <- as.character(y$name)
+            res@citation <- as.character(y$citation)
+            res@license <- as.character(y$license_terms)
+                        
+            ###validity check for sorted time stamps
+            if (any(df$timestamp!=sort(df$timestamp))){stop("\n Error:The data set includes unsorted time stamps")} else {}
+            ###validity check for double time stamps
+            if (any(duplicated(df$timestamp))){stop("\n Error: the data set includes double time stamps")} else {}
+            ###validity check for double locations
+            if (any(duplicated(as.numeric(coordinates(res@sdf))))){cat("\n WARNING: The data file includes double locations \n")} else {}
+            
+            return(res)
+          })
 
 ###Checking if projection method was set for move function
 ###if not, object is not created and process stops, returning error message
@@ -278,8 +318,8 @@ setMethod("show", "Move", function(object){
             cat("***** Spatial Data Frame data       ***** \n")
             print(object@sdf@data[1:3, ])            
             cat("***** End Spatial Data Frame data   ***** \n")
-            cat("***** There were: ", length(object@timesMissedFixes), "fixes omitted due to NA location \n")
-            cat("***** How to cite the dataset \n")
+            cat("***** There were: \n", length(object@timesMissedFixes), "fixes omitted due to NA location \n")
+            cat("***** The dataset is cited in this papers: \n")
             cat(object@citation, "\n")
             cat("***** Usage of the data underlies the following license \n")
             cat(object@license, "\n")
