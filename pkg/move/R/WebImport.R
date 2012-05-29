@@ -247,7 +247,7 @@ setMethod(f="getMovebankAnimals",
 
 
 ###retrieving data from a certain individual of a study
-setGeneric("getMovebankData", function(study,animalName,login, moveObject=FALSE, ...) standardGeneric("getMovebankData"))
+setGeneric("getMovebankData", function(study,animalName,login, moveObject=TRUE, ...) standardGeneric("getMovebankData"))
 setMethod(f="getMovebankData", 
           signature=c(study="ANY",animalName="ANY", login="missing"),
           definition = function(study,animalName,login, ...){

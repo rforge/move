@@ -14,6 +14,11 @@ if (!isGeneric("moveStack")) {setGeneric("moveStack", function(x, ...) standardG
 setMethod(f="moveStack", 
           signature=c(x="data.frame"), 
           definition = function(x){
+            for (i in length(unique(individualID))){
+              create a move object
+              and store it in MoveStack Object under animalName ...
+            }
+            
             return(res)##MoveStack object
           }
           )
