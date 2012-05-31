@@ -44,7 +44,7 @@ The provided functions allow you to search for studies stored in Movebank, brows
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Login to Movebank}
-There are two ways to login. Either you login everytime you use the functions that presented in this vignette. Or you use the \fct{movebankLogin} function to login to Movebank and create an object (a CURLHandle) that stores your login information. You can pass this object on to every function you use to skip the login process. Use your username and password which you use to login to webbased Movebank. 
+There are two ways to login. Either you login every time you use the functions that presented in this vignette. Or you use the \fct{movebankLogin} function to login to Movebank and create an object (a CURLHandle) that stores your login information. You can pass this object on to every function you use to skip the login process. Use your username and password which you use to login to web based Movebank. 
 
 \begin{Schunk}
 \begin{Sinput}
@@ -57,7 +57,7 @@ There are two ways to login. Either you login everytime you use the functions th
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Search for a study name and ID}
-You can use the \fct{searchMovebankStudies} function to search wihtin the study names for a specific study. For example, if you want to find all studies that worked with goose try the following:
+You can use the \fct{searchMovebankStudies} function to search within the study names for a specific study. For example, if you want to find all studies that worked with goose try the following:
 
 \begin{Schunk}
 \begin{Sinput}
@@ -91,7 +91,7 @@ If you want to know, which sensor types were used in this study you can use:
 \end{Sinput}
 \end{Schunk}
 
-To see all available sensor types on Movebank use the same function without specifing x (\texttt{getMovebankSensors(,login=curl)}). Which attributes are available for the particular sensor you get listed if you use:
+To see all available sensor types on Movebank use the same function without specifying x (\texttt{getMovebankSensors(,login=curl)}). Which attributes are available for the particular sensor you get listed if you use:
 
 \begin{Schunk}
 \begin{Sinput}

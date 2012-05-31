@@ -11,4 +11,4 @@ URL: http://move.r-forge.r-project.org/
 LazyLoad: yes
 Depends: sp, raster, rgdal, methods, geosphere, R (>= 2.14.0), RCurl
 Suggests: RgoogleMaps
-Collate: ClassMove.R ClassDBMvar.R ClassDBBMM.R main.R WebImport.R
+Collate: ClassMove.R ClassDBMvar.R ClassDBBMM.R main.R WebImport.R emd.R
