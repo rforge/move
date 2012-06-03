@@ -1,13 +1,3 @@
-require(sp)
-require(rgdal)
-require(raster)
-removeClass(".MoveTrackStack")
-removeClass("MoveStack")
-removeClass(".MoveTrack")
-removeClass(".MoveTrackSingle")
-removeClass(".MoveGeneral")
-removeClass("Move")
-removeClass(".OptionalPOSIXct")
 setClass(Class=".MoveTrackStack", contains=c(".MoveTrack"),
 	 representation=representation( 
 				       trackId="factor"
@@ -39,7 +29,7 @@ setMethod("citation", ".MoveGeneral", function(obj){
             return(obj@citation)
           }
           )
-setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))
+#setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))
 setGeneric("moveStack", function(x, y, time, data, proj, ...) standardGeneric("moveStack"))
 setMethod(f="moveStack", 
 	  signature=c(x="character"), 
@@ -71,14 +61,14 @@ setMethod(f="moveStack",
 		return(res)
 	  }
 	  )
-data <- move("../inst/extdata/leroy.csv",proj=CRS("+proj=longlat"))
-sta<-moveStack("~/Downloads/Oilbirds.csv")
-tmp<-new("MoveStack")
-# look citation now works for both without defining it twice
-citation(data)
-citation(tmp)
-# Look now we dont have to define a spTransform function or coordinates function all sp functions magically work! Well magick it finds the class inheritance
-head(coordinates(data))
-head(coordinates(spTransform(data, CRS("+proj=aeqd"))))
-head(coordinates(sta))
-head(coordinates(spTransform(sta, CRS("+proj=aeqd"))))
+#data <- move("../inst/extdata/leroy.csv",proj=CRS("+proj=longlat"))
+#sta<-moveStack("~/Downloads/Oilbirds.csv")
+#tmp<-new("MoveStack")
+## look citation now works for both without defining it twice
+#citation(data)
+#citation(tmp)
+## Look now we dont have to define a spTransform function or coordinates function all sp functions magically work! Well magick it finds the class inheritance
+#head(coordinates(data))
+#head(coordinates(spTransform(data, CRS("+proj=aeqd"))))
+#head(coordinates(sta))
+#head(coordinates(spTransform(sta, CRS("+proj=aeqd"))))
