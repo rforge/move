@@ -61,7 +61,7 @@ setMethod(f="brownian.bridge.dyn",
               ext <- rep(ext, each = 2) 
             } else {}                      
             if(length(ext)==4) { 
-              yRange <- c(min(range(y))-abs(diff(range(y))*ext[3]), max(range(y))+abs(diff(range(y))*ext[4]))
+              yRange <- c(min(range(y))-abs(diff(range(y))*ext[3]), max(range(y))+abs(diff(range(y))*ext[4]))# Marco I guess you could use here the bbox of the move object now that is probably easyer that the min max stuff
               xRange <- c(min(range(x))-abs(diff(range(x))*ext[1]), max(range(x))+abs(diff(range(x))*ext[2]))
             } else {stop("The ext argument must be 1, 2 or 4 numbers")}
             
@@ -85,7 +85,7 @@ setMethod(f="brownian.bridge.dyn",
           function(object, raster, dimSize, location.error,...){
                    cat("Using default dimSize: ", dimSize, "\n")
             return(brownian.bridge.dyn(object=object, dimSize=dimSize, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext,...))
-          })
+          })# i dont get this function Marco
 
 
 #if there is no valid raster object, it should be calculated     
@@ -119,7 +119,7 @@ setMethod(f = "brownian.bridge.dyn",
             nrow <- ((ymax-ymin)/raster) 
             ncol <- ((xmax-xmin)/raster)
             ex <- extent(c(xmin,xmax,ymin,ymax))
-            rst <- raster(ncols=ncol,nrows=nrow, crs=proj4string(object), ex) #object@sdf@proj4string@projargs, ex)# maybe use projection(object)
+            rst <- raster(ncols=ncol,nrows=nrow, crs=proj4string(object), ex) 
                             
             #cat("raster from brownian.bridge.dyn pre loop")
             print(rst)
@@ -140,7 +140,7 @@ setMethod(f = "brownian.bridge.dyn",
             x <- coordinates(object)[ ,1] #extracts the xy coordinates from the Move
             y <- coordinates(object)[ ,2]
             time.lag <- time.lag(object)
-            n.locs <- n.locs(object) 
+            n.locs <- n.locs(object)#nrow object would also work 
             if(length(location.error) == 1){
               location.error <- rep(x = location.error, times = n.locs)
               } else{}
