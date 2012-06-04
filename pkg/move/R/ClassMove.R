@@ -12,162 +12,116 @@
 #)
 
 setClassUnion(".OptionalPOSIXct", c("POSIXct","NULL"))
+
 setClass(Class = ".MoveGeneral",
-	representation = representation(
-		dateCreation = "POSIXct",
-		study = "character",
-		citation = "character",
-		license = "character"),
-	prototype = prototype(
-		dateCreation =Sys.time(),
-		study=as.character(),
-		citation=as.character(),
-		license=as.character()),
-	validity=function(object)
-		{
-			if(length(object@study)>1)
-				stop("Study has length unequal to 0 or 1")
-			if(length(object@citation)>1)
-				stop("Citation has length unequal to 0 or 1")
-			if(length(object@license)>1)
-				stop("License has length unequal to 0 or 1")
-			return(TRUE)
-		}
-	 )
+       	 representation = representation(
+      		dateCreation = "POSIXct",
+      		study = "character",
+      		citation = "character",
+      		license = "character"),
+         prototype = prototype(
+      		dateCreation = Sys.time(),
+      		study = as.character(),
+      		citation = as.character(),
+      		license = as.character()),
+      	 validity = function(object){
+      			if(length(object@study)>1)
+      				stop("Study has length unequal to 0 or 1")
+      			if(length(object@citation)>1)
+      				stop("Citation has length unequal to 0 or 1")
+      			if(length(object@license)>1)
+      				stop("License has length unequal to 0 or 1")
+      			return(TRUE)
+    		 }
+    	   )
+
 setClass(Class = ".MoveTrack",contains=c("SpatialPointsDataFrame"),
-	 representation = representation(
-					  timestamps="POSIXct"
-					  ),
-	 prototype= prototype(timesMissedFixes=NULL,timestamps=as.POSIXct(NA)),
-	 validity=function(object){
-			if(length(object@timestamps)!=nrow(object@coords))
-				stop("Number of timestamps does not match the number of coordinates")
-			return(TRUE)
-	 	}
-	 )
+	       representation = representation(
+				   timestamps = "POSIXct"),
+	       prototype = prototype(
+           timesMissedFixes = NULL,
+           timestamps = as.POSIXct(NA)),
+      	 validity = function(object){
+      			if(length(object@timestamps)!=nrow(object@coords))
+      				stop("Number of timestamps does not match the number of coordinates")
+      			return(TRUE)
+	 	    }
+	      )
+
 setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"),
-	 representation = representation (
-					  timesMissedFixes=".OptionalPOSIXct",
-					  timestamps="POSIXct"
-					  ),
-	 prototype= prototype(timesMissedFixes=NULL,timestamps=as.POSIXct(NA)),
-	 validity=function(object){
-		  	if(any(object@timestamps!=sort(object@timestamps)))
-				stop("The dataset includes unsorted time stamps")
-		  	if (any(duplicated(object@timestamps)))
-				stop("The dataset includes double timestamps")
-			return(TRUE)
-	 	}
-	 )
+	       representation = representation (
+					  timesMissedFixes = ".OptionalPOSIXct",
+					  timestamps = "POSIXct"),
+	       prototype = prototype(
+            timesMissedFixes = NULL,
+            timestamps = as.POSIXct(NA)),
+	       validity = function(object){
+		  	    if(any(object@timestamps!=sort(object@timestamps)))
+				      stop("The dataset includes unsorted time stamps")
+		  	    if (any(duplicated(object@timestamps)))
+				      stop("The dataset includes double timestamps")
+			      return(TRUE)
+	 	    }
+	      )
+
 setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
-	representation = representation (
-		animal = "character",
-		species = "character"),
-	prototype=prototype(
-		animal=as.character(),
-		species=as.character()),
-	validity=function(object)
-		{
-			if(length(object@species)>1)
-				stop("Species has length unequal to 0 or 1")
-			if(length(object@animal)>1)
-				stop("Animal has length unequal to 0 or 1")
-			return(TRUE)
-		}
-	 )
+       	 representation = representation (
+      		 animal = "character",
+      		 species = "character"),
+      	 prototype = prototype(
+           animal = as.character(),
+      		 species = as.character()),
+      	 validity = function(object){
+      			if(length(object@species)>1)
+      				stop("Species has length unequal to 0 or 1")
+      			if(length(object@animal)>1)
+      				stop("Animal has length unequal to 0 or 1")
+      			return(TRUE)
+      	 }
+      	 )
 
 ## Making move a generic funtion
 #if (!isGeneric("move")) {
 	setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))
 #}
 
-## Defining the funcitoin move
-
+### Defining the funcitoin move
 ##Reading from a .csv file
-setMethod(f="move", # i shortend this method somewhat i left the old code below so you can compare
-	  signature=c(x="character"), 
-	  definition = function(x, proj){
-		#check wheter rgdal is installed
-		if (!any(.packages(all=T)=="rgdal")){stop("You need the 'rgdal' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}# why is this here ? Marco
-		df <- read.csv(x, header=TRUE, sep=",", dec=".")
-		#check whether data are really from movebank
-		if (!all(c("timestamp","location.long", "location.lat","study.timezone","study.local.timestamp","sensor.type","individual.local.identifier","individual.taxon.canonical.name")%in%colnames(df)))
-		        stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
-		df$timestamp <-
-		        as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") 
-		df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))            
-		missedFixes<- df[(is.na(df$location.long)|is.na(df$location.lat)), ]$timestamp
-		df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
-		tmp <- SpatialPointsDataFrame(
-		      coords = cbind(df$location.long,df$location.lat),
-		      data = data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp")]]), 
-		      proj4string = CRS("+proj=longlat +ellps=WGS84"), # proj (function argument ) is not used here Marco
-		      match.ID = TRUE)
-		res <- new("Move", 
-		      timestamps=df$timestamp, 
-		      tmp, 
-		      study=levels(df$study.name), 
-		      species=levels(df$individual.taxon.canonical.name), 
-		      animal=levels(df$individual.local.identifier),
-		      timesMissedFixes=missedFixes)
-		# i removed the checks here since taht is now done at the creation of res Marco
-		return(res)
-	  }
-	  )
-#setMethod(f="move", 
-#          signature=c(x="character"), 
-#          definition = function(x, proj){
-#            #check wheter rgdal is installed
-#            if (any(.packages(all=T)=="rgdal")==FALSE){stop("You need the 'rgdl' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
-#            
-#		        df <- read.csv(x, header=TRUE, sep=",", dec=".")
-#
-#            #check whether data are really from movebank
-#           if (all(any(colnames(df)=="timestamp"), any(colnames(df)=="location.long"), any(colnames(df)=="location.lat"), any(colnames(df)=="study.timezone"), any(colnames(df)=="study.local.timestamp"), any(colnames(df)=="sensor.type"))==TRUE){print("")} else {stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")}
-#            
-#		        df$timestamp <- as.POSIXct(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%S", tz="UTC") ## NOTE: GMT is is default
-#            df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format = "%Y-%m-%d %H:%M:%OSn"))            
-#            
-#            res <- new("Move")
-#            #save omitted NA timestamps
-#		        res@timesMissedFixes <- df[(is.na(df$location.long)|is.na(df$location.lat)), "timestamp"]
-#            #omitting NAs
-#		        df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
-#            
-#		        #if (proj@projargs=="+proj=longlat"){
-#		          tmp <- SpatialPointsDataFrame(
-#		            coords = cbind(df$location.long,df$location.lat),
-#		            data = data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long")]]), ## incude all data from the data.frame except the coordinats (which are already stored in coords)
-#		            proj4string = CRS("+proj=longlat +ellps=WGS84"), 
-#		            match.ID = TRUE)
-#		        #} else {stop("No valid CRS object entered")}
-#		        
-#		        res@sdf <- tmp
-#            
-#            if (length(levels(df$individual.local.identifier))==1) {
-#              res@animal[1] <- as.character(df$individual.local.identifier[1])} else{stop("More than one animal detected")}
-#            if (length(levels(df$individual.taxon.canonical.name))==1) {
-#              res@species[1] <- as.character(df$individual.taxon.canonical.name[1])} else{stop("More than one species defined")}
-#		        if (length(levels(df$study.name))==1) {
-#              res@study[1] <- as.character(df$study.name[1])} else{stop("More than one study detected")}            
-#		        
-#		        ###validity check for sorted time stamps
-#		        if (any(df$timestamp!=sort(df$timestamp))){stop("\n Error:The data set includes unsorted time stamps")} else {}
-#		        ###validity check for double time stamps
-#		        if (any(duplicated(df$timestamp))){stop("\n Error: the data set includes double time stamps")} else {}
-#            ###validity check for double locations
-#		        if (any(duplicated(as.numeric(coordinates(res@sdf))))){cat("\n WARNING: The data file includes double locations \n")} else {}
-#            
-#            return(res)
-#          }
-#)
+setMethod(f = "move", # i shortend this method somewhat i left the old code below so you can compare
+      	  signature = c(x="character"), 
+      	  definition = function(x, proj){
+      		#check wheter rgdal is installed
+      		#if (!any(.packages(all=T)=="rgdal")){stop("You need the 'rgdal' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
+      		df <- read.csv(x, header=TRUE, sep=",", dec=".")
+      		#check whether data are really from movebank
+      		if (!all(c("timestamp", "location.long",  "location.lat", "study.timezone", "study.local.timestamp", "sensor.type", "individual.local.identifier", "individual.taxon.canonical.name")%in%colnames(df)))
+      		        stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
+      		df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") 
+      		df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))            
+      		missedFixes<- df[(is.na(df$location.long)|is.na(df$location.lat)), ]$timestamp
+      		df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
+      		tmp <- SpatialPointsDataFrame(
+      		      coords = cbind(df$location.long,df$location.lat),
+      		      data = data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp")]]), 
+      		      proj4string = CRS("+proj=longlat +ellps=WGS84"), # proj (function argument ) is not used here Marco
+      		      match.ID = TRUE)
+      		res <- new("Move", 
+      		      timestamps = df$timestamp, 
+      		      tmp, 
+      		      study = levels(df$study.name), 
+      		      species = levels(df$individual.taxon.canonical.name), 
+      		      animal = levels(df$individual.local.identifier),
+      		      timesMissedFixes = missedFixes)
+      		return(res)
+      	  }
+      	  )
 
 #if non-movebank data are used, coordinates (x,y), time and the data frame must be defined
 setMethod(f="move",
           signature=c(x="numeric"),#,y="numeric",time="factor",data="data.frame"),
           definition = function(x,y,time,data,proj){
             #check wheter rgdal is installed
-            if (any(.packages(all=T)=="rgdal")==FALSE){stop("You need the 'rgdl' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
+            #if (any(.packages(all=T)=="rgdal")==FALSE){stop("You need the 'rgdl' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
             
             df <- data
             df$timestamp <- time
@@ -187,16 +141,13 @@ setMethod(f="move",
               match.ID = TRUE)
             
             res@sdf <- tmp
-            
-#             if (length(levels(df$individual.local.identifier))==1) {
-#               res@animal[1] <- as.character(df$individual.local.identifier[1])} else{stop("More than one animal detected")}
   
             ###validity check for sorted time stamps
-            if (any(df$timestamp!=sort(df$timestamp))){stop("\n Error:The data set includes unsorted time stamps")} else {}
+            #if (any(df$timestamp!=sort(df$timestamp))){stop("\n Error:The data set includes unsorted time stamps")} else {}
             ###validity check for double time stamps
-            if (any(duplicated(df$timestamp))){stop("\n Error: the data set includes double time stamps")} else {}
+            #if (any(duplicated(df$timestamp))){stop("\n Error: the data set includes double time stamps")} else {}
             ###validity check for double locations
-            if (any(duplicated(as.numeric(coordinates(res@sdf))))){cat("\n WARNING: The data file includes double locations \n")} else {}
+            #if (any(duplicated(as.numeric(coordinates(res@sdf))))){cat("\n WARNING: The data file includes double locations \n")} else {}
             
             return(res)
           }
@@ -208,7 +159,7 @@ setMethod(f="move",
           signature=c(x="data.frame", y="data.frame"),
           definition = function(x,y, animal,...){
             #check wheter rgdal is installed
-            if (any(.packages(all=T)=="rgdal")==FALSE){stop("You need the 'rgdl' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
+            #if (any(.packages(all=T)=="rgdal")==FALSE){stop("You need the 'rgdl' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
 
             df <- x
             df$timestamp <-  as.POSIXct(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%S", tz="UTC")
@@ -235,11 +186,11 @@ setMethod(f="move",
             res@license <- as.character(y$license_terms)
                         
             ###validity check for sorted time stamps
-            if (any(df$timestamp!=sort(df$timestamp))){stop("\n Error:The data set includes unsorted time stamps")} else {}
+            #if (any(df$timestamp!=sort(df$timestamp))){stop("\n Error:The data set includes unsorted time stamps")} else {}
             ###validity check for double time stamps
-            if (any(duplicated(df$timestamp))){stop("\n Error: the data set includes double time stamps")} else {}
+            #if (any(duplicated(df$timestamp))){stop("\n Error: the data set includes double time stamps")} else {}
             ###validity check for double locations
-            if (any(duplicated(as.numeric(coordinates(res@sdf))))){cat("\n WARNING: The data file includes double locations \n")} else {}
+            #if (any(duplicated(as.numeric(coordinates(res@sdf))))){cat("\n WARNING: The data file includes double locations \n")} else {}
             
             return(res)
           })
@@ -265,10 +216,7 @@ setMethod(f="move",
 
 
 ###extract number of locations from Move
-#if (!isGeneric("n.locs")) {
-setGeneric("n.locs", function(obj) standardGeneric("n.locs"))
-#}
-
+if (!isGeneric("n.locs")) {setGeneric("n.locs", function(obj) standardGeneric("n.locs"))}
 setMethod("n.locs", "Move", function(obj){
             return(length(coordinates(obj)[ ,1]))
           }
@@ -276,27 +224,12 @@ setMethod("n.locs", "Move", function(obj){
 
 
 ###extract time.lag from Move
-#if (!isGeneric("time.lag")) {
-setGeneric("time.lag", function(x, ...) standardGeneric("time.lag"))
-#}
-
+if (!isGeneric("time.lag")) {setGeneric("time.lag", function(x, ...) standardGeneric("time.lag"))}
 setMethod("time.lag", "Move", function(x, ...){
             return(c(as.numeric(diff(x@timestamps)),0)) #calculates the time differences between locations one less than locations! we need a more elegant way than just adding a zero 
           }
           )
 
-
-###extract projection from Move
-#setMethod("proj4string", "Move", function(obj){
-#            return(proj4string(obj@sdf))
-#          }
-#          )
-
-###extract the sdf data.frame from Move
-#setMethod("as.data.frame", "Move", function(x,...){
-#          return(as.data.frame(x@sdf,...))
-#          }
-#          )
 
 # if (!isGeneric("SpatialLines")) {
 # setGeneric("SpatialLines", function(LinesList) standardGeneric("SpatialLines"))
@@ -352,45 +285,6 @@ setMethod("plot", "Move", function(x, google=FALSE, maptype="terrain",...){
             }
           }
           )
-
-
-
-
-#setMethod(f = "spTransform", 
-#          signature = c(x = "Move", CRSobj = "missing"), 
-#          function(x, center=FALSE, ...){
-#            if (center==TRUE){
-#              mid.range.lon <- (max(coordinates(x)[ ,1])+min(coordinates(x)[ ,1]))/2
-#              mid.range.lat  <- (max(coordinates(x)[ ,2])+min(coordinates(x)[ ,2]))/2
-#              crsexpr <- paste("+proj=aeqd +lon_0=",mid.range.lon," +lat_0=", mid.range.lat, sep="")
-#            } else {
-#              crsexpr <- "+proj=aeqd"
-#            }
-#            coordsnew <- spTransform.SpatialPointsDataFrame(x= x@sdf, CRSobj=CRS(crsexpr))
-#            x@sdf <- coordsnew
-#            return(x)
-#          }
-#          )
-
-
-#setMethod(f = "spTransform", 
-#          signature = c(x = "Move", CRSobj = "character"), 
-#          function(x, CRSobj, center=FALSE){
-#            if (center==TRUE){
-#              mid.range.lon <- (max(coordinates(x)[ ,1])+min(coordinates(x)[ ,1]))/2
-#              mid.range.lat  <- (max(coordinates(x)[ ,2])+min(coordinates(x)[ ,2]))/2
-#              crsexpr <- paste(CRSobj," +lon_0=",mid.range.lon," +lat_0=", mid.range.lat, sep="")
-#            } else {
-#              crsexpr <- CRSobj
-#            }
-#            
-#            coordsnew <- spTransform.SpatialPointsDataFrame(x= x@sdf, CRSobj=CRS(crsexpr))
-#            x@sdf <- coordsnew
-#            return(x)
-#          }
-#          )
-#
-
 
 
 ### Show Method for the data object Move

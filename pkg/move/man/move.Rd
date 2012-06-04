@@ -43,6 +43,7 @@ If the data include double timestamps check your data for valitdity. You may wan
 \author{Marco Smolla }
 
 \examples{
+\dontrun{
 ## create a move object
 data <- move(system.file("extdata","leroy.csv",package="move"))## create a move object
 data <- move(system.file("extdata","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
@@ -50,4 +51,5 @@ data <- move(system.file("extdata","leroy.csv",package="move"),proj=CRS("+proj=l
 ## create a move object from non-Movebank data
 file <- read.table(system.file("extdata","leroy.csv",package="move"), header=TRUE, sep=",", dec=".")
 data <- move(x=file$location.long, y=file$location.lat, time=as.POSIXct(file$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC"), data=file, proj=CRS("+proj=longlat"))
+}
 }

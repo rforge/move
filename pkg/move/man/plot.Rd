@@ -35,6 +35,7 @@
 }
 
 \examples{
+\dontrun{
 load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
 
 ## plot a Move object
@@ -48,4 +49,5 @@ lines(data, add=TRUE)
 
 ## plot the raster of a DBBMM object
 plot(dbbmm)
+}
 }

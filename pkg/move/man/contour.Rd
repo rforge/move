@@ -35,6 +35,7 @@ To change parameters of the contour or line plotting use the usual parameters of
 \author{Marco Smolla}
 
 \examples{
+\dontrun{
 ## Create a DBBMM object to use this function
 ## See the examples of the brownian.bridge.dyn function
 ## Here we just load a previous session, where we already created a DBBMM object
@@ -51,4 +52,5 @@ cnt  <- contour(dbbmm, levels=c(.4,.9))
 require("RgoogleMaps")
 cnt  <- contour(x=dbbmm, y=data, levels=c(.4,.9), google=TRUE)
 cnt  <- contour(x=dbbmm, y=data, levels=c(.4,.9), google=TRUE, track=TRUE)
+}
 }
