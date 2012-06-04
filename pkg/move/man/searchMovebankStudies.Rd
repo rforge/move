@@ -1,7 +1,8 @@
 \name{searchMovebankStudies}
 
 \alias{searchMovebankStudies}
-\alias{searchMovebankStudies-method}
+\alias{searchMovebankStudies,character,CURLHandle-method}
+\alias{searchMovebankStudies,character,missing-method}
 
 \docType{methods}
 
@@ -10,11 +11,12 @@
 \description{The coordinates method extracts the coordinates of the track within a Move object.}
 
 \usage{
-  searchMovebankStudies(x, sensor=FALSE)
+  searchMovebankStudies(x, login, sensor = FALSE)
 }
 
 \arguments{
   \item{x}{a character string to search within the Movebank study names}
+  \item{login}{...}
   \item{sensor}{logical, if TRUE you can search for studies using a certain sensor type. Default is FALSE}
 }
 

@@ -71,7 +71,7 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
 
 ### Defining the funcitoin move
 ##Reading from a .csv file
-setMethod(f = "move", # i shortend this method somewhat i left the old code below so you can compare
+setMethod(f = "move", 
       	  signature = c(x="character"), 
       	  definition = function(x, proj){
       		#check wheter rgdal is installed
@@ -84,11 +84,13 @@ setMethod(f = "move", # i shortend this method somewhat i left the old code belo
       		df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))            
       		missedFixes<- df[(is.na(df$location.long)|is.na(df$location.lat)), ]$timestamp
       		df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
+          
       		tmp <- SpatialPointsDataFrame(
       		      coords = cbind(df$location.long,df$location.lat),
       		      data = data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp")]]), 
       		      proj4string = CRS("+proj=longlat +ellps=WGS84"), # proj (function argument ) is not used here Marco
       		      match.ID = TRUE)
+          
       		res <- new("Move", 
       		      timestamps = df$timestamp, 
       		      tmp, 
@@ -119,6 +121,7 @@ setMethod(f="move",
               data = df,#(df[names(df)[!names(df)%in%c("location.lat", "location.long")]]),
               proj4string = proj, 
               match.ID = TRUE)
+            
             res <- new("Move",
                        tmp,
                        timestamps=time)
@@ -127,7 +130,8 @@ setMethod(f="move",
           )
 
 
-
+###This function is called by getMovebankData with
+###move(x=trackDF, y=studyDF, animal=animalName)
 setMethod(f="move",
           signature=c(x="data.frame", y="data.frame"),
           definition = function(x,y, animal,...){
@@ -253,22 +257,20 @@ setMethod("lines", "Move", function(x,add=FALSE,...){
           }          
           )
 
-setGeneric("plot")
-setMethod("plot", "Move", function(x, google=FALSE, maptype="terrain",...){
+setGeneric("plot") ###is not working properly!! returns that google is not a graphic parameter
+setMethod(f = "plot", 
+          signature = c(x="Move", y="missing"), 
+          function(x, google=FALSE, maptype="terrain",...){
             if (google==FALSE){
               plot(coordinates(x), type="p", ...)#creates points
               lines(x, add=TRUE, ...)
             } else {
+              if (grepl("longlat",proj4string(x)) == FALSE) {stop("\n The projeciton of the coordinates needs to be \"longlat\" to be plotted on a google map. \n")} else {}
               require(RgoogleMaps)
               obj <- x
               lat <-coordinates(obj)[ ,2] 
               lon <- coordinates(obj)[ ,1]
-              #maptype <- maptype
-              #center <- c(mean(lat), mean(lon))
-              #zoom <- min(MaxZoom(range(lat), range(lon)))
               MyMap <- GetMap.bbox(lonR=range(coordinates(obj)[ ,1]), latR=range(coordinates(obj)[ ,2]), maptype=maptype)
-              #MyMap <- GetMap(center=center, zoom=zoom, destfile=paste(getwd(),"MyTile.png",sep="/"), ...)
-              
               PlotOnStaticMap(MyMap=MyMap, lon=lon, lat=lat, FUN=lines, ...)
               file.remove(paste(getwd(),"MyTile.png",sep="/"))
               file.remove(paste(getwd(),"MyTile.png.rda",sep="/"))

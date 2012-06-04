@@ -1,16 +1,51 @@
 #source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMove.R")
 #source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassDBMvar.R")
 
+setClass(Class = ".UDStack", contains=c("RasterLayer", ".DBBMM"), 
+         representation = representation (
+           parameters = "data.frame"), 
+         prototype = prototype(
+           parameters = as.data.frame()),
+         }
+         )
 
+setClass(Class = ".UD", contains=c("RasterLayer"), 
+         representation = representation (
+           method = "character", 
+           parameters = "data.frame"), 
+         prototype = prototype(
+           method = as.character()
+           ),
+         validity = function (object){
+           if (sum(values(raster(object)))!=1) {stop("The used raster is not a UD (sum unequal to 1)")}
+           else {return=TRUE}
+         }
+         )
 
 ###Defining the class of the Brownian Bridge Movement Model object
-setClass(Class = "DBBMM",
+setClass(Class = ".DBBMM",
          representation = representation (
            DBMvar= "DBMvar", 
-           raster= "RasterLayer", #storing the raster and the probabilities as values
            ext= "numeric" #storing the extent of the map
            )
          )
+
+setClass(Class = "RasterStack", contains=c(".UDStack"),
+         representation = representation(
+           rasterID = "factor"),
+         prototype = prototype(
+           rasterID = as.factor()),
+         #validity =
+         )
+
+setClass(Class = "Raster", contains=c(".UD", ".DBBMM"),
+         representation = representation(
+           animal = "character"),
+         prototype = prototype(
+           animal = as.character()),
+         #validity =
+         )
+
 
 ## Making dBBMM a generic funtion
 #if (!isGeneric("dBBMM")) {  
@@ -21,7 +56,7 @@ setClass(Class = "DBBMM",
 setMethod(f="dBBMM", 
           signature=c(DBMvar="DBMvar", raster ="RasterLayer", ext="numeric"), 
           definition = function(DBMvar, raster, ext){
-            res <- new(Class="DBBMM")
+            res <- new(Class=".DBBMM")
             res@DBMvar <- DBMvar
             res@raster <- raster 
             res@ext <- ext
@@ -47,6 +82,17 @@ setMethod(f="brownian.bridge.dyn",
                   cat("Using default dimSize: ", dimSize, "\n")
            return(brownian.bridge.dyn(object=object, dimSize=dimSize, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext,...))
          }) #seems to be necessary
+
+###do brownian.bridge.dyn for all individuals within a MoveStack
+# setMethod(f="brownian.bridge.dyn", 
+#           signature=c(object="MoveStack",raster="ANY", dimSize="ANY",location.error="numeric"),
+#           function(object, raster, dimSize, location.error,...){
+#             dbbmmStack <- data.frame()
+#             for (i in length(object@idData$individual.local.identifier)){
+#               brownian.bridge.dyn()
+#             }
+#             return(dbbmmStack)
+#           }) 
 
 
 ###if no raster object but a dimSize is given, the cell size of the raster is calculated with the number of cells given by the dimSize
@@ -182,7 +228,6 @@ setMethod(f = ".extcalc",
           signature = c(obj="Move",ext="numeric"), 
           definition = function(obj,ext){
             Range <- as.vector(c(obj@bbox[1,],obj@bbox[2,]))
-            
             if(length(ext)==1) {
               ext <- rep(ext, 4)
             } else {}            

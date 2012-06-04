@@ -43,8 +43,10 @@ setMethod(f="moveStack",
       		df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))            
       		missedFixes <- df[(is.na(df$location.long)|is.na(df$location.lat)), ]
       		df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
-      		# p is a vector with unique variables per individual
+            
+      		# p is a vector with unique variables of the individual
       		p <- unlist(lapply(lapply(lapply(lapply(apply(df, 2, tapply, df$individual.local.identifier, unique), lapply, length),unlist),'==',1),all))
+            
       		tmp <- SpatialPointsDataFrame(
       		      	coords = cbind(df$location.long,df$location.lat),
       		      	data = data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp","individual.local.identifier", names(p)[p])]]), 
@@ -63,14 +65,3 @@ setMethod(f="moveStack",
       		return(res)
       	  }
       	  )
-#data <- move("../inst/extdata/leroy.csv",proj=CRS("+proj=longlat"))
-#sta<-moveStack("~/Downloads/Oilbirds.csv")
-#tmp<-new("MoveStack")
-## look citation now works for both without defining it twice
-#citation(data)
-#citation(tmp)
-## Look now we dont have to define a spTransform function or coordinates function all sp functions magically work! Well magick it finds the class inheritance
-#head(coordinates(data))
-#head(coordinates(spTransform(data, CRS("+proj=aeqd"))))
-#head(coordinates(sta))
-#head(coordinates(spTransform(sta, CRS("+proj=aeqd"))))
