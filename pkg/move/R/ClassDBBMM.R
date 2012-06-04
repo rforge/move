@@ -1,49 +1,40 @@
 #source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMove.R")
 #source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassDBMvar.R")
 
-setClass(Class = ".UDStack", contains=c("RasterLayer", ".DBBMM"), 
+setClass(Class = ".UDStack", contains=c("RasterStack"), 
          representation = representation (
-           parameters = "data.frame"), 
+           method = "character"), 
          prototype = prototype(
-           parameters = as.data.frame()),
-         }
+           method = as.character()),
+         
          )
 
 setClass(Class = ".UD", contains=c("RasterLayer"), 
          representation = representation (
-           method = "character", 
-           parameters = "data.frame"), 
+           method = "character"), 
+#           parameters = "data.frame"), 
          prototype = prototype(
            method = as.character()
            ),
          validity = function (object){
-           if (sum(values(raster(object)))!=1) {stop("The used raster is not a UD (sum unequal to 1)")}
-           else {return=TRUE}
+           if (sum(values(raster(object)))!=1) 
+		stop("The used raster is not a UD (sum unequal to 1)")
+           return(TRUE)
          }
          )
 
 ###Defining the class of the Brownian Bridge Movement Model object
-setClass(Class = ".DBBMM",
+setClass(Class = "DBBMMStack",contains=c(".UDStack"),
          representation = representation (
            DBMvar= "DBMvar", 
            ext= "numeric" #storing the extent of the map
            )
          )
-
-setClass(Class = "RasterStack", contains=c(".UDStack"),
-         representation = representation(
-           rasterID = "factor"),
-         prototype = prototype(
-           rasterID = as.factor()),
-         #validity =
-         )
-
-setClass(Class = "Raster", contains=c(".UD", ".DBBMM"),
-         representation = representation(
-           animal = "character"),
-         prototype = prototype(
-           animal = as.character()),
-         #validity =
+setClass(Class = "DBBMM",contains=c(".UD"),
+         representation = representation (
+           DBMvar= "DBMvar", 
+           ext= "numeric" #storing the extent of the map
+           )
          )
 
 
@@ -279,20 +270,20 @@ setMethod(f = "proj4string",
 ####################
 ## Plotting dbbmm ##
 ####################
-setMethod(f = "plot",
-          signature = "DBBMM",
-          definition = function(x){ #maybe some more variables for the desgin
-            plot(raster(x))
-          }
-          ) 
-
-setGeneric("image")
-setMethod(f = "image",
-          signature = "DBBMM",
-          definition = function(x,col=rainbow(356),...){ #maybe some more variables for the desgin
-            image(raster(x),col=col,...)
-          }
-          )
+#setMethod(f = "plot",
+#          signature = "DBBMM",
+#          definition = function(x){ #maybe some more variables for the desgin
+#            plot(raster(x))
+#          }
+#          ) 
+#
+#setGeneric("image")
+#setMethod(f = "image",
+#          signature = "DBBMM",
+#          definition = function(x,col=rainbow(356),...){ #maybe some more variables for the desgin
+#            image(raster(x),col=col,...)
+#          }
+#          )
 
 setGeneric("contour")
 setMethod(f = "contour",
@@ -347,7 +338,7 @@ setMethod(f = "contour",
 setGeneric("raster2contour", function(x, ...){standardGeneric("raster2contour")})
 # #}
 setMethod(f = "raster2contour",
-          signature = c(x="DBBMM"),
+          signature = c(x=".UD"),
           definition = function(x, ...){
             newRaster <- raster(x)
             
