@@ -1,5 +1,4 @@
 ### Using fast Earth Movers Distance with rasters and DBBMM objects
-require(move)
 if (!isGeneric("emd")) {
   setGeneric("emd", function(x, y, threshold, integer, greatcircle) standardGeneric("emd"))
   }

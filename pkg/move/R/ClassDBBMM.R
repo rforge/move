@@ -35,13 +35,18 @@ setMethod(f="dBBMM",
 
 
 
-
-
-
-
 #if (!isGeneric("brownian.bridge.dyn")) {
   setGeneric("brownian.bridge.dyn", function(object,raster=1,dimSize=10,location.error,margin=11, time.step=NULL, window.size=31, ext=0.25,...){standardGeneric("brownian.bridge.dyn")})
 #}
+
+
+###if neither a raster nor the dimSize is given, then the cell size is calculated by the defauled dimSize and the largest dimension
+setMethod(f="brownian.bridge.dyn", 
+         signature=c(object="Move",raster="missing", dimSize="missing",location.error="numeric"),
+         function(object, raster, dimSize, location.error,...){
+                  cat("Using default dimSize: ", dimSize, "\n")
+           return(brownian.bridge.dyn(object=object, dimSize=dimSize, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext,...))
+         }) #seems to be necessary
 
 
 ###if no raster object but a dimSize is given, the cell size of the raster is calculated with the number of cells given by the dimSize
@@ -49,43 +54,20 @@ setMethod(f="dBBMM",
 setMethod(f="brownian.bridge.dyn", 
           signature=c(object="Move",raster="missing", dimSize="numeric",location.error="numeric"),
           function(object, raster, dimSize, location.error, ...){
-                        
-            y <- coordinates(object)[ ,2]
-            x <- coordinates(object)[ ,1]
             
-            #either one, two, or four factors for extension ...
-            if(length(ext)==1) {
-              ext <- rep(ext, 4)
-            } else {}            
-            if(length(ext)==2) {
-              ext <- rep(ext, each = 2) 
-            } else {}                      
-            if(length(ext)==4) { 
-              yRange <- c(min(range(y))-abs(diff(range(y))*ext[3]), max(range(y))+abs(diff(range(y))*ext[4]))# Marco I guess you could use here the bbox of the move object now that is probably easyer that the min max stuff
-              xRange <- c(min(range(x))-abs(diff(range(x))*ext[1]), max(range(x))+abs(diff(range(x))*ext[2]))
-            } else {stop("The ext argument must be 1, 2 or 4 numbers")}
-            
+            Range <- .extcalc(obj = object, ext = ext)
+            yRange <- diff(Range[3:4])
+            xRange <- diff(Range[1:2])            
             
             #largest dimension divided by number of cells (=dimSize) gives cell.size (raster="numeric")
-            if (diff(xRange) > diff(yRange)){
-              raster <- diff(xRange)/dimSize ##### why times two???
+            if (xRange > yRange){
+              raster <- xRange/dimSize ##### why times two???
             } else{
-              raster <- diff(yRange)/dimSize
+              raster <- yRange/dimSize
             }
             
-            #cat("dimSize: ", dimSize, "\n")
-            #cat("ext: ", ext)
             return(brownian.bridge.dyn(object=object, raster=raster, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, ext=ext,...))
           })
-
-
-###if neither a raster nor the dimSize is given, then the cell size is calculated by the defauled dimSize and the largest dimension
-#setMethod(f="brownian.bridge.dyn", 
-#          signature=c(object="Move",raster="missing", dimSize="missing",location.error="numeric"),
-#          function(object, raster, dimSize, location.error,...){
-#                   cat("Using default dimSize: ", dimSize, "\n")
-#            return(brownian.bridge.dyn(object=object, dimSize=dimSize, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext,...))
-#          })# i dont get this function Marco
 
 
 #if there is no valid raster object, it should be calculated     
@@ -93,37 +75,22 @@ setMethod(f="brownian.bridge.dyn",
 setMethod(f = "brownian.bridge.dyn",
           signature = c(object="Move",raster="numeric",dimSize="missing",location.error="numeric"),
           definition = function(object,raster,dimSize,location.error,...){
-            y <- coordinates(object)[ ,2]
-            x <- coordinates(object)[ ,1]
            
-            #either one, two, or four factors for extension ...
-            if(length(ext)==1) {
-              ext <- rep(ext, 4)
-            } else {}            
-            if(length(ext)==2) {
-              ext <- rep(ext, each = 2) 
-            } else {}                      
-            if(length(ext)==4) { 
-              yRange <- c(min(range(y))-abs(diff(range(y))*ext[3]), max(range(y))+abs(diff(range(y))*ext[4]))
-              xRange <- c(min(range(x))-abs(diff(range(x))*ext[1]), max(range(x))+abs(diff(range(x))*ext[2]))
-            } else {stop("The ext argument must be 1, 2 or 4 numbers")}
-            
-            
+            Range <- .extcalc(obj = object, ext = ext)
+            yRange <- diff(Range[3:4])
+            xRange <- diff(Range[1:2])
             #calculation of the coordinates to fit squared raster cells
-            ymin <- yRange[1] - (ceiling(diff(yRange)/raster) * raster - diff(yRange))/2
-            ymax <- yRange[2] + (ceiling(diff(yRange)/raster) * raster - diff(yRange))/2
-            xmin <- xRange[1] - (ceiling(diff(xRange)/raster) * raster - diff(xRange))/2
-            xmax <- xRange[2] + (ceiling(diff(xRange)/raster) * raster - diff(xRange))/2
+            ymin <- Range[3] - (ceiling(yRange/raster) * raster - yRange)/2
+            ymax <- Range[4] + (ceiling(yRange/raster) * raster - yRange)/2
+            xmin <- Range[1] - (ceiling(xRange/raster) * raster - xRange)/2
+            xmax <- Range[2] + (ceiling(xRange/raster) * raster - xRange)/2
             
             #Calculate the raster; the raster variable replaces here the cell size
             nrow <- ((ymax-ymin)/raster) 
             ncol <- ((xmax-xmin)/raster)
             ex <- extent(c(xmin,xmax,ymin,ymax))
-            rst <- raster(ncols=ncol,nrows=nrow, crs=proj4string(object), ex) 
-                            
-            #cat("raster from brownian.bridge.dyn pre loop")
+            rst <- raster(ncols=ncol,nrows=nrow, crs=proj4string(object), ex)                            
             print(rst)
-            #cat("extention factor is: ", ext, "\n")
             return(brownian.bridge.dyn(object=object, raster=rst, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext,...))
           }
 )
@@ -144,7 +111,6 @@ setMethod(f = "brownian.bridge.dyn",
             if(length(location.error) == 1){
               location.error <- rep(x = location.error, times = n.locs)
               } else{}
-                        
 
               DBMvar <- brownian.motion.variance.dyn(object=object, location.error=location.error, margin=margin, window.size=window.size)##<<<<<<<<<<<<<<<
               DBMvar.vec <- DBMvar@means              
@@ -209,7 +175,28 @@ setMethod(f = "brownian.bridge.dyn",
             return(DBBMM)
           }
 )
-          
+ 
+#calculating the extent
+setGeneric(".extcalc", function(obj, ext) standardGeneric(".extcalc"))
+setMethod(f = ".extcalc", 
+          signature = c(obj="Move",ext="numeric"), 
+          definition = function(obj,ext){
+            Range <- as.vector(c(obj@bbox[1,],obj@bbox[2,]))
+            
+            if(length(ext)==1) {
+              ext <- rep(ext, 4)
+            } else {}            
+            if(length(ext)==2) {
+              ext <- rep(ext, each = 2) 
+            } else {}                      
+            if(length(ext)==4) { 
+              yRange <- c(Range[3]-abs(diff(Range[3:4])*ext[3]), Range[4]+abs(diff(Range[3:4])*ext[4]))
+              xRange <- c(Range[1]-abs(diff(Range[1:2])*ext[1]), Range[2]+abs(diff(Range[1:2])*ext[2]))
+            } else {stop("The ext argument must be 1, 2 or 4 numbers")}
+            return(c(xRange, yRange))
+          }
+          )
+
 
 #if (!isGeneric("outerProbability")){
 setGeneric("outerProbability", function(raster, border=.1){standardGeneric("outerProbability")})

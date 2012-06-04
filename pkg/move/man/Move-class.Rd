@@ -14,7 +14,6 @@ The Move object is created with the \code{\link{move}} function. It is the requi
 
 \section{Slots}{
   \describe{
-    \item{sdf}{Object of class \code{"SpatialPointsDataFrame"}: track locations with corresponding time stamps;  }
     \item{animal}{Object of class \code{"character"}: animal ID or name;  }
     \item{species}{Object of class \code{"character"}: species name;  }
     \item{dateCreation}{Object of class \code{"numeric"}: time stamp when the file was downloaded;  }
@@ -22,6 +21,12 @@ The Move object is created with the \code{\link{move}} function. It is the requi
     \item{citation}{Object of class \code{"character"}: how to cite the study;  }
     \item{license}{Object of class \code{"character"}: the license under which the data were publicated;  }
     \item{timesMissedFixes}{Object of class \code{"POSIXct"}: stores the timestamps of lines of the data set that were removed because they included NA locations }
+    \item{bbox}{...}
+    \item{coords}{...}
+    \item{coords.nrs}{...}
+    \item{data}{...}
+    \item{proj4string}{...}
+    \item{timestamps}{...}
   }
 }
 

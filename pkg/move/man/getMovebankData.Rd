@@ -10,12 +10,15 @@
 \description{getMovebankData downloads the location and timestemp columns of an animal of study stored in Movebank. }
 
 \usage{
-  getMovebankData(study,animalName=NA)
+  getMovebankData(study, animalName, login, moveObject = TRUE, ...)
 }
 
 \arguments{
   \item{study}{character, full name of the study, as stored on Movebank}
   \item{animalName}{chracter, name of the individual as stored on Movebank}
+  \item{login}{...}
+  \item{moveObject}{...}
+  \item{...}{...}
 }
 
 \details{
