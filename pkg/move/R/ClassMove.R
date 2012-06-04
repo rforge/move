@@ -1,16 +1,3 @@
-###Defining the class of the Move
-#setClass(Class = "Move",
-#         representation = representation (
-#           sdf = "SpatialPointsDataFrame",     
-#            animal = "character",   #animal name
-#            species = "character",
-#            #dateCreation = "POSIXct", #time stamp data creation ##use for the date POSIXct
-#            study = "character",
-#            citation = "character",
-#            license = "character",
-#            timesMissedFixes="POSIXct")
-#)
-
 setClassUnion(".OptionalPOSIXct", c("POSIXct","NULL"))
 
 setClass(Class = ".MoveGeneral",
@@ -39,7 +26,6 @@ setClass(Class = ".MoveTrack",contains=c("SpatialPointsDataFrame"),
 	       representation = representation(
 				   timestamps = "POSIXct"),
 	       prototype = prototype(
-           timesMissedFixes = NULL,
            timestamps = as.POSIXct(NA)),
       	 validity = function(object){
       			if(length(object@timestamps)!=nrow(object@coords))
@@ -50,11 +36,9 @@ setClass(Class = ".MoveTrack",contains=c("SpatialPointsDataFrame"),
 
 setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"),
 	       representation = representation (
-					  timesMissedFixes = ".OptionalPOSIXct",
-					  timestamps = "POSIXct"),
+					  timesMissedFixes = ".OptionalPOSIXct"),
 	       prototype = prototype(
-            timesMissedFixes = NULL,
-            timestamps = as.POSIXct(NA)),
+            timesMissedFixes = NULL),
 	       validity = function(object){
 		  	    if(any(object@timestamps!=sort(object@timestamps)))
 				      stop("The dataset includes unsorted time stamps")
@@ -124,14 +108,10 @@ setMethod(f="move",
             #if (any(.packages(all=T)=="rgdal")==FALSE){stop("You need the 'rgdl' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
             
             df <- data
-            df$timestamp <- time
-            #check for valid POSIXct timestamp
-            if (grepl("POSIXct", class(df$timestamp))[1]==FALSE) {stop("\n The timestamps need to be transformed to a POSIXct class.")} else {}
             df$location.long <- x
             df$location.lat <- y
-            
-            res <- new("Move")
-            res@timesMissedFixes <- df[(is.na(df$location.long)|is.na(df$location.lat)), "timestamp"] #save omitted NA timestamps
+            if(any(is.na(df$location.long))==TRUE) warning("There were NA locations detected.")
+            #res@timesMissedFixes <- df[(is.na(df$location.long)|is.na(df$location.lat)), "timestamp"] #save omitted NA timestamps
             df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ] #omitting NAsa
            
             tmp <- SpatialPointsDataFrame(
@@ -139,16 +119,9 @@ setMethod(f="move",
               data = df,#(df[names(df)[!names(df)%in%c("location.lat", "location.long")]]),
               proj4string = proj, 
               match.ID = TRUE)
-            
-            res@sdf <- tmp
-  
-            ###validity check for sorted time stamps
-            #if (any(df$timestamp!=sort(df$timestamp))){stop("\n Error:The data set includes unsorted time stamps")} else {}
-            ###validity check for double time stamps
-            #if (any(duplicated(df$timestamp))){stop("\n Error: the data set includes double time stamps")} else {}
-            ###validity check for double locations
-            #if (any(duplicated(as.numeric(coordinates(res@sdf))))){cat("\n WARNING: The data file includes double locations \n")} else {}
-            
+            res <- new("Move",
+                       tmp,
+                       timestamps=time)
             return(res)
           }
           )
@@ -163,35 +136,27 @@ setMethod(f="move",
 
             df <- x
             df$timestamp <-  as.POSIXct(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%S", tz="UTC")
+            df <- df[!(is.na(df$location_long)|is.na(df$location_lat)), ] #omitting NAsa
             #check for valid POSIXct timestamp
             if (grepl("POSIXct", class(df$timestamp))[1]==FALSE) {stop("\n The timestamps need to be transformed to a POSIXct class.")} else {}
 #            df$location.long <- x
 #            df$location.lat <- y
-            
-            res <- new("Move")
-            res@timesMissedFixes <- df[(is.na(df$location_long)|is.na(df$location_lat)), "timestamp"] #save omitted NA timestamps
-            df <- df[!(is.na(df$location_long)|is.na(df$location_lat)), ] #omitting NAsa
             
             tmp <- SpatialPointsDataFrame(
               coords = cbind(df$location_long, df$location_lat),
               data = df,#(df[names(df)[!names(df)%in%c("location.lat", "location.long")]]),
               proj4string = CRS("+proj=longlat +ellps=WGS84"), 
               match.ID = TRUE)
-
-            res@sdf <- tmp
+            
+            res <- new("Move",
+                       tmp)
+            
+            res@timesMissedFixes <- df[(is.na(df$location_long)|is.na(df$location_lat)), "timestamp"] #save omitted NA timestamps
             res@animal <- animal
             res@species <- ""
             res@study <- as.character(y$name)
             res@citation <- as.character(y$citation)
-            res@license <- as.character(y$license_terms)
-                        
-            ###validity check for sorted time stamps
-            #if (any(df$timestamp!=sort(df$timestamp))){stop("\n Error:The data set includes unsorted time stamps")} else {}
-            ###validity check for double time stamps
-            #if (any(duplicated(df$timestamp))){stop("\n Error: the data set includes double time stamps")} else {}
-            ###validity check for double locations
-            #if (any(duplicated(as.numeric(coordinates(res@sdf))))){cat("\n WARNING: The data file includes double locations \n")} else {}
-            
+            res@license <- as.character(y$license_terms)            
             return(res)
           })
 
@@ -304,7 +269,7 @@ setMethod("show", "Move", function(object){
             cat("***** Coordinates                   ***** \n")
             print(coordinates(object)[1:3, ])            
             cat("***** Spatial Data Frame data       ***** \n")
-            print(object@sdf@data[1:3, ])            
+            print(object@coords[1:3, ])            
             cat("***** End Spatial Data Frame data   ***** \n")
             cat("***** There were: \n", length(object@timesMissedFixes), "fixes omitted due to NA location \n")
             cat("***** The dataset is cited in this papers: \n")
@@ -317,6 +282,39 @@ setMethod("show", "Move", function(object){
 #    install.packages("adehabitat")
 #    install.packages("circular")
 #    install.packages("gpclib")
+
+setMethod(f = "spTransform", 
+         signature = c(x = ".MoveTrack", CRSobj = "missing"), 
+         function(x, center=FALSE, ...){
+           if (center==TRUE){
+             mid.range.lon <- (max(coordinates(x)[ ,1])+min(coordinates(x)[ ,1]))/2
+             mid.range.lat  <- (max(coordinates(x)[ ,2])+min(coordinates(x)[ ,2]))/2
+             crsexpr <- paste("+proj=aeqd +lon_0=",mid.range.lon," +lat_0=", mid.range.lat, sep="")
+           } else {
+             crsexpr <- "+proj=aeqd"
+           }
+           coordsnew <- spTransform.SpatialPointsDataFrame(x=x, CRSobj=CRS(crsexpr))
+           as(x, class(x))<- coordsnew
+           return(x)
+         }
+         )
+
+setMethod(f = "spTransform", 
+         signature = c(x = "Move", CRSobj = "character"), 
+         function(x, CRSobj, center=FALSE){
+           if (center==TRUE){
+             mid.range.lon <- (max(coordinates(x)[ ,1])+min(coordinates(x)[ ,1]))/2
+             mid.range.lat  <- (max(coordinates(x)[ ,2])+min(coordinates(x)[ ,2]))/2
+             crsexpr <- paste(CRSobj," +lon_0=",mid.range.lon," +lat_0=", mid.range.lat, sep="")
+           } else {
+             crsexpr <- CRSobj
+           }
+           
+           coordsnew <- spTransform.SpatialPointsDataFrame(x=x, CRSobj=CRS(crsexpr))
+           as(x, class(x))<- coordsnew
+           return(x)
+         }
+         )
 
 ### Summary of a Move object
 setGeneric("summary")

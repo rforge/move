@@ -80,12 +80,12 @@ setMethod(f="brownian.bridge.dyn",
 
 
 ###if neither a raster nor the dimSize is given, then the cell size is calculated by the defauled dimSize and the largest dimension
-setMethod(f="brownian.bridge.dyn", 
-          signature=c(object="Move",raster="missing", dimSize="missing",location.error="numeric"),
-          function(object, raster, dimSize, location.error,...){
-                   cat("Using default dimSize: ", dimSize, "\n")
-            return(brownian.bridge.dyn(object=object, dimSize=dimSize, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext,...))
-          })# i dont get this function Marco
+#setMethod(f="brownian.bridge.dyn", 
+#          signature=c(object="Move",raster="missing", dimSize="missing",location.error="numeric"),
+#          function(object, raster, dimSize, location.error,...){
+#                   cat("Using default dimSize: ", dimSize, "\n")
+#            return(brownian.bridge.dyn(object=object, dimSize=dimSize, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext,...))
+#          })# i dont get this function Marco
 
 
 #if there is no valid raster object, it should be calculated     
@@ -150,7 +150,7 @@ setMethod(f = "brownian.bridge.dyn",
               DBMvar.vec <- DBMvar@means              
             
             # Use 10 units (generally minutes) as default
-            if(is.null(time.step)){ 
+            if(is.null(time.step)==TRUE){ 
               time.step <- (min(time.lag[-length(time.lag)])/15)
             }
             
