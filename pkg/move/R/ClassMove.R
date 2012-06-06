@@ -277,100 +277,66 @@ setMethod(f = "plot",
             }
           }
           )
-
-setMethod(f = "plot",
-          signature = c(x="MoveStack"),
-          definition = function(x, google=FALSE, maptype="terrain", ...){
-            moveList <- split(test2)
-            plot(moveList[[1]], ...)
+# 
+# setMethod(f = "plot",
+#           signature = c(x="MoveStack"),
+#           definition = function(x, google=FALSE, maptype="terrain", ...){
+#             moveList <- split(test2)
+#             plot(moveList[[1]], ...)
 #             for (i in 2:length(moveList)){
 #               points(moveList[[i]], add=TRUE, ...)
 #               lines(moveList[[i]], add=TRUE, ...)
 #             }
-          }
-          )
-plot(test2)
+#           }
+#           )
+#plot(test2)
 
 ###Print function for a Move and MoveStack object
 setGeneric("print")
-setMethod("print", "MoveStack", function(x){
-              cat("class of obj:",class(x),"\n")
-              if (exists("study.name",x@idData)==TRUE){
-                cat("study name  :",levels(x@idData$study.name),"\n")}
-              cat("n animals   :",nlevels(unique(x@trackId)),"\n")
-              i <- 1
-            for (ID in unique(x@trackId)){
-              cat("\nanimal name :",as.character(ID),"\n")
-              if (exists("individual.taxon.canonical.name", where=x@idData)==TRUE){
-                cat("species     :",as.character(x@idData$individual.taxon.canonical.name)[i],"\n")}
-              print(as(x[x@trackId==ID,],"SpatialPointsDataFrame"))
-              cat("timestamps  :",paste(range(x@timestamps[x@trackId==ID]), collapse=", ")," (start, end) \n")
-              if (exists("sensor.type", where=x@idData)==TRUE){
-                sensors <- levels(unique(x@idData$sensor.type))
-                if (length(sensors)==1) {
-                  sensor <- rep(sensors, times = length(unique(x@trackId)))
-                  cat("sensor type :",sensor[i],"\n")}} else{}
-              i <- i+1
-              }
+setMethod("print",".MoveTrackStack",function(x){
+          callNextMethod(x)
+          if (exists("study.name",x@idData)==TRUE){
+            cat("study name  :",levels(x@idData$study.name),"\n")}
+          if (exists("individual.taxon.canonical.name", where=x@idData)==TRUE){
+            cat("species     :",as.character(unique(x@idData$individual.taxon.canonical.name)),"\n")}
+          cat("no. of indiv:",nlevels(x@trackId),"\n")
+          cat("indiv. ids  :",paste(levels(x@trackId),collapse=", "),"\n")
+          pp <- split(x@coords,x@trackId)
+          cat("no. of fixes:",unlist(lapply(pp,length)),"\n")
           }
           )
-setMethod("print",".MoveTrackStack",function(x){
-  callNextMethod(x)
-  cat("indiv. ids  :",x@trackId)
-  #time it takes
-  #as.numeric(as.difftime(unlist(lapply(a, as.numeric, "secs")),units="secs"), units="days")
-  #cat("asdf",paste(unlist(lapply(tapply(x@timestamps, x@trackId, range), diff)),collapse=" "),"\n")
-})
+
 setMethod("print","MoveStack",
           function(x){
             callNextMethod(x)
-              x <- x@idData
-              nc<-ncol(x)
-              maxnl <- 15
-              
-              if (nc > maxnl) {
-                x <- x[, 1:maxnl]
-              }
-              coln <- colnames(x)
-              if (nc > maxnl) {
-                coln <- c(coln[1:maxnl], '...')
-                
-              }
-              cat('indiv. attr.:', paste(coln, collapse=', '), '\n')
-              
-              nfact <- sapply(1:ncol(x), function(i) is.numeric(x[,i]))
-              if (sum(nfact) > 1) {
-                r <- apply(x[,which(nfact)], 2, range, na.rm=TRUE)
-                fc <- as.character(nfact)
-                fc[! nfact] <- '(f)'
-                maxv <- minv <- fc
-                minv[nfact] <- as.vector(r[1, ])
-                maxv[nfact] <- as.vector(r[2,])
-                if (nc > maxnl) {
-                  minv <- c(minv, '...')
-                  maxv <- c(maxv, '...')
-                }
-                cat('min values  :', paste(minv, collapse=', '), '\n')
-                cat('max values  :', paste(maxv, collapse=', '), '\n')
-              }
-                
-          })
+            if (exists("sensor.type", where=x@idData)==TRUE){
+              cat("sensor type :",levels(x@idData$sensor.type),"\n")}
+            maxItems <- 10  
+            items <- ncol(x@idData)
+            if (items > maxItems) { 
+              coln <- colnames(x@idData)
+              coln <- c(coln[1:maxItems], '...')
+            } else {coln <- colnames(x@idData)}
+              cat("indiv. attr.:", paste(coln, collapse=", "), "\n")
+          }
+          )
 
 setMethod("print",".MoveTrackSingle",
           function(x){
             callNextMethod(x)
-            if(x@timesMissedFixes)
-              cat("n. Missed   :", length(x@timesMissedFixes))
-          })
+            try(silent=TRUE, if(length(x@timesMissedFixes)>1)
+              cat("missed fixes:", length(x@timesMissedFixes)) )
+          }
+          )
+
 setMethod("print", ".MoveTrack", function(x){
-  
-#  print(as(x[x@trackId==ID,],"SpatialPointsDataFrame"))
-  callNextMethod(x)
-  cat("timestamps  :",paste(range(x@timestamps), collapse=", ")," (start, end) \n")
-  
-  
-}
-)
+         #print(as(x[x@trackId==ID,],"SpatialPointsDataFrame"))
+          callNextMethod(x)
+          timeRange <- range(x@timestamps)
+          cat("timestamps  :",paste(timeRange, collapse="..."),capture.output(round(difftime(timeRange[2],timeRange[1]))), " (start...end, duration) \n")  
+        }
+        )
+
 
 ### Show Method for the data object Move
 setMethod("show", "Move", function(object){
@@ -387,17 +353,17 @@ setMethod("show", "MoveStack", function(object){
 setGeneric("summary")
 setMethod("summary", "Move", function(object){
     
-    require(adehabitat)
-    require(circular)
-    require(gpclib)
+    require(adehabitat,quietly=T)
+    require(circular,quietly=T)
+    require(gpclib,quietly=T)
   
     track <- as.data.frame(coordinates(object))
     date <- object@timestamps
-    animalID <- as.data.frame(object@sdf@data$individual.local.identifier[1])
+    animalID <- as.data.frame(object@data$individual.local.identifier[1])
     names(animalID)  <- "animalID"
-    tagID  <- as.data.frame(object@sdf@data$tag.local.identifier[1])
+    tagID  <- as.data.frame(object@data$tag.local.identifier[1])
     names(tagID) <- "tagID" 
-    species <- object@sdf@data$individual.taxon.canonical.name # Marco why not use object@species here?
+    species <- object@species # Marco why not use object@species here?
     trackProj <- proj4string(object)    
     #check whether trac is in long/lat
     if (grepl("longlat",proj4string(object)) == FALSE) {stop("\n The projeciton of the coordinates needs to be \"longlat\". \n")}else{}
@@ -405,7 +371,7 @@ setMethod("summary", "Move", function(object){
     trackTraj <- as.ltraj(as.data.frame(coordinates(object)), date=date, id=animalID)
     
       
-      tempSpecies <- levels(object@sdf@data$individual.taxon.canonical.name)  #species name # Marco why not use object@species here?
+      tempSpecies <- object@species  #species name # Marco why not use object@species here?
       tempReloc <- nrow(track)    #number of relocations
       tempStart <- as.character(min(date)) #start date and time of tracking
       tempEnd <- as.character(max(date))  # end date and time of tracking
