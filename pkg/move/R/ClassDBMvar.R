@@ -1,20 +1,23 @@
 ###Defining the class of the Dynamic Brownian Motion Variance object
-require(sp)
-setClass(Class = "DBMvar",
-         representation = representation (
-           means      = "array", 
-           in.windows = "array",
-           interest   = "logical",
-           break.list = "ANY")
-         )
+#setClass(Class = "DBMvar",
+#         representation = representation (
+#           means      = "array", 
+#           in.windows = "array",
+#           interest   = "logical",
+#           break.list = "ANY")
+#         )
 
 setClass(Class = "dBMvariance",contains=".MoveTrackSingle",
 	 representation=representation(
+			window.size= "numeric",
+			margin     = "numeric",
            		means      = "numeric", 
            		in.windows = "numeric",
            		interest   = "logical",
            		break.list = "numeric"),
 	 prototype=prototype(
+			     window.size=numeric(),
+			     margin=numeric(),
 			     means=numeric(),
 			     in.windows=numeric(),
 			     interest=logical(),
@@ -23,6 +26,10 @@ setClass(Class = "dBMvariance",contains=".MoveTrackSingle",
 	 validity=function(object){
 		 if(length(unique(c(length(object@means), length(object@in.windows), length(object@interest), nrow(object@coords))))!=1)
 			 stop("Length does not match")
+		 if(length(object@margin)!=1)
+			 stop("Margin length not 1")
+		 if(length(object@window.size)!=1)
+			 stop("Window size length not 1")
 		 return(TRUE)
 	 }
 	 )
@@ -31,10 +38,10 @@ setClass(Class = "dBMvariance",contains=".MoveTrackSingle",
 
 ## Making dBMvar a generic funtion
 #if (!isGeneric("dBMvar")) {  
-setGeneric("dBMvar", function(BMvars, BMvar, n.locs, break.list) standardGeneric("dBMvar"))
+#setGeneric("dBMvar", function(BMvars, BMvar, n.locs, break.list) standardGeneric("dBMvar"))
 #} 
 #if (!isGeneric("brownian.motion.variance.dyn")) {
-  setGeneric("brownian.motion.variance.dyn", function(object, location.error, window.size, margin){standardGeneric("brownian.motion.variance.dyn")})
+setGeneric("brownian.motion.variance.dyn", function(object, location.error, window.size, margin){standardGeneric("brownian.motion.variance.dyn")})
 #}
 
 setMethod(f= "brownian.motion.variance.dyn",
@@ -121,14 +128,14 @@ setMethod(f= "brownian.motion.variance.dyn",
 		    tmp<-aggregate(BMvar~loc,data=BMvars, function(x){ c(mean=mean(x), length=length(x))})
 	    DBMvar<-new("dBMvariance",
 			as(object,".MoveTrackSingle"),
-           		means      = c(rep(NA, min(tmp$loc)-1),tmp$BMvar.mean,rep(NA, n.locs(object)-max(tmp$loc))), 
-           		in.windows = c(rep(NA, min(tmp$loc)-1),tmp$BMvar.length,rep(NA, n.locs(object)-max(tmp$loc))),
-           		interest   =c(rep(FALSE, min(tmp$loc)-1),tmp$BMvar.length==max(tmp$BMvar.length),rep(FALSE, n.locs(object)-max(tmp$loc))) ,
+			margin=margin,
+			window.size=window.size,
+           		means      = c(rep(NA, min(tmp$loc)-1),tmp$BMvar[,"mean"],rep(NA, n.locs(object)-max(tmp$loc))), 
+           		in.windows = c(rep(NA, min(tmp$loc)-1),tmp$BMvar[,"length"],rep(NA, n.locs(object)-max(tmp$loc))),
+           		interest   =c(rep(FALSE, min(tmp$loc)-1),tmp$BMvar[,"length"]==max(tmp$BMvar[,"length"]),rep(FALSE, n.locs(object)-max(tmp$loc))) ,
            		break.list = breaks.found
 		)
-	    browser()
             
-#            DBMvar <- dBMvar(BMvars=BMvars,  n.locs=n.locs(object), break.list=breaks.found) 
             
        #     i <- DBMvar@interest
        #     if((sum(i)%%2)==0){    # if even one more location can be included in bb calculations
@@ -138,17 +145,17 @@ setMethod(f= "brownian.motion.variance.dyn",
   }
 )
 ## Defining the funcitoin dBMvar
-setMethod(f="dBMvar", 
-          signature = c(BMvars = "data.frame", BMvar ="list", n.locs = "numeric", break.list = "ANY"), 
-          definition = function(BMvars, BMvar, n.locs, break.list){
-            res <- new(Class="DBMvar")
-            res@means <- tapply(BMvars$BMvar, BMvars$loc, "mean")
-            res@in.windows <- tapply(BMvars$BMvar, BMvars$loc, "length")
-            res@interest <- 1:n.locs %in% as.numeric(names(res@in.windows[res@in.windows == max(res@in.windows)]))
-            res@break.list <- break.list
-            return(res)
-            }
-          )
+#setMethod(f="dBMvar", 
+#          signature = c(BMvars = "data.frame", BMvar ="list", n.locs = "numeric", break.list = "ANY"), 
+#          definition = function(BMvars, BMvar, n.locs, break.list){
+#            res <- new(Class="DBMvar")
+#            res@means <- tapply(BMvars$BMvar, BMvars$loc, "mean")
+#            res@in.windows <- tapply(BMvars$BMvar, BMvars$loc, "length")
+#            res@interest <- 1:n.locs %in% as.numeric(names(res@in.windows[res@in.windows == max(res@in.windows)]))
+#            res@break.list <- break.list
+#            return(res)
+#            }
+#          )
 
 
 

@@ -12,7 +12,7 @@
 !
 
 ! ---------------------------------------------------------------------------
-subroutine DBBMM(nLocs, gridSize, timeDiff, tTotal, X, Y, BMvar, LocationError, gridX, gridY, timeStep, probability)
+subroutine dBBMM(nLocs, gridSize, timeDiff, tTotal, X, Y, BMvar, LocationError, gridX, gridY, timeStep, probability)
 !
 ! Brownian Bridge Movement Model (does not include motion variance)
 !

@@ -1,6 +1,7 @@
 #source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMoveStack.R")
 #source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMove.R")
 #source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassDBMvar.R")
+#	    brownian.bridge.dyn(spTransform(move("../inst/extdata/leroy.csv"), center=T), location.error=5, window.size=31)
 
 setClass(Class = ".UDStack", contains=c("RasterStack"), 
          representation = representation (
@@ -18,7 +19,7 @@ setClass(Class = ".UD", contains=c("RasterLayer"),
            method = as.character()
            ),
          validity = function (object){
-           if (sum(values(raster(object)))!=1) 
+           if (!isTRUE(all.equal(sum(values((object))),1))) 
 		stop("The used raster is not a UD (sum unequal to 1)")
            return(TRUE)
          }
@@ -27,13 +28,13 @@ setClass(Class = ".UD", contains=c("RasterLayer"),
 ###Defining the class of the Brownian Bridge Movement Model object
 setClass(Class = "DBBMMStack",contains=c(".UDStack"),
          representation = representation (
-           DBMvar= "DBMvar", 
+           DBMvar= "dBMvariance", 
            ext= "numeric" #storing the extent of the map
            )
-         )
+         )# this still needs a prototype and validity check i think Marco
 setClass(Class = "DBBMM",contains=c(".UD"),
          representation = representation (
-           DBMvar= "DBMvar", 
+           DBMvar= "dBMvariance", 
            ext= "numeric" #storing the extent of the map
            )
          )
@@ -41,20 +42,20 @@ setClass(Class = "DBBMM",contains=c(".UD"),
 
 ## Making dBBMM a generic funtion
 #if (!isGeneric("dBBMM")) {  
-  setGeneric("dBBMM", function(DBMvar, raster, ext) standardGeneric("dBBMM"))
+#  setGeneric("dBBMM", function(DBMvar, raster, ext) standardGeneric("dBBMM"))
   #}
 
 ## Defining the funcitoin dBBMM
-setMethod(f="dBBMM", 
-          signature=c(DBMvar="DBMvar", raster ="RasterLayer", ext="numeric"), 
-          definition = function(DBMvar, raster, ext){
-            res <- new(Class=".DBBMM")
-            res@DBMvar <- DBMvar
-            res@raster <- raster 
-            res@ext <- ext
-            return(res)
-            }
-          )
+#setMethod(f="dBBMM", 
+#          signature=c(DBMvar="DBMvar", raster ="RasterLayer", ext="numeric"), 
+#          definition = function(DBMvar, raster, ext){
+#            res <- new(Class=".DBBMM")
+#            res@DBMvar <- DBMvar
+#            res@raster <- raster 
+#            res@ext <- ext
+#            return(res)
+#            }
+#          )
 #testing:
 #bbmm <- doBBMM(BMvar=c(1,2), rasterX=2,rasterY=2,probability=2,track=data.frame(c(1:2),c(1:2)),dyn=T)
 
@@ -71,7 +72,6 @@ setMethod(f="dBBMM",
 setMethod(f="brownian.bridge.dyn", 
          signature=c(object="Move",raster="missing", dimSize="missing",location.error="numeric"),
          function(object, raster, dimSize, location.error,...){
-                  cat("Using default dimSize: ", dimSize, "\n")
            return(brownian.bridge.dyn(object=object, dimSize=dimSize, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext,...))
          }) #seems to be necessary
 
@@ -128,7 +128,6 @@ setMethod(f = "brownian.bridge.dyn",
             ncol <- ((xmax-xmin)/raster)
             ex <- extent(c(xmin,xmax,ymin,ymax))
             rst <- raster(ncols=ncol,nrows=nrow, crs=proj4string(object), ex)                            
-            print(rst)
             return(brownian.bridge.dyn(object=object, raster=rst, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext,...))
           }
 )
@@ -142,74 +141,66 @@ setMethod(f = "brownian.bridge.dyn",
             #check for aeqd projection of the coordinates
             if (grepl("aeqd",proj4string(object)) == FALSE) {stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")} else {}
             
-            x <- coordinates(object)[ ,1] #extracts the xy coordinates from the Move
-            y <- coordinates(object)[ ,2]
             time.lag <- time.lag(object)
-            n.locs <- n.locs(object)#nrow object would also work 
-            if(length(location.error) == 1){
-              location.error <- rep(x = location.error, times = n.locs)
-              } else{}
 
-              DBMvar <- brownian.motion.variance.dyn(object=object, location.error=location.error, margin=margin, window.size=window.size)##<<<<<<<<<<<<<<<
-              DBMvar.vec <- DBMvar@means              
+            if(length(location.error) == 1)
+              location.error <- rep(x = location.error, times = n.locs(object))
+
+            DBMvar <- brownian.motion.variance.dyn(object=object, location.error=location.error, margin=margin, window.size=window.size)##<<<<<<<<<<<<<<<
             
             # Use 10 units (generally minutes) as default
             if(is.null(time.step)==TRUE){ 
               time.step <- (min(time.lag[-length(time.lag)])/15)
             }
             
-            grid.size <- ncell(raster)
-            probability <- rep(0, grid.size)
             T.Total <- sum(time.lag[DBMvar@interest])
             
             interest <- (c(DBMvar@interest, 0)+c(0, DBMvar@interest))[1:length(DBMvar@interest)]!=0
-            compsize <- grid.size*(sum(time.lag[DBMvar@interest])/time.step)
+            compsize <- ncell(raster)*(sum(time.lag[DBMvar@interest])/time.step)
             print(paste("Computational size:", sprintf("%.1e", compsize)))
             if (compsize>500000000){
               cat("The calculation may take longer than 5 minutes. \n")
-              cat("If you don't want to proceed, abort the funciton now! \n")
+              cat("If you don't want to proceed, abort the function now! \n")
               cat("Process continues within 10 seconds. \n")
-              pb <- txtProgressBar(min = 0, max = 10, style = 1)
-              for(i in 1:10){
-                Sys.sleep(1)# Waiting 10s
+              pb <- txtProgressBar(min = 0, max = 100, style = 1)
+              for(i in 1:100){
+                Sys.sleep(.1)# Waiting 10s
                 setTxtProgressBar(pb, i)
               }
               close(pb)
             } else {}            
                         
-            ans <- .Fortran("DBBMM",
-                            as.integer(1+sum(DBMvar@interest)), 
-                            as.integer(grid.size), 
-                            as.double(c(time.lag[DBMvar@interest],0)), 
-                            as.double(T.Total), 
-                            as.double(x[interest]), 
-                            as.double(y[interest]), 
-                            as.double(c(DBMvar.vec[DBMvar@in.windows==max(DBMvar@in.windows)],0)), 
+            ans <- .Fortran("dBBMM",
+                            as.integer(1+sum(DBMvar@interest)), #n.locs
+                            as.integer(ncell(raster)), #gridSize
+                            as.double(c(time.lag[DBMvar@interest],0)), #timeDiff
+                            as.double(T.Total), #total time
+                            as.double(coordinates(object)[interest,1]), # x coordinates track
+                            as.double(coordinates(object)[interest,2]), # y coordinates track
+                            as.double(c(DBMvar@means[DBMvar@interest],0)), # variance estimates
                             as.double(location.error[interest]), 
-                            as.double(coordinates(raster)[ ,1]), 
-                            as.double(coordinates(raster)[ ,2]),
+                            as.double(coordinates(raster)[,1]), # raster coordinates
+                            as.double(coordinates(raster)[,2]),
                             as.double(time.step), 
-                            as.double(probability))
+                            as.double(rep(0, ncell(raster))))# probability vector to be returned
             
-            #print("done with FORTRAN")
-            #cat("Probability: ", head(ans[[12]]), "\n")
             raster <- setValues(raster, ans[[12]])
             
-            outerProbability <- outerProbability(raster=raster)
+            dBBMM <- new("DBBMM",
+			 DBMvar=DBMvar, 
+			 raster, 
+			 ext=ext)
+            outerProbability <- outerProbability(dBBMM)
             
-            if (is.na(outerProbability)) {
-              stop("The used extent is too large. Choose a smaller value for ext!")
+            if(is.na(outerProbability)){
+              stop("The used extent is too large. Choose a smaller value for ext!")# when did this occure Marco? # should we move these checks to the validity function of the dbbbmm object
             } else {
-              if (outerProbability > .05){
-                cat("outer probability: ", outerProbability, "\n")
-                warning("The used extent is too small. Choose an extent which includes more of the probabilities.")
-              } else {}
+              if (outerProbability > .01){
+                warning("outer probability: ", outerProbability," The used extent is too small. Choose an extent which includes more of the probabilities.")
+              } 
             }
 
-            DBBMM <- dBBMM(DBMvar=DBMvar, raster=raster, ext=ext)
-          
-            print("DBBMM successfully created")
-            return(DBBMM)
+            return(dBBMM)
           }
 )
  
@@ -275,21 +266,21 @@ setMethod(f = "outerProbability",
 
 
 ###extract  raster from DBBMM
-setMethod(f="raster",
-          signature = "DBBMM",
-          definition = function(x){
-            return(x@raster)
-          }
-          )
-
-
-###extract projection from DBBMM
-setMethod(f = "proj4string",
-          signature = "DBBMM", 
-          definition = function(obj){
-            return(raster(obj)@crs@projargs)
-          }
-          )
+#setMethod(f="raster",
+#          signature = "DBBMM",
+#          definition = function(x){
+#            return(x@raster)
+#          }
+#          )
+#
+#
+####extract projection from DBBMM
+#setMethod(f = "proj4string",
+#          signature = "DBBMM", 
+#          definition = function(obj){
+#            return(raster(obj)@crs@projargs)
+#          }
+#          )
 
 ####################
 ## Plotting dbbmm ##
@@ -313,7 +304,7 @@ setGeneric("contour")
 setMethod(f = "contour",
           signature = c(x="DBBMM"), ## enter nlevel for the number of levels, or levels for the correct levels!!
           definition = function(x, y, add=F, plot=F, google=F, track=F, col="blue", lcol="brown", lwd=2, llwd=2, ...){
-            newRaster <- raster(x)            
+            newRaster <- (x)            
             rank <- (1:length(values(newRaster)))[rank(values(newRaster))]
             values(newRaster)<-1-cumsum(sort(values(newRaster)))[rank]
             
@@ -364,7 +355,7 @@ setGeneric("raster2contour", function(x, ...){standardGeneric("raster2contour")}
 setMethod(f = "raster2contour",
           signature = c(x=".UD"),
           definition = function(x, ...){
-            newRaster <- raster(x)
+            newRaster <- (x)
             
             rank <- (1:length(values(newRaster)))[rank(values(newRaster))]
             values(newRaster)<-1-cumsum(sort(values(newRaster)))[rank]
@@ -379,11 +370,11 @@ setGeneric("summary")
 setMethod(f = "summary",
           signature = c(object="DBBMM"),
           definition = function(object){
-            cat("Raster projection: ",object@raster@crs@projargs,"\n")
+            cat("Raster projection: ",object@crs@projargs,"\n")
             cat("Raster extent \n")
-            print(object@raster@extent)
-            cat("Raster maximum: ",maxValue(raster(object)),"\n")
-            cat("Raster minimum: ",minValue(raster(object)),"\n")
+            print(object@extent)
+            cat("Raster maximum: ",maxValue((object)),"\n")
+            cat("Raster minimum: ",minValue((object)),"\n")
           }
           )
 
