@@ -117,7 +117,7 @@ setMethod(f= "brownian.motion.variance.dyn",
                   }#breakWindow should now be the best possible break
                           
                   if(breakWindow$BIC<wholeWindow$BIC){# check if the break is better than any other, if so use those variance values
-                    windowBMvar <- c(rep(breakWindow$var.before, sum(breaks<breakWindow$b)), rep(breakWindow$var.after, sum(breaks>breakWindow$b)))# bart check >= is needed
+                    windowBMvar <- c(rep(breakWindow$var.before, sum(breaks<breakWindow$b)), rep(breakWindow$var.after, sum(breaks>breakWindow$b)))# bart description of why >
                     breaks.found <- c(breaks.found, (w-1+breakWindow$b))
                   } else{
                     windowBMvar <- rep(wholeWindow$BMvar, length(breaks)-1)
@@ -140,7 +140,7 @@ setMethod(f= "brownian.motion.variance.dyn",
        #     i <- DBMvar@interest
        #     if((sum(i)%%2)==0){    # if even one more location can be included in bb calculations
        #       i <- (c(DBMvar@interest,0)+c(0,DBMvar@interest))[1:length(DBMvar@interest)]!=0
-       #     }# this needs a fix Marco bart i is throwen away
+       #     }# have to see what to do with this bit of code bart
             return(DBMvar)
   }
 )
@@ -192,7 +192,7 @@ setMethod(f= "brownian.motion.variance.dyn",
 #			          	likelihood <- function(var, T.jump, alpha, loc.error.1, loc.error.2, ztz){   
 #			          		v <- T.jump*alpha*(1-alpha)*var + ((1-alpha)^2)*(loc.error.1^2) + (alpha^2)*(loc.error.2^2)
 #			          		l <- (1/(2*pi*v))*exp(-ztz/(2*v)) 
-#			          		return(-sum(log(l), na.rm=TRUE))# bart check na.rm=T
+#			          		return(-sum(log(l), na.rm=TRUE))
 #			          	}
 #			          	BMvar <- optimize(likelihood, lower=(l<-0), upper=(u<-1000000000000000), T.jump=T.jump, alpha=alpha, loc.error.1=loc.error.1, loc.error.2=loc.error.2, ztz=ztz)# implement checks if optimization worked
 #				  	if(BMvar$minimum %in% c(l,u))

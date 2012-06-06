@@ -56,17 +56,8 @@ setClass(Class = "DBBMM",contains=c(".UD"),
 #            return(res)
 #            }
 #          )
-#testing:
-#bbmm <- doBBMM(BMvar=c(1,2), rasterX=2,rasterY=2,probability=2,track=data.frame(c(1:2),c(1:2)),dyn=T)
 
-
-
-
-
-#if (!isGeneric("brownian.bridge.dyn")) {
-  setGeneric("brownian.bridge.dyn", function(object,raster=1,dimSize=10,location.error,margin=11, time.step=NULL, window.size=31, ext=0.25,...){standardGeneric("brownian.bridge.dyn")})
-#}
-
+setGeneric("brownian.bridge.dyn", function(object,raster=1,dimSize=10,location.error,margin=11, time.step=NULL, window.size=31, ext=0.25,...){standardGeneric("brownian.bridge.dyn")})
 
 ###if neither a raster nor the dimSize is given, then the cell size is calculated by the defauled dimSize and the largest dimension
 setMethod(f="brownian.bridge.dyn", 
@@ -86,7 +77,6 @@ setMethod(f="brownian.bridge.dyn",
 #             return(DBBMMStack)
 #           }) 
 
-
 ###if no raster object but a dimSize is given, the cell size of the raster is calculated with the number of cells given by the dimSize
 #NOTE: the dimSize is a raw estimate of number of cells of the highest range side. it is however not the final number of cells in that direction because when calculating the raster it is extended by the ext factor and there is rounding with ceiling also taking part. 
 setMethod(f="brownian.bridge.dyn", 
@@ -99,14 +89,13 @@ setMethod(f="brownian.bridge.dyn",
             
             #largest dimension divided by number of cells (=dimSize) gives cell.size (raster="numeric")
             if (xRange > yRange){
-              raster <- xRange/dimSize ##### why times two???
+              raster <- xRange/dimSize
             } else{
               raster <- yRange/dimSize
             }
             
             return(brownian.bridge.dyn(object=object, raster=raster, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, ext=ext,...))
           })
-
 
 #if there is no valid raster object, it should be calculated     
 #make a raster object and feed it (again) to the brownian.bridge.dyn function (now it will call the right function, because raster is now a raster object)   
@@ -132,7 +121,7 @@ setMethod(f = "brownian.bridge.dyn",
           }
 )
 
-
+# diff check timediff /timelag for unit errors bart
 
 setMethod(f = "brownian.bridge.dyn",
           signature = c(object=".MoveTrackSingle", raster="RasterLayer",dimSize="missing", location.error="numeric"),
@@ -146,16 +135,14 @@ setMethod(f = "brownian.bridge.dyn",
             if(length(location.error) == 1)
               location.error <- rep(x = location.error, times = n.locs(object))
 
-            DBMvar <- brownian.motion.variance.dyn(object=object, location.error=location.error, margin=margin, window.size=window.size)##<<<<<<<<<<<<<<<
+            DBMvar <- brownian.motion.variance.dyn(object=object, location.error=location.error, margin=margin, window.size=window.size)
             
-            # Use 10 units (generally minutes) as default
             if(is.null(time.step)==TRUE){ 
               time.step <- (min(time.lag[-length(time.lag)])/15)
             }
             
             T.Total <- sum(time.lag[DBMvar@interest])
-            
-            interest <- (c(DBMvar@interest, 0)+c(0, DBMvar@interest))[1:length(DBMvar@interest)]!=0
+
             compsize <- ncell(raster)*(sum(time.lag[DBMvar@interest])/time.step)
             print(paste("Computational size:", sprintf("%.1e", compsize)))
             if (compsize>500000000){
@@ -168,8 +155,10 @@ setMethod(f = "brownian.bridge.dyn",
                 setTxtProgressBar(pb, i)
               }
               close(pb)
-            } else {}            
+            }
                         
+            interest <- (c(DBMvar@interest, 0)+c(0, DBMvar@interest))[1:length(DBMvar@interest)]!=0
+
             ans <- .Fortran("dBBMM",
                             as.integer(1+sum(DBMvar@interest)), #n.locs
                             as.integer(ncell(raster)), #gridSize
@@ -188,6 +177,7 @@ setMethod(f = "brownian.bridge.dyn",
             
             dBBMM <- new("DBBMM",
 			 DBMvar=DBMvar, 
+			 method="Dynamic Brownian Bridge Movement Model",
 			 raster, 
 			 ext=ext)
             outerProbability <- outerProbability(dBBMM)
@@ -355,12 +345,9 @@ setGeneric("raster2contour", function(x, ...){standardGeneric("raster2contour")}
 setMethod(f = "raster2contour",
           signature = c(x=".UD"),
           definition = function(x, ...){
-            newRaster <- (x)
-            
-            rank <- (1:length(values(newRaster)))[rank(values(newRaster))]
-            values(newRaster)<-1-cumsum(sort(values(newRaster)))[rank]
-            
-            rasterToContour(newRaster, ...)
+            rank <- (1:length(values(x)))[rank(values(x))]
+            values(x)<-1-cumsum(sort(values(x)))[rank]
+            rasterToContour(x, ...)
           }
           )
 
@@ -373,8 +360,8 @@ setMethod(f = "summary",
             cat("Raster projection: ",object@crs@projargs,"\n")
             cat("Raster extent \n")
             print(object@extent)
-            cat("Raster maximum: ",maxValue((object)),"\n")
-            cat("Raster minimum: ",minValue((object)),"\n")
+            cat("Raster maximum: ",maxValue(object),"\n")
+            cat("Raster minimum: ",minValue(object),"\n")
           }
           )
 
