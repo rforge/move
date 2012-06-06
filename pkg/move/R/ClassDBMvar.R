@@ -13,11 +13,17 @@ setClass(Class = "dBMvariance",contains=".MoveTrackSingle",
            		means      = "numeric", 
            		in.windows = "numeric",
            		interest   = "logical",
-           		break.list = "ANY"),
+           		break.list = "numeric"),
 	 prototype=prototype(
-			     means=NULL
+			     means=numeric(),
+			     in.windows=numeric(),
+			     interest=logical(),
+			     break.list=numeric()
 			     ),
 	 validity=function(object){
+		 if(length(unique(c(length(object@means), length(object@in.windows), length(object@interest), nrow(object@coords))))!=1)
+			 stop("Length does not match")
+		 return(TRUE)
 	 }
 	 )
 
@@ -111,20 +117,23 @@ setMethod(f= "brownian.motion.variance.dyn",
 		  }
                   BMvars <- rbind(BMvars, data.frame(BMvar=windowBMvar, loc=w-1+margin:(window.size-margin)))
             }
-	    new("dBMvariance",
-			as(".MoveTrackSingle",object),
-           		means      = c(tapply(BMvars$BMvar, BMvars$loc, "mean")), 
-           		in.windows = c(tapply(BMvars$BMvar, BMvars$loc, "length")),
-           		interest   = ,
+
+		    tmp<-aggregate(BMvar~loc,data=BMvars, function(x){ c(mean=mean(x), length=length(x))})
+	    DBMvar<-new("dBMvariance",
+			as(object,".MoveTrackSingle"),
+           		means      = c(rep(NA, min(tmp$loc)-1),tmp$BMvar.mean,rep(NA, n.locs(object)-max(tmp$loc))), 
+           		in.windows = c(rep(NA, min(tmp$loc)-1),tmp$BMvar.length,rep(NA, n.locs(object)-max(tmp$loc))),
+           		interest   =c(rep(FALSE, min(tmp$loc)-1),tmp$BMvar.length==max(tmp$BMvar.length),rep(FALSE, n.locs(object)-max(tmp$loc))) ,
            		break.list = breaks.found
 		)
+	    browser()
             
 #            DBMvar <- dBMvar(BMvars=BMvars,  n.locs=n.locs(object), break.list=breaks.found) 
             
-            i <- DBMvar@interest
-            if((sum(i)%%2)==0){    # if even one more location can be included in bb calculations
-              i <- (c(DBMvar@interest,0)+c(0,DBMvar@interest))[1:length(DBMvar@interest)]!=0
-            }# this needs a fix Marco bart i is throwen away
+       #     i <- DBMvar@interest
+       #     if((sum(i)%%2)==0){    # if even one more location can be included in bb calculations
+       #       i <- (c(DBMvar@interest,0)+c(0,DBMvar@interest))[1:length(DBMvar@interest)]!=0
+       #     }# this needs a fix Marco bart i is throwen away
             return(DBMvar)
   }
 )
