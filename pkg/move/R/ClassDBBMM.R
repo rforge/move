@@ -1,3 +1,4 @@
+#source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMoveStack.R")
 #source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMove.R")
 #source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassDBMvar.R")
 
@@ -82,14 +83,14 @@ setMethod(f="brownian.bridge.dyn",
 #             for (i in length(object@idData$individual.local.identifier)){
 #               brownian.bridge.dyn()
 #             }
-#             return(dbbmmStack)
+#             return(DBBMMStack)
 #           }) 
 
 
 ###if no raster object but a dimSize is given, the cell size of the raster is calculated with the number of cells given by the dimSize
 #NOTE: the dimSize is a raw estimate of number of cells of the highest range side. it is however not the final number of cells in that direction because when calculating the raster it is extended by the ext factor and there is rounding with ceiling also taking part. 
 setMethod(f="brownian.bridge.dyn", 
-          signature=c(object="Move",raster="missing", dimSize="numeric",location.error="numeric"),
+          signature=c(object="SpatialPointsDataFrame",raster="missing", dimSize="numeric",location.error="numeric"),
           function(object, raster, dimSize, location.error, ...){
             
             Range <- .extcalc(obj = object, ext = ext)
@@ -110,7 +111,7 @@ setMethod(f="brownian.bridge.dyn",
 #if there is no valid raster object, it should be calculated     
 #make a raster object and feed it (again) to the brownian.bridge.dyn function (now it will call the right function, because raster is now a raster object)   
 setMethod(f = "brownian.bridge.dyn",
-          signature = c(object="Move",raster="numeric",dimSize="missing",location.error="numeric"),
+          signature = c(object="SpatialPointsDataFrame",raster="numeric",dimSize="missing",location.error="numeric"),
           definition = function(object,raster,dimSize,location.error,...){
            
             Range <- .extcalc(obj = object, ext = ext)
@@ -135,7 +136,7 @@ setMethod(f = "brownian.bridge.dyn",
 
 
 setMethod(f = "brownian.bridge.dyn",
-          signature = c(object="Move", raster="RasterLayer",dimSize="missing", location.error="numeric"),
+          signature = c(object=".MoveTrackSingle", raster="RasterLayer",dimSize="missing", location.error="numeric"),
           definition = function(object, raster, location.error, ...){
                         
             #check for aeqd projection of the coordinates
@@ -205,18 +206,41 @@ setMethod(f = "brownian.bridge.dyn",
               } else {}
             }
 
-            DBBMM <- dBBMM(DBMvar=DBMvar, raster=raster, ext=ext 
-                         )
+            DBBMM <- dBBMM(DBMvar=DBMvar, raster=raster, ext=ext)
           
             print("DBBMM successfully created")
             return(DBBMM)
           }
 )
  
-#calculating the extent
+###create a list of Move objects from a Move Stack (hand over additional arguments!)
+setMethod(f = "split",
+          signature = c(x="MoveStack", f="missing"),
+          definition = function(x, f, ...){
+            moveList <- list()
+           for (ID in unique(x@trackId)) {
+             moveObj <- new(Class="Move", 
+                           animal=ID,
+                           species=levels(x@idData$individual.taxon.canonical.name[x@trackId==ID]),
+                           timestamps=x@timestamps[x@trackId==ID],
+                           data=x@data[x@trackId==ID,],
+                           coords.nrs=x@coords.nrs,
+                           coords=x@coords[x@trackId==ID,],
+                           bbox=as.matrix(x@bbox),
+                           proj4string=x@proj4string,
+                           dateCreation=x@dateCreation,
+                           study=levels(x@idData$study.name[x@trackId==ID]),
+                           citation=x@citation)
+             moveList[[ID]]  <- moveObj
+             }
+           return(moveList)
+          }
+          )
+
+#calculating the extent ##works for Move and Movestack (both inherit SPDF)
 setGeneric(".extcalc", function(obj, ext) standardGeneric(".extcalc"))
 setMethod(f = ".extcalc", 
-          signature = c(obj="Move",ext="numeric"), 
+          signature = c(obj="SpatialPointsDataFrame",ext="numeric"), 
           definition = function(obj,ext){
             Range <- as.vector(c(obj@bbox[1,],obj@bbox[2,]))
             if(length(ext)==1) {

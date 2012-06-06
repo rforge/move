@@ -278,37 +278,109 @@ setMethod(f = "plot",
           }
           )
 
+setMethod(f = "plot",
+          signature = c(x="MoveStack"),
+          definition = function(x, google=FALSE, maptype="terrain", ...){
+            moveList <- split(test2)
+            plot(moveList[[1]], ...)
+#             for (i in 2:length(moveList)){
+#               points(moveList[[i]], add=TRUE, ...)
+#               lines(moveList[[i]], add=TRUE, ...)
+#             }
+          }
+          )
+plot(test2)
+
+###Print function for a Move and MoveStack object
+setGeneric("print")
+setMethod("print", "MoveStack", function(x){
+              cat("class of obj:",class(x),"\n")
+              if (exists("study.name",x@idData)==TRUE){
+                cat("study name  :",levels(x@idData$study.name),"\n")}
+              cat("n animals   :",nlevels(unique(x@trackId)),"\n")
+              i <- 1
+            for (ID in unique(x@trackId)){
+              cat("\nanimal name :",as.character(ID),"\n")
+              if (exists("individual.taxon.canonical.name", where=x@idData)==TRUE){
+                cat("species     :",as.character(x@idData$individual.taxon.canonical.name)[i],"\n")}
+              print(as(x[x@trackId==ID,],"SpatialPointsDataFrame"))
+              cat("timestamps  :",paste(range(x@timestamps[x@trackId==ID]), collapse=", ")," (start, end) \n")
+              if (exists("sensor.type", where=x@idData)==TRUE){
+                sensors <- levels(unique(x@idData$sensor.type))
+                if (length(sensors)==1) {
+                  sensor <- rep(sensors, times = length(unique(x@trackId)))
+                  cat("sensor type :",sensor[i],"\n")}} else{}
+              i <- i+1
+              }
+          }
+          )
+setMethod("print",".MoveTrackStack",function(x){
+  callNextMethod(x)
+  cat("indiv. ids  :",x@trackId)
+  #time it takes
+  #as.numeric(as.difftime(unlist(lapply(a, as.numeric, "secs")),units="secs"), units="days")
+  #cat("asdf",paste(unlist(lapply(tapply(x@timestamps, x@trackId, range), diff)),collapse=" "),"\n")
+})
+setMethod("print","MoveStack",
+          function(x){
+            callNextMethod(x)
+              x <- x@idData
+              nc<-ncol(x)
+              maxnl <- 15
+              
+              if (nc > maxnl) {
+                x <- x[, 1:maxnl]
+              }
+              coln <- colnames(x)
+              if (nc > maxnl) {
+                coln <- c(coln[1:maxnl], '...')
+                
+              }
+              cat('indiv. attr.:', paste(coln, collapse=', '), '\n')
+              
+              nfact <- sapply(1:ncol(x), function(i) is.numeric(x[,i]))
+              if (sum(nfact) > 1) {
+                r <- apply(x[,which(nfact)], 2, range, na.rm=TRUE)
+                fc <- as.character(nfact)
+                fc[! nfact] <- '(f)'
+                maxv <- minv <- fc
+                minv[nfact] <- as.vector(r[1, ])
+                maxv[nfact] <- as.vector(r[2,])
+                if (nc > maxnl) {
+                  minv <- c(minv, '...')
+                  maxv <- c(maxv, '...')
+                }
+                cat('min values  :', paste(minv, collapse=', '), '\n')
+                cat('max values  :', paste(maxv, collapse=', '), '\n')
+              }
+                
+          })
+
+setMethod("print",".MoveTrackSingle",
+          function(x){
+            callNextMethod(x)
+            if(x@timesMissedFixes)
+              cat("n. Missed   :", length(x@timesMissedFixes))
+          })
+setMethod("print", ".MoveTrack", function(x){
+  
+#  print(as(x[x@trackId==ID,],"SpatialPointsDataFrame"))
+  callNextMethod(x)
+  cat("timestamps  :",paste(range(x@timestamps), collapse=", ")," (start, end) \n")
+  
+  
+}
+)
 
 ### Show Method for the data object Move
 setMethod("show", "Move", function(object){
-            cat("******* Class Move, show method ******* \n")
-            Animal   <- object@animal
-            Species  <- object@species
-            Receiver <- object@data$sensor.type[1]
-            Proj     <- proj4string(object)
-            nPoints  <- nrow(object)
-            #DateCreation <- c(object@dateCreation)
-            Study   <- c(object@study)
-            df <- try(data.frame(Animal, Species, nPoints, Receiver, Study, check.rows=FALSE), silent=TRUE)
-            print(df)            
-            cat("***** Projection method             ***** \n")
-            print(Proj)            
-            cat("***** Coordinates                   ***** \n")
-            print(coordinates(object)[1:3, ])            
-            cat("***** Spatial Data Frame data       ***** \n")
-            print(object@coords[1:3, ])            
-            cat("***** End Spatial Data Frame data   ***** \n")
-            cat("***** There were: \n", length(object@timesMissedFixes), "fixes omitted due to NA location \n")
-            cat("***** The dataset is cited in this papers: \n")
-            cat(object@citation, "\n")
-            cat("***** Usage of the data underlies the following license \n")
-            cat(object@license, "\n")
-            cat("******* End show (Move) ******* \n") 
+            print(object)
             }
           )
-#    install.packages("adehabitat")
-#    install.packages("circular")
-#    install.packages("gpclib")
+setMethod("show", "MoveStack", function(object){
+            print(object)
+            }
+          )
 
 
 ### Summary of a Move object
