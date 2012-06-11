@@ -34,7 +34,7 @@ setClass(Class = ".MoveTrack",contains=c("SpatialPointsDataFrame"),
 	 	    }
 	      )
 
-setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"),
+setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no missed fixes stored for a MoveStack?
 	       representation = representation (
 					  timesMissedFixes = ".OptionalPOSIXct"),
 	       prototype = prototype(

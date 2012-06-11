@@ -88,16 +88,7 @@ setMethod(f="getMovebankStudies",
           })
 
 
-
 #names of the sensors
-  ######
-####  #### 
-####
- #####
-   #####
-     ####
-####  ####
-  ######
 setGeneric("getMovebankSensors", function(x, login) standardGeneric("getMovebankSensors"))
 setMethod(f="getMovebankSensors", 
           signature=c(x="ANY",login="missing"), 
@@ -267,17 +258,62 @@ setMethod(f="getMovebankData",
             definition = function(study, animalName, login, moveObject=T, ...){
             data <- getMovebankAnimals(study=study, login)
             attribs <- paste(collapse="%2C",getMovebankSensorsAttributes(study, login)$short_name)
-            ddd <- strsplit(as.character(data[data$animalName==animalName,]),split="\t")
-            data2 <- getMovebank("event", login, study_id=study, attributes=attribs, sensor_sensor_type_id=as.numeric(ddd[[4]][[1]]), individual_id=as.numeric(ddd[[1]][[1]]))
-            cat("##### FIRST FIVE LINES OF THE ANIMAL DATA #####\n") 
-            print(data2[1:5,])
-            if (moveObject==TRUE) {
-              studyDF <- getMovebankStudy(study, login)
-              trackDF <- data2
-              trackDF$sensor.type <- as.character(getMovebankSensors(,login)[getMovebankSensors(,login)$id==as.numeric(ddd[[4]][[1]]), "external_id"])
-              print(moveObject)
-              move <- move(x=trackDF, y=studyDF, animal=animalName)
-              return(move)
-            }
-            else{return(data2)}
+            
+            ###create a Move or download data from a single animal within the study
+            if(animalName!="all"){
+                  ddd <- data[data$animalName==animalName,]
+                  trackDF <- getMovebank("event", login, study_id=study, attributes=attribs, sensor_sensor_type_id=ddd$sensor_type_id, individual_id=ddd$animalID)
+                  if (moveObject==TRUE) {
+                    studyDF <- getMovebankStudy(study, login)
+                    sensor <- as.character(getMovebankSensors(,login)[getMovebankSensors(,login)$id==ddd$sensor_type_id, "external_id"])
+                    sensorDF <- data.frame(sensor)
+                    if (any(is.na(trackDF$location_long))|any(is.na(trackDF$location_lat))){
+                      trackDF <- trackDF[!(is.na(trackDF$location_long)|is.na(trackDF$location_lat)), ]
+                    }
+                    coords <- cbind(trackDF$location_long,trackDF$location_lat)
+                    timestamps <- as.POSIXct(strptime(as.character(trackDF$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")
+                    #timesMissedFixes  <- as.POSIXct(origin=0,tz="UTC")                
+                    spdf <- SpatialPointsDataFrame(
+                      coords = coords,
+                      data = data.frame(sensorDF[rep(1,length(trackDF$location_long)),]), 
+                      proj4string = CRS("+proj=longlat +ellps=WGS84"), # proj (function argument ) is not used here Marco
+                      match.ID = TRUE)
+                    moveG <- new(".MoveGeneral",
+                                 dateCreation=Sys.time(),
+                                 study=as.character(studyDF$name),
+                                 citation=as.character(studyDF$citation),
+                                 license=as.character(studyDF$license_terms))
+    #                 moveTS <- new(".MoveTrackSingle",
+    #                               timesMissedFixes=timesMissedFixes)
+                    moveT <- new(".MoveTrack",
+                                timestamps = timestamps,
+                                spdf)
+                    move <- new("Move",
+                                animal=animalName,
+                                species="species name",
+                                #spdf,#SPDF
+                                moveG, #.MoveGeneral
+                                #moveTS, #.MoveTrackSingle
+                                moveT) #.MoveTrack
+                  return(move)} else{return(trackDF)}
+                    cat("##### FIRST FIVE LINES OF THE ANIMAL DATA #####\n") 
+                    print(trackDF[1:5,])
+                    }
+            
+            ###create a MoveStack or download data from all animals within the study
+            if(animalName=="all"){
+                  trackDF <- list()
+                  for (row in 1:nrow(data)) {
+                    trackDF[[row]] <-  getMovebank("event", login, study_id=study, attributes=attribs, sensor_sensor_type_id=data$sensor_type_id[row], individual_id=data$animalID[row]) 
+                  }
+                  names(trackDF) <- data$animalName
+                  trackID  <- 
+                  if (moveObject==TRUE){
+                    #studyDF <- getMovebankStudy(study, login)
+                    #trackDF$sensor.type <- as.character(getMovebankSensors(,login)[getMovebankSensors(,login)$id==as.numeric(ddd[[4]][[1]]), "external_id"])
+                    #move  <- new("MoveStack",
+                                  #)
+                return(move)} else{return(trackDF)}
+                  }
+
             })
