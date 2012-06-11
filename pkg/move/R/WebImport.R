@@ -39,9 +39,10 @@ setMethod(f="getMovebank",
             url <- paste("https://www.movebank.org/movebank/service/direct-read?entity_type=",entity_type  ,sep="")
             if(length(tmp!=0))
               url <- paste(url, sep="&",paste(names(tmp),tmp, collapse="&", sep="="))
-            #    print(url)
+                print(url)
             web <- getURL(url, curl=login, verbose=F)
             data <- read.csv(textConnection(web))
+            #print(web)
             return(data)
           })
 
@@ -261,21 +262,22 @@ setMethod(f="getMovebankData",
             
             ###create a Move or download data from a single animal within the study
             if(animalName!="all"){
-                  ddd <- data[data$animalName==animalName,]
-                  trackDF <- getMovebank("event", login, study_id=study, attributes=attribs, sensor_sensor_type_id=ddd$sensor_type_id, individual_id=ddd$animalID)
+                  name <- data[data$animalName==animalName,]
+                  trackDF <- getMovebank("event", login, study_id=study, attributes=attribs, sensor_sensor_type_id=name$sensor_type_id, individual_id=name$animalID)
                   if (moveObject==TRUE) {
                     studyDF <- getMovebankStudy(study, login)
-                    sensor <- as.character(getMovebankSensors(,login)[getMovebankSensors(,login)$id==ddd$sensor_type_id, "external_id"])
-                    sensorDF <- data.frame(sensor)
-                    if (any(is.na(trackDF$location_long))|any(is.na(trackDF$location_lat))){
+                    sensor <- as.character(getMovebankSensors(,login)[getMovebankSensors(,login)$id==name$sensor_type_id, "external_id"])
+                    if (any(is.na(trackDF$location_long))|any(is.na(trackDF$location_lat))){   ##ommitt NA fixes
                       trackDF <- trackDF[!(is.na(trackDF$location_long)|is.na(trackDF$location_lat)), ]
                     }
                     coords <- cbind(trackDF$location_long,trackDF$location_lat)
                     timestamps <- as.POSIXct(strptime(as.character(trackDF$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")
+                    sensorDF <- data.frame(rep(sensor, times=nrow(trackDF)))
+                    names(sensorDF)  <- "sensor"
                     #timesMissedFixes  <- as.POSIXct(origin=0,tz="UTC")                
                     spdf <- SpatialPointsDataFrame(
                       coords = coords,
-                      data = data.frame(sensorDF[rep(1,length(trackDF$location_long)),]), 
+                      data = sensorDF, #data.frame(sensorDF[rep(1,dim(trackDF[animalName])),]), 
                       proj4string = CRS("+proj=longlat +ellps=WGS84"), # proj (function argument ) is not used here Marco
                       match.ID = TRUE)
                     moveG <- new(".MoveGeneral",
@@ -291,9 +293,8 @@ setMethod(f="getMovebankData",
                     move <- new("Move",
                                 animal=animalName,
                                 species="species name",
-                                #spdf,#SPDF
                                 moveG, #.MoveGeneral
-                                #moveTS, #.MoveTrackSingle
+                                #moveTS, #.MoveTrackSingle   ###we need to include this, yet the function does not work at the moment
                                 moveT) #.MoveTrack
                   return(move)} else{return(trackDF)}
                     cat("##### FIRST FIVE LINES OF THE ANIMAL DATA #####\n") 
@@ -302,17 +303,48 @@ setMethod(f="getMovebankData",
             
             ###create a MoveStack or download data from all animals within the study
             if(animalName=="all"){
-                  trackDF <- list()
-                  for (row in 1:nrow(data)) {
-                    trackDF[[row]] <-  getMovebank("event", login, study_id=study, attributes=attribs, sensor_sensor_type_id=data$sensor_type_id[row], individual_id=data$animalID[row]) 
-                  }
-                  names(trackDF) <- data$animalName
-                  trackID  <- 
+#                  names <- data[data$animalName,]
+                 #trackDF <- getMovebank("event", login, study_id=study, attributes=attribs, sensor_sensor_type_id=name$sensor_type_id)
+                 idData <- getMovebank("individual", login=login, study_id="123413")
+                 trackDF <- getMovebank("event", login=login, study_id="123413")
+                 trackDF <- merge(trackDF, idData[,c("id","local_identifier")],by.x="individual_id", by.y="id", all=TRUE)
+                 #
+#                   sensorLST <- list()
+#                   for (row in 1:nrow(data)) {
+#                     namesDF <-  getMovebank("event", login, study_id=study, attributes=attribs, sensor_sensor_type_id=data$sensor_type_id[row], individual_id=data$animalID[row]) 
+#                     sensorLST[[row]] <- rep(as.character(getMovebankSensors(,login)[getMovebankSensors(,login)$id==data$sensor_type_id[row], "external_id"]), nrow(trackLST[[row]]))
+#                   }
+                  #names(trackDF) <- data$animalName
+#                   trackID  <- as.character(data$animalName)
                   if (moveObject==TRUE){
-                    #studyDF <- getMovebankStudy(study, login)
+                    studyDF <- getMovebankStudy(study, login)
                     #trackDF$sensor.type <- as.character(getMovebankSensors(,login)[getMovebankSensors(,login)$id==as.numeric(ddd[[4]][[1]]), "external_id"])
-                    #move  <- new("MoveStack",
-                                  #)
+                    #sensorDF <- data.frame(rep(sensor, times=nrow(trackDF)))
+                    #names(sensorDF)  <- "sensor"
+                    
+                    spdf <- SpatialPointsDataFrame(
+                      coords = cbind(trackDF$location_long, trackDF$location_lat),
+                      data = data.frame(trackDF[names(trackDF)[!names(trackDF)%in%c("location_lat", "location_long","timestamp")]]), 
+                      proj4string = CRS("+proj=longlat +ellps=WGS84"), # proj is not used here
+                      match.ID = TRUE)
+                   DATA  <- data.frame(
+                      sensor.type = as.character(getMovebankSensors(study,login)[getMovebankSensors(,login)$id==data$sensor_type_id, "external_id"]),
+                      individual.taxon.canonical.name=rep("species",times=nrow(names)),
+                      tag.local.identifier=names$tag_id, #paste("#",names$tag_id,sep=""),
+                      individual.local.identifier=as.character(names$animalName),
+                      study.name=rep(as.character(studyDF$name),times=nrow(names)))
+                    
+#                    rownames(idData) <- idData$individual.local.identifier
+                    timestamps <- as.POSIXct(strptime(as.character(trackDF$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")
+                    
+                    move <- new("MoveStack", 
+                               spdf, 
+                               idData = idData,
+                               timestamps = timestamps, 
+                               trackId = as.factor(trackDF$individual_id) #individual.local.identifier
+                    )
+                    
+                    
                 return(move)} else{return(trackDF)}
                   }
 
