@@ -9,20 +9,20 @@
 
 setClass(Class = "dBMvariance",contains=".MoveTrackSingle",
 	 representation=representation(
-			window.size= "numeric",
-			margin     = "numeric",
-           		means      = "numeric", 
-           		in.windows = "numeric",
-           		interest   = "logical",
-           		break.list = "numeric"),
+     			window.size= "numeric",
+     			margin     = "numeric",
+      		means      = "numeric", 
+      		in.windows = "numeric",
+       		interest   = "logical",
+       		break.list = "numeric"),
 	 prototype=prototype(
-			     window.size=numeric(),
-			     margin=numeric(),
-			     means=numeric(),
-			     in.windows=numeric(),
-			     interest=logical(),
-			     break.list=numeric()
-			     ),
+			    window.size=numeric(),
+			    margin=numeric(),
+			    means=numeric(),
+			    in.windows=numeric(),
+			    interest=logical(),
+			    break.list=numeric()
+			    ),
 	 validity=function(object){
 		 if(length(unique(c(length(object@means), length(object@in.windows), length(object@interest), nrow(object@coords))))!=1)
 			 stop("Length does not match")

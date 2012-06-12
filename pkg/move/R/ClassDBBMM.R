@@ -8,7 +8,6 @@ setClass(Class = ".UDStack", contains=c("RasterStack"),
            method = "character"), 
          prototype = prototype(
            method = as.character()),
-         
          )
 
 setClass(Class = ".UD", contains=c("RasterLayer"), 
@@ -61,27 +60,41 @@ setGeneric("brownian.bridge.dyn", function(object,raster=1,dimSize=10,location.e
 
 ###if neither a raster nor the dimSize is given, then the cell size is calculated by the defauled dimSize and the largest dimension
 setMethod(f="brownian.bridge.dyn", 
-         signature=c(object="Move",raster="missing", dimSize="missing",location.error="numeric"),
-         function(object, raster, dimSize, location.error,...){
+          signature=c(object="Move",raster="missing", dimSize="missing",location.error="numeric"),
+          #signature=c(object="SpatialPointsDataFrame",raster="missing", dimSize="missing",location.error="numeric"),
+          function(object, raster, dimSize, location.error,...){
+           print("raster and dimSize missing")
            return(brownian.bridge.dyn(object=object, dimSize=dimSize, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext,...))
          }) #seems to be necessary
 
 ###do brownian.bridge.dyn for all individuals within a MoveStack
-# setMethod(f="brownian.bridge.dyn", 
-#           signature=c(object="MoveStack",raster="ANY", dimSize="ANY",location.error="numeric"),
-#           function(object, raster, dimSize, location.error,...){
-#             dbbmmStack <- data.frame()
-#             for (i in length(object@idData$individual.local.identifier)){
-#               brownian.bridge.dyn()
-#             }
-#             return(DBBMMStack)
-#           }) 
+setMethod(f="brownian.bridge.dyn", 
+          signature=c(object="MoveStack",raster="RasterLayer", dimSize="missing",location.error="numeric"),
+          function(object, raster, dimSize, location.error,...){
+            print("object MoveStack, raster RasterLayer")
+            #.extcalc already calculated the right raster extension for all tracks
+            #split MoveStack into individual Move objects
+            print(raster) ##to controll bbox
+            rm(dimSize)   ##is not needed anymore, because RasterLayer is already calculated
+            moveUnstacked <- split(object)
+            dbbmmLST  <- list()
+            for (i in 1:length(object@idData$individual.local.identifier)){
+              print(i)
+              dbbmm <- brownian.bridge.dyn(moveUnstacked[[i]], raster=raster,..., location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext)
+              dbbmmLST[[i]]  <- dbbmm
+             # print(length(dbbmmLST))
+            }
+            rasterStack <- stack(unlist(dbbmmLST))
+            #return(DBBMMStack)
+          }) 
+#PP <- brownian.bridge.dyn(testtest, dimSize=75, location.error=23, time.step=600, ext=.2)
 
 ###if no raster object but a dimSize is given, the cell size of the raster is calculated with the number of cells given by the dimSize
 #NOTE: the dimSize is a raw estimate of number of cells of the highest range side. it is however not the final number of cells in that direction because when calculating the raster it is extended by the ext factor and there is rounding with ceiling also taking part. 
 setMethod(f="brownian.bridge.dyn", 
           signature=c(object="SpatialPointsDataFrame",raster="missing", dimSize="numeric",location.error="numeric"),
           function(object, raster, dimSize, location.error, ...){
+            print("object SPDF, dimSize numeric")
             
             Range <- .extcalc(obj = object, ext = ext)
             yRange <- diff(Range[3:4])
@@ -93,6 +106,7 @@ setMethod(f="brownian.bridge.dyn",
             } else{
               raster <- yRange/dimSize
             }
+            print(raster)
             
             return(brownian.bridge.dyn(object=object, raster=raster, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, ext=ext,...))
           })
@@ -102,6 +116,7 @@ setMethod(f="brownian.bridge.dyn",
 setMethod(f = "brownian.bridge.dyn",
           signature = c(object="SpatialPointsDataFrame",raster="numeric",dimSize="missing",location.error="numeric"),
           definition = function(object,raster,dimSize,location.error,...){
+            print("object SPDF, raster numeric")
            
             Range <- .extcalc(obj = object, ext = ext)
             yRange <- diff(Range[3:4])
@@ -122,10 +137,10 @@ setMethod(f = "brownian.bridge.dyn",
 )
 
 # diff check timediff /timelag for unit errors bart
-
 setMethod(f = "brownian.bridge.dyn",
           signature = c(object=".MoveTrackSingle", raster="RasterLayer",dimSize="missing", location.error="numeric"),
           definition = function(object, raster, location.error, ...){
+            print("object MTS, raster=RasterLayer")
                         
             #check for aeqd projection of the coordinates
             if (grepl("aeqd",proj4string(object)) == FALSE) {stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")} else {}
@@ -198,6 +213,7 @@ setMethod(f = "brownian.bridge.dyn",
 setMethod(f = "split",
           signature = c(x="MoveStack", f="missing"),
           definition = function(x, f, ...){
+            print("splitting MoveStack")
             moveList <- list()
            for (ID in unique(x@trackId)) {
              moveObj <- new(Class="Move", 
