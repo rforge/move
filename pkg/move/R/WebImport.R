@@ -1,5 +1,6 @@
 ## Browsing Movebank data base
-
+ OS <- .Platform$OS.type
+if(OS=="unix"){
 setGeneric("movebankLogin", function(username, password,...) standardGeneric("movebankLogin"))
 setMethod(f="movebankLogin", 
           signature=c(username="character", password="character"), 
@@ -28,7 +29,12 @@ setMethod(f="movebankLogin",
             return(movebankLogin(username=user))
           })
 
-
+# study_id=123413&attributes=id%2Clocal_identifier%2Ctaxon_id&entity_type=individual
+# url <- "https://www.movebank.org/movebank/service/direct-read?id=19963&attributes=canonical_name&entity_type=taxon"
+# url <- "https://www.movebank.org/movebank/service/direct-read?study_id=123413&attributes=attributes=canonical_name&entity_type=taxon"
+# url <- "https://www.movebank.org/movebank/service/direct-read?entity_type=individual&study_id=123413&attributes=id%2Clocal_identifier%2Ctaxon_id"
+# url <- "https://www.movebank.org/movebank/service/direct-read?entity_type=individual&study_id=123413&attributes=id%2Clocal_identifier%2Ctaxon_id"
+# getURL(url, curl=login, verbose=F)
 
 ##construct URLs and download from Movebank
 setGeneric("getMovebank", function(entity_type, login,...) standardGeneric("getMovebank"))
@@ -342,3 +348,5 @@ setMethod(f="getMovebankData",
  
                 return(move)} else{return(trackDF)}
                 })
+
+}

@@ -1,5 +1,5 @@
 #importFrom("graphics", plot)
-exportClasses(Move, DBBMM)
+exportClasses(Move, DBBMM, MoveStack, DBBMMStack)
 exportMethods(move, n.locs, time.lag,  lines, summary, print, show, outerProbability,  brownian.bridge.dyn, plot, contour, getMovebankAnimals, getMovebankData, getMovebankID, getMovebankSensors, getMovebankSensorsAttributes, getMovebankStudies, getMovebankStudy, movebankLogin, searchMovebankStudies, emd, moveStack)
 useDynLib(move)
 

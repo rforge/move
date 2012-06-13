@@ -76,16 +76,24 @@ setMethod(f="brownian.bridge.dyn",
             #split MoveStack into individual Move objects
             print(raster) ##to controll bbox
             rm(dimSize)   ##is not needed anymore, because RasterLayer is already calculated
-            moveUnstacked <- split(object)
+            moveUnstacked <- split(x=object)
             dbbmmLST  <- list()
+            omitMove <- c()
+              print(window.size)
+              print(margin)
             for (i in 1:length(object@idData$individual.local.identifier)){
               print(i)
-              dbbmm <- brownian.bridge.dyn(moveUnstacked[[i]], raster=raster,..., location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext)
-              dbbmmLST[[i]]  <- dbbmm
-             # print(length(dbbmmLST))
+              if (nrow(moveUnstacked[[i]]@coords) > (window.size+margin)){
+                  dbbmm <- brownian.bridge.dyn(moveUnstacked[[i]], raster=raster,..., location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext)
+                  dbbmmLST[[i]]  <- dbbmm
+              } else {omitMove <- c(omitMove,i)} #remember which Move Objects were not processed
             }
+            if (length(omitMove)>0) cat("Move object",omitMove,"was/were omitted, because the number of coordinates is smaller than the window.size and margin you use.\n")      
             rasterStack <- stack(unlist(dbbmmLST))
-            #return(DBBMMStack)
+            
+            UDStack <- new(".UDStack", rasterStack, method="Dynamic_Brownian_Bridge_Movement_Model")
+            DBBMMStack <- new("DBBMMStack", UDStack)#, DBMvar=UDStack@)
+            return(DBBMMStack)
           }) 
 #PP <- brownian.bridge.dyn(testtest, dimSize=75, location.error=23, time.step=600, ext=.2)
 
@@ -210,9 +218,7 @@ setMethod(f = "brownian.bridge.dyn",
 )
  
 ###create a list of Move objects from a Move Stack (hand over additional arguments!)
-setMethod(f = "split",
-          signature = c(x="MoveStack", f="missing"),
-          definition = function(x, f, ...){
+setMethod(f = "split",signature = c(x="MoveStack", f="missing"),definition = function(x, f, ...){
             print("splitting MoveStack")
             moveList <- list()
            for (ID in unique(x@trackId)) {
