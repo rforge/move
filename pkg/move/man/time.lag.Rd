@@ -18,8 +18,10 @@
   \item{...}{further arguments}
 }
 
+\details{Optionally the argument units can be passed on to ensure the time lag in a certain unit. For more information on the units argument see the help of difftime.}
+
 \value{
-  The function returns time lags in minutes
+  The function returns numeric vector time lags.
 }
 
 \author{Marco Smolla}

@@ -53,7 +53,7 @@ setMethod(f= "brownian.motion.variance.dyn",
             # function to calculate brownian.motion.variance for a piece of track
             brownian.motion.variance <- function(time.lag, location.error, x, y){
               	#Creating NULL vectors to store data
-		n.locs<-unique(length(time.lag),length(location.error),length(x),length(y))
+		n.locs<-unique(c(length(time.lag),length(location.error),length(x),length(y)))
 	    	if(length(n.locs)!=1)
 			stop("Not an equal number of locations in call to brownian.motion.variance")
               	T.jump <- alpha <- ztz <- loc.error.1 <- loc.error.2 <- NULL
@@ -72,8 +72,10 @@ setMethod(f= "brownian.motion.variance.dyn",
               	#Likelihood function for Brownian Motion variance estimation
               	likelihood <- function(var, T.jump, alpha, loc.error.1, loc.error.2, ztz){   
               		v <- T.jump*alpha*(1-alpha)*var + ((1-alpha)^2)*(loc.error.1^2) + (alpha^2)*(loc.error.2^2)
-              		l <- (1/(2*pi*v))*exp(-ztz/(2*v)) 
-              		return(-sum(log(l), na.rm=TRUE))# bart check na.rm=T
+              		l <- log((1/(2*pi*v))*exp(-ztz/(2*v)) )
+			if(any(is.na(l)))
+				stop("Something weird occured contact bart")
+              		return(-sum((l)))# sum was using na.rm=T, but i want to know why probably has to do with not possible optimizations, now build in logical statement in line before
               	}
               	BMvar <- optimize(likelihood, lower=(l<-0), upper=(u<-1000000000000000), T.jump=T.jump, alpha=alpha, loc.error.1=loc.error.1, loc.error.2=loc.error.2, ztz=ztz)# implement checks if optimization worked
 	      	if(any(BMvar$minimum %in% c(l,u)))
@@ -117,7 +119,7 @@ setMethod(f= "brownian.motion.variance.dyn",
                   }#breakWindow should now be the best possible break
                           
                   if(breakWindow$BIC<wholeWindow$BIC){# check if the break is better than any other, if so use those variance values
-                    windowBMvar <- c(rep(breakWindow$var.before, sum(breaks<breakWindow$b)), rep(breakWindow$var.after, sum(breaks>breakWindow$b)))# bart description of why >
+                    windowBMvar <- c(rep(breakWindow$var.before, sum(breaks<breakWindow$b)), rep(breakWindow$var.after, sum(breaks>breakWindow$b)))# use > instead of >= because the sigma is going to be assosicated with the segments not the locations and there are one more locations than segments in the track
                     breaks.found <- c(breaks.found, (w-1+breakWindow$b))
                   } else{
                     windowBMvar <- rep(wholeWindow$BMvar, length(breaks)-1)
@@ -125,7 +127,7 @@ setMethod(f= "brownian.motion.variance.dyn",
                   BMvars <- rbind(BMvars, data.frame(BMvar=windowBMvar, loc=w-1+margin:(window.size-margin)))
             }
 
-		    tmp<-aggregate(BMvar~loc,data=BMvars, function(x){ c(mean=mean(x), length=length(x))})
+	    tmp<-aggregate(BMvar~loc,data=BMvars, function(x){ c(mean=mean(x), length=length(x))})
 	    DBMvar<-new("dBMvariance",
 			as(object,".MoveTrackSingle"),
 			margin=margin,
@@ -135,12 +137,6 @@ setMethod(f= "brownian.motion.variance.dyn",
            		interest   =c(rep(FALSE, min(tmp$loc)-1),tmp$BMvar[,"length"]==max(tmp$BMvar[,"length"]),rep(FALSE, n.locs(object)-max(tmp$loc))) ,
            		break.list = breaks.found
 		)
-            
-            
-       #     i <- DBMvar@interest
-       #     if((sum(i)%%2)==0){    # if even one more location can be included in bb calculations
-       #       i <- (c(DBMvar@interest,0)+c(0,DBMvar@interest))[1:length(DBMvar@interest)]!=0
-       #     }# have to see what to do with this bit of code bart
             return(DBMvar)
   }
 )

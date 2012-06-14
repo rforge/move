@@ -144,7 +144,6 @@ setMethod(f = "brownian.bridge.dyn",
           }
 )
 
-# diff check timediff /timelag for unit errors bart
 setMethod(f = "brownian.bridge.dyn",
           signature = c(object=".MoveTrackSingle", raster="RasterLayer",dimSize="missing", location.error="numeric"),
           definition = function(object, raster, location.error, ...){
@@ -153,7 +152,7 @@ setMethod(f = "brownian.bridge.dyn",
             #check for aeqd projection of the coordinates
             if (grepl("aeqd",proj4string(object)) == FALSE) {stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")} else {}
             
-            time.lag <- time.lag(object)
+            time.lag <- c(time.lag(object, units="mins"),0)
 
             if(length(location.error) == 1)
               location.error <- rep(x = location.error, times = n.locs(object))
