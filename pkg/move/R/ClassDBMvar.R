@@ -25,7 +25,7 @@ setClass(Class = "dBMvarianceTmp",
 			    break.list=numeric()
 			    ),
 	 validity=function(object){
-		 if(length(unique(c(length(object@means), length(object@in.windows), length(object@interest), nrow(object@coords))))!=1)
+		 if(length(unique(c(length(object@means), length(object@in.windows), length(object@interest))))!=1)
 			 stop("Length does not match")
 		 if(length(object@margin)!=1)
 			 stop("Margin length not 1")
@@ -35,8 +35,16 @@ setClass(Class = "dBMvarianceTmp",
 	 }
 	 )
 
-setClass(Class = "dBMvariance",contains=c(".MoveTrackSingle","dBMvarianceTmp"))
-setClass(Class = "dBMvarianceStack",contains=c(".MoveTrackStack","dBMvarianceTmp"))
+setClass(Class = "dBMvariance",contains=c(".MoveTrackSingle","dBMvarianceTmp"),validity=function(object){
+  if (length(object@means)!=nrow(object@coords))
+    stop("Number of coordinates does not match the number of means")
+  return(TRUE)
+})
+setClass(Class = "dBMvarianceStack",contains=c(".MoveTrackStack","dBMvarianceTmp"),validity=function(object){
+  if (length(object@means)!=nrow(object@coords))
+    stop("Number of coordinates does not match the number of means")
+  return(TRUE)
+})
 
 
 setGeneric(".extractDBMvar", function(object){standardGeneric(".extractDBMvar")})

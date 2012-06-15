@@ -81,6 +81,7 @@ setMethod(f="brownian.bridge.dyn",
             for (i in names(moveUnstacked)){
               print(i)
               if (nrow(moveUnstacked[[i]]@coords) > (window.size+margin)){
+            browser()
                   dbbmm <- brownian.bridge.dyn(moveUnstacked[[i]], raster=raster,..., location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext)
                   dbbmmLST[[i]]  <- dbbmm
               } else {omitMove <- c(omitMove,i)} #remember which Move Objects were not processed
@@ -90,7 +91,6 @@ setMethod(f="brownian.bridge.dyn",
             rasterStack <- stack(lapply(dbbmmLST, raster)) #now we only use the raster to stack; therefore we need to extract DBMvar and the ext from dbbmmLST to store it in DBBMMStack
             DBMvarLST <- unlist(lapply(dbbmmLST, .extractDBMvar))
             #extLST <- 
-            browser()
             UDStack <- new(".UDStack", rasterStack)#, method="Dynamic_Brownian_Bridge_Movement_Model")
             DBBMMStack <- new("DBBMMStack", UDStack, DBMvar=DBMvarLST)
             return(DBBMMStack)
