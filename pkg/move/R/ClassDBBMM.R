@@ -81,7 +81,7 @@ setMethod(f="brownian.bridge.dyn",
             for (i in names(moveUnstacked)){
               print(i)
               if (nrow(moveUnstacked[[i]]@coords) > (window.size+margin)){
-            browser()
+            #browser()
                   dbbmm <- brownian.bridge.dyn(moveUnstacked[[i]], raster=raster,..., location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext)
                   dbbmmLST[[i]]  <- dbbmm
               } else {omitMove <- c(omitMove,i)} #remember which Move Objects were not processed
@@ -97,10 +97,10 @@ setMethod(f="brownian.bridge.dyn",
           }) 
 # detach("package:move")
 # remove.packages("move")
-# require(move)
-# test2 <- moveStack(x="~/Documents/Programming/Rmove/BCI Ocelot.csv")
-# testtest <- spTransform(test2, center=TRUE,CRSobj="+proj=aeqd")
-# PP <- brownian.bridge.dyn(testtest, dimSize=75, location.error=23, time.step=600, ext=.2)
+require(move)
+test2 <- moveStack(x="~/Documents/Programming/Rmove/BCI Ocelot.csv")
+testtest <- spTransform(test2, center=TRUE,CRSobj="+proj=aeqd")
+PP <- brownian.bridge.dyn(testtest, dimSize=75, location.error=23, time.step=600, ext=.2)
 
 ###if no raster object but a dimSize is given, the cell size of the raster is calculated with the number of cells given by the dimSize
 #NOTE: the dimSize is a raw estimate of number of cells of the highest range side. it is however not the final number of cells in that direction because when calculating the raster it is extended by the ext factor and there is rounding with ceiling also taking part. 
@@ -393,4 +393,11 @@ setMethod(f = "summary",
             cat("Raster minimum: ",minValue(object),"\n")
           }
           )
+
+
+setGeneric(".extractDBMvar", function(object){standardGeneric(".extractDBMvar")})
+setMethod(f=".extractDBMvar", signature="DBBMM", definition=function(object){
+  return(object@DBMvar)
+})
+
 

@@ -47,11 +47,6 @@ setClass(Class = "dBMvarianceStack",contains=c(".MoveTrackStack","dBMvarianceTmp
 })
 
 
-setGeneric(".extractDBMvar", function(object){standardGeneric(".extractDBMvar")})
-setMethod(f=".extractDBMvar", signature="DBBMM", definition=function(object){
-return(object@DBMvar)
-})
-
 			     
 
 ## Making dBMvar a generic funtion
