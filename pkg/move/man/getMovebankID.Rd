@@ -1,7 +1,8 @@
 \name{getMovebankID}
 
 \alias{getMovebankID}
-\alias{getMovebankID-method}
+\alias{getMovebankID,character,CURLHandle-method}
+\alias{getMovebankID,character,missing-method}
 
 \docType{methods}
 

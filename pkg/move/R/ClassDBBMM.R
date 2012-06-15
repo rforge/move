@@ -26,7 +26,7 @@ setClass(Class = ".UD", contains=c("RasterLayer"),
 
 ###Defining the class of the Brownian Bridge Movement Model object
 setClass(Class = "DBBMMStack",contains=c(".UDStack"),
-         representation = representation (
+         representation = representation (#marco validity check check if names of lazers in raster stack match names of individuals in dBMvarstack
            DBMvar= "dBMvarianceStack", 
            ext= "numeric" #storing the extent of the map
            )
@@ -82,7 +82,7 @@ setMethod(f="brownian.bridge.dyn",
           signature=c(object="Move",raster="missing", dimSize="missing",location.error="numeric"),
           #signature=c(object="SpatialPointsDataFrame",raster="missing", dimSize="missing",location.error="numeric"),
           function(object, raster, dimSize, location.error,...){
-           print("raster and dimSize missing")
+#           print("raster and dimSize missing")
            return(brownian.bridge.dyn(object=object, dimSize=dimSize, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext,...))
          }) #seems to be necessary
 
@@ -93,30 +93,46 @@ setMethod(f="brownian.bridge.dyn",
             print("object MoveStack, raster RasterLayer")
             #.extcalc already calculated the right raster extension for all tracks
             rm(dimSize)   ##is not needed anymore, because RasterLayer is already calculated
-            #split MoveStack into individual Move objects
-            moveUnstacked <- split(x=object)
+            moveUnstacked <- split(x=object) #split MoveStack into individual Move objects
             dbbmmLST  <- list()
             omitMove <- c()
             for (i in names(moveUnstacked)){
-              print(i)
               if (nrow(moveUnstacked[[i]]@coords) > (window.size+margin)){
-            #browser()
-                  dbbmm <- brownian.bridge.dyn(moveUnstacked[[i]], raster=raster,..., location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext)
-                  dbbmmLST[[i]]  <- dbbmm
-              } else {omitMove <- c(omitMove,i)} #remember which Move Objects were not processed
+                dbbmmLST[[i]] <- brownian.bridge.dyn(moveUnstacked[[i]], raster=raster,..., location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext)
+        #          dbbmmLST[[i]]  <- dbbmm
+              } else {omitMove <- c(omitMove,i)} #store which Move Objects were not processed
             }
             if (length(omitMove)>0) warning("Move object",omitMove,"was/were omitted, because the number of coordinates is smaller than the window.size and margin you use.\n")      
 
 	    browser()
-            rasterStack <- do.call('stack',dbbmmLST)
+            #rasterStack <- do.call('stack',dbbmmLST)
+            rasterStack <- stack(lapply(dbbmmLST, as, 'RasterLayer'))
+            DBMvarLST <-(lapply(dbbmmLST, slot,'DBMvar'))
+            objectAnimalsOmitted<-object ....
+                dBMvarianceStack <- new("dBMvarianceStack", objectAnimalsOmitted,in.windows=unlist(lapply(DBMvarLST,slot,"in.windows")), means=unlist(lapply(DBMvarLST,slot,"means")), #bart
+                                        )
+                
+            DBBMMStack <- new("DBBMMStack",dBMvarianceStack, rasterStack)
             #rasterStack <- stack(lapply(dbbmmLST, as(dbbmmLST, Class="RasterLayer"))) #now we only use the raster to stack; therefore we need to extract DBMvar and the ext from dbbmmLST to store it in DBBMMStack
-            #DBMvarLST <- unlist(lapply(dbbmmLST, .extractDBMvar))
-             
             #UDStack <- new(".UDStack", rasterStack)#, method="Dynamic_Brownian_Bridge_Movement_Model")
             #DBBMMStack <- new("DBBMMStack", UDStack, DBMvar=DBMvarLST)
-            return(rasterStack)
+            #return(rasterStack)
             #return(dbbmmLST)
+            return(DBBMMStack)
           }) 
+
+setGeneric(".extractDBMvar", function(object){standardGeneric(".extractDBMvar")})
+setMethod(f=".extractDBMvar", signature="list", definition=function(object){  
+  new()
+    means <- unlist(lapply(DBMvarLST,slot,"means"))
+    in.windows <- c(in.windows, object[[i]]@DBMvar@in.windows)
+    interest <- c(interest, object[[i]]@DBMvar@interest)
+  
+  
+  return(dBMvarianceStack)  
+  })
+
+
 # detach("package:move")
 # remove.packages("move")
 # require(move)
@@ -270,8 +286,8 @@ setMethod(f = "split",
           )
 
 
-# setGeneric(".extractDBMvar", function(object){standardGeneric(".extractDBMvar")})
-# setMethod(f=".extractDBMvar", signature="DBBMM", definition=function(object){  return(object@DBMvar)  })
+setGeneric(".extractDBMvar", function(object){standardGeneric(".extractDBMvar")})
+setMethod(f=".extractDBMvar", signature="DBBMM", definition=function(object){  return(object@DBMvar)  })
 
 #calculating the extent ##works for Move and Movestack (both inherit SPDF)
 setGeneric(".extcalc", function(obj, ext) standardGeneric(".extcalc"))
