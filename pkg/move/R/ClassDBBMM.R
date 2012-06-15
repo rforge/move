@@ -7,7 +7,7 @@ setClass(Class = ".UDStack", contains=c("RasterStack"),
          representation = representation (
            method = "character"), 
          prototype = prototype(
-           method = as.character()),
+           method = as.character()),# needs validity check marco check if every layer sums to one see .UD
          )
 
 setClass(Class = ".UD", contains=c("RasterLayer"), 
@@ -27,7 +27,7 @@ setClass(Class = ".UD", contains=c("RasterLayer"),
 ###Defining the class of the Brownian Bridge Movement Model object
 setClass(Class = "DBBMMStack",contains=c(".UDStack"),
          representation = representation (
-           DBMvar= "dBMvariance", 
+           DBMvar= "dBMvarianceStack", 
            ext= "numeric" #storing the extent of the map
            )
          )# this still needs a prototype and validity check i think Marco
@@ -37,6 +37,7 @@ setClass(Class = "DBBMM",contains=c(".UD"),
            ext= "numeric" #storing the extent of the map
            )
          )
+
 
 
 ## Making dBBMM a generic funtion
@@ -57,7 +58,25 @@ setClass(Class = "DBBMM",contains=c(".UD"),
 #          )
 
 setGeneric("brownian.bridge.dyn", function(object,raster=1,dimSize=10,location.error,margin=11, time.step=NULL, window.size=31, ext=0.25,...){standardGeneric("brownian.bridge.dyn")})
-
+#setGeneric('stack2', function(x, ...){standardGeneric("stack2")})
+#setMethod("stack2", signature(x="DBBMM"), 
+#	  function(x,...)
+#	  {
+#		  browser()
+#t<-list(...)
+#		  x<-c(x, t)
+#		  rasterStack<-stack(lapply(x,as, "RasterLayer"))
+#		  dBMvarianceStack<-do.call("stack",lapply(x, .extractDBMvar))
+#		  new("DBBMMStack",dBMvarianceStack, rasterStack)
+#	  }
+#	  )
+#setMethod("stack", signature(x="dBMvariance"), 
+#	  function(x,...)
+#	  {
+#		  x<-c(x, list(...))
+#
+#	  }
+#	  )
 ###if neither a raster nor the dimSize is given, then the cell size is calculated by the defauled dimSize and the largest dimension
 setMethod(f="brownian.bridge.dyn", 
           signature=c(object="Move",raster="missing", dimSize="missing",location.error="numeric"),
@@ -87,7 +106,9 @@ setMethod(f="brownian.bridge.dyn",
               } else {omitMove <- c(omitMove,i)} #remember which Move Objects were not processed
             }
             if (length(omitMove)>0) warning("Move object",omitMove,"was/were omitted, because the number of coordinates is smaller than the window.size and margin you use.\n")      
-            rasterStack <- stack(dbbmmLST)
+
+	    browser()
+            rasterStack <- do.call('stack',dbbmmLST)
             #rasterStack <- stack(lapply(dbbmmLST, as(dbbmmLST, Class="RasterLayer"))) #now we only use the raster to stack; therefore we need to extract DBMvar and the ext from dbbmmLST to store it in DBBMMStack
             #DBMvarLST <- unlist(lapply(dbbmmLST, .extractDBMvar))
              
