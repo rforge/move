@@ -73,29 +73,34 @@ setMethod(f="brownian.bridge.dyn",
           function(object, raster, dimSize, location.error,...){
             print("object MoveStack, raster RasterLayer")
             #.extcalc already calculated the right raster extension for all tracks
-            #split MoveStack into individual Move objects
-            print(raster) ##to controll bbox
             rm(dimSize)   ##is not needed anymore, because RasterLayer is already calculated
+            #split MoveStack into individual Move objects
             moveUnstacked <- split(x=object)
             dbbmmLST  <- list()
             omitMove <- c()
-              print(window.size)
-              print(margin)
-            for (i in 1:length(object@idData$individual.local.identifier)){
+            for (i in names(moveUnstacked)){
               print(i)
               if (nrow(moveUnstacked[[i]]@coords) > (window.size+margin)){
                   dbbmm <- brownian.bridge.dyn(moveUnstacked[[i]], raster=raster,..., location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext)
                   dbbmmLST[[i]]  <- dbbmm
               } else {omitMove <- c(omitMove,i)} #remember which Move Objects were not processed
             }
-            if (length(omitMove)>0) cat("Move object",omitMove,"was/were omitted, because the number of coordinates is smaller than the window.size and margin you use.\n")      
-            rasterStack <- stack(unlist(dbbmmLST))
-            
-            UDStack <- new(".UDStack", rasterStack, method="Dynamic_Brownian_Bridge_Movement_Model")
-            DBBMMStack <- new("DBBMMStack", UDStack)#, DBMvar=UDStack@)
+            if (length(omitMove)>0) warning("Move object",omitMove,"was/were omitted, because the number of coordinates is smaller than the window.size and margin you use.\n")      
+            #rasterStack <- stack((dbbmmLST))
+            rasterStack <- stack(lapply(dbbmmLST, raster)) #now we only use the raster to stack; therefore we need to extract DBMvar and the ext from dbbmmLST to store it in DBBMMStack
+            DBMvarLST <- unlist(lapply(dbbmmLST, .extractDBMvar))
+            #extLST <- 
+            browser()
+            UDStack <- new(".UDStack", rasterStack)#, method="Dynamic_Brownian_Bridge_Movement_Model")
+            DBBMMStack <- new("DBBMMStack", UDStack, DBMvar=DBMvarLST)
             return(DBBMMStack)
           }) 
-#PP <- brownian.bridge.dyn(testtest, dimSize=75, location.error=23, time.step=600, ext=.2)
+# detach("package:move")
+# remove.packages("move")
+# require(move)
+# test2 <- moveStack(x="~/Documents/Programming/Rmove/BCI Ocelot.csv")
+# testtest <- spTransform(test2, center=TRUE,CRSobj="+proj=aeqd")
+# PP <- brownian.bridge.dyn(testtest, dimSize=75, location.error=23, time.step=600, ext=.2)
 
 ###if no raster object but a dimSize is given, the cell size of the raster is calculated with the number of cells given by the dimSize
 #NOTE: the dimSize is a raw estimate of number of cells of the highest range side. it is however not the final number of cells in that direction because when calculating the raster it is extended by the ext factor and there is rounding with ceiling also taking part. 
@@ -142,7 +147,7 @@ setMethod(f = "brownian.bridge.dyn",
             rst <- raster(ncols=ncol,nrows=nrow, crs=proj4string(object), ex)                            
             return(brownian.bridge.dyn(object=object, raster=rst, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext,...))
           }
-)
+          )
 
 setMethod(f = "brownian.bridge.dyn",
           signature = c(object=".MoveTrackSingle", raster="RasterLayer",dimSize="missing", location.error="numeric"),
@@ -214,10 +219,13 @@ setMethod(f = "brownian.bridge.dyn",
 
             return(dBBMM)
           }
-)
+          )
  
 ###create a list of Move objects from a Move Stack (hand over additional arguments!)
-setMethod(f = "split",signature = c(x="MoveStack", f="missing"),definition = function(x, f, ...){
+setGeneric("split") ##check whether this is necessary or screws up the original method marco
+setMethod(f = "split",
+          signature = c(x="MoveStack", f="missing"),
+          definition = function(x, f, ...){
             print("splitting MoveStack")
             moveList <- list()
            for (ID in unique(x@trackId)) {

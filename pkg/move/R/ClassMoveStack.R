@@ -24,11 +24,6 @@ setClass(Class = "MoveStack", contains = c(".MoveGeneral",".MoveTrackStack"),
     		}
         )
 
-setGeneric("citation", function(obj) standardGeneric("citation"))
-setMethod("citation", ".MoveGeneral", function(obj){
-            return(obj@citation)
-          }
-          )
 
 #setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))
 setGeneric("moveStack", function(x, y, time, data, proj, ...) standardGeneric("moveStack"))
@@ -65,6 +60,14 @@ setMethod(f="moveStack",
       		return(res)
       	  }
       	  )
+
+
+setGeneric("citation", function(obj) standardGeneric("citation"))
+setMethod("citation", ".MoveGeneral", function(obj){
+  return(obj@citation)
+}
+)
+
 ##Print function for a Move and MoveStack object
 setGeneric("print")
 setMethod("print",".MoveTrackStack",function(x){

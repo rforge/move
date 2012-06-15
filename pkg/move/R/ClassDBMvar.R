@@ -7,7 +7,8 @@
 #           break.list = "ANY")
 #         )
 
-setClass(Class = "dBMvariance",contains=".MoveTrackSingle",
+
+setClass(Class = "dBMvarianceTmp",
 	 representation=representation(
      			window.size= "numeric",
      			margin     = "numeric",
@@ -33,6 +34,15 @@ setClass(Class = "dBMvariance",contains=".MoveTrackSingle",
 		 return(TRUE)
 	 }
 	 )
+
+setClass(Class = "dBMvariance",contains=c(".MoveTrackSingle","dBMvarianceTmp"))
+setClass(Class = "dBMvarianceStack",contains=c(".MoveTrackStack","dBMvarianceTmp"))
+
+
+setGeneric(".extractDBMvar", function(object){standardGeneric(".extractDBMvar")})
+setMethod(f=".extractDBMvar", signature="DBBMM", definition=function(object){
+return(object@DBMvar)
+})
 
 			     
 
