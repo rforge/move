@@ -87,20 +87,21 @@ setMethod(f="brownian.bridge.dyn",
               } else {omitMove <- c(omitMove,i)} #remember which Move Objects were not processed
             }
             if (length(omitMove)>0) warning("Move object",omitMove,"was/were omitted, because the number of coordinates is smaller than the window.size and margin you use.\n")      
-            #rasterStack <- stack((dbbmmLST))
-            rasterStack <- stack(lapply(dbbmmLST, raster)) #now we only use the raster to stack; therefore we need to extract DBMvar and the ext from dbbmmLST to store it in DBBMMStack
-            DBMvarLST <- unlist(lapply(dbbmmLST, .extractDBMvar))
-            #extLST <- 
-            UDStack <- new(".UDStack", rasterStack)#, method="Dynamic_Brownian_Bridge_Movement_Model")
-            DBBMMStack <- new("DBBMMStack", UDStack, DBMvar=DBMvarLST)
-            return(DBBMMStack)
+            rasterStack <- stack(dbbmmLST)
+            #rasterStack <- stack(lapply(dbbmmLST, as(dbbmmLST, Class="RasterLayer"))) #now we only use the raster to stack; therefore we need to extract DBMvar and the ext from dbbmmLST to store it in DBBMMStack
+            #DBMvarLST <- unlist(lapply(dbbmmLST, .extractDBMvar))
+             
+            #UDStack <- new(".UDStack", rasterStack)#, method="Dynamic_Brownian_Bridge_Movement_Model")
+            #DBBMMStack <- new("DBBMMStack", UDStack, DBMvar=DBMvarLST)
+            return(rasterStack)
+            #return(dbbmmLST)
           }) 
 # detach("package:move")
 # remove.packages("move")
-# require(move)
-# test2 <- moveStack(x="~/Documents/Programming/Rmove/BCI Ocelot.csv")
-# testtest <- spTransform(test2, center=TRUE,CRSobj="+proj=aeqd")
-# PP <- brownian.bridge.dyn(testtest, dimSize=75, location.error=23, time.step=600, ext=.2)
+require(move)
+test2 <- moveStack(x="~/Documents/Programming/Rmove/BCI Ocelot.csv")
+testtest <- spTransform(test2, center=TRUE,CRSobj="+proj=aeqd")
+PP <- brownian.bridge.dyn(testtest, dimSize=20, location.error=23, time.step=600, ext=.2)
 
 ###if no raster object but a dimSize is given, the cell size of the raster is calculated with the number of cells given by the dimSize
 #NOTE: the dimSize is a raw estimate of number of cells of the highest range side. it is however not the final number of cells in that direction because when calculating the raster it is extended by the ext factor and there is rounding with ceiling also taking part. 
@@ -246,6 +247,10 @@ setMethod(f = "split",
            return(moveList)
           }
           )
+
+
+# setGeneric(".extractDBMvar", function(object){standardGeneric(".extractDBMvar")})
+# setMethod(f=".extractDBMvar", signature="DBBMM", definition=function(object){  return(object@DBMvar)  })
 
 #calculating the extent ##works for Move and Movestack (both inherit SPDF)
 setGeneric(".extcalc", function(obj, ext) standardGeneric(".extcalc"))
@@ -395,9 +400,5 @@ setMethod(f = "summary",
           )
 
 
-setGeneric(".extractDBMvar", function(object){standardGeneric(".extractDBMvar")})
-setMethod(f=".extractDBMvar", signature="DBBMM", definition=function(object){
-  return(object@DBMvar)
-})
 
 

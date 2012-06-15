@@ -46,6 +46,15 @@ setClass(Class = "dBMvarianceStack",contains=c(".MoveTrackStack","dBMvarianceTmp
   return(TRUE)
 })
 
+# ##create a DBBMMStack from a dbbmmLST
+# setGeneric(".dbbmmStack", function(object){standardGeneric(".dbbmmStack")})
+# setMethod(f= ".dbbmmStack",
+#           signature = "list",
+#           definition = function(object){
+#             ##RasterStack
+#             ##dBMvarianceStack
+#             #DBMvarLST <- unlist(lapply(dbbmmLST, .extractDBMvar))
+#           })
 
 			     
 
