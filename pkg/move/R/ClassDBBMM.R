@@ -98,10 +98,10 @@ setMethod(f="brownian.bridge.dyn",
           }) 
 # detach("package:move")
 # remove.packages("move")
-require(move)
-test2 <- moveStack(x="~/Documents/Programming/Rmove/BCI Ocelot.csv")
-testtest <- spTransform(test2, center=TRUE,CRSobj="+proj=aeqd")
-PP <- brownian.bridge.dyn(testtest, dimSize=20, location.error=23, time.step=600, ext=.2)
+# require(move)
+# test2 <- moveStack(x="~/Documents/Programming/Rmove/BCI Ocelot.csv")
+# testtest <- spTransform(test2, center=TRUE,CRSobj="+proj=aeqd")
+# PP <- brownian.bridge.dyn(testtest, dimSize=20, location.error=23, time.step=600, ext=.2)
 
 ###if no raster object but a dimSize is given, the cell size of the raster is calculated with the number of cells given by the dimSize
 #NOTE: the dimSize is a raw estimate of number of cells of the highest range side. it is however not the final number of cells in that direction because when calculating the raster it is extended by the ext factor and there is rounding with ceiling also taking part. 
