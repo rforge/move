@@ -102,22 +102,21 @@ setMethod(f="brownian.bridge.dyn",
         #          dbbmmLST[[i]]  <- dbbmm
               } else {omitMove <- c(omitMove,i)} #store which Move Objects were not processed
             }
-            if (length(omitMove)>0) warning("Move object",omitMove,"was/were omitted, because the number of coordinates is smaller than the window.size and margin you use.\n")      
+            if (length(omitMove)>0) 
+		    warning("Move object ",paste(omitMove,collapse=" ")," was/were omitted, because the number of coordinates is smaller than the window.size and margin you use.\n")      
 
-	    browser()
             #rasterStack <- do.call('stack',dbbmmLST)
             rasterStack <- stack(lapply(dbbmmLST, as, 'RasterLayer'))
             DBMvarLST <-(lapply(dbbmmLST, slot,'DBMvar'))
-            objectAnimalsOmitted<-object ....
-                dBMvarianceStack <- new("dBMvarianceStack", objectAnimalsOmitted,in.windows=unlist(lapply(DBMvarLST,slot,"in.windows")), means=unlist(lapply(DBMvarLST,slot,"means")), #bart
+            objectAnimalsOmitted<-object[as.character(object@trackId)%in%names(DBMvarLST)]
+            dBMvarianceStack <- new("dBMvarianceStack", objectAnimalsOmitted,
+				    in.windows=unlist(lapply(DBMvarLST,slot,"in.windows")), 
+				    interest=unlist(lapply(DBMvarLST,slot,"interest")), 
+				    means=unlist(lapply(DBMvarLST,slot,"means")), 
+				    margin=unique(unlist(lapply(DBMvarLST,slot,"margin"))), #bart break lst should still be inhereted here
+				    window.size=unique(unlist(lapply(DBMvarLST,slot,"window.size")))
                                         )
-                
-            DBBMMStack <- new("DBBMMStack",dBMvarianceStack, rasterStack)
-            #rasterStack <- stack(lapply(dbbmmLST, as(dbbmmLST, Class="RasterLayer"))) #now we only use the raster to stack; therefore we need to extract DBMvar and the ext from dbbmmLST to store it in DBBMMStack
-            #UDStack <- new(".UDStack", rasterStack)#, method="Dynamic_Brownian_Bridge_Movement_Model")
-            #DBBMMStack <- new("DBBMMStack", UDStack, DBMvar=DBMvarLST)
-            #return(rasterStack)
-            #return(dbbmmLST)
+            DBBMMStack <- new("DBBMMStack",DBMvar=dBMvarianceStack, rasterStack)
             return(DBBMMStack)
           }) 
 

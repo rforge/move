@@ -18,11 +18,19 @@ setClass(Class = "MoveStack", contains = c(".MoveGeneral",".MoveTrackStack"),
       	 validity = function(object){
     			if(length(unique(object@trackId))!=nrow(object@idData))
     				stop("Not same number of IDs and rows in dataframe per ID")
-    			if(any(sort(levels(object@trackId))!=sort(unique(rownames(object@idData)))))
-    				stop("No match between rownames in idData and ids along track")
+    			if(any(sort(as.character(unique(object@trackId)))!=sort(unique(rownames(object@idData)))))
+			{browser()
+				stop("No match between rownames in idData and ids along track")}
     			return(TRUE)
     		}
         )
+setMethod('[', signature(x="MoveStack"),definition=function(x,i,j,drop){
+	  new('MoveStack', as(x, "SpatialPointsDataFrame")[i,], 
+	      trackId=droplevels(x@trackId[i]),
+	      idData=x@idData[as.character(unique(x@trackId[i])),],
+	      timestamps=x@timestamps[i])})
+	      
+
 
 
 #setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))
