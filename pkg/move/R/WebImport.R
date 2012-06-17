@@ -96,65 +96,65 @@ setMethod(f="getMovebankStudies",
 
 
 #names of the sensors
-setGeneric("getMovebankSensors", function(x, login) standardGeneric("getMovebankSensors"))
+setGeneric("getMovebankSensors", function(study, login) standardGeneric("getMovebankSensors"))
 setMethod(f="getMovebankSensors", 
-          signature=c(x="ANY",login="missing"), 
-          definition = function(x,login){
+          signature=c(study="ANY",login="missing"), 
+          definition = function(study,login){
             login <- movebankLogin()
-              getMovebankSensors(x=x, login=login)
+              getMovebankSensors(study=study, login=login)
           })
 setMethod(f="getMovebankSensors", 
-          signature=c(x="missing",login="missing"), 
-          definition = function(x,login){
+          signature=c(study="missing",login="missing"), 
+          definition = function(study,login){
             login <- movebankLogin()
             getMovebankSensors(login=login)        
           })
 
 setMethod(f="getMovebankSensors", 
-          signature=c(x="missing",login="CURLHandle"), 
-          definition = function(x,login){
+          signature=c(study="missing",login="CURLHandle"), 
+          definition = function(study,login){
             data <- getMovebank("tag_type", login)
             cat("##### LIST OF ALL SENSOR TYPES IN MOVEBANK #####\n")
             return(data)
           })
 
 setMethod(f="getMovebankSensors", 
-         signature=c(x="numeric",login="CURLHandle"), 
-         definition = function(x,login){
-           data <- getMovebank("sensor", login, tag_study_id=x)
+         signature=c(study="numeric",login="CURLHandle"), 
+         definition = function(study,login){
+           data <- getMovebank("sensor", login, tag_study_id=study)
           return(data)
          })
 
 setMethod(f="getMovebankSensors", 
-          signature=c(x="character",login="CURLHandle"), 
-          definition = function(x,login){   
-            studyNUM  <- getMovebankID(x,login)
+          signature=c(study="character",login="CURLHandle"), 
+          definition = function(study,login){   
+            studyNUM  <- getMovebankID(study,login)
             return(getMovebankSensors(studyNUM, login))
          })
 
 
 
-setGeneric("getMovebankSensorsAttributes", function(x, login) standardGeneric("getMovebankSensorsAttributes"))
+setGeneric("getMovebankSensorsAttributes", function(study, login) standardGeneric("getMovebankSensorsAttributes"))
 setMethod(f="getMovebankSensorsAttributes", 
-          signature=c(x="numeric",login="CURLHandle"), 
-          definition = function(x,login){
-           data <- getMovebank("sensor", login, tag_study_id=x)
+          signature=c(study="numeric",login="CURLHandle"), 
+          definition = function(study,login){
+           data <- getMovebank("sensor", login, tag_study_id=study)
            studySensors <- unique(data$sensor_type_id)
-           data2 <- getMovebank("study_attribute", login, study_id=x, sensor_type_id=studySensors[1])
+           data2 <- getMovebank("study_attribute", login, study_id=study, sensor_type_id=studySensors[1])
            if(length(studySensors)>1){
             for (i in 2:length(studySensors)){ 
-              dataNew <- getMovebank("study_attribute", login, study_id=x, sensor_type_id=studySensors[i])
+              dataNew <- getMovebank("study_attribute", login, study_id=study, sensor_type_id=studySensors[i])
               data2<-merge(data2,dataNew)
             }
            }         
-          cat("##### ATTRIBUTES OF THE SENSORS IN STUDY ID: ",x," \n")
+          cat("##### ATTRIBUTES OF THE SENSORS IN STUDY ID: ",study," \n")
            return(data2)
           })
 
 setMethod(f="getMovebankSensorsAttributes", 
-          signature=c(x="character",login="CURLHandle"), 
-          definition = function(x,login){   
-            studyNUM  <- getMovebankID(x,login)
+          signature=c(study="character",login="CURLHandle"), 
+          definition = function(study,login){   
+            studyNUM  <- getMovebankID(study,login)
             return(getMovebankSensorsAttributes(studyNUM, login))
           })
             

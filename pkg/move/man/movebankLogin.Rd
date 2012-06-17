@@ -2,7 +2,10 @@
 
 \alias{movebankLogin}
 \alias{movebankLogin,character,character-method}
-
+\alias{movebankLogin,character,missing-method}
+\alias{movebankLogin,missing,character-method}
+\alias{movebankLogin,missing,missing-method}
+ 
 \docType{methods}
 
 \title{

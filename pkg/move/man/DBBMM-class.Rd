@@ -15,7 +15,7 @@ The DBBMM object is created within the brownian.bridge.dyn function from a Move 
 
 \section{Slots}{
   \describe{
-    \item{DBMvar}{Object of class \code{"DBMvar"}: includes the break.list and points of interest, ...; }
+    \item{DBMvar}{Object of class \code{"dBMvariance"}: includes the break.list and points of interest, ...; }
     \item{crs}{  }
     \item{ext}{the extension factor set by the user}
     \item{data}{  }
@@ -30,10 +30,7 @@ The DBBMM object is created within the brownian.bridge.dyn function from a Move 
     \item{rotated}{  }
     \item{rotation}{  }
     \item{title}{  }
-    \item{unit}{  }
     \item{z}{  }
-    \item{zname}{  }
-    \item{zvalue}{  }
   }
 }
 

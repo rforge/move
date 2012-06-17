@@ -1,23 +1,24 @@
-\name{getMovebanAnimals}
+\name{getMovebankAnimals}
 
-\alias{getMovebanAnimals}
-\alias{getMovebanAnimals,character,CURLHandle-method}
-\alias{getMovebanAnimals,numeric,CURLHandle-method}
-\alias{getMovebanAnimals,ANY,missing-method}
+\alias{getMovebankAnimals}
+\alias{getMovebankAnimals,character,CURLHandle-method}
+\alias{getMovebankAnimals,numeric,CURLHandle-method}
+\alias{getMovebankAnimals,ANY,missing-method}
 
 \docType{methods}
 
 \title{Which animals, tags and IDs are included in a specific study}
 
-\description{The coordinates method extracts the coordinates of the track within a Move object.}
+\description{Returns the animals, their tags and IDs from a study.}
 
 \usage{
-  getMovebanAnimals(x, login)
+  getMovebankAnimals(study, login, ...)
 }
 
 \arguments{
-  \item{x}{a character string (study name) or the numeric study ID as it is stored on Movebank}
+  \item{study}{a character string (study name) or the numeric study ID as it is stored on Movebank}
   \item{login}{...}
+  \item{...}{...}
 }
 
 \details{

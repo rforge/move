@@ -1,7 +1,11 @@
 \name{getMovebankData}
 
 \alias{getMovebankData}
-\alias{getMovebankData-method}
+\alias{getMovebankData,ANY,ANY,missing-method}
+\alias{getMovebankData,character,ANY,CURLHandle-method}
+\alias{getMovebankData,numeric,ANY,CURLHandle-method}
+\alias{getMovebankData,numeric,character,CURLHandle-method}
+\alias{getMovebankData,numeric,missing,CURLHandle-method}
 
 \docType{methods}
 

@@ -7,7 +7,11 @@ setClass(Class = ".UDStack", contains=c("RasterStack"),
          representation = representation (
            method = "character"), 
          prototype = prototype(
-           method = as.character()),# needs validity check marco check if every layer sums to one see .UD
+           method = as.character()),
+         validity = function(object){
+           if(!all(apply(values(object), MARGIN=2,FUN=function(X) isTRUE(all.equal(sum(X),1))))) 
+             stop("One or more of the used rasters are not a UD (sum is not equal to 1)")
+         }#check if every layer sums to 1
          )
 
 setClass(Class = ".UD", contains=c("RasterLayer"), 
@@ -26,57 +30,38 @@ setClass(Class = ".UD", contains=c("RasterLayer"),
 
 ###Defining the class of the Brownian Bridge Movement Model object
 setClass(Class = "DBBMMStack",contains=c(".UDStack"),
-         representation = representation (#marco validity check check if names of lazers in raster stack match names of individuals in dBMvarstack
-           DBMvar= "dBMvarianceStack", 
-           ext= "numeric" #storing the extent of the map
-           )
-         )# this still needs a prototype and validity check i think Marco
+         representation = representation (
+           DBMvar = "dBMvarianceStack", 
+           ext = "numeric"), #storing the extent of the map
+         prototype = prototype(
+           ext = as.numeric()),
+         validity = function (object){
+           if(!all(unique(object@DBMvar@trackId)==object@layernames))
+             stop("The layer names of the raster objects do not match the trackIDs of the DBMvarStack.")
+         }#check if names of layers in raster stack match names of individuals in dBMvarStack
+         )
+
 setClass(Class = "DBBMM",contains=c(".UD"),
          representation = representation (
-           DBMvar= "dBMvariance", 
-           ext= "numeric" #storing the extent of the map
-           )
+           DBMvar = "dBMvariance", 
+           ext = "numeric" #storing the extent of the map
+           ),
+         prototype = prototype(
+           ext = as.numeric())#,
+#          validity = function(object){           
+#            if(is.na(outerProbability(object))){#moved from brownian.bridge.dyn 
+#              stop("The used extent is too large. Choose a smaller value for ext!")# when did this occure Marco? 
+#            } else {
+#              if (outerProbability > .01){
+#                warning("outer probability: ", outerProbability," The used extent is too small. Choose an extent which includes more of the probabilities.")
+#              } 
+#            }           
+#          }
          )
 
 
-
-## Making dBBMM a generic funtion
-#if (!isGeneric("dBBMM")) {  
-#  setGeneric("dBBMM", function(DBMvar, raster, ext) standardGeneric("dBBMM"))
-  #}
-
-## Defining the funcitoin dBBMM
-#setMethod(f="dBBMM", 
-#          signature=c(DBMvar="DBMvar", raster ="RasterLayer", ext="numeric"), 
-#          definition = function(DBMvar, raster, ext){
-#            res <- new(Class=".DBBMM")
-#            res@DBMvar <- DBMvar
-#            res@raster <- raster 
-#            res@ext <- ext
-#            return(res)
-#            }
-#          )
-
 setGeneric("brownian.bridge.dyn", function(object,raster=1,dimSize=10,location.error,margin=11, time.step=NULL, window.size=31, ext=0.25,...){standardGeneric("brownian.bridge.dyn")})
-#setGeneric('stack2', function(x, ...){standardGeneric("stack2")})
-#setMethod("stack2", signature(x="DBBMM"), 
-#	  function(x,...)
-#	  {
-#		  browser()
-#t<-list(...)
-#		  x<-c(x, t)
-#		  rasterStack<-stack(lapply(x,as, "RasterLayer"))
-#		  dBMvarianceStack<-do.call("stack",lapply(x, .extractDBMvar))
-#		  new("DBBMMStack",dBMvarianceStack, rasterStack)
-#	  }
-#	  )
-#setMethod("stack", signature(x="dBMvariance"), 
-#	  function(x,...)
-#	  {
-#		  x<-c(x, list(...))
-#
-#	  }
-#	  )
+
 ###if neither a raster nor the dimSize is given, then the cell size is calculated by the defauled dimSize and the largest dimension
 setMethod(f="brownian.bridge.dyn", 
           signature=c(object="Move",raster="missing", dimSize="missing",location.error="numeric"),
@@ -85,51 +70,6 @@ setMethod(f="brownian.bridge.dyn",
 #           print("raster and dimSize missing")
            return(brownian.bridge.dyn(object=object, dimSize=dimSize, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext,...))
          }) #seems to be necessary
-
-###do brownian.bridge.dyn for all individuals within a MoveStack
-setMethod(f="brownian.bridge.dyn", 
-          signature=c(object="MoveStack",raster="RasterLayer", dimSize="missing",location.error="numeric"),
-          function(object, raster, dimSize, location.error,...){
-            print("object MoveStack, raster RasterLayer")
-            #.extcalc already calculated the right raster extension for all tracks
-            rm(dimSize)   ##is not needed anymore, because RasterLayer is already calculated
-            moveUnstacked <- split(x=object) #split MoveStack into individual Move objects
-            dbbmmLST  <- list()
-            omitMove <- c()
-            for (i in names(moveUnstacked)){
-              if (nrow(moveUnstacked[[i]]@coords) > (window.size+margin)){
-                dbbmmLST[[i]] <- brownian.bridge.dyn(moveUnstacked[[i]], raster=raster,..., location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext)
-        #          dbbmmLST[[i]]  <- dbbmm
-              } else {omitMove <- c(omitMove,i)} #store which Move Objects were not processed
-            }
-            if (length(omitMove)>0) 
-		    warning("Move object ",paste(omitMove,collapse=" ")," was/were omitted, because the number of coordinates is smaller than the window.size and margin you use.\n")      
-
-            #rasterStack <- do.call('stack',dbbmmLST)
-            rasterStack <- stack(lapply(dbbmmLST, as, 'RasterLayer'))
-            DBMvarLST <-(lapply(dbbmmLST, slot,'DBMvar'))
-            objectAnimalsOmitted<-object[as.character(object@trackId)%in%names(DBMvarLST)]
-            dBMvarianceStack <- new("dBMvarianceStack", objectAnimalsOmitted,
-				    in.windows=unlist(lapply(DBMvarLST,slot,"in.windows")), 
-				    interest=unlist(lapply(DBMvarLST,slot,"interest")), 
-				    means=unlist(lapply(DBMvarLST,slot,"means")), 
-				    margin=unique(unlist(lapply(DBMvarLST,slot,"margin"))), #bart break lst should still be inhereted here
-				    window.size=unique(unlist(lapply(DBMvarLST,slot,"window.size")))
-                                        )
-            DBBMMStack <- new("DBBMMStack",DBMvar=dBMvarianceStack, rasterStack)
-            return(DBBMMStack)
-          }) 
-
-setGeneric(".extractDBMvar", function(object){standardGeneric(".extractDBMvar")})
-setMethod(f=".extractDBMvar", signature="list", definition=function(object){  
-  new()
-    means <- unlist(lapply(DBMvarLST,slot,"means"))
-    in.windows <- c(in.windows, object[[i]]@DBMvar@in.windows)
-    interest <- c(interest, object[[i]]@DBMvar@interest)
-  
-  
-  return(dBMvarianceStack)  
-  })
 
 
 # detach("package:move")
@@ -144,7 +84,7 @@ setMethod(f=".extractDBMvar", signature="list", definition=function(object){
 setMethod(f="brownian.bridge.dyn", 
           signature=c(object="SpatialPointsDataFrame",raster="missing", dimSize="numeric",location.error="numeric"),
           function(object, raster, dimSize, location.error, ...){
-            print("object SPDF, dimSize numeric")
+            #print("object SPDF, dimSize numeric")
             
             Range <- .extcalc(obj = object, ext = ext)
             yRange <- diff(Range[3:4])
@@ -156,7 +96,7 @@ setMethod(f="brownian.bridge.dyn",
             } else{
               raster <- yRange/dimSize
             }
-            print(raster)
+            #print(raster)
             
             return(brownian.bridge.dyn(object=object, raster=raster, location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, ext=ext,...))
           })
@@ -166,7 +106,7 @@ setMethod(f="brownian.bridge.dyn",
 setMethod(f = "brownian.bridge.dyn",
           signature = c(object="SpatialPointsDataFrame",raster="numeric",dimSize="missing",location.error="numeric"),
           definition = function(object,raster,dimSize,location.error,...){
-            print("object SPDF, raster numeric")
+            #print("object SPDF, raster numeric")
            
             Range <- .extcalc(obj = object, ext = ext)
             yRange <- diff(Range[3:4])
@@ -189,7 +129,7 @@ setMethod(f = "brownian.bridge.dyn",
 setMethod(f = "brownian.bridge.dyn",
           signature = c(object=".MoveTrackSingle", raster="RasterLayer",dimSize="missing", location.error="numeric"),
           definition = function(object, raster, location.error, ...){
-            print("object MTS, raster=RasterLayer")
+            #print("object MTS, raster=RasterLayer")
                         
             #check for aeqd projection of the coordinates
             if (grepl("aeqd",proj4string(object)) == FALSE) {stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")} else {}
@@ -257,6 +197,40 @@ setMethod(f = "brownian.bridge.dyn",
             return(dBBMM)
           }
           )
+
+###do brownian.bridge.dyn for all individuals within a MoveStack
+setMethod(f="brownian.bridge.dyn", 
+          signature=c(object="MoveStack",raster="RasterLayer", dimSize="missing",location.error="numeric"),
+          function(object, raster, dimSize, location.error,...){
+            #print("object MoveStack, raster RasterLayer")
+            #.extcalc already calculated the right raster extension for all tracks
+            rm(dimSize)   ##is not needed anymore, because RasterLayer is already calculated
+            moveUnstacked <- split(x=object) #split MoveStack into individual Move objects
+            dbbmmLST  <- list()
+            omitMove <- c()
+            for (i in names(moveUnstacked)){
+              if (nrow(moveUnstacked[[i]]@coords) > (window.size+margin)){
+                dbbmmLST[[i]] <- brownian.bridge.dyn(moveUnstacked[[i]], raster=raster,..., location.error=location.error, margin=margin, time.step=time.step, window.size=window.size, var=var,ext=ext)
+                #          dbbmmLST[[i]]  <- dbbmm
+              } else {omitMove <- c(omitMove,i)} #store which Move Objects were not processed
+            }
+            if (length(omitMove)>0) 
+              warning("Move object ",paste(omitMove,collapse=" ")," was/were omitted, because the number of coordinates is smaller than the window.size and margin you use.\n")      
+            
+            #rasterStack <- do.call('stack',dbbmmLST)
+            rasterStack <- stack(lapply(dbbmmLST, as, 'RasterLayer'))
+            DBMvarLST <- lapply(dbbmmLST, slot,'DBMvar')
+            objectAnimalsOmitted <- object[as.character(object@trackId)%in%names(DBMvarLST)]
+            dBMvarianceStack <- new("dBMvarianceStack", objectAnimalsOmitted,
+                                    in.windows = unlist(lapply(DBMvarLST,slot,"in.windows")), 
+                                    interest = unlist(lapply(DBMvarLST,slot,"interest")), 
+                                    means = unlist(lapply(DBMvarLST,slot,"means")), 
+                                    margin = unique(unlist(lapply(DBMvarLST,slot,"margin"))), #bart break lst should still be inhereted here
+                                    window.size = unique(unlist(lapply(DBMvarLST,slot,"window.size")))
+            )
+            DBBMMStack <- new("DBBMMStack",DBMvar=dBMvarianceStack, rasterStack)
+            return(DBBMMStack)
+          })
  
 ###create a list of Move objects from a Move Stack (hand over additional arguments!)
 setGeneric("split") ##check whether this is necessary or screws up the original method marco
@@ -283,6 +257,18 @@ setMethod(f = "split",
            return(moveList)
           }
           )
+
+
+setGeneric(".extractDBMvar", function(object){standardGeneric(".extractDBMvar")})
+setMethod(f=".extractDBMvar", signature="list", definition=function(object){  
+  new()
+  means <- unlist(lapply(DBMvarLST,slot,"means"))
+  in.windows <- c(in.windows, object[[i]]@DBMvar@in.windows)
+  interest <- c(interest, object[[i]]@DBMvar@interest)
+  
+  
+  return(dBMvarianceStack)  
+})
 
 
 setGeneric(".extractDBMvar", function(object){standardGeneric(".extractDBMvar")})

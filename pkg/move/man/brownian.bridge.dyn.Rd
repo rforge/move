@@ -1,9 +1,12 @@
 \name{brownian.bridge.dyn}
 
 \alias{brownian.bridge.dyn}
-\alias{brownian.bridge.dyn,Move,RasterLayer,missing,numeric-method}
-\alias{brownian.bridge.dyn,Move,numeric,missing,numeric-method}
+\alias{brownian.bridge.dyn,.MoveTrackSingle,RasterLayer,missing,numeric-method}
+\alias{brownian.bridge.dyn,MoveStack,RasterLayer,missing,numeric-method}
 \alias{brownian.bridge.dyn,Move,missing,missing,numeric-method}
+\alias{brownian.bridge.dyn,SpatialPointsDataFrame,missing,numeric,numeric-method}
+\alias{brownian.bridge.dyn,SpatialPointsDataFrame,numeric,missing,numeric-method}
+\alias{brownian.bridge.dyn,Move,numeric,missing,numeric-method}
 \alias{brownian.bridge.dyn,Move,missing,numeric,numeric-method}
 
 \docType{methods}
