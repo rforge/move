@@ -180,10 +180,10 @@ setMethod(f = "brownian.bridge.dyn",
             raster <- setValues(raster, ans[[12]])
             
             dBBMM <- new("DBBMM",
-			 DBMvar=DBMvar, 
-			 method="Dynamic Brownian Bridge Movement Model",
-			 raster, 
-			 ext=ext)
+                  			 DBMvar = DBMvar, 
+                  			 method = "Dynamic Brownian Bridge Movement Model",
+                  			 raster, 
+                  			 ext = ext)
             outerProbability <- outerProbability(dBBMM)
             
             if(is.na(outerProbability)){
