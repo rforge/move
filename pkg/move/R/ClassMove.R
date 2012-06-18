@@ -51,7 +51,7 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no misse
 setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
        	 representation = representation (
       		 animal = "character",
-      		 species = "character"),
+      		 species = "character"),# marco maybe make something like id data instead of this rather specific implementation
       	 prototype = prototype(
            animal = as.character(),
       		 species = as.character()),
@@ -72,7 +72,7 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
 ### Defining the funcitoin move
 ##Reading from a .csv file
 setMethod(f = "move", 
-      	  signature = c(x="character"), 
+      	  signature = c(x="character"), # marco maybe also make these this fucntion work with files with multiple ids by combining moveStack and move functions all into move functions
       	  definition = function(x, proj){
       		#check wheter rgdal is installed
       		#if (!any(.packages(all=T)=="rgdal")){stop("You need the 'rgdal' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
@@ -210,19 +210,22 @@ setMethod(f = "spTransform",
             spTransform(x=x, center=center, CRSobj="+proj=aeqd")
           }
 )
-
 setMethod(f = "spTransform", 
           signature = c(x = ".MoveTrack", CRSobj = "character"), 
           function(x, CRSobj, center=FALSE){
-            if (center==TRUE){
+		  spTransform(x=x, CRSobj=CRS(CRSobj), center=center)
+	  })
+
+setMethod(f = "spTransform", 
+          signature = c(x = ".MoveTrack", CRSobj = "CRS"), 
+          function(x, CRSobj, center=FALSE){
+            if (center){
               mid.range.lon <- (max(coordinates(x)[ ,1])+min(coordinates(x)[ ,1]))/2
               mid.range.lat  <- (max(coordinates(x)[ ,2])+min(coordinates(x)[ ,2]))/2
-              crsexpr <- paste(CRSobj," +lon_0=",mid.range.lon," +lat_0=", mid.range.lat, sep="")
-            } else {
-              crsexpr <- CRSobj
-            }
+              CRSobj <- CRS(paste(as.character(CRSobj)," +lon_0=",mid.range.lon," +lat_0=", mid.range.lat, sep=""))
+            } 
             
-            coordsnew <- spTransform.SpatialPointsDataFrame(x=x, CRSobj=CRS(crsexpr))
+            coordsnew <- spTransform.SpatialPointsDataFrame(x=x, CRSobj=CRSobj)
             x <- new(class(x), coordsnew,x )
             return(x)
           }
@@ -264,7 +267,7 @@ setMethod("lines", "Move", function(x,add=FALSE,...){
 setGeneric("plot") ###is not working properly!! returns that google is not a graphic parameter
 setMethod(f = "plot", 
           signature = c(x="Move", y="missing"), 
-          function(x, google=FALSE, maptype="terrain",...){
+          function(x, google=FALSE, maptype="terrain",...){# marco seperate plot and google plot in two seperate functions
             if (google==FALSE){
               plot(coordinates(x), type="p", ...)#creates points
               lines(x, add=TRUE, ...)

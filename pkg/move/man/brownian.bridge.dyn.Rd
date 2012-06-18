@@ -55,7 +55,7 @@
 \references{
 	Kranstauber, B., Kays, R., LaPoint, S. D., Wikelski, M. and Safi, K. (2012), A dynamic Brownian bridge movement model to estimate utilization distributions for heterogeneous animal movement. Journal of Animal Ecology. doi: 10.1111/j.1365-2656.2012.01955.x
 }
-
+% marco why are these examples commented out ?
 \examples{
 ## create a move object
 #data <- move(system.file("extdata","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
