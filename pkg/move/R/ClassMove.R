@@ -64,6 +64,17 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
       	 }
       	 )
 
+setClass(Class= "MoveBurst", contains=c("Move"),
+		representation=representation(
+				bursts="factor"),
+		prototype=prototype(
+				bursts=factor())
+		valitidy=function(object){
+			if(length(object@bursts)!=length(object@timestamps))
+				stop("length of bursts does not match")
+			return(TRUE)})
+
+
 ## Making move a generic funtion
 #if (!isGeneric("move")) {
 	setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))
@@ -76,6 +87,8 @@ setMethod(f = "move",
       	  definition = function(x, proj){
       		#check wheter rgdal is installed
       		#if (!any(.packages(all=T)=="rgdal")){stop("You need the 'rgdal' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
+		  if(!file.exist(x))
+			  stop("x should be a file on disk but it cant be found")
       		df <- read.csv(x, header=TRUE, sep=",", dec=".")
       		#check whether data are really from movebank
       		if (!all(c("timestamp", "location.long",  "location.lat", "study.timezone", "study.local.timestamp", "sensor.type", "individual.local.identifier", "individual.taxon.canonical.name")%in%colnames(df)))
