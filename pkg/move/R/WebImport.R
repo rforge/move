@@ -274,8 +274,9 @@ setMethod(f="getMovebankData",
           signature=c(study="numeric",animalName="character", login="CURLHandle"),
           definition = function(study, animalName, login, moveObject=T, ...){
             #if(animalName!="all"){
-            name <- data[data$animalName==animalName,]
-            trackDF <- getMovebank("event", login, study_id=study, attributes=attribs, sensor_sensor_type_id=name$sensor_type_id, individual_id=name$animalID)
+            data <- getMovebankAnimals(study=study, login=login)
+            name <- data[data$animalName==animalName,] ### this doesnt work, where does data comes from? marco
+            trackDF <- getMovebank("event", login, study_id=study, sensor_sensor_type_id=name$sensor_type_id, individual_id=name$animalID)
             if (moveObject==TRUE) {
               studyDF <- getMovebankStudy(study, login)
               sensor <- as.character(getMovebankSensors(,login)[getMovebankSensors(,login)$id==name$sensor_type_id, "external_id"])
