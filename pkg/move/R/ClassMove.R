@@ -68,8 +68,8 @@ setClass(Class= "MoveBurst", contains=c("Move"),
 		representation=representation(
 				bursts="factor"),
 		prototype=prototype(
-				bursts=factor())
-		valitidy=function(object){
+				bursts=factor()),
+		validity=function(object){
 			if(length(object@bursts)!=length(object@timestamps))
 				stop("length of bursts does not match")
 			return(TRUE)})
