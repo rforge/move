@@ -270,7 +270,10 @@ setMethod(f = "spTransform",
 #          }          
 #          )
 #
-setGeneric("lines")
+
+
+###MARCO change all plot functions to plot, default is points and lines, user can also plot p or l OR add p and l for Move AND MoveStacks
+setGeneric("lines") ##need to be different -- 
 setMethod("lines", "Move", function(x,add=FALSE,...){
           if (add==FALSE) {plot(coordinates(x), type="l", ...)}
           else {lines(coordinates(x), type="l", ...)}
@@ -280,22 +283,35 @@ setMethod("lines", "Move", function(x,add=FALSE,...){
 setGeneric("plot") ###is not working properly!! returns that google is not a graphic parameter
 setMethod(f = "plot", 
           signature = c(x="Move", y="missing"), 
-          function(x, google=FALSE, maptype="terrain",...){# marco seperate plot and google plot in two seperate functions
+          function(x, google=FALSE, maptype="terrain",...){
             if (google==FALSE){
               plot(coordinates(x), type="p", ...)#creates points
               lines(x, add=TRUE, ...)
             } else {
               if (grepl("longlat",proj4string(x)) == FALSE) {stop("\n The projeciton of the coordinates needs to be \"longlat\" to be plotted on a google map. \n")} else {}
-              PlotOnStaticMap(MyMap=x,...)
+              googleplot(obj=x,...)
             }
           }
           )
 
-setMethod(f = "PlotOnStaticMap", 
-          signature = c(MyMap="Move"), 
-          function(MyMap, maptype="terrain",...){
+setMethod(f = "plot", ##bart marco find a more decent way to plot MoveStacks
+          signature = c(x="MoveStack", y="missing"), 
+          function(x, google=FALSE, maptype="terrain",...){
+            unstackedMove <- split(x)
+            indiv <- length(unique(x@trackId))
+            lines(unstackedMove[[1]], xlim=range(coordinates(x)[,1]), ylim=range(coordinates(x)[,2]) )
+            #test2@trackId <- factor(test2@trackId, labels=c(1:length(unique(test2@trackId))))
+            l <- split(as.data.frame(coordinates(test2)),cumsum(c(0,abs(diff(as.numeric(test2@trackId))))))
+            lapply(unstackedMove, FUN=lines, col=c(rgb(runif(indiv),runif(indiv),runif(indiv))), add=T, xlim=range(coordinates(x)[,1]), ylim=range(coordinates(x)[,2] ))            
+            ##there is no google implemented for MoveStacks marco
+          }
+          )
+
+setGeneric("googleplot", function(obj, ...){standardGeneric("googleplot")})
+setMethod(f = "googleplot", 
+          signature = c(obj="Move"), 
+          function(obj, maptype="terrain",...){
               require(RgoogleMaps)
-              obj <- MyMap
               lat <-coordinates(obj)[ ,2] 
               lon <- coordinates(obj)[ ,1]
               MyMap <- GetMap.bbox(lonR=range(coordinates(obj)[ ,1]), latR=range(coordinates(obj)[ ,2]), maptype=maptype)
@@ -508,3 +524,47 @@ setMethod("summary", "Move", function(object){
   cat("Omitted locations:  ", length(object@timesMissedFixes))
 }
 )
+
+#Find below the functions to plot a "centroid" point on the line of a certain line segment
+# require(move)
+# data <- read.csv("~/Downloads/beh_movebank.csv", header=T, sep=";", dec=".")
+# data <- data[order(time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC")),]
+# 
+# test <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"))
+# 
+# trackb <- new("MoveBurst", bursts=as.factor(data$id_line_beh), test)
+# 
+# l <- as.list(split(coordinates(trackb),cumsum(c(0,abs(diff(as.numeric(trackb@data$beh_code)))))))
+# 
+# lapply(X=l, FUN=lineMidpoint)
+# 
+# 
+# setGeneric("lineMidpoint", function(object){standardGeneric("lineMidpoint")})
+# setMethod(f = "lineMidpoint", 
+#           signature = "SpatialPoints",
+#           definition = function(object){
+#             #track <- SpatialPoints(coords=data.frame(c(1,2,3,4), c(1,2,1.8,1)),proj4string=CRS("+proj=longlat"))
+#             track <- coordinates(obj=object)
+#             dreck <- cbind(as.matrix(as.data.frame(track)[-nrow(track),]), as.matrix(as.data.frame(track)[-1,]))
+#             names(dreck) <- c("X1", "Y1", "X2", "Y2")
+#             
+#             seglength <- function(dreck)
+#             {
+#               spDistsN1(as.matrix(t(dreck[1:2])), as.matrix(t(dreck[3:4])), longlat=FALSE)
+#             }
+#             dists <- apply(dreck, 1, seglength)
+#             
+#             totalDist <- sum(dists)
+#             cumsum <- cumsum(dists)
+#             lcum <- list(cumsum)
+#             
+#             min <- which(cumsum(dists)>0.5*sum(dists))[1]
+#             prop <- (cumsum(dists)[min]-sum(dists)/2)/cumsum(dists)[min]
+#             mid <- (coordinates(track)[min+1,]-coordinates(track)[min,])*prop+coordinates(track)[min,]
+#             
+#             plot(coordinates(track))
+#             scalebar(d=10, lonlat=T)
+#             lines(coordinates(track))
+#             points(t(mid), pch=16, col="blue", cex=2)
+#             return(mid)
+#           })
