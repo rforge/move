@@ -87,7 +87,7 @@ setMethod(f = "move",
       	  definition = function(x, proj){
       		#check wheter rgdal is installed
       		#if (!any(.packages(all=T)=="rgdal")){stop("You need the 'rgdal' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
-		  if(!file.exist(x))
+		  if(!file.exists(x))
 			  stop("x should be a file on disk but it cant be found")
       		df <- read.csv(x, header=TRUE, sep=",", dec=".")
       		#check whether data are really from movebank
@@ -286,6 +286,16 @@ setMethod(f = "plot",
               lines(x, add=TRUE, ...)
             } else {
               if (grepl("longlat",proj4string(x)) == FALSE) {stop("\n The projeciton of the coordinates needs to be \"longlat\" to be plotted on a google map. \n")} else {}
+              googleplot(x=x,...)
+            }
+          }
+          )
+
+###is not working properly!! returns that google is not a graphic parameter
+setGeneric("googleplot", function(x,y,...){standardGeneric("googleplot")}) #marco which is the generic of RgoogleMaps
+setMethod(f = "googleplot", 
+          signature = c(x="Move", y="missing"), 
+          function(x, google=FALSE, maptype="terrain",...){
               require(RgoogleMaps)
               obj <- x
               lat <-coordinates(obj)[ ,2] 
@@ -294,9 +304,7 @@ setMethod(f = "plot",
               PlotOnStaticMap(MyMap=MyMap, lon=lon, lat=lat, FUN=lines, ...)
               file.remove(paste(getwd(),"MyTile.png",sep="/"))
               file.remove(paste(getwd(),"MyTile.png.rda",sep="/"))
-            }
-          }
-          )
+              })
 # 
 # setMethod(f = "plot",
 #           signature = c(x="MoveStack"),
