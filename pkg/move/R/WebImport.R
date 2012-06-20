@@ -1,6 +1,4 @@
 ## Browsing Movebank data base
- OS <- .Platform$OS.type
-if(OS=="unix"){
 setGeneric("movebankLogin", function(username, password,...) standardGeneric("movebankLogin"))
 setMethod(f="movebankLogin", 
           signature=c(username="character", password="character"), 
@@ -349,5 +347,3 @@ setMethod(f="getMovebankData",
  
                 return(move)} else{return(trackDF)}
                 })
-
-}

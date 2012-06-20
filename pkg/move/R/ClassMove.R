@@ -286,18 +286,16 @@ setMethod(f = "plot",
               lines(x, add=TRUE, ...)
             } else {
               if (grepl("longlat",proj4string(x)) == FALSE) {stop("\n The projeciton of the coordinates needs to be \"longlat\" to be plotted on a google map. \n")} else {}
-              googleplot(x=x,...)
+              PlotOnStaticMap(MyMap=x,...)
             }
           }
           )
 
-###is not working properly!! returns that google is not a graphic parameter
-setGeneric("googleplot", function(x,y,...){standardGeneric("googleplot")}) #marco which is the generic of RgoogleMaps
-setMethod(f = "googleplot", 
-          signature = c(x="Move", y="missing"), 
-          function(x, google=FALSE, maptype="terrain",...){
+setMethod(f = "PlotOnStaticMap", 
+          signature = c(MyMap="Move"), 
+          function(MyMap, maptype="terrain",...){
               require(RgoogleMaps)
-              obj <- x
+              obj <- MyMap
               lat <-coordinates(obj)[ ,2] 
               lon <- coordinates(obj)[ ,1]
               MyMap <- GetMap.bbox(lonR=range(coordinates(obj)[ ,1]), latR=range(coordinates(obj)[ ,2]), maptype=maptype)
