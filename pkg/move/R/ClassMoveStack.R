@@ -31,6 +31,18 @@ setMethod('[', signature(x="MoveStack"),definition=function(x,i,j,drop){
 	      timestamps=x@timestamps[i])})
 	      
 
+setMethod(f = "plot", ##bart marco find a more decent way to plot MoveStacks
+          signature = c(x="MoveStack", y="missing"), 
+          function(x, google=FALSE, maptype="terrain",...){
+            unstackedMove <- split(x)
+            indiv <- length(unique(x@trackId))
+            lines(unstackedMove[[1]], xlim=range(coordinates(x)[,1]), ylim=range(coordinates(x)[,2]) )
+            #x@trackId <- factor(x@trackId, labels=c(1:length(unique(x@trackId))))
+            l <- split(as.data.frame(coordinates(x)),cumsum(c(0,abs(diff(as.numeric(x@trackId))))))
+            lapply(unstackedMove, FUN=lines, col=c(rgb(runif(indiv),runif(indiv),runif(indiv))), add=T, xlim=range(coordinates(x)[,1]), ylim=range(coordinates(x)[,2] ))            
+            ##there is no google implemented for MoveStacks marco
+          }
+          )
 
 
 #setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))

@@ -294,18 +294,6 @@ setMethod(f = "plot",
           }
           )
 
-setMethod(f = "plot", ##bart marco find a more decent way to plot MoveStacks
-          signature = c(x="MoveStack", y="missing"), 
-          function(x, google=FALSE, maptype="terrain",...){
-            unstackedMove <- split(x)
-            indiv <- length(unique(x@trackId))
-            lines(unstackedMove[[1]], xlim=range(coordinates(x)[,1]), ylim=range(coordinates(x)[,2]) )
-            #x@trackId <- factor(x@trackId, labels=c(1:length(unique(x@trackId))))
-            l <- split(as.data.frame(coordinates(x)),cumsum(c(0,abs(diff(as.numeric(x@trackId))))))
-            lapply(unstackedMove, FUN=lines, col=c(rgb(runif(indiv),runif(indiv),runif(indiv))), add=T, xlim=range(coordinates(x)[,1]), ylim=range(coordinates(x)[,2] ))            
-            ##there is no google implemented for MoveStacks marco
-          }
-          )
 
 setGeneric("googleplot", function(obj, ...){standardGeneric("googleplot")})
 setMethod(f = "googleplot", 
@@ -524,22 +512,22 @@ setMethod("summary", "Move", function(object){
   cat("Omitted locations:  ", length(object@timesMissedFixes))
 }
 )
-
-#Find below the functions to plot a "centroid" point on the line of a certain line segment
-data <- read.csv("~/Downloads/beh_movebank.csv", header=T, sep=";", dec=".")
-data <- data[order(time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC")),]
-test <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"))
-trackb <- new("MoveBurst", bursts=as.factor(data$id_line_beh), test)
-#l <- as.list(split(as.data.frame(coordinates(trackb)),cumsum(c(0,abs(diff(as.numeric(trackb@data$beh_code)))))))
-#midLST <- list()
-#midLST <- lapply(X=ll, FUN=lineMidpoint)
-
-
-
-
-require(move)
-##add classfication for color and size marco
-setGeneric("plotBursts", function(object, by, plot=TRUE, col, class){standardGeneric("plotBursts")})
+# 
+#			#Find below the functions to plot a "centroid" point on the line of a certain line segment
+#			data <- read.csv("~/Downloads/beh_movebank.csv", header=T, sep=";", dec=".")
+#			data <- data[order(time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC")),]
+#			test <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"))
+#			trackb <- new("MoveBurst", bursts=as.factor(data$id_line_beh), test)
+#			#l <- as.list(split(as.data.frame(coordinates(trackb)),cumsum(c(0,abs(diff(as.numeric(trackb@data$beh_code)))))))
+#			#midLST <- list()
+#			#midLST <- lapply(X=ll, FUN=lineMidpoint)
+#			
+#			
+#			
+#			
+#			require(move)
+#			##add classfication for color and size marco
+setGeneric("plotBursts", function(object, by, plot=TRUE, col, class,...){standardGeneric("plotBursts")})
 
 
 
@@ -611,4 +599,5 @@ setMethod(f = "lineMidpoint",
             }
             midSP <- SpatialPoints(coords=t(as.data.frame(mid)), proj4string=CRS("+proj=longlat"))
             })
-head(plotBursts(trackb, by=trackb@data$beh_code, plot=F))
+#head(plotBursts(trackb, by=trackb@data$beh_code, plot=F))
+
