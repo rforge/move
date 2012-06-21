@@ -300,8 +300,8 @@ setMethod(f = "plot", ##bart marco find a more decent way to plot MoveStacks
             unstackedMove <- split(x)
             indiv <- length(unique(x@trackId))
             lines(unstackedMove[[1]], xlim=range(coordinates(x)[,1]), ylim=range(coordinates(x)[,2]) )
-            #test2@trackId <- factor(test2@trackId, labels=c(1:length(unique(test2@trackId))))
-            l <- split(as.data.frame(coordinates(test2)),cumsum(c(0,abs(diff(as.numeric(test2@trackId))))))
+            #x@trackId <- factor(x@trackId, labels=c(1:length(unique(x@trackId))))
+            l <- split(as.data.frame(coordinates(x)),cumsum(c(0,abs(diff(as.numeric(x@trackId))))))
             lapply(unstackedMove, FUN=lines, col=c(rgb(runif(indiv),runif(indiv),runif(indiv))), add=T, xlim=range(coordinates(x)[,1]), ylim=range(coordinates(x)[,2] ))            
             ##there is no google implemented for MoveStacks marco
           }
@@ -526,45 +526,89 @@ setMethod("summary", "Move", function(object){
 )
 
 #Find below the functions to plot a "centroid" point on the line of a certain line segment
-# require(move)
-# data <- read.csv("~/Downloads/beh_movebank.csv", header=T, sep=";", dec=".")
-# data <- data[order(time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC")),]
-# 
-# test <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"))
-# 
-# trackb <- new("MoveBurst", bursts=as.factor(data$id_line_beh), test)
-# 
-# l <- as.list(split(coordinates(trackb),cumsum(c(0,abs(diff(as.numeric(trackb@data$beh_code)))))))
-# 
-# lapply(X=l, FUN=lineMidpoint)
-# 
-# 
-# setGeneric("lineMidpoint", function(object){standardGeneric("lineMidpoint")})
-# setMethod(f = "lineMidpoint", 
-#           signature = "SpatialPoints",
-#           definition = function(object){
-#             #track <- SpatialPoints(coords=data.frame(c(1,2,3,4), c(1,2,1.8,1)),proj4string=CRS("+proj=longlat"))
-#             track <- coordinates(obj=object)
-#             dreck <- cbind(as.matrix(as.data.frame(track)[-nrow(track),]), as.matrix(as.data.frame(track)[-1,]))
-#             names(dreck) <- c("X1", "Y1", "X2", "Y2")
-#             
-#             seglength <- function(dreck)
-#             {
-#               spDistsN1(as.matrix(t(dreck[1:2])), as.matrix(t(dreck[3:4])), longlat=FALSE)
-#             }
-#             dists <- apply(dreck, 1, seglength)
-#             
-#             totalDist <- sum(dists)
-#             cumsum <- cumsum(dists)
-#             lcum <- list(cumsum)
-#             
-#             min <- which(cumsum(dists)>0.5*sum(dists))[1]
-#             prop <- (cumsum(dists)[min]-sum(dists)/2)/cumsum(dists)[min]
-#             mid <- (coordinates(track)[min+1,]-coordinates(track)[min,])*prop+coordinates(track)[min,]
-#             
-#             plot(coordinates(track))
-#             scalebar(d=10, lonlat=T)
-#             lines(coordinates(track))
-#             points(t(mid), pch=16, col="blue", cex=2)
-#             return(mid)
-#           })
+data <- read.csv("~/Downloads/beh_movebank.csv", header=T, sep=";", dec=".")
+data <- data[order(time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC")),]
+test <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"))
+trackb <- new("MoveBurst", bursts=as.factor(data$id_line_beh), test)
+#l <- as.list(split(as.data.frame(coordinates(trackb)),cumsum(c(0,abs(diff(as.numeric(trackb@data$beh_code)))))))
+#midLST <- list()
+#midLST <- lapply(X=ll, FUN=lineMidpoint)
+
+
+
+
+require(move)
+##add classfication for color and size marco
+setGeneric("plotBursts", function(object, by, plot=TRUE, col, class){standardGeneric("plotBursts")})
+
+
+
+setMethod(f = "plotBursts", 
+          signature = c(object="MoveBurst", by="integer"),
+          definition = function(object, by, plot=TRUE, add=FALSE,...){
+#            require("classInt")
+            fixes <- nrow(coordinates(object))
+            states <- unique(by)
+            col <- rgb(runif(states),runif(states),runif(states)) #make color changeable
+            l <- as.list(split(data.frame(coordinates(object)),cumsum(c(0,abs(diff(as.numeric(by)))))))
+            coll <- as.list(split(data.frame(by),cumsum(c(0,abs(diff(as.numeric(by)))))))
+            ll <- lapply(l, FUN=SpatialPoints, proj4string=CRS("+proj=longlat"))
+            midLST <- lapply(X=ll, FUN=lineMidpoint)
+            colLST <- lapply(lapply(coll, unique), function(x) return(col[as.numeric(x)]))
+            sizeLST <- lapply(lapply(ll, length), FUN= function(x) (x/nrow(coordinates(object))))#
+            df <- cbind(as.data.frame(do.call(rbind, midLST)), 
+                        as.data.frame(do.call(rbind, colLST)), 
+                        as.data.frame(do.call(rbind, sizeLST)))
+            colnames(df) <- c("x","y","color", "size")
+            spdf  <- SpatialPointsDataFrame(coords=df[,1:2],data=df[,3:4], proj4string=CRS("+proj=longlat"))
+            
+            if (plot){
+              if(!add)
+                plot(coordinates(object), type="l")
+              apply(df, 1, function(x,...){points(x['x'], x['y'], cex=as.numeric(x['size']), col=x['color'],...)}, ...)
+                  #points(coordinates(spdf), col=spdf@data$color, cex=spdf@data$size, pch=19)
+            #lapply(midLST, FUN=points,  pch=19)#cex=sizeLST[[1]], col=colLST[[1]],
+            } else {}
+            if(plot)
+              return(invisible(spdf))
+            else return(spdf)#return(spdf)
+          })
+
+#cut
+#sort(unique(cut(size, breaks=5)))
+
+
+setGeneric("lineMidpoint", function(object){standardGeneric("lineMidpoint")})
+setMethod(f = "lineMidpoint",
+          signature="SpatialPoints",
+          definition=function(object){
+            track <- coordinates(object)
+            
+            if (nrow(track)<2) { ##make the point at the coordinate
+              mid <- t(coordinates(track))
+            } else {
+              if (nrow(track)==2) { ##make the point at the center of the line
+                mid <- (coordinates(track)[2,]-coordinates(track)[1,])*.5+coordinates(track)[1,]
+              }
+              
+              if (nrow(track)>2){
+                 dreck <- cbind(as.data.frame(track)[-nrow(track),], as.data.frame(track)[-1,])
+                 names(dreck) <- c("X1", "Y1", "X2", "Y2")
+                 seglength <- function(dreck)
+                 {
+                   spDistsN1(as.matrix(t(dreck[1:2])), as.matrix(t(dreck[3:4])), longlat=FALSE)
+                 }
+                dists <- apply(dreck, 1, seglength)
+                
+                totalDist <- sum(dists)
+                cumsum <- cumsum(dists)
+                lcum <- list(cumsum)
+                
+                min <- which(cumsum(dists)>0.5*sum(dists))[1]
+                prop <- (cumsum(dists)[min]-sum(dists)/2)/cumsum(dists)[min]
+                mid <- (coordinates(track)[min+1,]-coordinates(track)[min,])*prop+coordinates(track)[min,]
+              }
+            }
+            midSP <- SpatialPoints(coords=t(as.data.frame(mid)), proj4string=CRS("+proj=longlat"))
+            })
+head(plotBursts(trackb, by=trackb@data$beh_code, plot=F))
