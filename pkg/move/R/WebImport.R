@@ -52,7 +52,7 @@ setMethod(f="movebankLogin",
 ##construct URLs and download from Movebank
 setGeneric("getMovebank", function(entity_type, login,...) standardGeneric("getMovebank"))
 setMethod(f="getMovebank", 
-          signature=c(entity_type="character", login="MovebankLogin"),#login="CURLHandle"), 
+          signature=c(entity_type="character", login="MovebankLogin"), 
           definition = function(entity_type, login, ...){
             tmp <- unlist(list(...))
             url <- paste("://www.movebank.org/movebank/service/direct-read?entity_type=",entity_type  ,sep="")
@@ -78,7 +78,7 @@ setMethod(f="getMovebank",
 #names of the studies
 setGeneric("searchMovebankStudies", function(x,login, sensor=FALSE) standardGeneric("searchMovebankStudies"))
 setMethod(f="searchMovebankStudies", 
-          signature=c(x="character",login="CURLHandle"), 
+          signature=c(x="character",login="MovebankLogin"), 
           definition = function(x,login, sensor=FALSE){  
           data <- getMovebank("study", login, sort="name", attributes="id%2Cname%2Ci_am_owner%2Ci_can_see_data%2Cthere_are_data_which_i_cannot_see")
           if (sensor==FALSE){
@@ -109,7 +109,7 @@ setMethod(f="getMovebankStudies",
           })
 
 setMethod(f="getMovebankStudies", 
-          signature=c(x="missing",login="CURLHandle"), 
+          signature=c(x="missing",login="MovebankLogin"), 
           definition = function(x, login){
             data <- getMovebank("study", login, sort="name", attributes="id%2Cname%2Ci_am_owner%2Ci_can_see_data%2Cthere_are_data_which_i_cannot_see")
           return(data$name)
@@ -132,7 +132,7 @@ setMethod(f="getMovebankSensors",
           })
 
 setMethod(f="getMovebankSensors", 
-          signature=c(study="missing",login="CURLHandle"), 
+          signature=c(study="missing",login="MovebankLogin"), 
           definition = function(study,login){
             data <- getMovebank("tag_type", login)
             cat("##### LIST OF ALL SENSOR TYPES IN MOVEBANK #####\n")
@@ -140,14 +140,14 @@ setMethod(f="getMovebankSensors",
           })
 
 setMethod(f="getMovebankSensors", 
-         signature=c(study="numeric",login="CURLHandle"), 
+         signature=c(study="numeric",login="MovebankLogin"), 
          definition = function(study,login){
            data <- getMovebank("sensor", login, tag_study_id=study)
           return(data)
          })
 
 setMethod(f="getMovebankSensors", 
-          signature=c(study="character",login="CURLHandle"), 
+          signature=c(study="character",login="MovebankLogin"), 
           definition = function(study,login){   
             studyNUM  <- getMovebankID(study,login)
             return(getMovebankSensors(studyNUM, login))
@@ -157,7 +157,7 @@ setMethod(f="getMovebankSensors",
 
 setGeneric("getMovebankSensorsAttributes", function(study, login) standardGeneric("getMovebankSensorsAttributes"))
 setMethod(f="getMovebankSensorsAttributes", 
-          signature=c(study="numeric",login="CURLHandle"), 
+          signature=c(study="numeric",login="MovebankLogin"), 
           definition = function(study,login){
            data <- getMovebank("sensor", login, tag_study_id=study)
            studySensors <- unique(data$sensor_type_id)
@@ -173,7 +173,7 @@ setMethod(f="getMovebankSensorsAttributes",
           })
 
 setMethod(f="getMovebankSensorsAttributes", 
-          signature=c(study="character",login="CURLHandle"), 
+          signature=c(study="character",login="MovebankLogin"), 
           definition = function(study,login){   
             studyNUM  <- getMovebankID(study,login)
             return(getMovebankSensorsAttributes(studyNUM, login))
@@ -191,7 +191,7 @@ setMethod(f="getMovebankID",
           })
 
 setMethod(f="getMovebankID", 
-          signature=c(x="character", login="CURLHandle"), 
+          signature=c(x="character", login="MovebankLogin"), 
           definition = function(x, login){
           data <- getMovebank("study", login, sort="name", attributes="id%2Cname%2Ci_am_owner%2Ci_can_see_data%2Cthere_are_data_which_i_cannot_see")
           
@@ -211,7 +211,7 @@ setMethod(f="getMovebankID",
 ###retrieving information of a certain study
 setGeneric("getMovebankStudy", function(study, login, ...) standardGeneric("getMovebankStudy"))
 setMethod(f="getMovebankStudy", 
-          signature=c(study="numeric", login="CURLHandle"),
+          signature=c(study="numeric", login="MovebankLogin"),
           definition = function(study, login, ...){
               data <- getMovebank("study", login, id=study)
               cat("**** SUMMARY OF THE REQUESTED STUDY: ",levels(data$name)," ****\n")
@@ -226,7 +226,7 @@ setMethod(f="getMovebankStudy",
           })
 
 setMethod(f="getMovebankStudy", 
-          signature=c(study="character", login="CURLHandle"),
+          signature=c(study="character", login="MovebankLogin"),
           definition = function(study, login, ...){
               studyNUM  <- getMovebankID(study,login)   
               getMovebankStudy(study=studyNUM,login=login, ...)
@@ -238,7 +238,7 @@ setMethod(f="getMovebankStudy",
 ##get all animals with their IDs
 setGeneric("getMovebankAnimals", function(study, login, ...) standardGeneric("getMovebankAnimals"))
 setMethod(f="getMovebankAnimals",
-          c(study="numeric", login="CURLHandle"),
+          c(study="numeric", login="MovebankLogin"),
           definition = function(study, login, ...){
               animals <- getMovebank("sensor", login, tag_study_id=study)
               animalID <- getMovebank("individual", login, study_id=study, attributes="id%2Clocal_identifier")
@@ -250,7 +250,7 @@ setMethod(f="getMovebankAnimals",
           })
 
 setMethod(f="getMovebankAnimals",
-          c(study="character", login="CURLHandle"),
+          c(study="character", login="MovebankLogin"),
           definition = function(study, login, ...){
              studyNUM  <- getMovebankID(study,login)   
             getMovebankAnimals(study=studyNUM,login=login, ...)
@@ -275,14 +275,14 @@ setMethod(f="getMovebankData",
           })
 
 setMethod(f="getMovebankData", 
-          signature=c(study="character",animalName="ANY", login="CURLHandle"),
+          signature=c(study="character",animalName="ANY", login="MovebankLogin"),
           definition = function(study,animalName, login, ...){
             studyNUM <- getMovebankID(study, login)
             getMovebankData(study=studyNUM, animalName=animalName, login=login, moveObject=moveObject,...)
           })
           
 setMethod(f="getMovebankData", 
-            signature=c(study="numeric",animalName="ANY", login="CURLHandle"),
+            signature=c(study="numeric",animalName="ANY", login="MovebankLogin"),
             definition = function(study, animalName, login, moveObject=T, ...){
             data <- getMovebankAnimals(study=study, login)
             attribs <- paste(collapse="%2C",getMovebankSensorsAttributes(study, login)$short_name)
@@ -292,7 +292,7 @@ setMethod(f="getMovebankData",
 
 ###create a Move or download data from a single animal within the study
 setMethod(f="getMovebankData", 
-          signature=c(study="numeric",animalName="character", login="CURLHandle"),
+          signature=c(study="numeric",animalName="character", login="MovebankLogin"),
           definition = function(study, animalName, login, moveObject=T, ...){
             #if(animalName!="all"){
             data <- getMovebankAnimals(study=study, login=login)
@@ -335,7 +335,7 @@ setMethod(f="getMovebankData",
             
 ###create a MoveStack or download data from all animals within the study
 setMethod(f="getMovebankData", 
-          signature=c(study="numeric",animalName="missing", login="CURLHandle"),
+          signature=c(study="numeric",animalName="missing", login="MovebankLogin"),
           definition = function(study, animalName, login, moveObject=T, ...){
                  idData <- getMovebank("individual", login=login, study_id=study)
                  rownames(idData) <- idData$local_identifier
