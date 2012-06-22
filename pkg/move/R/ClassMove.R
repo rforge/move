@@ -514,13 +514,13 @@ setMethod("summary", "Move", function(object){
 )
 # 
 #			#Find below the functions to plot a "centroid" point on the line of a certain line segment
-#			data <- read.csv("~/Downloads/beh_movebank.csv", header=T, sep=";", dec=".")
-#			data <- data[order(time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC")),]
-#			test <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"))
-#			trackb <- new("MoveBurst", bursts=as.factor(data$id_line_beh), test)
-#			#l <- as.list(split(as.data.frame(coordinates(trackb)),cumsum(c(0,abs(diff(as.numeric(trackb@data$beh_code)))))))
-#			#midLST <- list()
-#			#midLST <- lapply(X=ll, FUN=lineMidpoint)
+			data <- read.csv("~/Downloads/beh_movebank.csv", header=T, sep=";", dec=".")
+			data <- data[order(time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC")),]
+			test <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"))
+			trackb <- new("MoveBurst", bursts=as.factor(data$id_line_beh), test)
+			#l <- as.list(split(as.data.frame(coordinates(trackb)),cumsum(c(0,abs(diff(as.numeric(trackb@data$beh_code)))))))
+			#midLST <- list()
+			#midLST <- lapply(X=ll, FUN=lineMidpoint)
 #			
 #			
 #			

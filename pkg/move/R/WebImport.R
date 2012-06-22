@@ -1,14 +1,28 @@
+## Class to login without using RCurl
+setClass(Class = "MovebankLogin",
+         representation = representation(username = "character", password = "character", rcurl = "logical"),
+         prototype = prototype(username = as.character(), password = as.character()),
+          validity = function(object){
+           if(nchar(object@username)==0 || nchar(object@password)==0)
+              stop("Please enter a username and password")
+#            if (object@rcurl){
+#              require("RCurl")
+#              curl  <- getCurlHandle()
+#              curlSetOpt( .opts = list(httpheader = c(user = object@username, password = object@password),verbose=FALSE), curl=curl)
+#              testdownload <- getMovebank("study", curl)
+#              if(getCurlInfo(curl)$response.code==403) {stop("Your username or password is not correct") } 
+#            }
+           return(TRUE)
+          }
+         )
 ## Browsing Movebank data base
 setGeneric("movebankLogin", function(username, password,...) standardGeneric("movebankLogin"))
 setMethod(f="movebankLogin", 
           signature=c(username="character", password="character"), 
           definition = function(username, password){
-          require(RCurl)
-            curl  <- getCurlHandle()
-            curlSetOpt( .opts = list(httpheader = c(user = username, password = password),verbose=FALSE), curl=curl)
-            testdownload <- getMovebank("study", curl)
-            if(getCurlInfo(curl)$response.code==403) {stop("Your username or password is not correct") } 
-            return(curl)
+            if(any(grepl("RCurl", installed.packages()))) {rcurl <- TRUE} else {rcurl <- FALSE}
+            if (rcurl) warning("You are using an unsecure connection via http. To use https install RCurl.")
+            return(new("MovebankLogin", username=username, password=password, rcurl=rcurl))
           })
 
 setMethod(f="movebankLogin", 
@@ -27,6 +41,7 @@ setMethod(f="movebankLogin",
             return(movebankLogin(username=user))
           })
 
+#getMovebank("event", login, sensor_sensor_type_id=673,study_id=123413)
 # study_id=123413&attributes=id%2Clocal_identifier%2Ctaxon_id&entity_type=individual
 # url <- "https://www.movebank.org/movebank/service/direct-read?id=19963&attributes=canonical_name&entity_type=taxon"
 # url <- "https://www.movebank.org/movebank/service/direct-read?study_id=123413&attributes=attributes=canonical_name&entity_type=taxon"
@@ -37,19 +52,27 @@ setMethod(f="movebankLogin",
 ##construct URLs and download from Movebank
 setGeneric("getMovebank", function(entity_type, login,...) standardGeneric("getMovebank"))
 setMethod(f="getMovebank", 
-          signature=c(entity_type="character", login="CURLHandle"), 
+          signature=c(entity_type="character", login="MovebankLogin"),#login="CURLHandle"), 
           definition = function(entity_type, login, ...){
             tmp <- unlist(list(...))
-            url <- paste("https://www.movebank.org/movebank/service/direct-read?entity_type=",entity_type  ,sep="")
+            url <- paste("://www.movebank.org/movebank/service/direct-read?entity_type=",entity_type  ,sep="")
             if(length(tmp!=0))
               url <- paste(url, sep="&",paste(names(tmp),tmp, collapse="&", sep="="))
-                print(url)
-            web <- getURL(url, curl=login, verbose=F)
-            data <- read.csv(textConnection(web))
-            #print(web)
+            
+            if (login@rcurl){
+              require(RCurl)
+              curl  <- getCurlHandle()
+              curlSetOpt( .opts = list(httpheader = c(user = login@username, password = login@password),verbose=FALSE), curl=curl)
+              url <- paste("https", url, sep="")
+                
+              web <- getURL(url, curl=curl, verbose=F)
+              data <- read.csv(textConnection(web))
+            } else {
+              url <- paste(paste("http",url, sep=""), sep="&",paste("user=",login@username,"&password=",login@password, sep=""))
+              data <- read.csv(url, header=T, sep=",", as.is=T)
+            }
             return(data)
           })
-
 
 
 #names of the studies
