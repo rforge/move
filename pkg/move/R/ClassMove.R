@@ -235,7 +235,7 @@ setMethod(f = "spTransform",
             if (center){
               mid.range.lon <- (max(coordinates(x)[ ,1])+min(coordinates(x)[ ,1]))/2
               mid.range.lat  <- (max(coordinates(x)[ ,2])+min(coordinates(x)[ ,2]))/2
-              CRSobj <- CRS(paste(as.character(CRSobj)," +lon_0=",mid.range.lon," +lat_0=", mid.range.lat, sep=""))
+              CRSobj <- CRS(paste(CRSobj@projargs," +lon_0=",mid.range.lon," +lat_0=", mid.range.lat, sep=""))
             } 
             
             coordsnew <- spTransform.SpatialPointsDataFrame(x=x, CRSobj=CRSobj)
