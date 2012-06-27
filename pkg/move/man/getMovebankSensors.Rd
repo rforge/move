@@ -2,10 +2,10 @@
 
 \alias{getMovebankSensors}
 \alias{getMovebankSensors,ANY,missing-method}
-\alias{getMovebankSensors,character,CURLHandle-method}
-\alias{getMovebankSensors,missing,CURLHandle-method}
+\alias{getMovebankSensors,character,MovebankLogin-method}
+\alias{getMovebankSensors,missing,MovebankLogin-method}
 \alias{getMovebankSensors,missing,missing-method}
-\alias{getMovebankSensors,numeric,CURLHandle-method}
+\alias{getMovebankSensors,numeric,MovebankLogin-method}
 
 \docType{methods}
 

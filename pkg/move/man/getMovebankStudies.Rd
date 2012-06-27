@@ -1,7 +1,7 @@
 \name{getMovebankStudies}
 
 \alias{getMovebankStudies}
-\alias{getMovebankStudies,missing,CURLHandle-method}
+\alias{getMovebankStudies,missing,MovebankLogin-method}
 \alias{getMovebankStudies,missing,missing-method}
 
 \docType{methods}

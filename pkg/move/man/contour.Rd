@@ -1,29 +1,20 @@
 \name{contour}
 
 \alias{contour}
-\alias{contour,DBBMM-method}
+\alias{contour,.UD-method}
 
 \docType{methods}
 
 \title{Contour plot}
 
-\description{Contour plot of a RasterLayer from a DBBMM object (see \code{\link{DBBMM-class}}).}
+\description{Contour plot of a RasterLayer from a DBBMM object (see \code{\link{.UD-class}}).}
 
 \usage{
-  \S4method{contour}{DBBMM}(x, y, add=F, plot=F, google=F, track=F, col="blue", lcol="brown", lwd=2, llwd=2, ...)
+  \S4method{contour}{.UD}(x, ...)
 }
 
 \arguments{
   \item{x}{a DBBMM object}
-  \item{y}{corresponding Move object if you want to plot the track on a google map}
-  \item{plot}{logical, if FALSE, the contour is returned as a SpatialLinesDataFrame. If TRUE, the contour is plotted. Default is FALSE}
-  \item{add}{logical, if TRUE the contour is added to a plot, default is FALSE}
-  \item{google}{logical, if TRUE plot is ommitted and the contour is plotted on top of a google map}
-  \item{track}{logical, if track and google is TRUE, a track is plotted on top of the contour google map plot}
-  \item{col}{color of the contour line}
-  \item{lcol}{color of the track}
-  \item{lwd}{line width of the contour line}
-  \item{llwd}{line width of the track}
   \item{...}{additional arguments, see details}
 }
 

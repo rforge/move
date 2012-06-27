@@ -36,9 +36,11 @@ setClass(Class = ".MoveTrack",contains=c("SpatialPointsDataFrame"),
 
 setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no missed fixes stored for a MoveStack?
 	       representation = representation (
-					  timesMissedFixes = ".OptionalPOSIXct"),
+					  timesMissedFixes = ".OptionalPOSIXct",
+            burstID = "factor"), ##to indicate the bursts of a single track
 	       prototype = prototype(
-            timesMissedFixes = NULL),
+            timesMissedFixes = NULL,
+            burstID = as.factor(NA)),
 	       validity = function(object){
 		  	    if(any(object@timestamps!=sort(object@timestamps)))
 				      stop("The dataset includes unsorted time stamps")
@@ -514,9 +516,9 @@ setMethod("summary", "Move", function(object){
 )
 # 
 #			#Find below the functions to plot a "centroid" point on the line of a certain line segment
-# 			data <- read.csv("~/Downloads/beh_movebank.csv", header=T, sep=";", dec=".")
+# 			data <- read.csv("~/Documents/Programming/Rmove/beh_movebank.csv", header=T, sep=";", dec=".")
 # 			data <- data[order(time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC")),]
-# 			test <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"))
+#      test <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"))
 # 			trackb <- new("MoveBurst", bursts=as.factor(data$id_line_beh), test)
 			#l <- as.list(split(as.data.frame(coordinates(trackb)),cumsum(c(0,abs(diff(as.numeric(trackb@data$beh_code)))))))
 			#midLST <- list()
@@ -527,51 +529,71 @@ setMethod("summary", "Move", function(object){
 #			
 #			require(move)
 #			##add classfication for color and size marco
-setGeneric("plotBursts", function(object, by, plot=TRUE, col, class,...){standardGeneric("plotBursts")})
-
-
-
+setGeneric("plotBursts", function(object, by, plot=TRUE, breaks=3, add=FALSE,...){standardGeneric("plotBursts")})
 setMethod(f = "plotBursts", 
-          signature = c(object="MoveBurst", by="integer"),
-          definition = function(object, by, plot=TRUE, add=FALSE,...){
-#            require("classInt")
+          signature = c(object="MoveBurst", by="integer", breaks="numeric"),
+          definition = function(object, by, plot, breaks, add, ...){
             fixes <- nrow(coordinates(object))
-            states <- unique(by)
-            col <- rgb(runif(states),runif(states),runif(states)) #make color changeable
-            l <- as.list(split(data.frame(coordinates(object)),cumsum(c(0,abs(diff(as.numeric(by)))))))
-            coll <- as.list(split(data.frame(by),cumsum(c(0,abs(diff(as.numeric(by)))))))
-            ll <- lapply(l, FUN=SpatialPoints, proj4string=CRS("+proj=longlat"))
+            totalDur <- difftime(object@timestamps[fixes], object@timestamps[1], units="mins") #duration in MIN
+            #l <- as.list(split(data.frame(coordinates(object), object@timestamps),cumsum(c(0,abs(diff(as.numeric(by)))))))
+            #ll <- lapply(l, function(x) { SpatialPointsDataFrame(coords=x[,1:2], proj4string=CRS("+proj=longlat"), data=data.frame(timestamps=x$object.timestamps))})
+            #by <- object$beh_code
+              starts <- c(1,which(diff(x=as.numeric(by))!=0))
+              stops  <- c(which(diff(x=as.numeric(by))!=0),length(as.numeric(by)))
+            l  <- apply(data.frame(Starts=starts, Stops=stops), 1, function(x) data.frame(coordinates(object),object@timestamps)[x[1]:x[2],])
+#             for (i in 1:(length(starts)-1)){ 
+#               l[[i]]  <-  as.list(data.frame(coordinates(object),object@timestamps)[starts[i]:stops[i],]) 
+#               }
+            ll <- lapply(l, function(x) { SpatialPointsDataFrame(coords=data.frame(x[1:2]), 
+                                                                 proj4string=CRS("+proj=longlat"), 
+                                                                 data=data.frame(timestamps=x$object.timestamps))})
             midLST <- lapply(X=ll, FUN=lineMidpoint)
-            colLST <- lapply(lapply(coll, unique), function(x) return(col[as.numeric(x)]))
-            sizeLST <- lapply(lapply(ll, length), FUN= function(x) (x/nrow(coordinates(object))))#
-            df <- cbind(as.data.frame(do.call(rbind, midLST)), 
-                        as.data.frame(do.call(rbind, colLST)), 
-                        as.data.frame(do.call(rbind, sizeLST)))
-            colnames(df) <- c("x","y","color", "size")
-            spdf  <- SpatialPointsDataFrame(coords=df[,1:2],data=df[,3:4], proj4string=CRS("+proj=longlat"))
             
+            col <- rgb(runif(unique(by)),runif(unique(by)),runif(unique(by))) #make color changeable
+            coll <- as.list(split(data.frame(by),cumsum(c(0,abs(diff(as.numeric(by)))))))
+            colLST <- lapply(lapply(coll, unique), function(x) return(col[as.numeric(x)]))
+            
+            #sizeLST <- lapply(lapply(ll, length), FUN= function(x) (x/nrow(coordinates(object))))
+            sizeLST <- lapply(lapply(ll, function(y) {diff.POSIXt(c(y@data$timestamps[nrow(y)], time2=y@data$timestamps[1]), units="mins")} ), FUN= function(x) (as.numeric(x)/as.numeric(totalDur)))
+            sizes  <- as.numeric(cut(unlist(sizeLST), breaks=breaks))/max(as.numeric(cut(unlist(sizeLST), breaks=breaks))) 
+            
+            df <- cbind(as.data.frame(do.call(rbind, midLST)),
+                        as.data.frame(do.call(rbind, colLST)), #which line do i cut here??
+                        sizes)
+            colnames(df) <- c("x","y","color", "size")
+            
+            spdf  <- SpatialPointsDataFrame(coords=do.call(rbind, midLST),data=df, proj4string=CRS("+proj=longlat")) ##we need a readable definition of the colors
             if (plot){
               if(!add)
                 plot(coordinates(object), type="l")
-              apply(df, 1, function(x,...){points(x['x'], x['y'], cex=as.numeric(x['size']), col=x['color'],...)}, ...)
-                  #points(coordinates(spdf), col=spdf@data$color, cex=spdf@data$size, pch=19)
-            #lapply(midLST, FUN=points,  pch=19)#cex=sizeLST[[1]], col=colLST[[1]],
+                apply(df, MARGIN=1, function(x,...){points(x=x['x'], y=x['y'], cex=as.numeric(x['size']), col=x['color'],...)}, ...)
             } else {}
-            if(plot)
-              return(invisible(spdf))
-            else return(spdf)#return(spdf)
+            if(plot) {return(invisible(spdf))}
+            else {return(spdf)}
           })
+#spdf <- plotBursts(trackb, data$beh_code, breaks=10, pch=19)
+#head(plotBursts(trackb, by=trackb@data$beh_code, plot=F))
 
-#cut
-#sort(unique(cut(size, breaks=5)))
+            #classes <- as.data.frame(sort(unique(cut(as.numeric(sizes), breaks=5))))#make breaks a variable
+            #labs <- levels(cut(as.numeric(sizes), breaks=5))
+            #classes <- cbind(lower = as.numeric( sub("\\((.+),.*", "\\1", labs) ), upper = as.numeric( sub("[^,]*,([^]]*)\\]", "\\1", labs)), size = c(1:length(labs)))
+            #sizeLST <- lapply(sizes, function(x){  unlist(apply(classes, 1, function(y){if (x>=y['lower'] && x<=y['upper']) x <- y['size']})) } )            
+##Function to categorize data into classes
+#setMethod(f="categroies", 
+#          signature=c("numeric"),
+#          definition=function(x,breaks){
+#          })
+
+###PLOTTING BURSTS1!!!!!!!!!!
+
 
 
 setGeneric("lineMidpoint", function(object){standardGeneric("lineMidpoint")})
 setMethod(f = "lineMidpoint",
-          signature="SpatialPoints",
+          signature="SpatialPointsDataFrame",
           definition=function(object){
             track <- coordinates(object)
-            
+            #should we include a check for projection bart
             if (nrow(track)<2) { ##make the point at the coordinate
               mid <- t(coordinates(track))
             } else {
@@ -597,7 +619,6 @@ setMethod(f = "lineMidpoint",
                 mid <- (coordinates(track)[min+1,]-coordinates(track)[min,])*prop+coordinates(track)[min,]
               }
             }
-            midSP <- SpatialPoints(coords=t(as.data.frame(mid)), proj4string=CRS("+proj=longlat"))
+            midSP <- SpatialPoints(coords=t(as.data.frame(x=mid, row.names=NULL)), proj4string=CRS("+proj=longlat"))
             })
-#head(plotBursts(trackb, by=trackb@data$beh_code, plot=F))
 

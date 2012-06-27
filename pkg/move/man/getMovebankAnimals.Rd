@@ -1,8 +1,8 @@
 \name{getMovebankAnimals}
 
 \alias{getMovebankAnimals}
-\alias{getMovebankAnimals,character,CURLHandle-method}
-\alias{getMovebankAnimals,numeric,CURLHandle-method}
+\alias{getMovebankAnimals,character,MovebankLogin-method}
+\alias{getMovebankAnimals,numeric,MovebankLogin-method}
 \alias{getMovebankAnimals,ANY,missing-method}
 
 \docType{methods}

@@ -2,10 +2,10 @@
 
 \alias{getMovebankData}
 \alias{getMovebankData,ANY,ANY,missing-method}
-\alias{getMovebankData,character,ANY,CURLHandle-method}
-\alias{getMovebankData,numeric,ANY,CURLHandle-method}
-\alias{getMovebankData,numeric,character,CURLHandle-method}
-\alias{getMovebankData,numeric,missing,CURLHandle-method}
+\alias{getMovebankData,character,ANY,MovebankLogin-method}
+\alias{getMovebankData,numeric,ANY,MovebankLogin-method}
+\alias{getMovebankData,numeric,character,MovebankLogin-method}
+\alias{getMovebankData,numeric,missing,MovebankLogin-method}
 
 \docType{methods}
 

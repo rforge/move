@@ -2,8 +2,8 @@
 
 \alias{getMovebankStudy}
 \alias{getMovebankStudy,ANY,missing-method}
-\alias{getMovebankStudy,numeric,CURLHandle-method}
-\alias{getMovebankStudy,character,CURLHandle-method}
+\alias{getMovebankStudy,numeric,MovebankLogin-method}
+\alias{getMovebankStudy,character,MovebankLogin-method}
 
 \docType{methods}
 

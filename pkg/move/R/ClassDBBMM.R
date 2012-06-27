@@ -311,13 +311,12 @@ setMethod(f = "outerProbability",
           )
 
 
-###extract  raster from DBBMM
-#setMethod(f="raster",
-#          signature = "DBBMM",
+# ###extract  raster from DBBMM
+# setMethod(f="raster",
+#          signature = ".UD",
 #          definition = function(x){
-#            return(x@raster)
-#          }
-#          )
+#            return(as(x, "RasterLayer"))
+#         })
 #
 #
 ####extract projection from DBBMM
@@ -346,63 +345,72 @@ setMethod(f = "outerProbability",
 #          }
 #          )
 
-setGeneric("contour")
+if (!isGeneric("contour")) {
+  setGeneric("contour", function(x,...)
+    standardGeneric("contour"))
+}
+
 setMethod(f = "contour",
-          signature = c(x="DBBMM"), ## enter nlevel for the number of levels, or levels for the correct levels!!
-          definition = function(x, y, add=F, plot=F, google=F, track=F, col="blue", lcol="brown", lwd=2, llwd=2, ...){
-            newRaster <- (x)            
+          signature = c(x=".UD"), ## enter nlevel for the number of levels, or levels for the correct levels!!
+          definition = function(x, ...){
+            newRaster <- x#raster2contour(x, ...)
             rank <- (1:length(values(newRaster)))[rank(values(newRaster))]
-            values(newRaster)<-1-cumsum(sort(values(newRaster)))[rank]
+            values(newRaster) <- 1-cumsum(sort(values(newRaster)))[rank]
             
+            x <- newRaster
+            callNextMethod() 
+            })
             #return the contour as SLDF object: plot=F, google=F
-            if (plot==F && google==F && track==F){
-              raster2contour(x,...)
-            } else {
+          #  if (plot==F && google==F && track==F){
+           #   raster2contour(x,...)
+              #return(newRaster)
+          #  } else { 
+              #browser()
                 #plot the contour line: plot=T, google=F
-                if (plot==T && google==F){
-                contour(x = newRaster, add = add, ...)
-                }
+#                 if (plot==T && google==F){
+#                 contour(x = newRaster, add = add, ...)
+#                 }
                 #add track to contour+google map: plot=T, google=T
-                if (google==T){
-                  print(newRaster)
-                  if (class(y)!="Move"){stop("y must be the corresponding Move object to the DBBMM object")}
-                  if (grepl(pattern="longlat", x=proj4string(y))==FALSE){stop("Use a Move object with longlat projection method")}
-                  require(RgoogleMaps)
-                  lon <- coordinates(y)[,1]
-                  lat <- coordinates(y)[,2]
-                  lonRange <- c(min(range(lon))-abs(diff(range(lon))*x@ext[1]), max(range(lon))+abs(diff(range(lon))*x@ext[2]))                 
-                  latRange <- c(min(range(lat))-abs(diff(range(lat))*x@ext[3]), max(range(lat))+abs(diff(range(lat))*x@ext[4]))
-                  MyMap <- GetMap.bbox(lonR=lonRange, latR=latRange)
-#                  MyMap <- GetMap.bbox(lonR=range(coordinates(y)[ ,1]), latR=range(coordinates(y)[ ,2]))
-                  rst1 <- raster2contour(x, ...)
-                  sldf <- spTransform.SpatialLinesDataFrame(rst1, CRSobj=CRS("+proj=longlat"))
-                  add <- F
-                  for (i in 1:length(sldf@lines)){
-                    for (j in 1:length(sldf@lines[[i]]@Lines)){
-                      sldflon <- sldf@lines[[i]]@Lines[[j]]@coords[,1]
-                      sldflat <- sldf@lines[[i]]@Lines[[j]]@coords[,2]
-                      PlotOnStaticMap(MyMap=MyMap, lon=sldflon, lat=sldflat, FUN=lines,add=add, col=col, lwd=lwd)
-                      add <- T
-                    }
-                  }
-                  #add a track: track=T
-                  if (track==T) {
-                    PlotOnStaticMap(MyMap=MyMap, lon=coordinates(y)[,1], lat=coordinates(y)[,2], add=TRUE, FUN=lines, lwd=llwd, col=lcol)
-                  }
-                  file.remove(paste(getwd(),"MyTile.png",sep="/"))
-                  file.remove(paste(getwd(),"MyTile.png.rda",sep="/"))
-                }
-                }})
+#                 if (google==T){
+#                   print(newRaster)
+#                   if (class(y)!="Move"){stop("y must be the corresponding Move object to the DBBMM object")}
+#                   if (grepl(pattern="longlat", x=proj4string(y))==FALSE){stop("Use a Move object with longlat projection method")}
+#                   require(RgoogleMaps)
+#                   lon <- coordinates(y)[,1]
+#                   lat <- coordinates(y)[,2]
+#                   lonRange <- c(min(range(lon))-abs(diff(range(lon))*x@ext[1]), max(range(lon))+abs(diff(range(lon))*x@ext[2]))                 
+#                   latRange <- c(min(range(lat))-abs(diff(range(lat))*x@ext[3]), max(range(lat))+abs(diff(range(lat))*x@ext[4]))
+#                   MyMap <- GetMap.bbox(lonR=lonRange, latR=latRange)
+# #                  MyMap <- GetMap.bbox(lonR=range(coordinates(y)[ ,1]), latR=range(coordinates(y)[ ,2]))
+#                   rst1 <- raster2contour(x, ...)
+#                   sldf <- spTransform.SpatialLinesDataFrame(rst1, CRSobj=CRS("+proj=longlat"))
+#                   add <- F
+#                   for (i in 1:length(sldf@lines)){
+#                     for (j in 1:length(sldf@lines[[i]]@Lines)){
+#                       sldflon <- sldf@lines[[i]]@Lines[[j]]@coords[,1]
+#                       sldflat <- sldf@lines[[i]]@Lines[[j]]@coords[,2]
+#                       PlotOnStaticMap(MyMap=MyMap, lon=sldflon, lat=sldflat, FUN=lines,add=add, col=col, lwd=lwd)
+#                       add <- T
+#                     }
+#                   }
+#                   #add a track: track=T
+#                   if (track==T) {
+#                     PlotOnStaticMap(MyMap=MyMap, lon=coordinates(y)[,1], lat=coordinates(y)[,2], add=TRUE, FUN=lines, lwd=llwd, col=lcol)
+#                   }
+#                   file.remove(paste(getwd(),"MyTile.png",sep="/"))
+#                   file.remove(paste(getwd(),"MyTile.png.rda",sep="/"))
+#                 }
+#                }})
 
 ### Contour to SpatialLinesDataFrame conversion
 #if (!isGeneric("outerProbability")){
 setGeneric("raster2contour", function(x, ...){standardGeneric("raster2contour")})
 # #}
 setMethod(f = "raster2contour",
-          signature = c(x=".UD"),
+          signature = c(x="RasterLayer"),
           definition = function(x, ...){
             rank <- (1:length(values(x)))[rank(values(x))]
-            values(x)<-1-cumsum(sort(values(x)))[rank]
+            values(x) <- 1 - cumsum(sort(values(x)))[rank]
             rasterToContour(x, ...)
           }
           )
