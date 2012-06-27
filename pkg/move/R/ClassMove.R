@@ -34,10 +34,24 @@ setClass(Class = ".MoveTrack",contains=c("SpatialPointsDataFrame"),
 	 	    }
 	      )
 
+# setClass(Class = ".MoveTrackBurst",
+#          representation = representation (
+#            burstID = "factor", ##to indicate the bursts of a single track
+#            burstSPDF = "SpatialPointsDataFrame"),
+#          prototype = prototype(
+#            burstID = as.factor(NA)),
+#          validity = function(object){
+#            if (length(object@burstID)!=nrow(coordinates(object)))
+#              stop("The length of burst IDs is not equal to the number of locations")
+#            return(TRUE)
+#          }
+#          )
+
 setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no missed fixes stored for a MoveStack?
 	       representation = representation (
 					  timesMissedFixes = ".OptionalPOSIXct",
-            burstID = "factor"), ##to indicate the bursts of a single track
+            burstID = "factor", ##to indicate the bursts of a single track
+            burstSPDF = "SpatialPointsDataFrame"),
 	       prototype = prototype(
             timesMissedFixes = NULL,
             burstID = as.factor(NA)),
@@ -46,6 +60,8 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no misse
 				      stop("The dataset includes unsorted time stamps")
 		  	    if (any(duplicated(object@timestamps)))
 				      stop("The dataset includes double timestamps")
+            #if (length(object@burstID)!=nrow(coordinates(object)))
+              #stop("The length of burst IDs is not equal to the number of locations")
 			      return(TRUE)
 	 	    }
 	      )
@@ -66,15 +82,15 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
       	 }
       	 )
 
-setClass(Class= "MoveBurst", contains=c("Move"),
-		representation=representation(
-				bursts="factor"),
-		prototype=prototype(
-				bursts=factor()),
-		validity=function(object){
-			if(length(object@bursts)!=length(object@timestamps))
-				stop("length of bursts does not match")
-			return(TRUE)})
+# setClass(Class= "MoveBurst", contains=c("Move"),
+# 		representation=representation(
+# 				bursts="factor"),
+# 		prototype=prototype(
+# 				bursts=factor()),
+# 		validity=function(object){
+# 			if(length(object@bursts)!=length(object@timestamps))
+# 				stop("length of bursts does not match")
+# 			return(TRUE)})
 
 
 ## Making move a generic funtion
@@ -514,27 +530,29 @@ setMethod("summary", "Move", function(object){
   cat("Omitted locations:  ", length(object@timesMissedFixes))
 }
 )
-# 
+
+
+
+
 #			#Find below the functions to plot a "centroid" point on the line of a certain line segment
-# 			data <- read.csv("~/Documents/Programming/Rmove/beh_movebank.csv", header=T, sep=";", dec=".")
-# 			data <- data[order(time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC")),]
-#      test <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"))
+# 			require(move)
+#  			data <- read.csv("~/Documents/Programming/Rmove/beh_movebank.csv", header=T, sep=";", dec=".")
+#  			data <- data[order(time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC")),]
+#       test <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"))
+#       test2 <- burstTrack(object=test, by=test$beh_code)
+#       plotBursts(test2, add=F, pch=19)
 # 			trackb <- new("MoveBurst", bursts=as.factor(data$id_line_beh), test)
-			#l <- as.list(split(as.data.frame(coordinates(trackb)),cumsum(c(0,abs(diff(as.numeric(trackb@data$beh_code)))))))
-			#midLST <- list()
-			#midLST <- lapply(X=ll, FUN=lineMidpoint)
-#			
-#			
-#			
-#			
-#			require(move)
-#			##add classfication for color and size marco
-setGeneric("plotBursts", function(object, by, plot=TRUE, breaks=3, add=FALSE,...){standardGeneric("plotBursts")})
-setMethod(f = "plotBursts", 
-          signature = c(object="MoveBurst", by="integer", breaks="numeric"),
-          definition = function(object, by, plot, breaks, add, ...){
+
+setGeneric("burstTrack", function(object, by, breaks=5, sizeFUN="relTime"){standardGeneric("burstTrack")}) #skiped the number of breaks, because this is set by the unique values of by
+setMethod(f = "burstTrack", 
+          signature = c(object="Move", by="integer"),
+          definition = function(object, by, breaks, sizeFUN){
             fixes <- nrow(coordinates(object))
             totalDur <- difftime(object@timestamps[fixes], object@timestamps[1], units="mins") #duration in MIN
+            if (length(by)!=fixes)
+              stop("The length of burst IDs is not equal to the number of locations")
+            
+    #browser()
             #l <- as.list(split(data.frame(coordinates(object), object@timestamps),cumsum(c(0,abs(diff(as.numeric(by)))))))
             #ll <- lapply(l, function(x) { SpatialPointsDataFrame(coords=x[,1:2], proj4string=CRS("+proj=longlat"), data=data.frame(timestamps=x$object.timestamps))})
             #by <- object$beh_code
@@ -552,39 +570,37 @@ setMethod(f = "plotBursts",
             col <- rgb(runif(unique(by)),runif(unique(by)),runif(unique(by))) #make color changeable
             coll <- as.list(split(data.frame(by),cumsum(c(0,abs(diff(as.numeric(by)))))))
             colLST <- lapply(lapply(coll, unique), function(x) return(col[as.numeric(x)]))
-            
             #sizeLST <- lapply(lapply(ll, length), FUN= function(x) (x/nrow(coordinates(object))))
-            sizeLST <- lapply(lapply(ll, function(y) {diff.POSIXt(c(y@data$timestamps[nrow(y)], time2=y@data$timestamps[1]), units="mins")} ), FUN= function(x) (as.numeric(x)/as.numeric(totalDur)))
+            if (sizeFUN=="relTime") {
+              sizeLST <- lapply(lapply(ll, function(y) {diff.POSIXt(c(y@data$timestamps[nrow(y)], time2=y@data$timestamps[1]), units="mins")} ), FUN= function(x) (as.numeric(x)/as.numeric(totalDur))) 
+              } else {sizeLST  <- sizeFUN}
             sizes  <- as.numeric(cut(unlist(sizeLST), breaks=breaks))/max(as.numeric(cut(unlist(sizeLST), breaks=breaks))) 
             
-            df <- cbind(as.data.frame(do.call(rbind, midLST)),
-                        as.data.frame(do.call(rbind, colLST)), #which line do i cut here??
-                        sizes)
-            colnames(df) <- c("x","y","color", "size")
-            
-            spdf  <- SpatialPointsDataFrame(coords=do.call(rbind, midLST),data=df, proj4string=CRS("+proj=longlat")) ##we need a readable definition of the colors
-            if (plot){
-              if(!add)
-                plot(coordinates(object), type="l")
-                apply(df, MARGIN=1, function(x,...){points(x=x['x'], y=x['y'], cex=as.numeric(x['size']), col=x['color'],...)}, ...)
-            } else {}
-            if(plot) {return(invisible(spdf))}
-            else {return(spdf)}
+            df <- cbind(as.data.frame(do.call(rbind, colLST)),
+                        sizes,
+                        as.data.frame(do.call(rbind, midLST)))
+            colnames(df) <- c("color", "size","x","y")
+            object@burstID <- as.factor(by)
+            object@burstSPDF  <- SpatialPointsDataFrame(coords=do.call(rbind, midLST),data=df[,1:2], proj4string=CRS("+proj=longlat"))    
+            return(object)
           })
+
+#			##add classfication for color and size marco
+setGeneric("plotBursts", function(object, add=FALSE, ...){standardGeneric("plotBursts")})
+setMethod(f = "plotBursts", 
+          signature = c(object=".MoveTrackSingle", add="logical"),
+          definition = function(object, add, ...){
+            if (add==FALSE) 
+              plot(coordinates(object), type="l")
+            #if(!add)
+              df <- data.frame(color=object@burstSPDF@data$color, size=object@burstSPDF@data$size, coordinates=coordinates(object@burstSPDF))
+              apply(df, MARGIN=1, function(x,...){points(x=x[3], y=x[4], cex=as.numeric(x['size']), col=x['color'],...)}, ...)
+          })
+#             } else {}
+#             if(plot) {return(invisible(spdf))}
+#             else {return(spdf)}
 #spdf <- plotBursts(trackb, data$beh_code, breaks=10, pch=19)
 #head(plotBursts(trackb, by=trackb@data$beh_code, plot=F))
-
-            #classes <- as.data.frame(sort(unique(cut(as.numeric(sizes), breaks=5))))#make breaks a variable
-            #labs <- levels(cut(as.numeric(sizes), breaks=5))
-            #classes <- cbind(lower = as.numeric( sub("\\((.+),.*", "\\1", labs) ), upper = as.numeric( sub("[^,]*,([^]]*)\\]", "\\1", labs)), size = c(1:length(labs)))
-            #sizeLST <- lapply(sizes, function(x){  unlist(apply(classes, 1, function(y){if (x>=y['lower'] && x<=y['upper']) x <- y['size']})) } )            
-##Function to categorize data into classes
-#setMethod(f="categroies", 
-#          signature=c("numeric"),
-#          definition=function(x,breaks){
-#          })
-
-###PLOTTING BURSTS1!!!!!!!!!!
 
 
 

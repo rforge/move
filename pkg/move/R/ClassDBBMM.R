@@ -345,10 +345,10 @@ setMethod(f = "outerProbability",
 #          }
 #          )
 
-if (!isGeneric("contour")) {
+#if (!isGeneric("contour")) {
   setGeneric("contour", function(x,...)
     standardGeneric("contour"))
-}
+#}
 
 setMethod(f = "contour",
           signature = c(x=".UD"), ## enter nlevel for the number of levels, or levels for the correct levels!!

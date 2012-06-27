@@ -1,6 +1,6 @@
 #importFrom(graphics, "plot")
 exportClasses(DBBMM, DBBMMStack, Move, MovebankLogin, MoveStack)
-exportMethods(brownian.bridge.dyn, contour, emd, getMovebankAnimals, getMovebankData, getMovebankID, getMovebankSensors, getMovebankSensorsAttributes, getMovebankStudies, getMovebankStudy, lines, lineMidpoint, move, movebankLogin, moveStack,n.locs, outerProbability,  plot, plotBursts,print, raster2contour, show, split, summary, searchMovebankStudies, time.lag)
+exportMethods(brownian.bridge.dyn, burstTrack, contour, emd, getMovebankAnimals, getMovebankData, getMovebankID, getMovebankSensors, getMovebankSensorsAttributes, getMovebankStudies, getMovebankStudy, lines, lineMidpoint, move, movebankLogin, moveStack,n.locs, outerProbability,  plot, plotBursts, print, raster2contour, show, split, summary, searchMovebankStudies, time.lag)
 useDynLib(move)
 
 

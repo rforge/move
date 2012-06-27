@@ -23,11 +23,13 @@
 }
 
 \examples{
+\dontrun{
 ## create a move object
 data <- move(system.file("extdata","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
 
 ## returns a data.frame with all information stored in the spatial data frame of the move object
 df <- as.data.frame(data)
+}
 }
 
 \author{Marco Smolla}
