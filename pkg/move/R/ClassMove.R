@@ -49,12 +49,12 @@ setClass(Class = ".MoveTrack",contains=c("SpatialPointsDataFrame"),
 
 setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no missed fixes stored for a MoveStack?
 	       representation = representation (
-					  timesMissedFixes = ".OptionalPOSIXct",
-            burstID = "factor", ##to indicate the bursts of a single track
-            burstSPDF = "SpatialPointsDataFrame"),
+					  timesMissedFixes = ".OptionalPOSIXct"),
+          #  burstID = "factor", ##to indicate the bursts of a single track
+          #  burstSPDF = "SpatialPointsDataFrame"),
 	       prototype = prototype(
-            timesMissedFixes = NULL,
-            burstID = as.factor(NA)),
+            timesMissedFixes = NULL),
+           # burstID = as.factor(NA)),
 	       validity = function(object){
 		  	    if(any(object@timestamps!=sort(object@timestamps)))
 				      stop("The dataset includes unsorted time stamps")
@@ -95,7 +95,7 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
 
 ## Making move a generic funtion
 #if (!isGeneric("move")) {
-	setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))
+	setGeneric("move", function(x, y, time, data, proj, animal, ...) standardGeneric("move"))
 #}
 
 ### Defining the funcitoin move
@@ -135,8 +135,8 @@ setMethod(f = "move",
 
 #if non-movebank data are used, coordinates (x,y), time and the data frame must be defined
 setMethod(f="move",
-          signature=c(x="numeric"),#,y="numeric",time="factor",data="data.frame"),
-          definition = function(x,y,time,data,proj){
+          signature=c(x="numeric", animal="character"),#,y="numeric",time="factor",data="data.frame"),
+          definition = function(x,y,time,data,proj, animal){
             #check wheter rgdal is installed
             #if (any(.packages(all=T)=="rgdal")==FALSE){stop("You need the 'rgdl' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
             
@@ -155,7 +155,8 @@ setMethod(f="move",
             
             res <- new("Move",
                        tmp,
-                       timestamps=time)
+                       timestamps=time,
+                       animal=animal)
             return(res)
           }
           )
@@ -239,18 +240,19 @@ setMethod(f = "spTransform",
           signature = c(x = ".MoveTrack", CRSobj = "missing"), 
           function(x, center=FALSE, ...){
             spTransform(x=x, center=center, CRSobj="+proj=aeqd")
-          }
-)
+          })
+
 setMethod(f = "spTransform", 
           signature = c(x = ".MoveTrack", CRSobj = "character"), 
-          function(x, CRSobj, center=FALSE){
+          function(x, CRSobj, center=FALSE, ...){
 		  spTransform(x=x, CRSobj=CRS(CRSobj), center=center)
 	  })
 
 setMethod(f = "spTransform", 
           signature = c(x = ".MoveTrack", CRSobj = "CRS"), 
-          function(x, CRSobj, center=FALSE){
-            if (center){
+          function(x, CRSobj, center=FALSE, ...){
+            print(center)
+            if (center){ 
               mid.range.lon <- (max(coordinates(x)[ ,1])+min(coordinates(x)[ ,1]))/2
               mid.range.lat  <- (max(coordinates(x)[ ,2])+min(coordinates(x)[ ,2]))/2
               CRSobj <- CRS(paste(CRSobj@projargs," +lon_0=",mid.range.lon," +lat_0=", mid.range.lat, sep=""))
@@ -259,9 +261,7 @@ setMethod(f = "spTransform",
             coordsnew <- spTransform.SpatialPointsDataFrame(x=x, CRSobj=CRSobj)
             x <- new(class(x), coordsnew,x )
             return(x)
-          }
-)
-
+          })
 
 # if (!isGeneric("SpatialLines")) {
 # setGeneric("SpatialLines", function(LinesList) standardGeneric("SpatialLines"))
@@ -538,12 +538,20 @@ setMethod("summary", "Move", function(object){
 # 			require(move)
 #  			data <- read.csv("~/Documents/Programming/Rmove/beh_movebank.csv", header=T, sep=";", dec=".")
 #  			data <- data[order(time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC")),]
-#       test <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"))
+#       test <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"), animal="Alba")
 #       test2 <- burstTrack(object=test, by=test$beh_code)
-#       plotBursts(test2, add=F, pch=19)
+#       lines(test)
+#       plotBursts(test2, pch=19)
 # 			trackb <- new("MoveBurst", bursts=as.factor(data$id_line_beh), test)
+setGeneric("burstTrack", function(object, by, breaks=5, sizeFUN="relTime"){standardGeneric("burstTrack")}) 
+setMethod(f = "burstTrack", 
+          signature = c(object="MoveStack", by="integer"),
+          definition = function(object, by, breaks, sizeFUN){
+            moveUnstacked <- split(x=object) #split MoveStack into individual Move objects
+            spdfLST <- as.list(lapply(moveUnstacked, FUN=burstTrack, by=by, breaks=breaks, sizeFUN=sizeFUN))                             
+          })##function was not tested yet
 
-setGeneric("burstTrack", function(object, by, breaks=5, sizeFUN="relTime"){standardGeneric("burstTrack")}) #skiped the number of breaks, because this is set by the unique values of by
+
 setMethod(f = "burstTrack", 
           signature = c(object="Move", by="integer"),
           definition = function(object, by, breaks, sizeFUN){
@@ -551,17 +559,9 @@ setMethod(f = "burstTrack",
             totalDur <- difftime(object@timestamps[fixes], object@timestamps[1], units="mins") #duration in MIN
             if (length(by)!=fixes)
               stop("The length of burst IDs is not equal to the number of locations")
-            
-    #browser()
-            #l <- as.list(split(data.frame(coordinates(object), object@timestamps),cumsum(c(0,abs(diff(as.numeric(by)))))))
-            #ll <- lapply(l, function(x) { SpatialPointsDataFrame(coords=x[,1:2], proj4string=CRS("+proj=longlat"), data=data.frame(timestamps=x$object.timestamps))})
-            #by <- object$beh_code
               starts <- c(1,which(diff(x=as.numeric(by))!=0))
               stops  <- c(which(diff(x=as.numeric(by))!=0),length(as.numeric(by)))
             l  <- apply(data.frame(Starts=starts, Stops=stops), 1, function(x) data.frame(coordinates(object),object@timestamps)[x[1]:x[2],])
-#             for (i in 1:(length(starts)-1)){ 
-#               l[[i]]  <-  as.list(data.frame(coordinates(object),object@timestamps)[starts[i]:stops[i],]) 
-#               }
             ll <- lapply(l, function(x) { SpatialPointsDataFrame(coords=data.frame(x[1:2]), 
                                                                  proj4string=CRS("+proj=longlat"), 
                                                                  data=data.frame(timestamps=x$object.timestamps))})
@@ -575,25 +575,29 @@ setMethod(f = "burstTrack",
               sizeLST <- lapply(lapply(ll, function(y) {diff.POSIXt(c(y@data$timestamps[nrow(y)], time2=y@data$timestamps[1]), units="mins")} ), FUN= function(x) (as.numeric(x)/as.numeric(totalDur))) 
               } else {sizeLST  <- sizeFUN}
             sizes  <- as.numeric(cut(unlist(sizeLST), breaks=breaks))/max(as.numeric(cut(unlist(sizeLST), breaks=breaks))) 
-            
             df <- cbind(as.data.frame(do.call(rbind, colLST)),
-                        sizes,
+                        sizes, 
                         as.data.frame(do.call(rbind, midLST)))
             colnames(df) <- c("color", "size","x","y")
-            object@burstID <- as.factor(by)
-            object@burstSPDF  <- SpatialPointsDataFrame(coords=do.call(rbind, midLST),data=df[,1:2], proj4string=CRS("+proj=longlat"))    
-            return(object)
+            spdf <- SpatialPointsDataFrame(coords=do.call(rbind, midLST),data=df[,1:2], proj4string=CRS("+proj=longlat"))    
+            return(spdf)
           })
 
 #			##add classfication for color and size marco
-setGeneric("plotBursts", function(object, add=FALSE, ...){standardGeneric("plotBursts")})
+setGeneric("plotBursts", function(object, add=TRUE, ...){standardGeneric("plotBursts")})
 setMethod(f = "plotBursts", 
-          signature = c(object=".MoveTrackSingle", add="logical"),
+          signature = c(object="list"),
+          definition = function(object, add, ...){
+            lapply(object, FUN=plotBursts, add=add, ...)
+          })
+
+setMethod(f = "plotBursts", 
+          signature = c(object="SpatialPointsDataFrame"),
           definition = function(object, add, ...){
             if (add==FALSE) 
               plot(coordinates(object), type="l")
             #if(!add)
-              df <- data.frame(color=object@burstSPDF@data$color, size=object@burstSPDF@data$size, coordinates=coordinates(object@burstSPDF))
+              df <- data.frame(color=object@data$color, size=object@data$size, coordinates=coordinates(object))
               apply(df, MARGIN=1, function(x,...){points(x=x[3], y=x[4], cex=as.numeric(x['size']), col=x['color'],...)}, ...)
           })
 #             } else {}

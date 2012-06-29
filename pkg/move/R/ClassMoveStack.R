@@ -47,6 +47,49 @@ setMethod(f = "plot", ##bart marco find a more decent way to plot MoveStacks
 
 #setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))
 setGeneric("moveStack", function(x, y, time, data, proj, ...) standardGeneric("moveStack"))
+##stack a list of Move objects
+#test1 <- move(x="/Users/marcosmolla/Documents/Programming/Rmove/BCI_Ocelot_Isaac.csv")
+#test3 <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"), animal="Alba")
+#testl <- list(test1,test3)
+
+
+
+#####MAKE ALL NECESSARY FIELDS OBLIGATORY: LIKE SPECIES; STUDY; ...
+setMethod(f = "moveStack", 
+          signature = c(x="list"),
+          definition = function(x){
+            if (any((as.character(lapply(x, class)))!="Move")) 
+              stop("One or more objects in the list are not from class Move")
+            if (any(as.character(lapply(x, function(y) attr(slot(y, "timestamps"), "tzone")) )!="UTC"))
+              stop("One or more objects in the list have no UTC timestamps")
+            if (length(unique(as.character(lapply(x,proj4string))))!=1)
+              stop("One or more objects in the have differnt projections. All projections have to be the same")
+            animal <- unlist(lapply(x, slot, name="animal"))
+            length <- lapply(lapply(x, coordinates), nrow)
+            coords <- do.call(rbind, lapply(x, coordinates))
+            colnames(coords) <- c("location.long", "location.lat")
+            allData <- lapply(x, function(y) slot(y, "data"))
+            allColumns <- unique(unlist(sapply(allData, names)))
+            DATA <- do.call("rbind", lapply(allData, FUN = function(entry) {
+              missingColumns <- allColumns[which(!allColumns %in% names(entry))]
+              entry[, missingColumns] <- NA
+              entry})) #thanks to: Karl Ove Hufthammer
+            
+            tmp <- SpatialPointsDataFrame(
+              coords = coords,
+              data = DATA, 
+              proj4string = CRS(proj4string(x[[1]])),
+              match.ID = TRUE)
+            
+            idData <- data.frame(row.names=animal, data=rep(NA, length(animal))) ##What happens with all the studies that are not from movebank and have very much different information stored? bart
+            res <- new("MoveStack", 
+                       tmp, 
+                       idData = idData,
+                       timestamps = as.POSIXct(do.call(rbind, (lapply(x, function(y) {as.data.frame(y@timestamps)})))[,1], tz="UTC"), #timezone?
+                       trackId = as.factor(rep(animal, length)))
+            return(res)
+          })
+
 setMethod(f="moveStack", 
 	        signature=c(x="character"), 
 	        definition = function(x, proj){
@@ -121,3 +164,57 @@ setMethod("show", "MoveStack", function(object){
   print(object) 
 }         
 )
+
+
+###create a list of Move objects from a Move Stack (hand over additional arguments!)
+setGeneric("split") ##check whether this is necessary or screws up the original method marco
+setMethod(f = "split",
+          signature = c(x="MoveStack", f="missing"),
+          definition = function(x, f, ...){
+            print("splitting MoveStack")
+            moveList <- list()
+            for (ID in unique(x@trackId)) {
+              moveObj <- new(Class="Move", 
+                             animal=ID,
+                             species=levels(x@idData$individual.taxon.canonical.name[x@trackId==ID]),
+                             timestamps=x@timestamps[x@trackId==ID],
+                             data=x@data[x@trackId==ID,],
+                             coords.nrs=x@coords.nrs,
+                             coords=x@coords[x@trackId==ID,],
+                             bbox=as.matrix(x@bbox),
+                             proj4string=x@proj4string,
+                             dateCreation=x@dateCreation,
+                             study=levels(x@idData$study.name[x@trackId==ID]),
+                             citation=x@citation)
+              moveList[[ID]]  <- moveObj
+            }
+            return(moveList)
+          }
+          )
+
+###create a list of Move objects from a Move Stack (hand over additional arguments!)
+# setGeneric("moveStack", function(x) standardGeneric{"moveStack"}) ##check whether this is necessary or screws up the original method marco
+# setMethod(f = "moveStack",
+#           signature = c(x="list"),
+#           definition = function(x, f, ...){
+#             print("stacking Move")
+#             
+#             moveList <- list()
+#             for (ID in unique(x@trackId)) {
+#               moveObj <- new(Class="Move", 
+#                              animal=ID,
+#                              species=levels(x@idData$individual.taxon.canonical.name[x@trackId==ID]),
+#                              timestamps=x@timestamps[x@trackId==ID],
+#                              data=x@data[x@trackId==ID,],
+#                              coords.nrs=x@coords.nrs,
+#                              coords=x@coords[x@trackId==ID,],
+#                              bbox=as.matrix(x@bbox),
+#                              proj4string=x@proj4string,
+#                              dateCreation=x@dateCreation,
+#                              study=levels(x@idData$study.name[x@trackId==ID]),
+#                              citation=x@citation)
+#               moveList[[ID]]  <- moveObj
+#             }
+#             return(moveStack)
+#           }
+#           )

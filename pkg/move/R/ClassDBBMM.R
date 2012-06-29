@@ -231,32 +231,7 @@ setMethod(f="brownian.bridge.dyn",
             DBBMMStack <- new("DBBMMStack",DBMvar=dBMvarianceStack, rasterStack)
             return(DBBMMStack)
           })
- 
-###create a list of Move objects from a Move Stack (hand over additional arguments!)
-setGeneric("split") ##check whether this is necessary or screws up the original method marco
-setMethod(f = "split",
-          signature = c(x="MoveStack", f="missing"),
-          definition = function(x, f, ...){
-            print("splitting MoveStack")
-            moveList <- list()
-           for (ID in unique(x@trackId)) {
-             moveObj <- new(Class="Move", 
-                           animal=ID,
-                           species=levels(x@idData$individual.taxon.canonical.name[x@trackId==ID]),
-                           timestamps=x@timestamps[x@trackId==ID],
-                           data=x@data[x@trackId==ID,],
-                           coords.nrs=x@coords.nrs,
-                           coords=x@coords[x@trackId==ID,],
-                           bbox=as.matrix(x@bbox),
-                           proj4string=x@proj4string,
-                           dateCreation=x@dateCreation,
-                           study=levels(x@idData$study.name[x@trackId==ID]),
-                           citation=x@citation)
-             moveList[[ID]]  <- moveObj
-             }
-           return(moveList)
-          }
-          )
+
 
 
 setGeneric(".extractDBMvar", function(object){standardGeneric(".extractDBMvar")})
