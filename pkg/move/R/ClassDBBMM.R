@@ -1,8 +1,3 @@
-#source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMoveStack.R")
-#source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassMove.R")
-#source(file="~/Documents/Programming/Rmove/move/pkg/move/R/ClassDBMvar.R")
-#	    brownian.bridge.dyn(spTransform(move("../inst/extdata/leroy.csv"), center=T), location.error=5, window.size=31)
-
 setClass(Class = ".UDStack", contains=c("RasterStack"), 
          representation = representation (
            method = "character"), 
@@ -72,13 +67,6 @@ setMethod(f="brownian.bridge.dyn",
          }) #seems to be necessary
 
 
-# detach("package:move")
-# remove.packages("move")
-# require(move)
-# test2 <- moveStack(x="~/Documents/Programming/Rmove/BCI Ocelot.csv")
-# testtest <- spTransform(test2, center=TRUE,CRSobj="+proj=aeqd")
-# PP <- brownian.bridge.dyn(testtest, dimSize=20, location.error=23, time.step=600, ext=.2)
-
 ###if no raster object but a dimSize is given, the cell size of the raster is calculated with the number of cells given by the dimSize
 #NOTE: the dimSize is a raw estimate of number of cells of the highest range side. it is however not the final number of cells in that direction because when calculating the raster it is extended by the ext factor and there is rounding with ceiling also taking part. 
 setMethod(f="brownian.bridge.dyn", 
@@ -107,7 +95,6 @@ setMethod(f = "brownian.bridge.dyn",
           signature = c(object="SpatialPointsDataFrame",raster="numeric",dimSize="missing",location.error="numeric"),
           definition = function(object,raster,dimSize,location.error,...){
             #print("object SPDF, raster numeric")
-           
             Range <- .extcalc(obj = object, ext = ext)
             yRange <- diff(Range[3:4])
             xRange <- diff(Range[1:2])
@@ -116,7 +103,6 @@ setMethod(f = "brownian.bridge.dyn",
             ymax <- Range[4] + (ceiling(yRange/raster) * raster - yRange)/2
             xmin <- Range[1] - (ceiling(xRange/raster) * raster - xRange)/2
             xmax <- Range[2] + (ceiling(xRange/raster) * raster - xRange)/2
-            
             #Calculate the raster; the raster variable replaces here the cell size
             nrow <- ((ymax-ymin)/raster) 
             ncol <- ((xmax-xmin)/raster)
@@ -128,9 +114,7 @@ setMethod(f = "brownian.bridge.dyn",
 
 setMethod(f = "brownian.bridge.dyn",
           signature = c(object=".MoveTrackSingle", raster="RasterLayer",dimSize="missing", location.error="numeric"),
-          definition = function(object, raster, location.error, ...){
-            #print("object MTS, raster=RasterLayer")
-                        
+          definition = function(object, raster, location.error, ...){        
             #check for aeqd projection of the coordinates
             if (grepl("aeqd",proj4string(object)) == FALSE) {stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")} else {}
             
@@ -202,7 +186,6 @@ setMethod(f = "brownian.bridge.dyn",
 setMethod(f="brownian.bridge.dyn", 
           signature=c(object="MoveStack",raster="RasterLayer", dimSize="missing",location.error="numeric"),
           function(object, raster, dimSize, location.error,...){
-            #print("object MoveStack, raster RasterLayer")
             #.extcalc already calculated the right raster extension for all tracks
             rm(dimSize)   ##is not needed anymore, because RasterLayer is already calculated
             moveUnstacked <- split(x=object) #split MoveStack into individual Move objects
@@ -284,23 +267,6 @@ setMethod(f = "outerProbability",
             return(outerProbability/cellStats(raster,stat=sum))
           }  
           )
-
-
-# ###extract  raster from DBBMM
-# setMethod(f="raster",
-#          signature = ".UD",
-#          definition = function(x){
-#            return(as(x, "RasterLayer"))
-#         })
-#
-#
-####extract projection from DBBMM
-#setMethod(f = "proj4string",
-#          signature = "DBBMM", 
-#          definition = function(obj){
-#            return(raster(obj)@crs@projargs)
-#          }
-#          )
 
 ####################
 ## Plotting dbbmm ##
@@ -403,7 +369,4 @@ setMethod(f = "summary",
             cat("Raster minimum: ",minValue(object),"\n")
           }
           )
-
-
-
 

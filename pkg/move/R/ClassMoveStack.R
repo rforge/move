@@ -45,16 +45,7 @@ setMethod(f = "plot", ##bart marco find a more decent way to plot MoveStacks
           )
 
 
-#setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))
 setGeneric("moveStack", function(x, y, time, data, proj, ...) standardGeneric("moveStack"))
-##stack a list of Move objects
-#test1 <- move(x="/Users/marcosmolla/Documents/Programming/Rmove/BCI_Ocelot_Isaac.csv")
-#test3 <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"), animal="Alba")
-#testl <- list(test1,test3)
-
-
-
-#####MAKE ALL NECESSARY FIELDS OBLIGATORY: LIKE SPECIES; STUDY; ...
 setMethod(f = "moveStack", 
           signature = c(x="list"),
           definition = function(x){
@@ -86,7 +77,8 @@ setMethod(f = "moveStack",
                        tmp, 
                        idData = idData,
                        timestamps = as.POSIXct(do.call(rbind, (lapply(x, function(y) {as.data.frame(y@timestamps)})))[,1], tz="UTC"), #timezone?
-                       trackId = as.factor(rep(animal, length)))
+                       trackId = as.factor(rep(animal, length)),
+                       study = c("A study"))
             return(res)
           })
 
@@ -193,8 +185,8 @@ setMethod(f = "split",
           )
 
 ###create a list of Move objects from a Move Stack (hand over additional arguments!)
-# setGeneric("moveStack", function(x) standardGeneric{"moveStack"}) ##check whether this is necessary or screws up the original method marco
-# setMethod(f = "moveStack",
+
+# setMethod(f = "stack",
 #           signature = c(x="list"),
 #           definition = function(x, f, ...){
 #             print("stacking Move")
@@ -218,3 +210,4 @@ setMethod(f = "split",
 #             return(moveStack)
 #           }
 #           )
+

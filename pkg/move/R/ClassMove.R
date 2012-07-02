@@ -94,17 +94,10 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
 
 
 ## Making move a generic funtion
-#if (!isGeneric("move")) {
-	setGeneric("move", function(x, y, time, data, proj, animal, ...) standardGeneric("move"))
-#}
-
-### Defining the funcitoin move
-##Reading from a .csv file
+setGeneric("move", function(x, y, time, data, proj, animal, species=NA, study=NA,...) standardGeneric("move"))
 setMethod(f = "move", 
       	  signature = c(x="character"), # marco maybe also make these this fucntion work with files with multiple ids by combining moveStack and move functions all into move functions
       	  definition = function(x, proj){
-      		#check wheter rgdal is installed
-      		#if (!any(.packages(all=T)=="rgdal")){stop("You need the 'rgdal' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
 		  if(!file.exists(x))
 			  stop("x should be a file on disk but it cant be found")
       		df <- read.csv(x, header=TRUE, sep=",", dec=".")
@@ -112,108 +105,49 @@ setMethod(f = "move",
       		if (!all(c("timestamp", "location.long",  "location.lat", "study.timezone", "study.local.timestamp", "sensor.type", "individual.local.identifier", "individual.taxon.canonical.name")%in%colnames(df)))
       		        stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
       		df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") 
-      		df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))            
-      		missedFixes<- df[(is.na(df$location.long)|is.na(df$location.lat)), ]$timestamp
-      		df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
-          
-      		tmp <- SpatialPointsDataFrame(
-      		      coords = cbind(df$location.long,df$location.lat),
-      		      data = data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp")]]), 
-      		      proj4string = CRS("+proj=longlat +ellps=WGS84"), # proj (function argument ) is not used here Marco
-      		      match.ID = TRUE)
-          
-      		res <- new("Move", 
-      		      timestamps = df$timestamp, 
-      		      tmp, 
-      		      study = levels(df$study.name), 
-      		      species = levels(df$individual.taxon.canonical.name), 
-      		      animal = levels(df$individual.local.identifier),
-      		      timesMissedFixes = missedFixes)
-      		return(res)
+      		df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))
+      		.move(x=list(df=df, proj=proj))
       	  }
       	  )
 
-#if non-movebank data are used, coordinates (x,y), time and the data frame must be defined
+#if non-Movebank data are used, table is new defined 
 setMethod(f="move",
-          signature=c(x="numeric", animal="character"),#,y="numeric",time="factor",data="data.frame"),
-          definition = function(x,y,time,data,proj, animal){
-            #check wheter rgdal is installed
-            #if (any(.packages(all=T)=="rgdal")==FALSE){stop("You need the 'rgdl' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
-            
+          signature=c(x="numeric", y="numeric", time="POSIXct", data="data.frame", proj="CRS",  animal="character"),
+          definition = function(x,y,time,data,proj,animal,...){
             df <- data
             df$location.long <- x
             df$location.lat <- y
-            if(any(is.na(df$location.long))==TRUE) warning("There were NA locations detected.")
-            #res@timesMissedFixes <- df[(is.na(df$location.long)|is.na(df$location.lat)), "timestamp"] #save omitted NA timestamps
-            df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ] #omitting NAsa
-           
-            tmp <- SpatialPointsDataFrame(
-              coords = cbind(df$location.long, df$location.lat),
-              data = df,#(df[names(df)[!names(df)%in%c("location.lat", "location.long")]]),
-              proj4string = proj, 
-              match.ID = TRUE)
-            
-            res <- new("Move",
-                       tmp,
-                       timestamps=time,
-                       animal=animal)
-            return(res)
+            df$timestamp <- time
+            df$individual.local.identifier <- as.factor(if (length(animal)==1) {rep(animal, length(x))} else {animal}) #animal
+            df$individual.taxon.canonical.name <- as.factor(if (length(species)==1) {rep(species, length(x))} else {species}) #species
+            df$study.name <- as.factor(if (length(study)==1) {rep(study, length(x))} else {study})#study
+            .move(x=list(df=df, proj=proj))
           }
           )
 
-
-###This function is called by getMovebankData with
-###move(x=trackDF, y=studyDF, animal=animalName)
-setMethod(f="move",
-          signature=c(x="data.frame", y="data.frame"),
-          definition = function(x,y, animal,...){
-            #check wheter rgdal is installed
-            #if (any(.packages(all=T)=="rgdal")==FALSE){stop("You need the 'rgdl' package to be installed. \n You may use: \n setRepositories(ind=1:2) \n install.packages('rgdal') \n")} else {}
-
-            df <- x
-            df$timestamp <-  as.POSIXct(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%S", tz="UTC")
-            df <- df[!(is.na(df$location_long)|is.na(df$location_lat)), ] #omitting NAsa
-            #check for valid POSIXct timestamp
-            if (grepl("POSIXct", class(df$timestamp))[1]==FALSE) {stop("\n The timestamps need to be transformed to a POSIXct class.")} else {}
-#            df$location.long <- x
-#            df$location.lat <- y
-            
+setGeneric(".move", function(x) standardGeneric(".move"))
+setMethod(f = ".move", 
+          signature = c(x="list"), 
+          definition = function(x){            
+            df <- x[['df']]
+            proj <- x[[2]]
+            if(any(is.na(df$location.long))==TRUE) warning("There were NA locations detected and omitted.")
+            missedFixes<- df[(is.na(df$location.long)|is.na(df$location.lat)), ]$timestamp
+            df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
             tmp <- SpatialPointsDataFrame(
-              coords = cbind(df$location_long, df$location_lat),
-              data = df,#(df[names(df)[!names(df)%in%c("location.lat", "location.long")]]),
-              proj4string = CRS("+proj=longlat +ellps=WGS84"), 
-              match.ID = TRUE)
-            
-            res <- new("Move",
-                       tmp)
-            
-            res@timesMissedFixes <- df[(is.na(df$location_long)|is.na(df$location_lat)), "timestamp"] #save omitted NA timestamps
-            res@animal <- animal
-            res@species <- ""
-            res@study <- as.character(y$name)
-            res@citation <- as.character(y$citation)
-            res@license <- as.character(y$license_terms)            
+                    coords = cbind(df$location.long,df$location.lat),
+                    data = data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp")]]), 
+                    proj4string = proj,#CRS("+proj=longlat +ellps=WGS84"), # proj (function argument ) is not used here Marco
+                    match.ID = TRUE)
+            res <- new("Move", 
+                       timestamps = df$timestamp, 
+                       tmp, 
+                       study = levels(df$study.name), 
+                       species = levels(df$individual.taxon.canonical.name), 
+                       animal = levels(df$individual.local.identifier),
+                       timesMissedFixes = missedFixes)
             return(res)
           })
-
-###Checking if projection method was set for move function
-###if not, object is not created and process stops, returning error message
-# setMethod(f="move",
-#           signature=c(x="character", proj="missing"),
-#           definition = function(x){return(stop("Projection method missing"))}
-#           )
-# 
-# setMethod(f="move",
-#           signature=c(x="character", proj="character"),
-#           definition = function(x,proj){return(move(x=x,proj=CRS(proj)))}
-#           )
-
-
-###extract coordinates from Move
-#setMethod("coordinates", "Move", function(obj, ...){
-#            return(coordinates(obj@sdf, ...))
-#          }
-#          )
 
 
 ###extract number of locations from Move
@@ -516,10 +450,6 @@ setMethod("summary", "Move", function(object){
         tempMCPArea <- NA
       }
       names(tempMCPArea)  <- "MCPArea"
-
-         
-  
-          
           
     tempRes <- as.data.frame(cbind(animalID, tagID, tempSpecies, tempRelpd, tempSEDist, tempTravDist, tempMaxDist, tempMinDist, tempFarthDist, tempAverDist, tempSDDist, outliners, dupl, multseason, tempDur, tempAverDur, tempSDDur, tempAverSpeed, tempMaxSpeed, tempVarSpeed, tempAverAngles, tempRhoAngles, tempVarAngles, tempSEAngle, tempFPTcoeff, tempFPTintercept, tempHBrown, tempMCPArea))
     results <- tempRes
@@ -535,21 +465,13 @@ setMethod("summary", "Move", function(object){
 
 
 #			#Find below the functions to plot a "centroid" point on the line of a certain line segment
-# 			require(move)
-#  			data <- read.csv("~/Documents/Programming/Rmove/beh_movebank.csv", header=T, sep=";", dec=".")
-#  			data <- data[order(time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC")),]
-#       test <- move(x=data$xi, y=data$yi,time=as.POSIXct(x=data$time, format="%Y-%m-%d %H:%M:%S",tz="UTC"), data=data, proj=CRS("+proj=longlat"), animal="Alba")
-#       test2 <- burstTrack(object=test, by=test$beh_code)
-#       lines(test)
-#       plotBursts(test2, pch=19)
-# 			trackb <- new("MoveBurst", bursts=as.factor(data$id_line_beh), test)
 setGeneric("burstTrack", function(object, by, breaks=5, sizeFUN="relTime"){standardGeneric("burstTrack")}) 
-setMethod(f = "burstTrack", 
-          signature = c(object="MoveStack", by="integer"),
-          definition = function(object, by, breaks, sizeFUN){
-            moveUnstacked <- split(x=object) #split MoveStack into individual Move objects
-            spdfLST <- as.list(lapply(moveUnstacked, FUN=burstTrack, by=by, breaks=breaks, sizeFUN=sizeFUN))                             
-          })##function was not tested yet
+# setMethod(f = "burstTrack", 
+#           signature = c(object="MoveStack", by="integer"),
+#           definition = function(object, by, breaks, sizeFUN){
+#             moveUnstacked <- split(x=object) #split MoveStack into individual Move objects
+#             spdfLST <- as.list(lapply(moveUnstacked, FUN=burstTrack, by=by, breaks=breaks, sizeFUN=sizeFUN))                             
+#           })##function was not tested yet
 
 
 setMethod(f = "burstTrack", 

@@ -3,15 +3,7 @@ setClass(Class = "MovebankLogin",
          representation = representation(username = "character", password = "character", rcurl = "logical"),
          prototype = prototype(username = as.character(), password = as.character()),
           validity = function(object){
-           if(nchar(object@username)==0 || nchar(object@password)==0)
-              stop("Please enter a username and password")
-#            if (object@rcurl){
-#              require("RCurl")
-#              curl  <- getCurlHandle()
-#              curlSetOpt( .opts = list(httpheader = c(user = object@username, password = object@password),verbose=FALSE), curl=curl)
-#              testdownload <- getMovebank("study", curl)
-#              if(getCurlInfo(curl)$response.code==403) {stop("Your username or password is not correct") } 
-#            }
+           if(nchar(object@username)==0 || nchar(object@password==0))
            return(TRUE)
           }
          )
@@ -21,7 +13,7 @@ setMethod(f="movebankLogin",
           signature=c(username="character", password="character"), 
           definition = function(username, password){
             if(any(grepl("RCurl", installed.packages()))) {rcurl <- TRUE} else {rcurl <- FALSE}
-            if (rcurl) warning("You are using an unsecure connection via http. To use https install RCurl.")
+            if (!rcurl) warning("You are using an unsecure connection via http. To use https install RCurl.")
             return(new("MovebankLogin", username=username, password=password, rcurl=rcurl))
           })
 
