@@ -168,7 +168,7 @@ setMethod(f = "split",
             for (ID in unique(x@trackId)) {
               moveObj <- new(Class="Move", 
                              animal=ID,
-                             species=levels(x@idData$individual.taxon.canonical.name[x@trackId==ID]),
+                             species=as.character(x@idData[rownames(x@idData)==ID,]$individual.taxon.canonical.name),
                              timestamps=x@timestamps[x@trackId==ID],
                              data=x@data[x@trackId==ID,],
                              coords.nrs=x@coords.nrs,
