@@ -286,11 +286,7 @@ setMethod(f = "outerProbability",
 #          }
 #          )
 
-#if (!isGeneric("contour")) {
-  setGeneric("contour", function(x,...)
-    standardGeneric("contour"))
-#}
-
+setGeneric("contour", function(x,...) standardGeneric("contour"))
 setMethod(f = "contour",
           signature = c(x=".UD"), ## enter nlevel for the number of levels, or levels for the correct levels!!
           definition = function(x, ...){
@@ -300,7 +296,7 @@ setMethod(f = "contour",
             
             x <- newRaster
             callNextMethod() 
-            })
+          })
             #return the contour as SLDF object: plot=F, google=F
           #  if (plot==F && google==F && track==F){
            #   raster2contour(x,...)

@@ -1,8 +1,8 @@
 \name{plot}
 
 \alias{plot}
-\alias{plot,Move,ANY-method}
-\alias{plot,DBBMM,ANY-method}
+\alias{plot,Move,missing-method}
+\alias{plot,MoveStack,missing-method}
 
 \docType{methods}
 
@@ -11,8 +11,9 @@
 \description{Function for plotting a recorded track from a Move object or the probability values from a DBBMM object}
 
 \usage{
-  \S4method{plot}{Move,ANY}(x,google=FALSE,maptype="terrain",...)
-  \S4method{plot}{DBBMM,ANY}(x)
+  \S4method{plot}{Move,missing}(x, google = FALSE, maptype = "terrain", ...)
+  \S4method{plot}{MoveStack,missing}(x, google = FALSE, maptype = "terrain", ...)
+  %\S4method{plot}{DBBMM,ANY}(x)
 }
 
 \arguments{

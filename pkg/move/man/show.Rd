@@ -2,6 +2,7 @@
 
 \alias{show}
 \alias{show,Move-method}
+\alias{show,MoveStack-method}
 
 \docType{methods}
 
@@ -11,10 +12,11 @@
 
 \usage{
   \S4method{show}{Move}(object)
+  \S4method{show}{MoveStack}(object)
 }
 
 \arguments{
-  \item{object}{a Move object}
+  \item{object}{a Move or MoveStack object}
 }
 
 \details{

@@ -12,8 +12,8 @@ setClass(Class = ".MoveGeneral",
       		citation = as.character(),
       		license = as.character()),
       	 validity = function(object){
-      			if(length(object@study)>1)
-      				stop("Study has length unequal to 0 or 1")
+      			#if(length(object@study)>1)
+      		#		stop("Study has length unequal to 0 or 1")
       			if(length(object@citation)>1)
       				stop("Citation has length unequal to 0 or 1")
       			if(length(object@license)>1)
@@ -68,6 +68,7 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no misse
 
 setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
        	 representation = representation (
+       	   #idData = "data.frame",
       		 animal = "character",
       		 species = "character"),# marco maybe make something like id data instead of this rather specific implementation
       	 prototype = prototype(
@@ -94,7 +95,7 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
 
 
 ## Making move a generic funtion
-setGeneric("move", function(x, y, time, data, proj, animal, species=NA, study=NA,...) standardGeneric("move"))
+setGeneric("move", function(x, y, time, data, proj, animal, species="sp", study="std",...) standardGeneric("move"))
 setMethod(f = "move", 
       	  signature = c(x="character"), # marco maybe also make these this fucntion work with files with multiple ids by combining moveStack and move functions all into move functions
       	  definition = function(x, proj){

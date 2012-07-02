@@ -7,7 +7,7 @@
 
 \title{Contour plot}
 
-\description{Contour plot of a RasterLayer from a DBBMM object (see \code{\link{.UD-class}}).}
+\description{Contour plot of a RasterLayer from a DBBMM object.}
 
 \usage{
   \S4method{contour}{.UD}(x, ...)

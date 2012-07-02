@@ -1,8 +1,8 @@
 \name{move}
 
 \alias{move}
-\alias{move,character-method}
-\alias{move,numeric-method}
+\alias{move,character,ANY,ANY,ANY,ANY,ANY-method}
+\alias{move,numeric,numeric,POSIXct,data.frame,CRS,character-method}
 
 \docType{methods}
 
@@ -16,8 +16,8 @@ An alternative to this method is to import one's own data, and specify the locat
 }
 
 \usage{
-\S4method{move}{character}(x, proj)
-\S4method{move}{numeric}(x, y, time, data, proj)
+\S4method{move}{character,ANY,ANY,ANY,ANY,ANY}(x, proj)
+\S4method{move}{numeric,numeric,POSIXct,data.frame,CRS,character}(x, y, time, data, proj, animal, species="sp", study="std",...)
 }
 
 \arguments{
@@ -26,6 +26,9 @@ An alternative to this method is to import one's own data, and specify the locat
 \item{time}{column indicator for non-Movebank data for the time stamps, with POSIXct conversion, i.e. \code{as.POSIXct(data$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC")}}
 \item{data}{full parh of the location of the non-Movebank file}
 \item{proj}{projection method for non-Movebank data; requires a valid CRS (see \code{\link{CRS-class}}) object, like CRS("+proj=longlat +ellps=WGS84")}
+\item{animal}{animal ID or name, either single character or a vector with length of the number of coordinates}
+\item{species}{Additional arguments}
+\item{study}{Additional arguments}
 \item{...}{Additional arguments}  
 }
 
