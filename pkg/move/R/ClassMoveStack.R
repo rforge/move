@@ -26,7 +26,7 @@ setClass(Class = "MoveStack", contains = c(".MoveGeneral",".MoveTrackStack"),
         )
 
 
-setMethod("[", signature(x="MoveStack"),definition=function(x,i){
+setMethod("[", signature(x="MoveStack"),definition=function(x,i){ #does not work
 	  new("MoveStack", as(x, "SpatialPointsDataFrame")[i,], 
 	      trackId=droplevels(x@trackId[i]),
 	      idData=x@idData[as.character(unique(x@trackId[i])),],

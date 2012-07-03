@@ -494,9 +494,11 @@ setMethod(f = "burstTrack",
             coll <- as.list(split(data.frame(by),cumsum(c(0,abs(diff(as.numeric(by)))))))
             colLST <- lapply(lapply(coll, unique), function(x) return(col[as.numeric(x)]))
             #sizeLST <- lapply(lapply(ll, length), FUN= function(x) (x/nrow(coordinates(object))))
-            if (sizeFUN=="relTime") {
+            
+            if (class(sizeFUN)!="function") {
               sizeLST <- lapply(lapply(ll, function(y) {diff.POSIXt(c(y@data$timestamps[nrow(y)], time2=y@data$timestamps[1]), units="mins")} ), FUN= function(x) (as.numeric(x)/as.numeric(totalDur))) 
-              } else {sizeLST  <- sizeFUN}
+              } else {FUN <- match.fun(sizeFUN)
+                      sizeLST  <- FUN(ll)}
             sizes  <- as.numeric(cut(unlist(sizeLST), breaks=breaks))/max(as.numeric(cut(unlist(sizeLST), breaks=breaks))) 
             df <- cbind(as.data.frame(do.call(rbind, colLST)),
                         sizes, 
