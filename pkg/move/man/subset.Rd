@@ -1,7 +1,6 @@
-\name{\[}
+\name{subset-method}
 
-\alias{\[}
-\alias{\[,MoveStack,ANY,ANY-method}
+\alias{[,MoveStack,ANY,ANY-method}
 
 \docType{methods}
 
@@ -10,14 +9,12 @@
 \description{Returning a single Move object}
 
 \usage{
-  \S4method{\[}{MoveStack,ANY,ANY}(x,i,y,drop)
+  \S4method{[}{MoveStack,ANY,ANY}(x,i)
 }
 
 \arguments{
   \item{x}{...}
   \item{i}{...}
-  \item{j}{...}
-  \item{drop}{...}
 }
 
 \details{

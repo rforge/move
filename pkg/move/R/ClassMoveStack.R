@@ -24,8 +24,10 @@ setClass(Class = "MoveStack", contains = c(".MoveGeneral",".MoveTrackStack"),
     			return(TRUE)
     		}
         )
-setMethod('[', signature(x="MoveStack"),definition=function(x,i,j,drop){
-	  new('MoveStack', as(x, "SpatialPointsDataFrame")[i,], 
+
+
+setMethod("[", signature(x="MoveStack"),definition=function(x,i){
+	  new("MoveStack", as(x, "SpatialPointsDataFrame")[i,], 
 	      trackId=droplevels(x@trackId[i]),
 	      idData=x@idData[as.character(unique(x@trackId[i])),],
 	      timestamps=x@timestamps[i])})
@@ -45,7 +47,7 @@ setMethod(f = "plot", ##bart marco find a more decent way to plot MoveStacks
           )
 
 
-setGeneric("moveStack", function(x, y, time, data, proj, ...) standardGeneric("moveStack"))
+setGeneric("moveStack", function(x, proj) standardGeneric("moveStack"))
 setMethod(f = "moveStack", 
           signature = c(x="list"),
           definition = function(x){
@@ -72,7 +74,9 @@ setMethod(f = "moveStack",
               proj4string = CRS(proj4string(x[[1]])),
               match.ID = TRUE)
             
-            idData <- data.frame(row.names=animal, data=rep(NA, length(animal))) ##What happens with all the studies that are not from movebank and have very much different information stored? bart
+            idData <- data.frame(row.names=animal, 
+                                 individual.taxon.canonical.name=unlist(lapply(x, slot, "species")),
+                                 study.name=unlist(lapply(x, slot, "study")))
             res <- new("MoveStack", 
                        tmp, 
                        idData = idData,
@@ -117,26 +121,51 @@ setMethod(f="moveStack",
       	  )
 
 
+###create a list of Move objects from a Move Stack (hand over additional arguments!)
+setGeneric("split") ##check whether this is necessary or screws up the original method marco
+setMethod(f = "split",
+          signature = c(x="MoveStack", f="missing"),
+          definition = function(x, f, ...){
+            moveList <- list()
+            for (ID in unique(x@trackId)) {
+              moveObj <- new(Class="Move", 
+                             animal=ID,
+                             species=as.character(x@idData[ID, "individual.taxon.canonical.name"]),
+                             timestamps=x@timestamps[x@trackId==ID],
+                             data=x@data[x@trackId==ID,],
+                             coords.nrs=x@coords.nrs,
+                             coords=x@coords[x@trackId==ID,],
+                             bbox=as.matrix(x@bbox),
+                             proj4string=x@proj4string,
+                             dateCreation=x@dateCreation,
+                             study=as.character(x@idData[ID,"study.name"]),
+                             citation=x@citation)
+              moveList[[ID]]  <- moveObj
+            }
+            return(moveList)
+          }) ###there is a warning issued like: In min(x) : no non-missing arguments to min; returning Inf;; this is due to the data that are coerced by the show function for 'min values' and 'max values'
+
+
 setGeneric("citation", function(obj) standardGeneric("citation"))
 setMethod("citation", ".MoveGeneral", function(obj){
   return(obj@citation)
-}
-)
+})
+
 
 ##Print function for a Move and MoveStack object
 setGeneric("print")
 setMethod("print",".MoveTrackStack",function(x){
-          callNextMethod(x)
-          if (exists("study.name",x@idData)==TRUE){
-            cat("study name  :",levels(x@idData$study.name),"\n")}
-          if (exists("individual.taxon.canonical.name", where=x@idData)==TRUE){
-            cat("species     :",as.character(unique(x@idData$individual.taxon.canonical.name)),"\n")}
-          cat("no. of indiv:",nlevels(x@trackId),"\n")
-          cat("indiv. ids  :",paste(levels(x@trackId),collapse=", "),"\n")
-          pp <- split(x@coords,x@trackId)
-          cat("no. of fixes:",unlist(lapply(pp,length)),"\n")
-          }
-          )
+  callNextMethod(x)
+  if (exists("study.name",x@idData)==TRUE){
+    cat("study name  :",levels(x@idData$study.name),"\n")}
+  if (exists("individual.taxon.canonical.name", where=x@idData)==TRUE){
+    cat("species     :",as.character(unique(x@idData$individual.taxon.canonical.name)),"\n")}
+  cat("no. of indiv:",nlevels(x@trackId),"\n")
+  cat("indiv. ids  :",paste(levels(x@trackId),collapse=", "),"\n")
+  pp <- split(x@coords,x@trackId)
+  cat("no. of fixes:",unlist(lapply(pp,length)),"\n")
+}
+)
 
 setMethod("print","MoveStack",
           function(x){
@@ -149,65 +178,10 @@ setMethod("print","MoveStack",
               coln <- colnames(x@idData)
               coln <- c(coln[1:maxItems], '...')
             } else {coln <- colnames(x@idData)}
-              cat("indiv. attr.:", paste(coln, collapse=", "), "\n")
+            cat("indiv. attr.:", paste(coln, collapse=", "), "\n")
           }
-          )
+)
 setMethod("show", "MoveStack", function(object){
   print(object) 
 }         
 )
-
-
-###create a list of Move objects from a Move Stack (hand over additional arguments!)
-setGeneric("split") ##check whether this is necessary or screws up the original method marco
-setMethod(f = "split",
-          signature = c(x="MoveStack", f="missing"),
-          definition = function(x, f, ...){
-            print("splitting MoveStack")
-            moveList <- list()
-            for (ID in unique(x@trackId)) {
-              moveObj <- new(Class="Move", 
-                             animal=ID,
-                             species=as.character(x@idData[rownames(x@idData)==ID,]$individual.taxon.canonical.name),
-                             timestamps=x@timestamps[x@trackId==ID],
-                             data=x@data[x@trackId==ID,],
-                             coords.nrs=x@coords.nrs,
-                             coords=x@coords[x@trackId==ID,],
-                             bbox=as.matrix(x@bbox),
-                             proj4string=x@proj4string,
-                             dateCreation=x@dateCreation,
-                             study=levels(x@idData$study.name[x@trackId==ID]),
-                             citation=x@citation)
-              moveList[[ID]]  <- moveObj
-            }
-            return(moveList)
-          }
-          )
-
-###create a list of Move objects from a Move Stack (hand over additional arguments!)
-
-# setMethod(f = "stack",
-#           signature = c(x="list"),
-#           definition = function(x, f, ...){
-#             print("stacking Move")
-#             
-#             moveList <- list()
-#             for (ID in unique(x@trackId)) {
-#               moveObj <- new(Class="Move", 
-#                              animal=ID,
-#                              species=levels(x@idData$individual.taxon.canonical.name[x@trackId==ID]),
-#                              timestamps=x@timestamps[x@trackId==ID],
-#                              data=x@data[x@trackId==ID,],
-#                              coords.nrs=x@coords.nrs,
-#                              coords=x@coords[x@trackId==ID,],
-#                              bbox=as.matrix(x@bbox),
-#                              proj4string=x@proj4string,
-#                              dateCreation=x@dateCreation,
-#                              study=levels(x@idData$study.name[x@trackId==ID]),
-#                              citation=x@citation)
-#               moveList[[ID]]  <- moveObj
-#             }
-#             return(moveStack)
-#           }
-#           )
-

@@ -2,6 +2,7 @@
 
 \alias{MoveStack}
 \alias{MoveStack-class}
+\alias{[,MoveStack,ANY,ANY-class}
 
 \docType{class}
 
@@ -28,6 +29,13 @@
     \item{timestamps}{  }
     \item{trackId}{  }
   }
+}
+
+\section{Methods}{
+  Methods defined with class "MoveStack" in the signature:
+    \describe{
+      \item{[}{\code{signature(x="MoveStack")}: select subset ...}
+      }
 }
 
 \author{Marco Smolla}
