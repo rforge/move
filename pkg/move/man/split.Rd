@@ -5,7 +5,7 @@
 
 \docType{methods}
 
-\title{Splitting MoveStack}
+\title{Splitting a MoveStack}
 
 \description{Splitting MoveStack in a list of Move objects}
 
@@ -21,15 +21,12 @@
 }
 
 \details{
-  ...
+  A MoveStack is splitted into a list of \link[=Move-class]{Move} objects by the trackIds of the given MoveStack. 
+  To stack this list again \link{moveStack} can be used. 
 }
 
 \author{Marco Smolla}
 
-\note{
-  ...
-}
-
 \examples{
-sum(2,1)
+##we would need a moveStack object right here
 }

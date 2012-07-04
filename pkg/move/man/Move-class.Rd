@@ -21,18 +21,19 @@ The Move object is created with the \code{\link{move}} function. It is the requi
     \item{citation}{Object of class \code{"character"}: how to cite the study;  }
     \item{license}{Object of class \code{"character"}: the license under which the data were publicated;  }
     \item{timesMissedFixes}{Object of class \code{"POSIXct"}: stores the timestamps of lines of the data set that were removed because they included NA locations }
-    \item{bbox}{...}
-    \item{coords}{...}
-    \item{coords.nrs}{...}
-    \item{data}{...}
-    \item{proj4string}{...}
-    \item{timestamps}{...}
+    \item{bbox}{belongs to the SpatialPointsDataFrame}
+    \item{coords}{coordinates of the track, belongs to the SpatialPointsDataFrame}
+    \item{coords.nrs}{belongs to the SpatialPointsDataFrame}
+    \item{data}{additional data of that object that is stored in the SpatialPointsDataFrame}
+    \item{proj4string}{projection of the coordinates}
+    \item{timestamps}{timestamps according to the coordinates}
   }
 }
 
 \section{Methods}{
   \describe{
-    \item{\code{\link{move}}}{\code{signature(object = "Move")}: creates a move object}
+    \item{\code{\link{move}}}{\code{signature(object = "Move")}: creates a Move object}
+    \item{\code{\link{getMovebankData}}}{\code{signature(object = "character")}: creates a Move object by accessing Movebank}
     \item{\code{\link{spTransform}}}{\code{signature(object = "Move")}: transforms coordinates to a different projection method}
     \item{\code{\link{show}}}{\code{signature(object = "Move")}: prints a summary of all data stored in the Move object}
     \item{\code{\link{as.data.frame}}}{\code{signature(object = "Move")}: extracts the spatial data frame}

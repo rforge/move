@@ -4,7 +4,7 @@
 
 \docType{methods}
 
-\title{Returns an object from a MoveStack}
+\title{Returns a single object from a MoveStack}
 
 \description{Returning a single Move object}
 
@@ -13,16 +13,9 @@
 }
 
 \arguments{
-  \item{x}{...}
-  \item{i}{...}
+  \item{x}{MoveStack object}
+  \item{i}{numeric, number of position in the stack}
 }
 
-\details{
-  ...
-}
 
 \author{Marco Smolla}
-
-\note{
-  ...
-}

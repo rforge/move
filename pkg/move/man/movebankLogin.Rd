@@ -13,7 +13,7 @@ Login into Movebank
 }
 
 \description{
-Create a curl object to use the get and search functions for Movebank
+Creates an object that can be used with all Movebank browsing functions. 
 }
 
 \usage{
@@ -26,11 +26,12 @@ Create a curl object to use the get and search functions for Movebank
 }
 
 \details{
-Use this function to login to Movebank. After you logged in, you can use the Movebank browsing functions from the move package
+Use this function to login to Movebank. After you logged in, you can use the Movebank browsing functions from the move package. 
 }
 
 \note{
-You need to create an object called "curl" with this function. This curl object is than used by the other Movebank browsing functions. 
+If you do not have the RCurl package installed \code{movebankLogin} will store your username and password in the object you assign it to. Furthermore, if you have no RCurl a http connection is used to retrieve data from Movebank instead of the more secure https protocol.  
+
 }
 
 
@@ -38,6 +39,10 @@ You need to create an object called "curl" with this function. This curl object 
 
 \examples{
 \dontrun{
-curl <- movebankLogin{username="xxx", password="zzz"}
+##first create the login object 
+login <- movebankLogin{username="xxx", password="zzz"}
+
+##and than use it with Movebank browsing functions
+getMovebankStudies(login)
 }
 }

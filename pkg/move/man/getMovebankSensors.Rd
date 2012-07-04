@@ -9,21 +9,25 @@
 
 \docType{methods}
 
-\title{Which sensors, tags and IDs are included in a specific study}
+\title{Information about Movebank sensors}
 
-\description{This function returns all available sensor types in Movebank. If a study is specified it returns the animal ID correlated with the sensor type and tag ID.}
-
+\description{getMovebankSensors returns information about sensors in a study.}
+  
 \usage{
   getMovebankSensors(study, login)
 }
 
 \arguments{
-  \item{study}{a character string (study name) or the numeric study ID as it is stored on Movebank}
-  \item{login}{...}
+  \item{study}{a character string (study name) or the numeric study ID as it is stored on Movebank, if missing the function returns a data.frame with information about all sensor types in Movebank}
+  \item{login}{an object of the \code{\link{MovebankLogin-class}}, if empty you'll be asked to enter your username or password}
 }
 
 \details{
-  The function returns a \code{data.frame} that incldues the \code{animalID, animalName, id, sensor_type_id} and \code{tag_id} from the requested study. 
+  The function returns either information about all sensor types that are available on Movebank or the sensor IDs corresponding to to the animal IDs in a specific study.
+}
+
+\note{
+See the 'browesMovebank' vignette (\href{http://move.r-forge.r-project.org/moveWEB/Downloads.html}{move website download section}) for more information about security and how to use Movebank from within R. 
 }
 
 

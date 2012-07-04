@@ -27,8 +27,8 @@ An alternative to this method is to import one's own data, and specify the locat
 \item{data}{full parh of the location of the non-Movebank file}
 \item{proj}{projection method for non-Movebank data; requires a valid CRS (see \code{\link{CRS-class}}) object, like CRS("+proj=longlat +ellps=WGS84")}
 \item{animal}{animal ID or name, either single character or a vector with length of the number of coordinates}
-\item{species}{Additional arguments}
-\item{study}{Additional arguments}
+\item{species}{name of the species}
+\item{study}{name of the study}
 \item{...}{Additional arguments}  
 }
 
@@ -46,13 +46,10 @@ If the data include double timestamps check your data for valitdity. You may wan
 \author{Marco Smolla }
 
 \examples{
-\dontrun{
-## create a move object
-data <- move(system.file("extdata","leroy.csv",package="move"))## create a move object
+## create a move object from a Movebank csv file
 data <- move(system.file("extdata","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
 
 ## create a move object from non-Movebank data
 file <- read.table(system.file("extdata","leroy.csv",package="move"), header=TRUE, sep=",", dec=".")
-data <- move(x=file$location.long, y=file$location.lat, time=as.POSIXct(file$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC"), data=file, proj=CRS("+proj=longlat"))
-}
+data <- move(x=file$location.long, y=file$location.lat, time=as.POSIXct(file$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC"), data=file, proj=CRS("+proj=longlat"), animal="Leroy", study="LeroyTagged", species="Martes pennanti")
 }

@@ -15,7 +15,7 @@
 
 \section{Slots}{
   \describe{
-    \item{DBMvar}{Object of class \code{"dBMvariance"}: includes the break.list and points of interest, ...; }
+    \item{DBMvar}{Object of class \code{"dBMvariance"}: includes the break.list and points of interest}
     \item{crs}{part of the \link{Raster-class}}
     \item{ext}{the extension factor set by the user}
     \item{extent}{part of the \link{Raster-class}}
@@ -26,7 +26,7 @@
     \item{ncols}{part of the \link{Raster-class}}
     \item{nrows}{part of the \link{Raster-class}}
     \item{rotated}{part of the \link{Raster-class}}
-    \item{rotation}part of the \link{Raster-class}}
+    \item{rotation}{part of the \link{Raster-class}}
     \item{title}{part of the \link{Raster-class}}
     \item{z}{part of the \link{Raster-class}}
   }

@@ -10,21 +10,21 @@
 }
 
 \description{
-  The MovebankLogin object is from every Movebank browsing function and created by movebankLogin
+  The MovebankLogin object is needed for every Movebank browsing function. Alternatively, one can also chose to enter the username and password everytime one uses one of the browsing functions. 
 }
 
 \section{Slots}{
   \describe{
-    \item{username}{Object of class \code{"dBMvariance"}: includes the break.list and points of interest, ...; }
-    \item{password}{  }
-    \item{rcurl}{the extension factor set by the user}
+    \item{username}{username as character}
+    \item{password}{password as character}
+    \item{rcurl}{logical value, whether RCurl is installed or not}
 
   }
 }
 
 \section{Methods}{
   \describe{
-    \item{\code{\link{movebankLogin}}}{\code{signature(object = "MovebankLogin")}: adds a contour line to a plot}}
+    \item{\code{\link{movebankLogin}}}{\code{signature(object = "character")}: creates a MovebankLogin object}}
 }
 
 \author{Marco Smolla}

@@ -6,9 +6,9 @@
 
 \docType{methods}
 
-\title{Download data from Movebank}
+\title{Study ID}
 
-\description{getMovebankID downloads the location and timestemp columns of an animal of study stored in Movebank. }
+\description{Returns the study ID of a certain study stored on Movebank}
 
 \usage{
   getMovebankID(x,login)
@@ -16,12 +16,15 @@
 
 \arguments{
   \item{x}{character, full name of the study, as stored on Movebank}
-  \item{login}{...}
+  \item{login}{an object of the \code{\link{MovebankLogin-class}}, if empty you'll be asked to enter your username or password}
 }
 
 \details{
-  With the getMovebankID function you can access the location and timestamp data of a particulat animal within a certain study. 
-  Remember that you need to be logged in to Movebank, see \code{\link{movebankLogin}}.
+  The getMovebankID function returns the ID of a study as it is stored on Movebank.org.
+}
+
+\note{
+See the 'browesMovebank' vignette (\href{http://move.r-forge.r-project.org/moveWEB/Downloads.html}{move website download section}) for more information about security and how to use Movebank from within R. 
 }
 
 

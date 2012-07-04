@@ -92,17 +92,17 @@ setMethod(f="searchMovebankStudies",
 
 
 #get all study names
-setGeneric("getMovebankStudies", function(x, login) standardGeneric("getMovebankStudies"))
+setGeneric("getMovebankStudies", function(login) standardGeneric("getMovebankStudies"))
 setMethod(f="getMovebankStudies", 
-          signature=c(x="missing",login="missing"), 
-          definition = function(x,login){
+          signature=c(login="missing"), 
+          definition = function(login){
             login <- movebankLogin()
             getMovebankStudies(login=login)
           })
 
 setMethod(f="getMovebankStudies", 
-          signature=c(x="missing",login="MovebankLogin"), 
-          definition = function(x, login){
+          signature=c(login="MovebankLogin"), 
+          definition = function(login){
             data <- getMovebank("study", login, sort="name", attributes="id%2Cname%2Ci_am_owner%2Ci_can_see_data%2Cthere_are_data_which_i_cannot_see")
           return(data$name)
           })
@@ -201,10 +201,10 @@ setMethod(f="getMovebankID",
 
 
 ###retrieving information of a certain study
-setGeneric("getMovebankStudy", function(study, login, ...) standardGeneric("getMovebankStudy"))
+setGeneric("getMovebankStudy", function(study, login) standardGeneric("getMovebankStudy"))
 setMethod(f="getMovebankStudy", 
           signature=c(study="numeric", login="MovebankLogin"),
-          definition = function(study, login, ...){
+          definition = function(study, login){
               data <- getMovebank("study", login, id=study)
               cat("**** SUMMARY OF THE REQUESTED STUDY: ",levels(data$name)," ****\n")
               return(data)
@@ -212,26 +212,26 @@ setMethod(f="getMovebankStudy",
 
 setMethod(f="getMovebankStudy", 
           signature=c(study="ANY", login="missing"),
-          definition = function(study, login, ...){
+          definition = function(study, login){
             login <- movebankLogin()
-            getMovebankStudy(study=study,login=login, ...)
+            getMovebankStudy(study=study,login=login)
           })
 
 setMethod(f="getMovebankStudy", 
           signature=c(study="character", login="MovebankLogin"),
-          definition = function(study, login, ...){
+          definition = function(study, login){
               studyNUM  <- getMovebankID(study,login)   
-              getMovebankStudy(study=studyNUM,login=login, ...)
+              getMovebankStudy(study=studyNUM,login=login)
           }
           )
 
 
 
 ##get all animals with their IDs
-setGeneric("getMovebankAnimals", function(study, login, ...) standardGeneric("getMovebankAnimals"))
+setGeneric("getMovebankAnimals", function(study, login) standardGeneric("getMovebankAnimals"))
 setMethod(f="getMovebankAnimals",
           c(study="numeric", login="MovebankLogin"),
-          definition = function(study, login, ...){
+          definition = function(study, login){
               animals <- getMovebank("sensor", login, tag_study_id=study)
               animalID <- getMovebank("individual", login, study_id=study, attributes="id%2Clocal_identifier")
               if (grepl(pattern="X.p.style", capture.output(animalID)[1])==TRUE) stop("It looks like you are not allowed to download this data.")
@@ -243,16 +243,16 @@ setMethod(f="getMovebankAnimals",
 
 setMethod(f="getMovebankAnimals",
           c(study="character", login="MovebankLogin"),
-          definition = function(study, login, ...){
+          definition = function(study, login){
              studyNUM  <- getMovebankID(study,login)   
-            getMovebankAnimals(study=studyNUM,login=login, ...)
+            getMovebankAnimals(study=studyNUM,login=login)
           })
 
 setMethod(f="getMovebankAnimals",
           c(study="ANY", login="missing"),
-          definition = function(study, login, ...){
+          definition = function(study, login){
             login <- movebankLogin()
-            getMovebankAnimals(study=study,login=login, ...)
+            getMovebankAnimals(study=study,login=login)
           })
 
 

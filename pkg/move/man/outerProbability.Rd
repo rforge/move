@@ -19,13 +19,12 @@
 }
 
 \examples{
-\dontrun{
 load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
 
 ## calculate the probabilities of 20\% of the raster at 
 ## the border from the DBBMM object dbbmm
 outerProbability(dbbmm, border=.2)
-"[1] 0.06753346"
-}
+"[1] 0.001669491"
+
 }
 \author{Marco Smolla}
