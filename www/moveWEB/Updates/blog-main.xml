@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<rss xmlns:iweb="http://www.apple.com/iweb" version="2.0">
+  <channel>
+    <title>Updates</title>
+    <link>http://move.r-forge.r-project.org/moveWEB/Updates</link>
+    <description></description>
+    <item>
+      <title>Browsing Movebank within R</title>
+      <link>http://move.r-forge.r-project.org/moveWEB/Updates/Entries/2012/5/31_Day_of_longboarding.html</link>
+      <guid isPermaLink="false">55526aa4-2ee5-4b28-afc5-ac4ee67dee1e</guid>
+      <pubDate>Thu, 31 May 2012 09:17:17 +0200</pubDate>
+      <description>The recent beta version of the move package supports now to browse the movebank database from within R. There are now functions that let you search for the name of study, or its ID, lists the animals and used tags, sensor types and tag IDs, and of course downloads the location information and timestamps to create a move object. &lt;br/&gt;To use these functions you need an account on &lt;a href="http://www.moveban.org/"&gt;movebank.org&lt;/a&gt;. Note, you can only download studies you have the permissions for. &lt;br/&gt;How to work with the functions is explained in the Browse Movebank Vignette (PDF below). &lt;br/&gt;Enjoy testing!</description>
+      <iweb:comment enabled="0" count="0" link="http://move.r-forge.r-project.org/moveWEB/Updates/Entries/2012/5/31_Day_of_longboarding.html#comment_layer"></iweb:comment>
+    </item>
+    <iweb:dateFormat>dd.MM.yyyy</iweb:dateFormat>
+    <iweb:baseURL>http://move.r-forge.r-project.org/moveWEB/Updates</iweb:baseURL>
+    <iweb:maximumSummaryItems>5</iweb:maximumSummaryItems>
+  </channel>
+</rss>
