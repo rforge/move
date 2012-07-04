@@ -26,9 +26,9 @@ move is a package that contains functions to access movement data stored at \url
 \section{I. Creating Move objects}{
 
 Move objects can be created from files with the function:
-  \tabular{ll}{
-    \code{move}\tab To create a Move object \cr
-  }
+  %\tabular{ll}{
+    \code{move} To create a Move object
+  %}
 }
 
 \section{II. Calculation of the utilization density}{
