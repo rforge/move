@@ -14,8 +14,8 @@
 }
 
 \arguments{
-  \item{x}{a DBBMM object}
-  \item{...}{additional arguments, see details}
+  \item{x}{an object of the \link{DBBMM-class}}
+  \item{...}{additional arguments like levels and nlevels, see details}
 }
 
 \details{

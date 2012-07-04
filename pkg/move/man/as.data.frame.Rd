@@ -14,7 +14,7 @@
 }
 
 \arguments{
-  \item{x}{a Move object}
+  \item{x}{an object of the \link{Move-class}}
   \item{...}{additional arguments to be passed to or from methods}
 }
 

@@ -15,22 +15,22 @@ The DBBMM object is created within the brownian.bridge.dyn function from a Move 
 
 \section{Slots}{
   \describe{
-    \item{DBMvar}{Object of class \code{"dBMvariance"}: includes the break.list and points of interest, ...; }
-    \item{crs}{  }
+    \item{DBMvar}{Object of class \code{"dBMvarianceTmp"}: includes the window.size, margin, means, in.windows, break.list, and points of interest}
+    \item{crs}{part of the \link{Raster-class}}
     \item{ext}{the extension factor set by the user}
-    \item{data}{  }
-    \item{extent}{  }
-    \item{file}{  }
-    \item{history}{  }
-    \item{layernames}{  }
-    \item{legend}{  }
-    \item{method}{  }
-    \item{ncols}{  }
-    \item{nrows}{  }
-    \item{rotated}{  }
-    \item{rotation}{  }
-    \item{title}{  }
-    \item{z}{  }
+    \item{data}{part of the \link{Raster-class}}
+    \item{extent}{part of the \link{Raster-class}}
+    \item{file}{part of the \link{Raster-class}}
+    \item{history}{part of the \link{Raster-class}}
+    \item{layernames}{part of the \link{Raster-class}}
+    \item{legend}{part of the \link{Raster-class}}
+    \item{method}{stores the method that was used to calculate the utilization distribution (UD), e.g. dynamic Brwonian Bridge}
+    \item{ncols}{part of the \link{Raster-class}}
+    \item{nrows}{part of the \link{Raster-class}}
+    \item{rotated}{part of the \link{Raster-class}}
+    \item{rotation}{part of the \link{Raster-class}}
+    \item{title}{part of the \link{Raster-class}}
+    \item{z}{part of the \link{Raster-class}}
   }
 }
 

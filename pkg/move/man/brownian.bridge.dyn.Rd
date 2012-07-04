@@ -22,7 +22,7 @@
 
 
 \arguments{
-  \item{object}{a Move object, which can be created with the function \code{move}}
+  \item{object}{a \link{Move-class} object, which can be created with the function \code{move}}
   \item{raster}{can be a RasterLayer object or numeric. If it is a RasterObject and dimSize is not set, \code{brownian.bridge.dyn} starts to calculate the UD. If \code{raster} is numeric, it describes the cell.size of the raster. Default is 1}
   \item{dimSize}{can be numeric. If there is no input for raster, dimSize describes the number of cells of the largest x or y dimenstion. Default is 10}
   \item{location.error}{required numeric value. Describes the error of the location (sender/receiver) system in map units.}

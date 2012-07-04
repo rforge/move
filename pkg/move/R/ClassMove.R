@@ -476,7 +476,7 @@ setGeneric("burstTrack", function(object, by, breaks=5, sizeFUN="relTime"){stand
 
 
 setMethod(f = "burstTrack", 
-          signature = c(object="Move", by="integer"),
+          signature = c(object="Move", by="numeric"),
           definition = function(object, by, breaks, sizeFUN){
             fixes <- nrow(coordinates(object))
             totalDur <- difftime(object@timestamps[fixes], object@timestamps[1], units="mins") #duration in MIN

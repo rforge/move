@@ -7,7 +7,7 @@
 
 \docType{methods}
 
-\title{Which animals, tags and IDs are included in a specific study}
+\title{Animals, tags and IDs in a Movebank study}
 
 \description{Returns the animals, their tags and IDs from a study.}
 
