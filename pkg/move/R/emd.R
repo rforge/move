@@ -16,11 +16,13 @@ setMethod(f="emd",
 setMethod(f="emd", 
           signature=c(x="RasterLayer", y="RasterLayer", threshold="numeric", integer="logical", greatcircle="logical"), 
           definition = function(x,y,threshold=NA,integer,greatcircle=FALSE){
+     # browser()
             r1 <- as.data.frame(rasterToPoints(x))
             r2 <- as.data.frame(rasterToPoints(y))
             if(sum(r1$layer)!=sum(r2$layer))
               warning(paste("Bart: Rasters dont have equal mass, delta:",sum(r1$layer)-sum(r2$layer)))
-            if(sum(r1$layer)!=1)
+            #if(sum(r1$layer)!=1)
+            if(identical(all.equal(sum(r1$layer),1), FALSE))
               warning("Bart: Raster does not represent probability surface")
             
             res <- 1

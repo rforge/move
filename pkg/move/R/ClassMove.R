@@ -306,19 +306,28 @@ setMethod(f = "googleplot",
 
 setMethod("print",".MoveTrackSingle",
           function(x){
-            callNextMethod(x)
+            #callNextMethod(x)
+            cat("Class        :", class(x),"\n")
+            cat("nfeatures    :", nrow(coordinates(x)),"\n")
+            cat("extent       :", c(extent(x)@xmin, extent(x)@xmax, extent(x)@ymin, extent(x)@ymax),"\n")
+            cat("coord.ref    :", proj4string(x),"\n")
+            cat("ndatacols    :", ncol(x@data),"\n")
+            cat("variables    :", paste(colnames(x@data),collapse=", "), "\n")
+            timeRange <- range(x@timestamps)
+            cat("timestamps   :",paste(timeRange, collapse="..."),"\n")
+            cat("duration     :", capture.output(round(difftime(timeRange[2],timeRange[1]))), "\n")
             try(silent=TRUE, if(length(x@timesMissedFixes)>1)
-              cat("missed fixes:", length(x@timesMissedFixes)) )
+            cat("missed fixes :", length(x@timesMissedFixes)) )
           }
           )
-
-setMethod("print", ".MoveTrack", function(x){
-  #print(as(x[x@trackId==ID,],"SpatialPointsDataFrame"))
-  callNextMethod(x)
-  timeRange <- range(x@timestamps)
-  cat("timestamps  :",paste(timeRange, collapse="..."),capture.output(round(difftime(timeRange[2],timeRange[1]))), " (start...end, duration) \n")  
-}       
-)
+# 
+# setMethod("print", ".MoveTrack", function(x){
+#   print(as(x[x@trackId==ID,],"SpatialPointsDataFrame"))
+#   callNextMethod(x)
+#   timeRange <- range(x@timestamps)
+#   cat("timestamps  :",paste(timeRange, collapse="..."),capture.output(round(difftime(timeRange[2],timeRange[1]))), " (start...end, duration) \n")  
+# }       
+# )
 
 
 

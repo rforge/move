@@ -18,9 +18,8 @@ setClass(Class = "MoveStack", contains = c(".MoveGeneral",".MoveTrackStack"),
       	 validity = function(object){
     			if(length(unique(object@trackId))!=nrow(object@idData))
     				stop("Not same number of IDs and rows in dataframe per ID")
-    			if(any(sort(as.character(unique(object@trackId)))!=sort(unique(rownames(object@idData)))))
-			{browser()
-				stop("No match between rownames in idData and ids along track")}
+    			if(any(sort(as.character(unique(object@trackId)))!=sort(unique(rownames(object@idData))))){
+				stop("No match between rownames in idData and ids along track")} 
     			return(TRUE)
     		}
         )
@@ -55,8 +54,11 @@ setMethod(f = "moveStack",
               stop("One or more objects in the list are not from class Move")
             if (any(as.character(lapply(x, function(y) attr(slot(y, "timestamps"), "tzone")) )!="UTC"))
               stop("One or more objects in the list have no UTC timestamps")
+            
+            proj <- lapply(lapply(x, proj4string), strsplit, split=" ")
+            lapply(proj, identical)
             if (length(unique(as.character(lapply(x,proj4string))))!=1)
-              stop("One or more objects in the have differnt projections. All projections have to be the same")
+              stop("One or more objects in the list have differnt projections. All projections have to be the same")
             animal <- unlist(lapply(x, slot, name="animal"))
             length <- lapply(lapply(x, coordinates), nrow)
             coords <- do.call(rbind, lapply(x, coordinates))
@@ -155,30 +157,41 @@ setMethod("citation", ".MoveGeneral", function(obj){
 ##Print function for a Move and MoveStack object
 setGeneric("print")
 setMethod("print",".MoveTrackStack",function(x){
-  callNextMethod(x)
+  #callNextMethod(x)
+            cat("Class        :", class(x),"\n")
+            cat("nfeatures    :", nrow(coordinates(x)),"\n")
+            cat("extent       :", c(extent(x)@xmin, extent(x)@xmax, extent(x)@ymin, extent(x)@ymax),"\n")
+            cat("coord.ref    :", proj4string(x),"\n")
+            cat("ndatacols    :", ncol(x@data),"\n")
+            cat("variables    :", paste(colnames(x@data),collapse=", "), "\n")
   if (exists("study.name",x@idData)==TRUE){
-    cat("study name  :",levels(x@idData$study.name),"\n")}
+    cat("study name   :",levels(x@idData$study.name),"\n")}
   if (exists("individual.taxon.canonical.name", where=x@idData)==TRUE){
-    cat("species     :",as.character(unique(x@idData$individual.taxon.canonical.name)),"\n")}
-  cat("no. of indiv:",nlevels(x@trackId),"\n")
-  cat("indiv. ids  :",paste(levels(x@trackId),collapse=", "),"\n")
+    cat("species      :",as.character(unique(x@idData$individual.taxon.canonical.name)),"\n")}
+  cat("no. of indiv :",nlevels(x@trackId),"\n")
+  cat("indiv. ids   :",paste(levels(x@trackId),collapse=", "),"\n")
   pp <- split(x@coords,x@trackId)
-  cat("no. of fixes:",unlist(lapply(pp,length)),"\n")
+  cat("no. of fixes :",unlist(lapply(pp,length)),"\n")
 }
 )
 
 setMethod("print","MoveStack",
           function(x){
             callNextMethod(x)
+            try(silent=TRUE, if(length(x@timesMissedFixes)>1)
+              cat("missed fixes  :", length(x@timesMissedFixes)) )
             if (exists("sensor.type", where=x@idData)==TRUE){
-              cat("sensor type :",levels(x@idData$sensor.type),"\n")}
+              cat("sensor type  :",levels(x@idData$sensor.type),"\n")}
             maxItems <- 10  
             items <- ncol(x@idData)
             if (items > maxItems) { 
               coln <- colnames(x@idData)
               coln <- c(coln[1:maxItems], '...')
             } else {coln <- colnames(x@idData)}
-            cat("indiv. attr.:", paste(coln, collapse=", "), "\n")
+            cat("indiv. attr. :", paste(coln, collapse=", "), "\n")
+            timeRange <- range(x@timestamps)
+            cat("timestamps   :",paste(timeRange, collapse="..."),"\n")
+            cat("duration     :", capture.output(round(difftime(timeRange[2],timeRange[1]))), "\n")
           }
 )
 setMethod("show", "MoveStack", function(object){
