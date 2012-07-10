@@ -32,8 +32,8 @@ setMethod(f="emd",
               }
               if (is.na(threshold)==FALSE){
                 fun <- "emdR_gd"
-                if(any(paste(r2$y,r2$x)!=paste(r1$y, r1$x)))
-                  stop("Rasters unequal not sure if that works")
+               # if(any(paste(r2$y,r2$x)!=paste(r1$y, r1$x)))
+               #   stop("Rasters unequal not sure if that works")
               }else{}
               a<-.C(fun,
                     Pn=as.integer(nrow(r1)),

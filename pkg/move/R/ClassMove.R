@@ -275,7 +275,7 @@ setMethod(f = "googleplot",
 #plot(test2)
 
 ###Print function for a Move and MoveStack object
-# setGeneric("print")
+setGeneric("print")
 # setMethod("print",".MoveTrackStack",function(x){
 #           callNextMethod(x)
 #           if (exists("study.name",x@idData)==TRUE){
@@ -288,12 +288,12 @@ setMethod(f = "googleplot",
 #           cat("no. of fixes:",unlist(lapply(pp,length)),"\n")
 #           }
 #           )
-
+# 
 # setMethod("print","MoveStack",
 #           function(x){
 #             callNextMethod(x)
-#             if (exists("sensor.type", where=x@idData)==TRUE){
-#               cat("sensor type :",levels(x@idData$sensor.type),"\n")}
+#             #if (exists("sensor.type", where=x@idData)==TRUE){
+#             #  cat("sensor type :",levels(x@idData$sensor.type),"\n")}
 #             maxItems <- 10  
 #             items <- ncol(x@idData)
 #             if (items > maxItems) { 
@@ -316,11 +316,11 @@ setMethod("print",".MoveTrackSingle",
             timeRange <- range(x@timestamps)
             cat("timestamps   :",paste(timeRange, collapse="..."),"\n")
             cat("duration     :", capture.output(round(difftime(timeRange[2],timeRange[1]))), "\n")
-            try(silent=TRUE, if(length(x@timesMissedFixes)>1)
+            try(silent=TRUE, if(length(x@timesMissedFixes)>=1)
             cat("missed fixes :", length(x@timesMissedFixes)) )
           }
           )
-# 
+
 # setMethod("print", ".MoveTrack", function(x){
 #   print(as(x[x@trackId==ID,],"SpatialPointsDataFrame"))
 #   callNextMethod(x)
