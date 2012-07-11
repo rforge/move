@@ -59,16 +59,26 @@ setMethod(f = "moveStack",
             #if (length(unique(as.character(lapply(x,proj4string))))!=1)
             if(!all(unlist(lapply(proj, identical, y=proj[[1]]))))      
               stop("One or more objects in the list have differnt projections. All projections have to be the same")
-            animal <- unlist(lapply(x, slot, name="animal"))
             length <- lapply(lapply(x, coordinates), nrow)
             coords <- do.call(rbind, lapply(x, coordinates))
             colnames(coords) <- c("location.long", "location.lat")
             allData <- lapply(x, function(y) slot(y, "data"))
             allColumns <- unique(unlist(sapply(allData, names)))
+            
+            ###DATA
             DATA <- do.call("rbind", lapply(allData, FUN = function(entry) {
               missingColumns <- allColumns[which(!allColumns %in% names(entry))]
               entry[, missingColumns] <- NA
               entry})) #thanks to: Karl Ove Hufthammer
+            
+            ###idData
+            allidData <- lapply(x, function(y) slot(y, "idData"))
+            allidColumns <- unique(unlist(sapply(allidData, names)))
+            IDDATA <- do.call("rbind", lapply(allidData, FUN = function(entry) {
+              missingColumns <- allidColumns[which(!allidColumns %in% names(entry))]
+              entry[, missingColumns] <- NA
+              entry}))
+            id <- rownames(IDDATA)
             
             tmp <- SpatialPointsDataFrame(
               coords = coords,
@@ -76,15 +86,11 @@ setMethod(f = "moveStack",
               proj4string = CRS(proj4string(x[[1]])),
               match.ID = TRUE)
             
-            idData <- data.frame(row.names=animal, 
-                                 individual.taxon.canonical.name=unlist(lapply(x, slot, "species")),
-                                 study.name=unlist(lapply(x, slot, "study")))
             res <- new("MoveStack", 
                        tmp, 
-                       idData = idData,
+                       idData = IDDATA,
                        timestamps = as.POSIXct(do.call(rbind, (lapply(x, function(y) {as.data.frame(y@timestamps)})))[,1], tz="UTC"), #timezone?
-                       trackId = as.factor(rep(animal, length)),
-                       study = c("A study"))
+                       trackId = as.factor(rep(id, length)))
             return(res)
           })
 
