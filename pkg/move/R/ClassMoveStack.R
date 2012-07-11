@@ -119,7 +119,7 @@ setMethod(f="moveStack",
       		
           res <- new("MoveStack", 
       		        tmp, 
-      		        idData = idData,
+      		        idData = idData[ ,names(idData)!="individual.local.identifier"],
       		        timestamps = df$timestamp, 
       		        trackId = df$individual.local.identifier
       		        )
@@ -134,20 +134,20 @@ setGeneric("split") ##check whether this is necessary or screws up the original 
 setMethod(f = "split",
           signature = c(x="MoveStack", f="missing"),
           definition = function(x, f, ...){
+    browser()
             moveList <- list()
             for (ID in unique(x@trackId)) {
+              spdf <- SpatialPointsDataFrame(coords = x@coords[x@trackId==ID,],
+                                             data=x@data[x@trackId==ID,],
+                                             proj4string=x@proj4string)
               moveObj <- new(Class="Move", 
-                             animal=ID,
-                             species=as.character(x@idData[ID, "individual.taxon.canonical.name"]),
+                             spdf,
+                             idData=x@idData[ID, ],
                              timestamps=x@timestamps[x@trackId==ID],
-                             data=x@data[x@trackId==ID,],
-                             coords.nrs=x@coords.nrs,
-                             coords=x@coords[x@trackId==ID,],
-                             bbox=as.matrix(x@bbox),
-                             proj4string=x@proj4string,
                              dateCreation=x@dateCreation,
-                             study=as.character(x@idData[ID,"study.name"]),
-                             citation=x@citation)
+                             study=x@study,
+                             citation=x@citation,
+                             license=x@license)
               moveList[[ID]]  <- moveObj
             }
             return(moveList)

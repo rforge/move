@@ -69,32 +69,14 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no misse
 setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
        	 representation = representation (
        	   idData = "data.frame"),
-      		 #animal = "character"),
-      		 #species = "character"),# marco maybe make something like id data instead of this rather specific implementation
       	 prototype = prototype(
            idData = data.frame()),
-           #animal = as.character()),
-      		 #species = as.character()),
       	 validity = function(object){
       			if(nrow(object@idData)>1)
               stop("There are more than 1 row stored in the idData")
-            #if(length(object@species)>1)
-      			#	stop("Species has length unequal to 0 or 1")
-      			#if(length(object@animal)>1)
-      			#	stop("Animal has length unequal to 0 or 1")
       			return(TRUE)
       	 }
       	 )
-
-# setClass(Class= "MoveBurst", contains=c("Move"),
-# 		representation=representation(
-# 				bursts="factor"),
-# 		prototype=prototype(
-# 				bursts=factor()),
-# 		validity=function(object){
-# 			if(length(object@bursts)!=length(object@timestamps))
-# 				stop("length of bursts does not match")
-# 			return(TRUE)})
 
 
 ## Making move a generic funtion
@@ -110,7 +92,6 @@ setMethod(f = "move",
       		        stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
       		df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") 
       		df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))
-#idData  <- data.frame(individual.taxon.canonical.name=df$individual.taxon.canonical.name, study.name=df$study.name)
       		.move(x=list(df=df, proj=proj))
       	  }
       	  )
@@ -125,9 +106,6 @@ setMethod(f="move",
             df$timestamp <- time
             if(is.na(animal)) animal <- "unnamed"
             df$individual.local.identifier <- as.factor(if (length(animal)==1) {rep(animal, length(x))} else {animal})
-            #df$individual.taxon.canonical.name <- as.factor(if (length(species)==1) {rep(species, length(x))} else {rep(NA, lenth(x))}) #species
-            #df$study.name <- as.factor(if (length(study)==1) {rep(study, length(x))} else {rep(NA, lenth(x))})#study
-#idData  <-  unique(idData, MARGIN=2)
             .move(x=list(df=df, proj=proj))
           }
           )
@@ -141,10 +119,11 @@ setMethod(f = ".move",
             if(any(is.na(df$location.long))==TRUE) warning("There were NA locations detected and omitted.")
             missedFixes<- df[(is.na(df$location.long)|is.na(df$location.lat)), ]$timestamp
             df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
+            
             idData <- df[1, unlist(lapply(lapply(apply(df, 2, unique), length), '==', 1))]
-            rownames(idData) <- df$individual.local.identifier[1]
-  browser()
             idData <- idData[,names(idData)!="individual.local.identifier"]
+            rownames(idData) <- df$individual.local.identifier[1]
+            
             tmp <- SpatialPointsDataFrame(
                     coords = cbind(df$location.long,df$location.lat),
                     data = data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp", colnames(idData))]]), 
@@ -156,9 +135,6 @@ setMethod(f = ".move",
                        tmp, 
                        idData = idData,
                        timesMissedFixes = missedFixes)
-                       #study = levels(df$study.name), 
-                       #species = levels(df$individual.taxon.canonical.name), 
-                       #animal = levels(df$individual.local.identifier),
             return(res)
           })
 
@@ -366,7 +342,7 @@ setMethod("summary", "Move", function(object){
   
     track <- as.data.frame(coordinates(object))
     date <- object@timestamps
-    animalID <- as.data.frame(object@data$individual.local.identifier[1])
+    animalID <- rownames(object@idData) #as.data.frame(object@data$individual.local.identifier[1])
     names(animalID)  <- "animalID"
     tagID  <- as.data.frame(object@data$tag.local.identifier[1])
     names(tagID) <- "tagID" 
