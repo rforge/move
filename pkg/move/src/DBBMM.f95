@@ -33,6 +33,7 @@ double precision, dimension(gridSize) :: gridX
 double precision, dimension(gridSize) :: gridY
 double precision :: timeStep       
 
+!character (len=180) MSG
 ! Local variables
 double precision :: tm, alpha, muX, muY, sigma2
 double precision, dimension(gridSize) :: int, theta, ZTZ
@@ -51,6 +52,7 @@ do i = 1, nLocs-1
     tm = 0.0
     ZTZ = 0.0
     do while(tm <= timeDiff(i))
+        call rchkusr()
         alpha = tm / timeDiff(i)
         muX = X(i) + alpha*(X(i+1) - X(i))
         muY = Y(i) + alpha*(Y(i+1) - Y(i))
@@ -58,7 +60,14 @@ do i = 1, nLocs-1
                  ((1-alpha)**2)*(LocationError(i)**2) + &
                  (alpha**2)*(LocationError(i+1)**2)
         ZTZ = (gridX - muX)**2 + (gridY - muY)**2
-        theta = (1/sqrt(2*3.14*sigma2))*exp(-ZTZ/(2*sigma2)) 
+        theta = (1/(2*3.14*sigma2))*exp(-ZTZ/(2*sigma2)) 
+!        call rwarn(sum(theta))
+!        format('nmax from workspace =',i8)
+!        write(msg,901) sum(theta) 
+       ! write(msg,901) sum(theta) 
+        !901 format('nmax from workspace =',1pe11.3)
+!        print(theta)
+!                  call dblepr("X was", 5, sum(theta), 1)
         int = int + theta
         tm = tm + timeStep
     end do

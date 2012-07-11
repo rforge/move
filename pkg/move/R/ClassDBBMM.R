@@ -130,17 +130,18 @@ setMethod(f = "brownian.bridge.dyn",
 
             compsize <- ncell(raster)*(sum(time.lag[DBMvar@interest])/time.step)
             print(paste("Computational size:", sprintf("%.1e", compsize)))
-            if (compsize>500000000){
-              cat("The calculation may take longer than 5 minutes. \n")
-              cat("If you don't want to proceed, abort the function now! \n")
-              cat("Process continues within 10 seconds. \n")
-              pb <- txtProgressBar(min = 0, max = 100, style = 1)
-              for(i in 1:100){
-                Sys.sleep(.1)# Waiting 10s
-                setTxtProgressBar(pb, i)
-              }
-              close(pb)
-            }
+	    # this is not needed anymore since now the routine can be interuped
+       #     if (compsize>500000000){
+       #       cat("The calculation may take longer than 5 minutes. \n")
+       #       cat("If you don't want to proceed, abort the function now! \n")
+       #       cat("Process continues within 10 seconds. \n")
+       #       pb <- txtProgressBar(min = 0, max = 100, style = 1)
+       #       for(i in 1:100){
+       #         Sys.sleep(.1)# Waiting 10s
+       #         setTxtProgressBar(pb, i)
+       #       }
+       #       close(pb)
+       #     }
                         
             interest <- (c(DBMvar@interest, 0)+c(0, DBMvar@interest))[1:length(DBMvar@interest)]!=0
 
