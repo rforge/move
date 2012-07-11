@@ -56,8 +56,8 @@ setMethod(f = "moveStack",
               stop("One or more objects in the list have no UTC timestamps")
             
             proj <- lapply(lapply(x, proj4string), strsplit, split=" ")
-            lapply(proj, identical)
-            if (length(unique(as.character(lapply(x,proj4string))))!=1)
+            #if (length(unique(as.character(lapply(x,proj4string))))!=1)
+            if(!all(unlist(lapply(proj, identical, y=proj[[1]]))))      
               stop("One or more objects in the list have differnt projections. All projections have to be the same")
             animal <- unlist(lapply(x, slot, name="animal"))
             length <- lapply(lapply(x, coordinates), nrow)
@@ -145,7 +145,7 @@ setMethod(f = "split",
               moveList[[ID]]  <- moveObj
             }
             return(moveList)
-          }) ###there is a warning issued like: In min(x) : no non-missing arguments to min; returning Inf;; this is due to the data that are coerced by the show function for 'min values' and 'max values'
+          }) ###when splitting a MoveStack there is a warning issued like: In min(x) : no non-missing arguments to min; returning Inf;; this is due to the data that are coerced by the show function for 'min values' and 'max values';; and this is because the original print function ahndels na.rm=T and thus there are no data anymore
 
 
 setGeneric("citation", function(obj) standardGeneric("citation"))

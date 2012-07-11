@@ -55,7 +55,7 @@ setClass(Class = "DBBMM",contains=c(".UD"),
          )
 
 
-setGeneric("brownian.bridge.dyn", function(object,raster=1,dimSize=10,location.error,margin=11, time.step=NULL, window.size=31, ext=0.25, bbox=NA, ...){standardGeneric("brownian.bridge.dyn")})
+setGeneric("brownian.bridge.dyn", function(object,raster=1,dimSize=10,location.error,margin=11, time.step=NULL, window.size=31, ext, bbox=NA, ...){standardGeneric("brownian.bridge.dyn")})
 
 ###if neither a raster nor the dimSize is given, then the cell size is calculated by the defauled dimSize and the largest dimension
 setMethod(f="brownian.bridge.dyn", 
@@ -73,7 +73,7 @@ setMethod(f="brownian.bridge.dyn",
           signature=c(object="SpatialPointsDataFrame",raster="missing", dimSize="numeric",location.error="numeric"),
           function(object, raster, dimSize, location.error, ...){
             #print("object SPDF, dimSize numeric")
-            if (!any(is.na(bbox))) {Range <- bbox} else {Range <- .extcalc(obj = object, ext = ext)}
+            if (!any(is.na(bbox))) {Range <- extent(bbox)} else {Range <- .extcalc(obj = object, ext = ext)}
             yRange <- diff(Range[3:4])
             xRange <- diff(Range[1:2])            
             
@@ -92,7 +92,7 @@ setMethod(f = "brownian.bridge.dyn",
           signature = c(object="SpatialPointsDataFrame",raster="numeric",dimSize="missing",location.error="numeric"),
           definition = function(object,raster,dimSize,location.error,...){
             #print("object SPDF, raster numeric")
-            if (!any(is.na(bbox))) {Range <- bbox} else {Range <- .extcalc(obj = object, ext = ext)}
+            if (!any(is.na(bbox))) {Range <- extent(bbox)} else {Range <- .extcalc(obj = object, ext = ext)}
             yRange <- diff(Range[3:4])
             xRange <- diff(Range[1:2])
             #calculation of the coordinates to fit squared raster cells

@@ -68,17 +68,20 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no misse
 
 setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
        	 representation = representation (
-       	   #idData = "data.frame",
-      		 animal = "character",
-      		 species = "character"),# marco maybe make something like id data instead of this rather specific implementation
+       	   idData = "data.frame"),
+      		 #animal = "character",
+      		 #species = "character"),# marco maybe make something like id data instead of this rather specific implementation
       	 prototype = prototype(
-           animal = as.character(),
-      		 species = as.character()),
+           idData = data.frame()),
+           #animal = as.character(),
+      		 #species = as.character()),
       	 validity = function(object){
-      			if(length(object@species)>1)
-      				stop("Species has length unequal to 0 or 1")
-      			if(length(object@animal)>1)
-      				stop("Animal has length unequal to 0 or 1")
+      			if(nrow(object@idData)>1)
+              stop("There are more than 1 row stored in the idData")
+            #if(length(object@species)>1)
+      			#	stop("Species has length unequal to 0 or 1")
+      			#if(length(object@animal)>1)
+      			#	stop("Animal has length unequal to 0 or 1")
       			return(TRUE)
       	 }
       	 )
@@ -95,34 +98,37 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
 
 
 ## Making move a generic funtion
-setGeneric("move", function(x, y, time, data, proj, animal, species="sp", study="std",...) standardGeneric("move"))
+setGeneric("move", function(x, y, time, data, idData, proj, animal, ...) standardGeneric("move"))
 setMethod(f = "move", 
       	  signature = c(x="character"), # marco maybe also make these this fucntion work with files with multiple ids by combining moveStack and move functions all into move functions
       	  definition = function(x, proj){
 		  if(!file.exists(x))
 			  stop("x should be a file on disk but it cant be found")
+  #browser()
       		df <- read.csv(x, header=TRUE, sep=",", dec=".")
       		#check whether data are really from movebank
       		if (!all(c("timestamp", "location.long",  "location.lat", "study.timezone", "study.local.timestamp", "sensor.type", "individual.local.identifier", "individual.taxon.canonical.name")%in%colnames(df)))
       		        stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
       		df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") 
       		df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))
-      		.move(x=list(df=df, proj=proj))
+#idData  <- data.frame(individual.taxon.canonical.name=df$individual.taxon.canonical.name, study.name=df$study.name)
+      		.move(x=list(df=df, proj=proj, idData=idData))
       	  }
       	  )
 
 #if non-Movebank data are used, table is new defined 
 setMethod(f="move",
-          signature=c(x="numeric", y="numeric", time="POSIXct", data="data.frame", proj="CRS",  animal="character"),
-          definition = function(x,y,time,data,proj,animal,...){
+          signature=c(x="numeric", y="numeric", time="POSIXct", data="data.frame", idData="ANY", proj="CRS",  animal="character"),
+          definition = function(x,y,time,data,idData,proj,animal,...){
             df <- data
             df$location.long <- x
             df$location.lat <- y
             df$timestamp <- time
-            df$individual.local.identifier <- as.factor(if (length(animal)==1) {rep(animal, length(x))} else {animal}) #animal
-            df$individual.taxon.canonical.name <- as.factor(if (length(species)==1) {rep(species, length(x))} else {species}) #species
-            df$study.name <- as.factor(if (length(study)==1) {rep(study, length(x))} else {study})#study
-            .move(x=list(df=df, proj=proj))
+            df$individual.local.identifier <- as.factor(if (length(animal)==1) {rep(animal, length(x))} else {rep(NA, lenth(x))}) #animal
+            #df$individual.taxon.canonical.name <- as.factor(if (length(species)==1) {rep(species, length(x))} else {rep(NA, lenth(x))}) #species
+            #df$study.name <- as.factor(if (length(study)==1) {rep(study, length(x))} else {rep(NA, lenth(x))})#study
+#idData  <-  unique(idData, MARGIN=2)
+            .move(x=list(df=df, proj=proj, idData=idData))
           }
           )
 
@@ -135,17 +141,19 @@ setMethod(f = ".move",
             if(any(is.na(df$location.long))==TRUE) warning("There were NA locations detected and omitted.")
             missedFixes<- df[(is.na(df$location.long)|is.na(df$location.lat)), ]$timestamp
             df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
+            idData <- idData
             tmp <- SpatialPointsDataFrame(
                     coords = cbind(df$location.long,df$location.lat),
-                    data = data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp")]]), 
+                    data = data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp", colnames(idData))]]), 
                     proj4string = proj,#CRS("+proj=longlat +ellps=WGS84"), # proj (function argument ) is not used here Marco
                     match.ID = TRUE)
             res <- new("Move", 
                        timestamps = df$timestamp, 
                        tmp, 
-                       study = levels(df$study.name), 
-                       species = levels(df$individual.taxon.canonical.name), 
-                       animal = levels(df$individual.local.identifier),
+                       #study = levels(df$study.name), 
+                       idData = x[['idData']],
+                       #species = levels(df$individual.taxon.canonical.name), 
+                       #animal = levels(df$individual.local.identifier),
                        timesMissedFixes = missedFixes)
             return(res)
           })
