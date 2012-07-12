@@ -145,7 +145,7 @@ if (!isGeneric("n.locs"))
 	setGeneric("n.locs", function(obj) standardGeneric("n.locs"))
 }
 
-setMethod("n.locs", "Move", function(obj){
+setMethod("n.locs", "SpatialPointsDataFrame", function(obj){
             return(length(coordinates(obj)[ ,1]))
           }
           )
@@ -218,22 +218,30 @@ setGeneric("lines") ##need to be different --
 setMethod("lines", "Move", function(x,add=FALSE,...){
           if (add==FALSE) {plot(coordinates(x), type="l", ...)}
           else {lines(coordinates(x), type="l", ...)}
-          }          
+          }           
           )
 
 setGeneric("plot") ###is not working properly!! returns that google is not a graphic parameter
 setMethod(f = "plot", 
           signature = c(x="Move", y="missing"), 
-          function(x, google=FALSE, maptype="terrain",...){
-            if (google==FALSE){
-              plot(coordinates(x), type="p", ...)#creates points
-              lines(x, add=TRUE, ...)
-            } else {
-              if (grepl("longlat",proj4string(x)) == FALSE) {stop("\n The projeciton of the coordinates needs to be \"longlat\" to be plotted on a google map. \n")} else {}
-              googleplot(obj=x,...)
-            }
+          function(x, y, ...){
+            plot(coordinates(x), type="p", ...)#creates points
+            lines(x, add=TRUE, ...)
           }
           )
+
+setMethod(f = "plot", 
+          signature = c(x="MoveStack", y="missing"), 
+          function(x, y, col=NA, ...){
+            if(any(is.na(col)))
+              col <- 1:length(unique(x@trackId))
+            if(length(col)!=n.locs(x))
+             col <- col[as.numeric(x@trackId)]
+            x$col <- col
+            unstacked <- split(x)
+              lines(unstacked[[1]], col=x$col, xlim=c(min(coordinates(x)[,1]),max(coordinates(x)[,1])), ylim=c(min(coordinates(x)[,2]), max(coordinates(x)[,2])), ... ) #create first plot
+            l = lapply(unstacked[-1], function(x,...){lines(x, col=x$col, add=T, ...)}, ...)
+          })
 
 
 setGeneric("googleplot", function(obj, ...){standardGeneric("googleplot")})
@@ -248,19 +256,6 @@ setMethod(f = "googleplot",
               file.remove(paste(getwd(),"MyTile.png",sep="/"))
               file.remove(paste(getwd(),"MyTile.png.rda",sep="/"))
               })
-# 
-# setMethod(f = "plot",
-#           signature = c(x="MoveStack"),
-#           definition = function(x, google=FALSE, maptype="terrain", ...){
-#             moveList <- split(test2)
-#             plot(moveList[[1]], ...)
-#             for (i in 2:length(moveList)){
-#               points(moveList[[i]], add=TRUE, ...)
-#               lines(moveList[[i]], add=TRUE, ...)
-#             }
-#           }
-#           )
-#plot(test2)
 
 ###Print function for a Move and MoveStack object
 setGeneric("print")
@@ -296,7 +291,7 @@ setMethod("print",".MoveTrackSingle",
           function(x){
             #callNextMethod(x)
             cat("Class        :", class(x),"\n")
-            try(cat("name         :", as.character(levels(x@idData$individual.local.identifier)),"\n"),silent=T)
+            try(cat("name         :", rownames(x@idData),"\n"),silent=T)
             cat("nfeatures    :", nrow(coordinates(x)),"\n")
             cat("extent       :", c(extent(x)@xmin, extent(x)@xmax, extent(x)@ymin, extent(x)@ymax),"\n")
             cat("coord.ref    :", proj4string(x),"\n")
@@ -518,7 +513,7 @@ setMethod(f = "plotBursts",
           signature = c(object="SpatialPointsDataFrame"),
           definition = function(object, add, ...){
             if (add==FALSE) 
-              plot(coordinates(object), type="l")
+              plot(coordinates(object), type="l", ...)
             #if(!add)
               df <- data.frame(color=object@data$color, size=object@data$size, coordinates=coordinates(object))
               apply(df, MARGIN=1, function(x,...){points(x=x[3], y=x[4], cex=as.numeric(x['size']), col=x['color'],...)}, ...)

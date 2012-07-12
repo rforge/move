@@ -63,6 +63,7 @@ setMethod(f="getMovebank",
               url <- paste(paste("http",url, sep=""), sep="&",paste("user=",login@username,"&password=",login@password, sep=""))
               data <- read.csv(url, header=T, sep=",", as.is=T)
             }
+#print(url)
             return(data)
           })
 
@@ -184,16 +185,16 @@ setMethod(f="getMovebankID",
 
 setMethod(f="getMovebankID", 
           signature=c(x="character", login="MovebankLogin"), 
-          definition = function(x, login){
+          definition = function(x=NA, login){
           data <- getMovebank("study", login, sort="name", attributes="id%2Cname%2Ci_am_owner%2Ci_can_see_data%2Cthere_are_data_which_i_cannot_see")
           
-          if (x=="all") {
+          if (is.na(x)) {
             cat("####### STUDY ID #######\n")
             return(data[ ,c("id","name")])
             }
           else {
-            studyNUM <- as.numeric(strsplit(capture.output(data[data$name==x,c("id")]),split=" ")[[1]][[2]])
-            studyNUM
+            #studyNUM <- as.numeric(strsplit(capture.output(data[data$name==x,c("id")]),split=" ")[[1]][[2]])
+            return(data[data$name==x,c("id")])
             }
           #if data is empty prompt, that study was not found
           })
@@ -234,6 +235,9 @@ setMethod(f="getMovebankAnimals",
           definition = function(study, login){
               animals <- getMovebank("sensor", login, tag_study_id=study)
               animalID <- getMovebank("individual", login, study_id=study, attributes="id%2Clocal_identifier")
+ #             browser()
+              if (grepl(pattern="The.requested.download.may.contain.copyrighted.material", animalID) )
+                  stop("You have no access the data. ")
               if (grepl(pattern="X.p.style", capture.output(animalID)[1])==TRUE) stop("It looks like you are not allowed to download this data.")
               names(animalID) <- c("animalID","animalName")
               animalDF <- cbind(animalID,animals)

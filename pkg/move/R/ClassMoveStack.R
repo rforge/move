@@ -134,7 +134,6 @@ setGeneric("split") ##check whether this is necessary or screws up the original 
 setMethod(f = "split",
           signature = c(x="MoveStack", f="missing"),
           definition = function(x, f, ...){
-    browser()
             moveList <- list()
             for (ID in unique(x@trackId)) {
               spdf <- SpatialPointsDataFrame(coords = x@coords[x@trackId==ID,],
@@ -165,7 +164,7 @@ setGeneric("print")
 setMethod("print",".MoveTrackStack",function(x){
   #callNextMethod(x)
             cat("Class        :", class(x),"\n")
-            cat("nfeatures    :", nrow(coordinates(x)),"\n")
+            cat("nfeatures    :", nrow(coordinates(x)[,1]),"\n")
             cat("extent       :", c(extent(x)@xmin, extent(x)@xmax, extent(x)@ymin, extent(x)@ymax),"\n")
             cat("coord.ref    :", proj4string(x),"\n")
             cat("ndatacols    :", ncol(x@data),"\n")
@@ -176,10 +175,9 @@ setMethod("print",".MoveTrackStack",function(x){
     cat("species      :",as.character(unique(x@idData$individual.taxon.canonical.name)),"\n")}
   cat("no. of indiv :",nlevels(x@trackId),"\n")
   cat("indiv. ids   :",paste(levels(x@trackId),collapse=", "),"\n")
-  pp <- split(x@coords,x@trackId)
+  pp <- split(x@coords[,1],x@trackId)
   cat("no. of fixes :",unlist(lapply(pp,length)),"\n")
-}
-)
+      })
 
 setMethod("print","MoveStack",
           function(x){
@@ -198,8 +196,8 @@ setMethod("print","MoveStack",
             timeRange <- range(x@timestamps)
             cat("timestamps   :",paste(timeRange, collapse="..."),"\n")
             cat("duration     :", capture.output(round(difftime(timeRange[2],timeRange[1]))), "\n")
-          }
-)
+          })
+
 setMethod("show", "MoveStack", function(object){
   print(object) 
 }         

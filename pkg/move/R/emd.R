@@ -77,9 +77,7 @@ setMethod(f="emd",
 # Copyright (c) 2012  Bart Kranstauber <kranstauber@mail.orn.mpg.de>, Marco Smolla <msmolla@orn.mpg.de>  
 # 
 # This file is free software: you may copy, redistribute and/or modify it  
-# under the terms of the GNU General Public License as published by the  
-# Free Software Foundation, either version 2 of the License, or (at your  
-# option) any later version.  
+# under the terms of the GNU General Public License version 3
 #   
 # This file is distributed in the hope that it will be useful, but  
 # WITHOUT ANY WARRANTY; without even the implied warranty of  
