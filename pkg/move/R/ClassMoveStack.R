@@ -32,20 +32,6 @@ setMethod("[", signature(x="MoveStack"),definition=function(x,i){ #does not work
 	      timestamps=x@timestamps[i])})
 	      
 
-setMethod(f = "plot", ##bart marco find a more decent way to plot MoveStacks
-          signature = c(x="MoveStack", y="missing"), 
-          function(x, google=FALSE, maptype="terrain",...){
-            unstackedMove <- split(x)
-            indiv <- length(unique(x@trackId))
-            lines(unstackedMove[[1]], xlim=range(coordinates(x)[,1]), ylim=range(coordinates(x)[,2]) )
-            #x@trackId <- factor(x@trackId, labels=c(1:length(unique(x@trackId))))
-            l <- split(as.data.frame(coordinates(x)),cumsum(c(0,abs(diff(as.numeric(x@trackId))))))
-            lapply(unstackedMove, FUN=lines, col=c(rgb(runif(indiv),runif(indiv),runif(indiv))), add=T, xlim=range(coordinates(x)[,1]), ylim=range(coordinates(x)[,2] ))            
-            ##there is no google implemented for MoveStacks marco
-          }
-          )
-
-
 setGeneric("moveStack", function(x, proj) standardGeneric("moveStack"))
 setMethod(f = "moveStack", 
           signature = c(x="list"),
@@ -94,39 +80,39 @@ setMethod(f = "moveStack",
             return(res)
           })
 
-setMethod(f="moveStack", 
-	        signature=c(x="character"), 
-	        definition = function(x, proj){
-		        df <- read.csv(x, header=TRUE, sep=",", dec=".")
-		        #check whether data are really from movebank
-		        if (!all(c("timestamp","location.long", "location.lat","study.timezone","study.local.timestamp","sensor.type","individual.local.identifier","individual.taxon.canonical.name")%in%colnames(df)))
-		        stop("The specified file does not seem to be from Movebank. Please use the alternative import function.")
-      		df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") 
-      		df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))            
-      		missedFixes <- df[(is.na(df$location.long)|is.na(df$location.lat)), ]
-      		df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
-            
-      		# p is a vector with unique variables of the individual
-      		p <- unlist(lapply(lapply(lapply(lapply(apply(df, 2, tapply, df$individual.local.identifier, unique), lapply, length),unlist),'==',1),all))
-            
-      		tmp <- SpatialPointsDataFrame(
-      		      	coords = cbind(df$location.long,df$location.lat),
-      		      	data = data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp","individual.local.identifier", names(p)[p])]]), 
-      		      	proj4string = CRS("+proj=longlat +ellps=WGS84"), # proj is not used here
-      		      	match.ID = TRUE)
-      		idData <- df[!duplicated(df$individual.local.identifier),names(p)[p]]
-      		rownames(idData) <- idData$individual.local.identifier
-      		
-          res <- new("MoveStack", 
-      		        tmp, 
-      		        idData = idData[ ,names(idData)!="individual.local.identifier"],
-      		        timestamps = df$timestamp, 
-      		        trackId = df$individual.local.identifier
-      		        )
-            
-      		return(res)
-      	  }
-      	  )
+# setMethod(f="moveStack", 
+# 	        signature=c(x="character"), 
+# 	        definition = function(x, proj){
+# 		        df <- read.csv(x, header=TRUE, sep=",", dec=".")
+# 		        #check whether data are really from movebank
+# 		        if (!all(c("timestamp","location.long", "location.lat","study.timezone","study.local.timestamp","sensor.type","individual.local.identifier","individual.taxon.canonical.name")%in%colnames(df)))
+# 		        stop("The specified file does not seem to be from Movebank. Please use the alternative import function.")
+#       		df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") 
+#       		df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))            
+#       		missedFixes <- df[(is.na(df$location.long)|is.na(df$location.lat)), ]
+#       		df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
+# browser()
+#             
+#       		# p is a vector with unique variables of the individual
+#       		#p <- unlist(lapply(lapply(lapply(lapply(apply(df, 2, tapply, df$individual.local.identifier, unique), lapply, length),unlist),'==',1),all))
+#             
+# #       		tmp <- SpatialPointsDataFrame(
+# #       		      	coords = cbind(df$location.long,df$location.lat),
+# #       		      	data = data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp","individual.local.identifier", names(p)[p])]]), 
+# #       		      	proj4string = CRS("+proj=longlat +ellps=WGS84"), # proj is not used here
+# #       		      	match.ID = TRUE)
+# #       		idData <- df[!duplicated(df$individual.local.identifier),names(p)[p]]
+# #       		rownames(idData) <- idData$individual.local.identifier
+# #       		
+# #           res <- new("MoveStack", 
+# #       		        tmp, 
+# #       		        idData = idData[ ,names(idData)!="individual.local.identifier"],
+# #       		        timestamps = df$timestamp, 
+# #       		        trackId = df$individual.local.identifier
+# #       		        )
+#             
+#       		return(res)
+#       	  })
 
 
 ###create a list of Move objects from a Move Stack (hand over additional arguments!)
@@ -136,7 +122,7 @@ setMethod(f = "split",
           definition = function(x, f, ...){
             moveList <- list()
             for (ID in unique(x@trackId)) {
-              spdf <- SpatialPointsDataFrame(coords = x@coords[x@trackId==ID,],
+              spdf <- SpatialPointsDataFrame(coords = matrix(x@coords[x@trackId==ID,], ncol=2),
                                              data=x@data[x@trackId==ID,],
                                              proj4string=x@proj4string)
               moveObj <- new(Class="Move", 
@@ -164,7 +150,7 @@ setGeneric("print")
 setMethod("print",".MoveTrackStack",function(x){
   #callNextMethod(x)
             cat("Class        :", class(x),"\n")
-            cat("nfeatures    :", nrow(coordinates(x)[,1]),"\n")
+            cat("nfeatures    :", length(coordinates(x)[,1]),"\n")
             cat("extent       :", c(extent(x)@xmin, extent(x)@xmax, extent(x)@ymin, extent(x)@ymax),"\n")
             cat("coord.ref    :", proj4string(x),"\n")
             cat("ndatacols    :", ncol(x@data),"\n")

@@ -17,6 +17,7 @@
 
 \arguments{
   \item{x}{Move or a DBBMM object}
+  \item{y}{keep empty}
 %  \item{google}{logical argument for a Move object. If TRUE, a map from googlemaps is downloaded and the track is plotted on top}
 %  \item{maptype}{defines the type of map to construct. There are several possible maptype values, including satellite, terrain, hybrid, and mobile.}
   \item{col}{specifies color. For Movestacks default is NA (R colors are used). It can also be a vector wich is as long as the number of tracks or coordinates}

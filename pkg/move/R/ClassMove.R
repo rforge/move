@@ -91,7 +91,7 @@ setMethod(f = "move",
       		if (!all(c("timestamp", "location.long",  "location.lat", "study.timezone", "study.local.timestamp", "sensor.type", "individual.local.identifier", "individual.taxon.canonical.name")%in%colnames(df)))
       		        stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
       		df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") 
-      		df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))
+      		try(df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS")),silent=T)
       		.move(x=list(df=df, proj=proj))
       	  }
       	  )
@@ -104,7 +104,7 @@ setMethod(f="move",
             df$location.long <- x
             df$location.lat <- y
             df$timestamp <- time
-            if(is.na(animal)) animal <- "unnamed"
+            if(all(is.na(animal))) animal <- "unnamed"
             df$individual.local.identifier <- as.factor(if (length(animal)==1) {rep(animal, length(x))} else {animal})
             .move(x=list(df=df, proj=proj))
           }
@@ -113,30 +113,49 @@ setMethod(f="move",
 setGeneric(".move", function(x) standardGeneric(".move"))
 setMethod(f = ".move", 
           signature = c(x="list"), 
-          definition = function(x){            
+          definition = function(x){
             df <- x[['df']]
             proj <- x[[2]]
             if(any(is.na(df$location.long))==TRUE) warning("There were NA locations detected and omitted.")
             missedFixes<- df[(is.na(df$location.long)|is.na(df$location.lat)), ]$timestamp
             df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
             
-            idData <- df[1, unlist(lapply(lapply(apply(df, 2, unique), length), '==', 1))]
-            idData <- idData[,names(idData)!="individual.local.identifier"]
-            rownames(idData) <- df$individual.local.identifier[1]
-            
+            ids <- as.list(as.character(unique(df$individual.local.identifier)))
+            if (length(ids)>1){
+              IDDATA <- lapply(ids, FUN= function(id) {df[df$individual.local.identifier==id, apply(df[df$individual.local.identifier==id,], MARGIN=2, FUN=function(y) {length(unique(y))==1}) ][1,]})
+              idData <- do.call("rbind", IDDATA)
+            } else {            
+              idData <- df[1, unlist(lapply(lapply(apply(df, 2, unique), length), '==', 1))]
+            }
+              
+              idData <- idData[,names(idData)!="individual.local.identifier"]
+              rownames(idData) <- unique(df$individual.local.identifier)
+              
+              data <- data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp", colnames(idData))]])
+              if (ncol(data)==0) data <- data.frame(data, empty=NA)
+              
             tmp <- SpatialPointsDataFrame(
                     coords = cbind(df$location.long,df$location.lat),
-                    data = data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp", colnames(idData))]]), 
+                    data = data, 
                     proj4string = proj,#CRS("+proj=longlat +ellps=WGS84"), # proj (function argument ) is not used here Marco
                     match.ID = TRUE)
-
-            res <- new("Move", 
-                       timestamps = df$timestamp, 
-                       tmp, 
-                       idData = idData,
-                       timesMissedFixes = missedFixes)
+            if (length(ids)==1){
+              res <- new("Move", 
+                         timestamps = df$timestamp, 
+                         tmp, 
+                         idData = idData,
+                         timesMissedFixes = missedFixes)
+              } else {
+               res <- new("MoveStack", 
+                 	        tmp, 
+                 	        idData = idData,
+               		        timestamps = df$timestamp, 
+               		        trackId = df$individual.local.identifier)
+              }
             return(res)
           })
+
+
 
 
 ###extract number of locations from Move
@@ -174,7 +193,6 @@ setMethod(f = "spTransform",
 setMethod(f = "spTransform", 
           signature = c(x = ".MoveTrack", CRSobj = "CRS"), 
           function(x, CRSobj, center=FALSE, ...){
-            print(center)
             if (center){ 
               mid.range.lon <- (max(coordinates(x)[ ,1])+min(coordinates(x)[ ,1]))/2
               mid.range.lat  <- (max(coordinates(x)[ ,2])+min(coordinates(x)[ ,2]))/2
