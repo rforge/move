@@ -59,7 +59,7 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no misse
 		  	    if(any(object@timestamps!=sort(object@timestamps)))
 				      stop("The dataset includes unsorted time stamps")
 		  	    if (any(duplicated(object@timestamps)))
-				      stop("The dataset includes double timestamps")
+				      stop("The dataset includes double timestamps (first one:",object@timestamps[duplicated(object@timestamps)][1],")")
             #if (length(object@burstID)!=nrow(coordinates(object)))
               #stop("The length of burst IDs is not equal to the number of locations")
 			      return(TRUE)
@@ -155,7 +155,7 @@ setMethod(f = ".move",
                  	        tmp, 
                  	        idData = idData,
                		        timestamps = df$timestamp, 
-               		        trackId = df$individual.local.identifier)
+               		        trackId = factor(df$individual.local.identifier))
               }
             return(res)
           })
