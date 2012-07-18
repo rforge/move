@@ -120,7 +120,16 @@ setMethod(f = ".move",
             missedFixes<- df[(is.na(df$location.long)|is.na(df$location.lat)), ]$timestamp
             df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
             
+	    if(length(unique(df$individual.local.identifier))>1 & any(unique(as.character(df$individual.local.identifier))==""))
+	    {# this is not so elegant from me (bart) since this function also gets used by non movebank data
+		    warning("omitting locations that have and empty local identifier n=",sum(tmp<-as.character(df$individual.local.identifier)=="")) 
+		    df<-df[!tmp,]
+		    df$individual.local.identifier<-factor(df$individual.local.identifier)
+
+	    }
             ids <- as.list(as.character(unique(df$individual.local.identifier)))
+
+
 #            if (length(ids)>1){
 # i changed this becuause it gave a error when some were unique per id and others not              IDDATA <- lapply(ids, FUN= function(id) {df[df$individual.local.identifier==id, apply(df[df$individual.local.identifier==id,], MARGIN=2, FUN=function(y) {length(unique(y))==1}) ][1,]})
 #			      browser()
