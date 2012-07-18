@@ -121,12 +121,17 @@ setMethod(f = ".move",
             df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
             
             ids <- as.list(as.character(unique(df$individual.local.identifier)))
-            if (length(ids)>1){
-              IDDATA <- lapply(ids, FUN= function(id) {df[df$individual.local.identifier==id, apply(df[df$individual.local.identifier==id,], MARGIN=2, FUN=function(y) {length(unique(y))==1}) ][1,]})
-              idData <- do.call("rbind", IDDATA)
-            } else {            
-              idData <- df[1, unlist(lapply(lapply(apply(df, 2, unique), length), '==', 1))]
-            }
+#            if (length(ids)>1){
+# i changed this becuause it gave a error when some were unique per id and others not              IDDATA <- lapply(ids, FUN= function(id) {df[df$individual.local.identifier==id, apply(df[df$individual.local.identifier==id,], MARGIN=2, FUN=function(y) {length(unique(y))==1}) ][1,]})
+#			      browser()
+#			      uniquePerID<-apply(df, MARGIN=2, function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=df$individual.local.identifier)
+#              idData <- df[!duplicated(df$individual.local.identifier), names(uniquePerID[uniquePerID])]
+#            } else {            
+#              idData <- df[1, unlist(lapply(lapply(apply(df, 2, unique), length), '==', 1))]
+#            }
+	    #this function should both work for one and multiple individuals
+	      uniquePerID<-apply(df, MARGIN=2, function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=df$individual.local.identifier)
+              idData <- df[!duplicated(df$individual.local.identifier), names(uniquePerID[uniquePerID])]
               
               idData <- idData[,names(idData)!="individual.local.identifier"]
               rownames(idData) <- unique(df$individual.local.identifier)
