@@ -55,17 +55,17 @@ setMethod(f="getMovebank",
               require(RCurl)
               curl  <- getCurlHandle()
               curlSetOpt( .opts = list(httpheader = c(user = login@username, password = login@password),verbose=FALSE), curl=curl)
-              url <- paste("https", url, sep="")
-                
+              url <- paste("https", url, sep="")  
               web <- getURL(url, curl=curl, verbose=F, .encoding="UTF-8")
+              if(grepl(pattern="The requested download may contain copyrighted material", x=web)) stop("You need a permition to access this data set. Go to movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
               data <- read.csv(textConnection(web))
-              if(grepl(pattern="You.may.only.download.it.if.you.agree.with.the.terms", x=names(data)[1])) stop("You need a permition to access this data set. Go to movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
-              if (grepl(pattern="X.html..head..title.Apache.Tomcat", capture.output(data)[1])==TRUE) stop("It looks like you are not allowed to download this data.")
+              if(grepl(pattern="You.may.only.download.it.if.you.agree.with.the.terms", x=names(data)[1])) warning("You need a permition to access this data set. Go to movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
+              if (grepl(pattern="X.html..head..title.Apache.Tomcat", capture.output(data)[1])==TRUE) warning("It looks like you are not allowed to download this data.")
             } else {
               url <- paste(paste("http",url, sep=""), sep="&",paste("user=",login@username,"&password=",login@password, sep=""))
               data <- read.csv(url, header=T, sep=",", as.is=T)
             }
-#print(url)            
+print(url)            
             return(data)
           })
 
@@ -188,16 +188,16 @@ setMethod(f="getMovebankID",
 setMethod(f="getMovebankID", 
           signature=c(x="character", login="MovebankLogin"), 
           definition = function(x=NA, login){
+browser()            
           data <- getMovebank("study", login, sort="name", attributes="id%2Cname%2Ci_am_owner%2Ci_can_see_data%2Cthere_are_data_which_i_cannot_see")
           if (is.na(x)) {
             cat("####### STUDY ID #######\n")
             return(data[ ,c("id","name")])
+            } else {
+              studyNUM <- data[gsub(" ","", data$name)==gsub(" ","", x),c("id")] #get rid of all spaces to avoid miss matching between different spaces words
+              if (length(studyNUM)>1) stop(paste("There was more than one study with the name:",x))
+            return(studyNUM)
             }
-          else {
-            #studyNUM <- as.numeric(strsplit(capture.output(data[data$name==x,c("id")]),split=" ")[[1]][[2]])
-            return(data[data$name==x,c("id")])
-            }
-          #if data is empty prompt, that study was not found
           })
 
 
@@ -233,8 +233,10 @@ setMethod(f="getMovebankStudy",
 setGeneric("getMovebankAnimals", function(study, login) standardGeneric("getMovebankAnimals"))
 setMethod(f="getMovebankAnimals",
           c(study="numeric", login="MovebankLogin"),
-          definition = function(study, login){     
-              animals <- getMovebank("sensor", login, tag_study_id=study)
+          definition = function(study, login){  
+print("2")  
+browser()            
+              animals <- getMovebank(entity_type="sensor", login, tag_study_id=study)
               animalID <- getMovebank("individual", login, study_id=study, attributes="id%2Clocal_identifier")
               #cat("**** LIST OF THE STUDY ANIMALS ****\n")
               names(animalID) <- c("animalID","animalName")
@@ -271,6 +273,8 @@ setMethod(f="getMovebankData",
 setMethod(f="getMovebankData", 
           signature=c(study="character",animalName="ANY", login="MovebankLogin"),
           definition = function(study,animalName, login, ...){
+print("1")
+browser()            
             studyNUM <- getMovebankID(study, login)
             getMovebankData(study=studyNUM, animalName=animalName, login=login, moveObject=moveObject,...)
           })
@@ -280,113 +284,64 @@ setMethod(f="getMovebankData",
             definition = function(study, animalName, login, moveObject=T, ...){
             data <- getMovebankAnimals(study=study, login)
             attribs <- paste(collapse="%2C",getMovebankSensorsAttributes(study, login)$short_name)
-            if (is.na(animalName)) {getMovebankData(study=study, login=login, data=data, attribs=attribs, ...)}
-            else {getMovebankData(study=study,animalName=animalName,login=login, data=data, attribs=attribs, ...)}
+            if (is.na(animalName)) {getMovebankData(study=study, login=login, data=data, attributes=attribs, ...)}
+            else {getMovebankData(study=study,animalName=animalName,login=login, data=data, attributes=attribs, ...)}
             })
 
 ###create a Move or download data from a single animal within the study
 setMethod(f="getMovebankData", 
           signature=c(study="numeric",animalName="character", login="MovebankLogin"),
-          definition = function(study, animalName, login, moveObject=T, ...){
+          definition = function(study, animalName, login, moveObject=T, ...){            
             data <- getMovebankAnimals(study=study, login=login)
             name <- data[data$animalName==animalName,]
             trackDF <- getMovebank("event", login, study_id=study, sensor_sensor_type_id=name$sensor_type_id, individual_id=name$animalID)
             
             IDData <- getMovebank("individual", login=login, study_id=study)
             idData <- data.frame(IDData[IDData$local_identifier==animalName,],name) ##id.1 is m.E. = deployment ID!!
-            rownames(idData)  <- idData$local_identifier
-            idData <- idData[ ,names(idData)!="animalName"]
-            df <- merge.data.frame(x=trackDF, y=idData, by.x="individual_id", by.y="animalID", all=TRUE)
-            studyDF <- getMovebankStudy(study, login)
-            df$study.name <- rep(as.character(studyDF$name),times=nrow(trackDF))
-            df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")
-            names(df) <- gsub('_', '.', names(df))
-            
-            .move(x=list(df=df, proj=CRS("+proj=longlat")))
-            
-#             #if(animalName!="all"){
-#             data <- getMovebankAnimals(study=study, login=login)
-#             name <- data[data$animalName==animalName,] ### this doesnt work, where does data comes from? marco
-#             trackDF <- getMovebank("event", login, study_id=study, sensor_sensor_type_id=name$sensor_type_id, individual_id=name$animalID)
-#             if (moveObject==TRUE) {
-#               studyDF <- getMovebankStudy(study, login)
-#               sensor <- as.character(getMovebankSensors(,login)[getMovebankSensors(,login)$id==name$sensor_type_id, "external_id"])
-#               if (any(is.na(trackDF$location_long))|any(is.na(trackDF$location_lat))){   ##ommitt NA fixes
-#                 trackDF <- trackDF[!(is.na(trackDF$location_long)|is.na(trackDF$location_lat)), ]
-#               }
-#               coords <- cbind(trackDF$location_long,trackDF$location_lat)
-#               timestamps <- as.POSIXct(strptime(as.character(trackDF$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")
-#               sensorDF <- data.frame(rep(sensor, times=nrow(trackDF)))
-#               names(sensorDF)  <- "sensor"
-#               #timesMissedFixes  <- as.POSIXct(origin=0,tz="UTC")                
-#               spdf <- SpatialPointsDataFrame(
-#                 coords = coords,
-#                 data = sensorDF, #data.frame(sensorDF[rep(1,dim(trackDF[animalName])),]), 
-#                 proj4string = CRS("+proj=longlat +ellps=WGS84"), # proj (function argument ) is not used here Marco
-#                 match.ID = TRUE)
-#               moveG <- new(".MoveGeneral",
-#                            dateCreation=Sys.time(),
-#                            study=as.character(studyDF$name),
-#                            citation=as.character(studyDF$citation),
-#                            license=as.character(studyDF$license_terms))
-# #                 moveTS <- new(".MoveTrackSingle",
-# #                               timesMissedFixes=timesMissedFixes)
-#               moveT <- new(".MoveTrack",
-#                           timestamps = timestamps,
-#                           spdf)
-#               move <- new("Move",
-#                           animal=animalName,
-#                           species="species name",
-#                           moveG, #.MoveGeneral
-#                           #moveTS, #.MoveTrackSingle   ###we need to include this, yet the function does not work at the moment
-#                           moveT) #.MoveTrack
-#             return(move)} else{return(trackDF)}
+            #rownames(idData)  <- idData$local_identifier
+            #idData <- idData[ ,names(idData)!="animalName"]
+#             df <- merge.data.frame(x=trackDF, y=idData, by.x="individual_id", by.y="animalID", all=TRUE)
+#             studyDF <- getMovebankStudy(study, login)
+#             df$study.name <- rep(as.character(studyDF$name),times=nrow(trackDF))
+#             df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")
+#             names(df) <- gsub('_', '.', names(df))
+#             names(df) <- gsub('local.identifier','individual.local.identifier',names(df))
+#             
+#             .move(x=list(df=df, proj=CRS("+proj=longlat")))
+            .getMovebankData(trackDF=trackDF, idData=idData, study=study, login=login, ...)
             })
             
 ###create a MoveStack or download data from all animals within the study
 setMethod(f="getMovebankData", 
           signature=c(study="numeric",animalName="missing", login="MovebankLogin"),
-          definition = function(study, animalName, login, moveObject=T, ...){ ##@bart I think there is no need to not return a Move object
+          definition = function(study, animalName, login, moveObject=T, ...){ 
                  idData <- getMovebank("individual", login=login, study_id=study)
-                 rownames(idData)  <- idData$local_identifier
-                 idData <- idData[ ,names(idData)!="local_identifier"]
-                 trackDF <- getMovebank("event", login=login, study_id=study)
-                 df <- merge.data.frame(x=trackDF, y=idData, by.x="individual_id", by.y="id", all=TRUE)
+                 trackDF <- getMovebank("event", login=login, study_id=study)#, attributes="deployment_id")[1,]
+browser()              
+               .getMovebankData(trackDF=trackDF, idData=idData, study=study, login=login, ...)
+                })
+
+
+setGeneric(".getMovebankData", function(trackDF, idData, ...) standardGeneric(".getMovebankData"))
+setMethod(f=".getMovebankData", 
+          signature=c("data.frame"),
+          definition = function(trackDF, idData, ...){
+print("3")            
+browser()
+            deploymentID <- getMovebank("deployment", login=login, study_id=study, attributes="individual_id%2Ctag_id%2Cid")
+                # if (any(apply(deploymentID, 2, FUN=duplicated))){##test whether animals
+                   
+                   ##if there are multiple deployments: idData$local_identifier  <-  paste(localID_deploymentID)
+                #   df <- merge.data.frame(x=trackDF, y=idData, by.x="individual_id", by.y="id", all=TRUE)
+                # } else{
+                   df <- merge.data.frame(x=trackDF, y=idData, by.x="individual_id", by.y="id", all=TRUE)
+                # }
                  studyDF <- getMovebankStudy(study, login)
                  df$study.name <- rep(as.character(studyDF$name),times=nrow(trackDF))
                  df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")
                  names(df) <- gsub('_', '.', names(df))
-
+                 names(df) <- gsub('local.identifier','individual.local.identifier',names(df))
+                 df$study.name <- gsub(' +', " ", df$study.name)
             
             .move(x=list(df=df, proj=CRS("+proj=longlat")))
-#                  idData <- getMovebank("individual", login=login, study_id=study)
-#                  rownames(idData) <- idData$local_identifier
-#                  colnames(idData)[7] <- "individual.local.identifier" #not the best way!
-#                  trackDF <- getMovebank("event", login=login, study_id=study)
-#                  trackDF <- merge(trackDF, idData[,c("id","individual.local.identifier")],by.x="individual_id", by.y="id", all=TRUE)
-#                   if (moveObject==TRUE){
-#                     studyDF <- getMovebankStudy(study, login)
-#                     spdf <- SpatialPointsDataFrame(
-#                       coords = cbind(trackDF$location_long, trackDF$location_lat),
-#                       data = data.frame(trackDF[names(trackDF)[!names(trackDF)%in%c("location_lat", "location_long","timestamp")]]), 
-#                       proj4string = CRS("+proj=longlat +ellps=WGS84"), # proj is not used here
-#                       match.ID = TRUE)
-#                    
-#                     sensorNames <- getMovebankSensors(,login)[,c("id","external_id")] ##names of sensors
-#                     studySensors <- getMovebankSensors(study,login)
-#                     DATA  <- data.frame(
-#                       sensor.type = merge(sensorNames,studySensors,by.x="id",by.y="sensor_type_id",)[,"external_id"],
-#                       individual.taxon.canonical.name=rep("species",times=nrow(idData)),
-#                       tag.local.identifier=studySensors$tag_id, #paste("#",names$tag_id,sep=""),
-#                       #individual.local.identifier=as.character(names$animalName),
-#                       study.name=rep(as.character(studyDF$name),times=nrow(idData)))
-#                     
-#                     timestamps <- as.POSIXct(strptime(as.character(trackDF$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")                    
-#                     move <- new("MoveStack", 
-#                                spdf, 
-#                                idData = data.frame(DATA,idData),
-#                                timestamps = timestamps, 
-#                                trackId = as.factor(trackDF$individual.local.identifier))
-#  
-#                 return(move)} else{return(trackDF)}
-                })
+          })

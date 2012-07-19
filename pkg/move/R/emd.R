@@ -11,15 +11,16 @@ setMethod(f="emd",
           }
           )
 
-
+# test2 <- move(x="~/Documents/Programming/Rmove/BCI Ocelot.csv", proj=CRS("+proj=longlat"))
+# p2 <- brownian.bridge.dyn(spTransform(test2), location.error=23.5, dimSize=55, ext=0.3, time.step=600)
+# emd(p2[[1]], p2[[2]],threshold=1, integer=T, greatcircle=F)
 #if threshold is set -> fast calculation 
 setMethod(f="emd", 
           signature=c(x="RasterLayer", y="RasterLayer", threshold="numeric", integer="logical", greatcircle="logical"), 
           definition = function(x,y,threshold=NA,integer,greatcircle=FALSE){
-     # browser()
             r1 <- as.data.frame(rasterToPoints(x))
             r2 <- as.data.frame(rasterToPoints(y))
-            if(sum(r1$layer)!=sum(r2$layer))
+            if(round(sum(r1$layer))!=round(sum(r2$layer))) ##bart I round here because differences from our rasters are somewhat like delta: -5.55111512312578e-16
               warning(paste("Bart: Rasters dont have equal mass, delta:",sum(r1$layer)-sum(r2$layer)))
             #if(sum(r1$layer)!=1)
             if(identical(all.equal(sum(r1$layer),1), FALSE))
