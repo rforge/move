@@ -188,7 +188,7 @@ setMethod(f="getMovebankID",
 setMethod(f="getMovebankID", 
           signature=c(x="character", login="MovebankLogin"), 
           definition = function(x=NA, login){
-browser()            
+#browser()            
           data <- getMovebank("study", login, sort="name", attributes="id%2Cname%2Ci_am_owner%2Ci_can_see_data%2Cthere_are_data_which_i_cannot_see")
           if (is.na(x)) {
             cat("####### STUDY ID #######\n")
@@ -234,15 +234,25 @@ setGeneric("getMovebankAnimals", function(study, login) standardGeneric("getMove
 setMethod(f="getMovebankAnimals",
           c(study="numeric", login="MovebankLogin"),
           definition = function(study, login){  
-print("2")  
-browser()            
-              animals <- getMovebank(entity_type="sensor", login, tag_study_id=study)
-              animalID <- getMovebank("individual", login, study_id=study, attributes="id%2Clocal_identifier")
-              #cat("**** LIST OF THE STUDY ANIMALS ****\n")
-              names(animalID) <- c("animalID","animalName")
-              if (nrow(animals)!=0){ 
-                return(cbind(animalID,animals))
-                } else {return(animalID)}
+#print("2")  
+#browser()           
+          tags <- getMovebank(entity_type="sensor", login, tag_study_id=study)
+          animalID <- getMovebank("individual", login, study_id=study, attributes="id%2Clocal_identifier")
+          deploymentID <- getMovebank("deployment", login=login, study_id=study, attributes="individual_id%2Ctag_id%2Cid")
+          #  if (nrow(deploymentID)==0) warning("There are no deployment IDs available!")
+          names(deploymentID)  <- c("individual_id", "tag_id", "deployment_id")   
+            if (nrow(tags)!=0){ 
+               tagdep <- merge.data.frame(x=tags, y=deploymentID, by.x="tag_id", by.y="tag_id", all=TRUE) #skipping tags that have no deployment
+               tagdepid <- merge.data.frame(x=tagdep, y=animalID, by.x="individual_id", by.y="id", all.y=TRUE)[,-3]#skipping the column of the movebank internal tag id
+               colnames(tagdepid) <- c("individual_id", "tag_id", "sensor_type_id", "deployment_id", "animalName")
+              #if (any(apply(deploymentID[,1:2], 2, FUN=duplicated)))##if there are multiple deployments: idData$local_identifier  <-  paste(localID_deploymentID)
+               if (any(duplicated(tagdepid$individual_id)|duplicated(tagdepid$tag_id))){
+                tagdepid$animalName <- paste(tagdepid$animalName, tagdepid$deployment_id, sep="_")
+                names(tagdepid)  <- c("individual_id", "tag_id", "sensor_type_id", "deployment_id", "animalName_deployment")}
+               return(tagdepid) 
+               } else {
+                 return(merge.data.frame(x=deploymentID, y=animalID, by.x="individual_id", by.y="id", all.y=TRUE))
+                 }
           })
 
 setMethod(f="getMovebankAnimals",
@@ -273,8 +283,8 @@ setMethod(f="getMovebankData",
 setMethod(f="getMovebankData", 
           signature=c(study="character",animalName="ANY", login="MovebankLogin"),
           definition = function(study,animalName, login, ...){
-print("1")
-browser()            
+#print("1")
+#browser()            
             studyNUM <- getMovebankID(study, login)
             getMovebankData(study=studyNUM, animalName=animalName, login=login, moveObject=moveObject,...)
           })
@@ -317,19 +327,20 @@ setMethod(f="getMovebankData",
           definition = function(study, animalName, login, moveObject=T, ...){ 
                  idData <- getMovebank("individual", login=login, study_id=study)
                  trackDF <- getMovebank("event", login=login, study_id=study)#, attributes="deployment_id")[1,]
-browser()              
+#browser()              
                .getMovebankData(trackDF=trackDF, idData=idData, study=study, login=login, ...)
                 })
 
 
-setGeneric(".getMovebankData", function(trackDF, idData, ...) standardGeneric(".getMovebankData"))
+setGeneric(".getMovebankData", function(trackDF, idData, login, study, ...) standardGeneric(".getMovebankData"))
 setMethod(f=".getMovebankData", 
           signature=c("data.frame"),
-          definition = function(trackDF, idData, ...){
-print("3")            
+          definition = function(trackDF, idData, login, study,...){
+#print("3")            
 browser()
+#3615655
             deploymentID <- getMovebank("deployment", login=login, study_id=study, attributes="individual_id%2Ctag_id%2Cid")
-                # if (any(apply(deploymentID, 2, FUN=duplicated))){##test whether animals
+                 #if (any(apply(deploymentID, 2, FUN=duplicated))){##test whether animals
                    
                    ##if there are multiple deployments: idData$local_identifier  <-  paste(localID_deploymentID)
                 #   df <- merge.data.frame(x=trackDF, y=idData, by.x="individual_id", by.y="id", all=TRUE)

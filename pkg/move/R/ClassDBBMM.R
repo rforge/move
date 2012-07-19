@@ -73,7 +73,12 @@ setMethod(f="brownian.bridge.dyn",
           signature=c(object="SpatialPointsDataFrame",raster="missing", dimSize="numeric",location.error="numeric"),
           function(object, raster, dimSize, location.error, ...){
             #print("object SPDF, dimSize numeric")
-            if (!any(is.na(bbox))) {Range <- extent(bbox)} else {Range <- .extcalc(obj = object, ext = ext)}
+            if (!any(is.na(bbox))) {
+              Range <- extent(bbox)
+              Range <- c(Range@xmin, Range@xmax, Range@ymin, Range@ymax)
+              } else {
+                Range <- .extcalc(obj = object, ext = ext)
+                }
             yRange <- diff(Range[3:4])
             xRange <- diff(Range[1:2])            
             
@@ -92,7 +97,12 @@ setMethod(f = "brownian.bridge.dyn",
           signature = c(object="SpatialPointsDataFrame",raster="numeric",dimSize="missing",location.error="numeric"),
           definition = function(object,raster,dimSize,location.error,...){
             #print("object SPDF, raster numeric")
-            if (!any(is.na(bbox))) {Range <- extent(bbox)} else {Range <- .extcalc(obj = object, ext = ext)}
+            if (!any(is.na(bbox))) {
+              Range <- extent(bbox)
+              Range <- c(Range@xmin, Range@xmax, Range@ymin, Range@ymax)
+            } else {
+              Range <- .extcalc(obj = object, ext = ext)
+            }
             yRange <- diff(Range[3:4])
             xRange <- diff(Range[1:2])
             #calculation of the coordinates to fit squared raster cells
