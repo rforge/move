@@ -354,5 +354,5 @@ browser()
                  names(df) <- gsub('local.identifier','individual.local.identifier',names(df))
                  df$study.name <- gsub(' +', " ", df$study.name)
             
-            .move(x=list(df=df, proj=CRS("+proj=longlat")))
+            .move(df=df, proj=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"))
           })
