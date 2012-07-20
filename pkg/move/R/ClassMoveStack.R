@@ -29,7 +29,8 @@ setMethod("[", signature(x="MoveStack"),definition=function(x,i){ #does not work
 	  new("MoveStack", as(x, "SpatialPointsDataFrame")[i,], 
 	      trackId=droplevels(x@trackId[i]),
 	      idData=x@idData[as.character(unique(x@trackId[i])),],
-	      timestamps=x@timestamps[i])})
+	      timestamps=x@timestamps[i],
+		sensor=x@sensor[i])})
 	      
 
 setGeneric("moveStack", function(x, proj) standardGeneric("moveStack"))
@@ -76,6 +77,7 @@ setMethod(f = "moveStack",
                        tmp, 
                        idData = IDDATA,
                        timestamps = as.POSIXct(do.call(rbind, (lapply(x, function(y) {as.data.frame(y@timestamps)})))[,1], tz="UTC"), #timezone?
+                       sensor = do.call("rbind", (lapply(x, slot, "sensor"))), 
                        trackId = as.factor(rep(id, length)))
             return(res)
           })
@@ -129,6 +131,7 @@ setMethod(f = "split",
                              spdf,
                              idData=x@idData[ID, ],
                              timestamps=x@timestamps[x@trackId==ID],
+                             sensor=x@sensor[x@trackId==ID],
                              dateCreation=x@dateCreation,
                              study=x@study,
                              citation=x@citation,
