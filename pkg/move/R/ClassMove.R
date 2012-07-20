@@ -84,7 +84,7 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
 
 
 ## Making move a generic funtion
-setGeneric("move", function(x, y, time, data, proj, animal=NA, ...) standardGeneric("move"))
+setGeneric("move", function(x, y, time, data, proj, animal, ...) standardGeneric("move"))
 setMethod(f = "move", 
       	  signature = c(x="character"), # marco maybe also make these this fucntion work with files with multiple ids by combining moveStack and move functions all into move functions
       	  definition = function(x){
@@ -113,7 +113,7 @@ setMethod(f = "move",
 #if non-Movebank data are used, table is new defined 
 setMethod(f="move",
           signature=c(x="numeric", y="numeric", time="POSIXct", data="data.frame", proj="CRS",  animal="ANY"),
-          definition = function(x,y,time,data,proj,sensor="unknown",animal, ...){
+          definition = function(x,y,time,data,proj,sensor="unknown",animal=NA, ...){
             df <- data
             df$location.long <- x
             df$location.lat <- y
@@ -160,8 +160,9 @@ setMethod(f = ".move",
 	      uniquePerID<-apply(df, MARGIN=2, function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=df$individual.local.identifier)
 			      uniquePerID["sensor.type"]<-FALSE
               idData <- df[!duplicated(df$individual.local.identifier), names(uniquePerID[uniquePerID])]
-              
-              idData <- idData[,names(idData)!="individual.local.identifier"]
+	      if(length(names(idData))!=1)# dont shorten it because we need something
+	     idData<-subset(idData, select=names(idData)!="individual.local.identifier")
+
               rownames(idData) <- unique(df$individual.local.identifier)
               
 
