@@ -4,8 +4,8 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack"),
 	       validity = function(object){
     			if(length(object@trackId)!=nrow(object@coords))
     				stop("Number of trackId does not match the number of coordinates")
-    		  	if(any(tmp<-duplicated(cbind(object@timestamps, object@trackId))))
-    				stop("The data set includes double timestamps per ID (first one:", object@trackId[tmp][1]," ",object@timestamps[tmp][1], ")")
+    		  	if(any(tmp<-duplicated(cbind(object@timestamps, object@trackId, object@sensor))))
+    				stop("The data set includes double timestamps per ID (first one:", object@trackId[tmp][1]," ",object@sensor[tmp][1]," ",object@timestamps[tmp][1], ")")
     			if(any(unlist(lapply(tapply(object@timestamps,object@trackId, order),diff))!=1))
     				stop("Not ordered timestamps per individual")
     			return(TRUE)

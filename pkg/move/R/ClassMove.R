@@ -24,12 +24,16 @@ setClass(Class = ".MoveGeneral",
 
 setClass(Class = ".MoveTrack",contains=c("SpatialPointsDataFrame"),
 	       representation = representation(
-				   timestamps = "POSIXct"),
+				   timestamps = "POSIXct",
+				   sensor="factor"),
 	       prototype = prototype(
-           timestamps = as.POSIXct(NA)),
+           timestamps = as.POSIXct(NA),
+	   sensor=factor()),
       	 validity = function(object){
       			if(length(object@timestamps)!=nrow(object@coords))
       				stop("Number of timestamps does not match the number of coordinates")
+      			if(length(object@sensor)!=nrow(object@coords))
+      				stop("Number of sensors observations does not match the number of coordinates")
       			return(TRUE)
 	 	    }
 	      )
@@ -58,8 +62,8 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no misse
 	       validity = function(object){
 		  	    if(any(object@timestamps!=sort(object@timestamps)))
 				      stop("The dataset includes unsorted time stamps")
-		  	    if (any(duplicated(object@timestamps)))
-				      stop("The dataset includes double timestamps (first one:",object@timestamps[duplicated(object@timestamps)][1],")")
+		  	    if (any(dups<-duplicated(data.frame(object@timestamps, object@sensor))))
+				      stop("The dataset includes double timestamps (first one:",object@timestamps[dups][1],")")
             #if (length(object@burstID)!=nrow(coordinates(object)))
               #stop("The length of burst IDs is not equal to the number of locations")
 			      return(TRUE)
@@ -83,16 +87,26 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
 setGeneric("move", function(x, y, time, data, proj, animal=NA, ...) standardGeneric("move"))
 setMethod(f = "move", 
       	  signature = c(x="character"), # marco maybe also make these this fucntion work with files with multiple ids by combining moveStack and move functions all into move functions
-      	  definition = function(x, proj){
+      	  definition = function(x){
 		  if(!file.exists(x))
 			  stop("x should be a file on disk but it cant be found")
       		df <- read.csv(x, header=TRUE, sep=",", dec=".")
       		#check whether data are really from movebank
       		if (!all(c("timestamp", "location.long",  "location.lat", "study.timezone", "study.local.timestamp", "sensor.type", "individual.local.identifier", "individual.taxon.canonical.name")%in%colnames(df)))
       		        stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
+		if(any(dups<-duplicated(apply(df[,names(df)!="event.id"], 1, paste, collapse="__")))){
+			warning("Exact duplicate records removed (n=",sum(dups),") (movebank allows them but the move package cant deal with them)")
+		       df<-df[!dups,]
+	       }	       
       		df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") 
+	       if(any(tapply(df$sensor.type, df$individual.local.identifier, length)!=1)){
+		       df<-df[with(df, order(individual.local.identifier, timestamp)), ]
+
+	       }
+	       proj=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84")
+
       		try(df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS")),silent=T)
-      		.move(x=list(df=df, proj=proj))
+      		.move(df=df, proj=proj)
       	  }
       	  )
 
@@ -106,23 +120,26 @@ setMethod(f="move",
             df$timestamp <- time
             if(all(is.na(animal))) animal <- "unnamed"
             df$individual.local.identifier <- as.factor(if (length(animal)==1) {rep(animal, length(x))} else {animal})
-            .move(x=list(df=df, proj=proj))
+            .move(df=df, proj=proj)
           }
           )
 
-setGeneric(".move", function(x) standardGeneric(".move"))
+setGeneric(".move", function(df, proj) standardGeneric(".move"))
 setMethod(f = ".move", 
-          signature = c(x="list"), 
-          definition = function(x){
-            df <- x[['df']]
-            proj <- x[[2]]
+          signature = c(df="data.frame", proj="CRS"), 
+          definition = function(df, proj){
+#            df <- x[['df']]
+#            proj <- x[[2]]
             if(any(is.na(df$location.long))==TRUE) warning("There were NA locations detected and omitted.")
             missedFixes<- df[(is.na(df$location.long)|is.na(df$location.lat)), ]$timestamp
             df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
+#	    sensor<-df$sensor.type
+ #             df <- df[,names(df)!="sensor.type"]
+
             
 	    if(length(unique(df$individual.local.identifier))>1 & any(unique(as.character(df$individual.local.identifier))==""))
 	    {# this is not so elegant from me (bart) since this function also gets used by non movebank data
-		    warning("omitting locations that have and empty local identifier n=",sum(tmp<-as.character(df$individual.local.identifier)=="")) 
+		    warning("omitting locations that have and empty local identifier (n=",sum(tmp<-as.character(df$individual.local.identifier)==""),") most likely the tag was not deployed") 
 		    df<-df[!tmp,]
 		    df$individual.local.identifier<-factor(df$individual.local.identifier)
 
@@ -140,11 +157,13 @@ setMethod(f = ".move",
 #            }
 	    #this function should both work for one and multiple individuals
 	      uniquePerID<-apply(df, MARGIN=2, function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=df$individual.local.identifier)
+			      uniquePerID["sensor.type"]<-FALSE
               idData <- df[!duplicated(df$individual.local.identifier), names(uniquePerID[uniquePerID])]
               
               idData <- idData[,names(idData)!="individual.local.identifier"]
               rownames(idData) <- unique(df$individual.local.identifier)
               
+
               data <- data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp", colnames(idData))]])
               if (ncol(data)==0) data <- data.frame(data, empty=NA)
               
@@ -156,6 +175,7 @@ setMethod(f = ".move",
             if (length(ids)==1){
               res <- new("Move", 
                          timestamps = df$timestamp, 
+			 sensor=factor(df$sensor),
                          tmp, 
                          idData = idData,
                          timesMissedFixes = missedFixes)
@@ -163,6 +183,7 @@ setMethod(f = ".move",
                res <- new("MoveStack", 
                  	        tmp, 
                  	        idData = idData,
+			 sensor=factor(df$sensor),
                		        timestamps = df$timestamp, 
                		        trackId = factor(df$individual.local.identifier))
               }
