@@ -56,10 +56,26 @@ setClass(Class = "DBBMM",contains=c(".UD"),
 
 
 setGeneric("brownian.bridge.dyn", function(object,raster=1,dimSize=10,location.error,margin=11, time.step=NULL, window.size=31, ext, bbox=NA, ...){standardGeneric("brownian.bridge.dyn")})
+setMethod(f="brownian.bridge.dyn", 
+          signature=c(object=".MoveTrackSingle",raster="ANY", dimSize="missing",location.error="character"),
+          #signature=c(object="SpatialPointsDataFrame",raster="missing", dimSize="missing",location.error="numeric"),
+          function(object,  raster,dimSize,location.error,...){
+		  location.error<- do.call("$",list(object,location.error))
+#           print("raster and dimSize missing")
+		  brownian.bridge.dyn(object=object, location.error=location.error,raster=raster,...)
+         }) #seems to be necessary
+setMethod(f="brownian.bridge.dyn", 
+          signature=c(object=".MoveTrackSingle",raster="ANY", dimSize="ANY",location.error="character"),
+          #signature=c(object="SpatialPointsDataFrame",raster="missing", dimSize="missing",location.error="numeric"),
+          function(object,  raster,dimSize,location.error,...){
+		  location.error<- do.call("$",list(object,location.error))
+#           print("raster and dimSize missing")
+		  brownian.bridge.dyn(object=object, location.error=location.error,raster=raster, dimSize=dimSize,...)
+         }) #seems to be necessary
 
 ###if neither a raster nor the dimSize is given, then the cell size is calculated by the defauled dimSize and the largest dimension
 setMethod(f="brownian.bridge.dyn", 
-          signature=c(object="Move",raster="missing", dimSize="missing",location.error="numeric"),
+          signature=c(object=".MoveTrackSingle",raster="missing", dimSize="missing",location.error="numeric"),
           #signature=c(object="SpatialPointsDataFrame",raster="missing", dimSize="missing",location.error="numeric"),
           function(object, raster, dimSize, location.error,...){
 #           print("raster and dimSize missing")
