@@ -113,7 +113,7 @@ setMethod(f = "move",
 #if non-Movebank data are used, table is new defined 
 setMethod(f="move",
           signature=c(x="numeric", y="numeric", time="POSIXct", data="data.frame", proj="CRS",  animal="ANY"),
-          definition = function(x,y,time,data,proj,sensor="unknown", ...){
+          definition = function(x,y,time,data,proj,sensor="unknown",animal, ...){
             df <- data
             df$location.long <- x
             df$location.lat <- y
