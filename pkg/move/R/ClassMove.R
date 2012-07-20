@@ -113,13 +113,14 @@ setMethod(f = "move",
 #if non-Movebank data are used, table is new defined 
 setMethod(f="move",
           signature=c(x="numeric", y="numeric", time="POSIXct", data="data.frame", proj="CRS",  animal="ANY"),
-          definition = function(x,y,time,data,proj,...){
+          definition = function(x,y,time,data,proj,sensor="unknown", ...){
             df <- data
             df$location.long <- x
             df$location.lat <- y
             df$timestamp <- time
             if(all(is.na(animal))) animal <- "unnamed"
             df$individual.local.identifier <- as.factor(if (length(animal)==1) {rep(animal, length(x))} else {animal})
+			    df$sensor.type<-sensor
             .move(df=df, proj=proj)
           }
           )
