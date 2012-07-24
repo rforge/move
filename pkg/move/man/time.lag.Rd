@@ -1,7 +1,7 @@
 \name{time.lag}
 
 \alias{time.lag}
-\alias{time.lag,Move-method}
+\alias{time.lag,.MoveTrackSingle-method}
 
 \docType{methods}
 
@@ -10,7 +10,7 @@
 \description{The time.lag function calculates the time lags between locations.}
 
 \usage{
-  \S4method{time.lag}{Move}(x,...)
+  \S4method{time.lag}{.MoveTrackSingle}(x,...)
 }
 
 \arguments{

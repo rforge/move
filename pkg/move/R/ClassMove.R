@@ -84,9 +84,9 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
 
 
 ## Making move a generic funtion
-setGeneric("move", function(x, y, time, data, proj, animal, ...) standardGeneric("move"))
+setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))
 setMethod(f = "move", 
-      	  signature = c(x="character"), # marco maybe also make these this fucntion work with files with multiple ids by combining moveStack and move functions all into move functions
+      	  signature = c(x="character",y='missing',time='missing', data='missing', proj='missing'), # marco maybe also make these this fucntion work with files with multiple ids by combining moveStack and move functions all into move functions
       	  definition = function(x){
 		  if(!file.exists(x))
 			  stop("x should be a file on disk but it cant be found")
@@ -110,18 +110,47 @@ setMethod(f = "move",
       	  }
       	  )
 
+#setMethod(f="move",
+#          signature=c(x='ANY', y='ANY', time='ANY', data='ANY', proj='ANY',sensor='missing', animal='ANY'),
+#          definition = function(x, y, time, data, proj,sensor, animal, ...){
+#		  move(x=x, y=y, time=time, data=data, proj=proj,sensor='unknown', animal=animal,...)
+#	  }
+#	  )
+#setMethod(f="move",
+#          signature=c(x='ANY', y='ANY', time='ANY', data='ANY', proj='ANY',sensor='character', animal='ANY'),
+#          definition = function(x, y, time, data, proj,sensor, animal, ...){
+#		  move(x=x, y=y, time=time, data=data, proj=proj,sensor=factor(sensor), animal=animal,...)
+#	  }
+#	  )
+#setMethod(f="move",
+#          signature=c(x='ANY', y='ANY', time='ANY', data='ANY', proj='ANY',sensor='ANY', animal='character'),
+#          definition = function(x, y, time, data, proj,sensor, animal, ...){
+#		  move(x=x, y=y, time=time, data=data, proj=proj,sensor=sensor, animal=factor(animal),...)
+#	  }
+#	  )
+#setMethod(f="move",
+#          signature=c(x='ANY', y='ANY', time='ANY', data='ANY', proj='ANY',sensor='ANY', animal='missing'),
+#          definition = function(x, y, time, data, proj,sensor, animal, ...){
+#		  move(x=x, y=y, time=time, data=data, proj=proj,sensor=sensor, animal='unknown',...)
+#	  }
+#	  )
 #if non-Movebank data are used, table is new defined 
 setMethod(f="move",
-          signature=c(x="numeric", y="numeric", time="POSIXct", data="data.frame", proj="CRS",  animal="ANY"),
-          definition = function(x,y,time,data,proj,sensor="unknown",animal=NA, ...){
-            df <- data
-            df$location.long <- x
-            df$location.lat <- y
-            df$timestamp <- time
-            if(all(is.na(animal))) animal <- "unnamed"
-            df$individual.local.identifier <- as.factor(if (length(animal)==1) {rep(animal, length(x))} else {animal})
-			    df$sensor.type<-sensor
-            .move(df=df, proj=proj)
+          signature=c(x="numeric", y="numeric", time="POSIXct", data="missing", proj="CRS"),
+          definition = function(x,y,time,data,proj, ...){
+		  data<-data.frame(x,y,time)
+		  move(x=x,y=y,time=time,proj=proj,data=data,...)
+          }
+          )
+setMethod(f="move",
+          signature=c(x="numeric", y="numeric", time="POSIXct", data="data.frame", proj="CRS"),
+          definition = function(x,y,time,data,proj,sensor='unknown',animal='unnamed', ...){
+            data$location.long <- x
+            data$location.lat <- y
+            data$timestamp <- time
+            data$individual.local.identifier <- animal
+	    data$sensor.type<-sensor
+            .move(df=data, proj=proj)
           }
           )
 
@@ -159,7 +188,7 @@ setMethod(f = ".move",
 	    #this function should both work for one and multiple individuals
 	      uniquePerID<-apply(df, MARGIN=2, function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=df$individual.local.identifier)
 			      uniquePerID["sensor.type"]<-FALSE
-              idData <- df[!duplicated(df$individual.local.identifier), names(uniquePerID[uniquePerID])]
+	      idData<-subset(df, select=names(uniquePerID[uniquePerID]), !duplicated(individual.local.identifier))
 	      if(length(names(idData))!=1)# dont shorten it because we need something
 	     idData<-subset(idData, select=names(idData)!="individual.local.identifier")
 
@@ -209,7 +238,7 @@ setMethod("n.locs", "SpatialPointsDataFrame", function(obj){
 
 ###extract time.lag from Move
 if (!isGeneric("time.lag")) {setGeneric("time.lag", function(x, ...) standardGeneric("time.lag"))}
-setMethod("time.lag", "Move", function(x, ...){
+setMethod("time.lag", ".MoveTrackSingle", function(x, ...){
             return(as.numeric(diff(x@timestamps),...)) #calculates the time differences between locations one less than locations! we need a more elegant way than just adding a zero 
           }
           )
@@ -257,7 +286,7 @@ setMethod(f = "spTransform",
 #            }
 #            )
 
-
+# Marco i think this function needs to be uncommented since it would be nice to be able to plot points for move objects
 ###plotting 
 #setGeneric("points")
 #setMethod("points", "Move", function(x,add=FALSE,...){
@@ -285,18 +314,6 @@ setMethod(f = "plot",
           }
           )
 
-setMethod(f = "plot", 
-          signature = c(x="MoveStack", y="missing"), 
-          function(x, y, col=NA, ...){
-            if(any(is.na(col)))
-              col <- 1:length(unique(x@trackId))
-            if(length(col)!=n.locs(x))
-             col <- col[as.numeric(x@trackId)]
-            x$col <- col
-            unstacked <- split(x)
-              lines(unstacked[[1]], col=x$col, xlim=c(min(coordinates(x)[,1]),max(coordinates(x)[,1])), ylim=c(min(coordinates(x)[,2]), max(coordinates(x)[,2])), ... ) #create first plot
-            l = lapply(unstacked[-1], function(x,...){lines(x, col=x$col, add=T, ...)}, ...)
-          })
 
 
 setGeneric("googleplot", function(obj, ...){standardGeneric("googleplot")})

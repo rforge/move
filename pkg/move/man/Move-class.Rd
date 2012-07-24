@@ -1,6 +1,10 @@
 \name{Move-class}
 
 \alias{Move-class}
+\alias{.MoveTrack-class}
+\alias{.MoveTrackSingle-class}
+\alias{.MoveTrack}
+\alias{.MoveTrackSingle}
 
 \docType{class}
 
@@ -46,6 +50,7 @@ The Move object is created with the \code{\link{move}} function. It is the requi
   }
 }
 
+\note{.MoveTrack and .MoveTrackSingle are also exported for other people to program against}
 \author{Marco Smolla}
 
 \keyword{classes}

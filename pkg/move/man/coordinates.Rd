@@ -24,7 +24,7 @@
 
 \examples{
 ## create a move object
-data <- move(system.file("extdata","leroy.csv",package="move"), proj=CRS("+proj=longlat"))
+data <- move(system.file("extdata","leroy.csv",package="move"))
 
 ## extract the coordinates
 coords <- coordinates(data)

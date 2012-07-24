@@ -29,7 +29,7 @@
 
 \examples{
 ## create a Move object
-data <- move(system.file("extdata","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
+data <- move(system.file("extdata","leroy.csv",package="move"))
 
 ## transform the Move object by default into "+aeqd" projection method 
 ## and center the coordinate system
@@ -45,6 +45,7 @@ proj4string(data2)
 "[1]   +proj=longlat +lon_0=-73.8871629 +lat_0=42.73884025 +ellps=WGS84"
 proj4string(data3)
 "[1]  +proj=moll +ellps=WGS84"
+\dontshow{spTransform(data, CRSobj=CRS("+proj=moll"))}
 }
 
 \author{Marco Smolla}

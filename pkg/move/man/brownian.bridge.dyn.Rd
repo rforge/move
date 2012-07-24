@@ -3,11 +3,13 @@
 \alias{brownian.bridge.dyn}
 \alias{brownian.bridge.dyn,.MoveTrackSingle,RasterLayer,missing,numeric-method}
 \alias{brownian.bridge.dyn,MoveStack,RasterLayer,missing,numeric-method}
-\alias{brownian.bridge.dyn,Move,missing,missing,numeric-method}
-\alias{brownian.bridge.dyn,SpatialPointsDataFrame,missing,numeric,numeric-method}
-\alias{brownian.bridge.dyn,SpatialPointsDataFrame,numeric,missing,numeric-method}
-\alias{brownian.bridge.dyn,Move,numeric,missing,numeric-method}
-\alias{brownian.bridge.dyn,Move,missing,numeric,numeric-method}
+\alias{brownian.bridge.dyn,.MoveTrackSingle,missing,missing,numeric-method}
+\alias{brownian.bridge.dyn,SpatialPointsDataFrame,missing,numeric,ANY-method}
+\alias{brownian.bridge.dyn,SpatialPointsDataFrame,numeric,missing,ANY-method}
+%\alias{brownian.bridge.dyn,Move,numeric,missing,numeric-method}
+%\alias{brownian.bridge.dyn,Move,missing,numeric,numeric-method}
+\alias{brownian.bridge.dyn,dBMvariance,RasterLayer,missing,numeric-method}
+\alias{brownian.bridge.dyn,.MoveTrackSingle,RasterLayer,missing,character-method}
 
 \docType{methods}
 
@@ -59,7 +61,7 @@
 
 \examples{
 ## create a move object
-data <- move(system.file("extdata","leroy.csv",package="move"),proj=CRS("+proj=longlat"))
+data <- move(system.file("extdata","leroy.csv",package="move"))
 
 ## change projection method to aequd and center the coordinate system to the track
 data2 <- spTransform(data, CRSobj="+proj=aeqd", center=TRUE)
