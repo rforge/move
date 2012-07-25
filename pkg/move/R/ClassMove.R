@@ -206,7 +206,7 @@ setMethod(f = ".move",
             if (length(ids)==1){
               res <- new("Move", 
                          timestamps = df$timestamp, 
-			 sensor=factor(df$sensor),
+			                   sensor = factor(df$sensor),
                          tmp, 
                          idData = idData,
                          timesMissedFixes = missedFixes)
@@ -214,10 +214,9 @@ setMethod(f = ".move",
                res <- new("MoveStack", 
                  	        tmp, 
                  	        idData = idData,
-			 sensor=factor(df$sensor),
+			                    sensor = factor(df$sensor),
                		        timestamps = df$timestamp, 
-               		        trackId = factor(df$individual.local.identifier))
-              }
+               		        trackId = factor(df$individual.local.identifier))}
             return(res)
           })
 
@@ -239,7 +238,7 @@ setMethod("n.locs", "SpatialPointsDataFrame", function(obj){
 ###extract time.lag from Move
 if (!isGeneric("time.lag")) {setGeneric("time.lag", function(x, ...) standardGeneric("time.lag"))}
 setMethod("time.lag", ".MoveTrackSingle", function(x, ...){
-            return(as.numeric(diff(x@timestamps),...)) #calculates the time differences between locations one less than locations! we need a more elegant way than just adding a zero 
+            return(difftime(time2=x@timestamps[-length(x@timestamps)], x@timestamps[-1],...)) #calculates the time differences between locations one less than locations! we need a more elegant way than just adding a zero 
           }
           )
 

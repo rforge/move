@@ -326,8 +326,10 @@ setMethod(f="getMovebankData",
           signature=c(study="numeric",animalName="missing", login="MovebankLogin"),
           definition = function(study, animalName, login, moveObject=T, ...){ 
                  idData <- getMovebank("individual", login=login, study_id=study)
-                 trackDF <- getMovebank("event", login=login, study_id=study)#, attributes="deployment_id")[1,]
-#browser()              
+                 trackDF <- 
+                   getMovebank("event", login=login, study_id=study, attributes = "location_lat%2Clocation_long%2Ctimestamp%2Csensor_type_id%2Cindividual_id%2Ctag_id%2Cdeployment_id")
+#getMovebank("event", login=ms, individual_id=3616439, study_id=3615655, attributes="location_lat%2Clocation_long%2Ctimestamp%2Csensor_type_id")
+browser()              
                .getMovebankData(trackDF=trackDF, idData=idData, study=study, login=login, ...)
                 })
 
@@ -340,8 +342,9 @@ setMethod(f=".getMovebankData",
 browser()
 #3615655
             deploymentID <- getMovebank("deployment", login=login, study_id=study, attributes="individual_id%2Ctag_id%2Cid")
-                 #if (any(apply(deploymentID, 2, FUN=duplicated))){##test whether animals
-                   
+                 if (any(duplicated(deploymentID$id))) stop("Duplicated deplyoment IDs detected. Deployment IDs must be unique!")
+                 if (any(apply(deploymentID[,1:2], 2, FUN=duplicated)))##test whether animals
+                   tackDF$individual_id <- apply(deploymentID$id, 1, function(y) {paste(trackDF$individual_id, trackDF$deployment_id, sep="_")} )
                    ##if there are multiple deployments: idData$local_identifier  <-  paste(localID_deploymentID)
                 #   df <- merge.data.frame(x=trackDF, y=idData, by.x="individual_id", by.y="id", all=TRUE)
                 # } else{
