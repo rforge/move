@@ -26,13 +26,11 @@ setClass(Class = "MoveStack", contains = c(".MoveGeneral",".MoveTrackStack"),
     		}
         )
 
-
-setMethod("[", signature(x="MoveStack"),definition=function(x,i){ #does not work
-	  new("MoveStack", as(x, "SpatialPointsDataFrame")[i,], 
-	      trackId=droplevels(x@trackId[i]),
-	      idData=x@idData[as.character(unique(x@trackId[i])),],
-	      timestamps=x@timestamps[i],
-		sensor=x@sensor[i])})
+setMethod("[", signature(x=".MoveTrackStack"),definition=function(x,i,j,..., drop=T){ #does not work
+	      x@trackId=droplevels(x@trackId[i])
+	      x@idData=x@idData[as.character(unique(x@trackId[i])),]
+		callNextMethod()
+	      })
 	      
 setMethod(f = "plot", 
           signature = c(x="MoveStack", y="missing"), 
@@ -53,7 +51,9 @@ setMethod(f = "moveStack",
           definition = function(x){
             if (any((as.character(lapply(x, class)))!="Move")) 
               stop("One or more objects in the list are not from class Move")
-            if (any(as.character(lapply(x, function(y) attr(slot(y, "timestamps"), "tzone")) )!="UTC"))
+	    if(!all(unlist(lapply(x, validObject))))
+		    stop("Not all valid moveobjects")
+            if (length(unique(as.character(lapply(x, function(y) attr(slot(y, "timestamps"), "tzone")) )))!=1)
               stop("One or more objects in the list have no UTC timestamps")
             
             proj <- lapply(lapply(x, proj4string), strsplit, split=" ")
@@ -81,17 +81,18 @@ setMethod(f = "moveStack",
               entry}))
             id <- rownames(IDDATA)
             
-            tmp <- SpatialPointsDataFrame(
+            spdftmp <- SpatialPointsDataFrame(
               coords = coords,
               data = DATA, 
-              proj4string = CRS(proj4string(x[[1]])),
+              proj4string = CRS(proj4string(x[[1]])),# marco add a check if all projections are the same
               match.ID = TRUE)
-            
+           browser() 
             res <- new("MoveStack", 
-                       tmp, 
                        idData = IDDATA,
-                       timestamps = as.POSIXct(do.call(rbind, (lapply(x, function(y) {as.data.frame(y@timestamps)})))[,1], tz="UTC"), #timezone?
-                       sensor = do.call("rbind", (lapply(x, slot, "sensor"))), 
+                       spdftmp, 
+                       timestamps = do.call("c", lapply(x, timestamps)),
+#as.POSIXct(do.call(rbind, (lapply(x, function(y) {as.data.frame(y@timestamps)})))[,1], tz="UTC"), #timezone?
+                       sensor =factor(do.call('c',lapply(lapply(x, slot, 'sensor'),as.character))),# do.call("factor", (lapply(x, slot, "sensor"))), 
                        trackId = as.factor(rep(id, length)))
             return(res)
           })

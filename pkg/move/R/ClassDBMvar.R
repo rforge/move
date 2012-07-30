@@ -148,6 +148,8 @@ setMethod(f = "brownian.motion.variance.dyn", signature = c(object = ".MoveTrack
     tmp <- aggregate(BMvar ~ loc, data = BMvars, function(x) {
         c(mean = mean(x), length = length(x))
     })
+    if (is.null(breaks.found)) 
+        breaks.found <- numeric()
     DBMvar <- new("dBMvariance", as(object, ".MoveTrackSingle"), margin = margin, 
         window.size = window.size, means = c(rep(NA, min(tmp$loc) - 1), tmp$BMvar[, 
             "mean"], rep(NA, n.locs(object) - max(tmp$loc))), in.windows = c(rep(NA, 

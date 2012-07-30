@@ -27,7 +27,9 @@
 \author{Marco Smolla}
 
 \examples{
-  \dontrun{
-    we need more than one test file
-  }
+\dontshow{
+dataOne<-move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat'))
+dataTwo<-move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat'))
+moveStack(list(dataOne, dataTwo))
+}
 }

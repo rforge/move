@@ -85,6 +85,13 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
 
  setAs(".MoveTrack","data.frame", function(from){return(data.frame(data.frame(from), sensor=from@sensor, timestamps=from@timestamps))})
 
+	 setMethod("[", ".MoveTrack", function(x, i, j, ..., drop = TRUE) {
+			     x@timestamps <- x@timestamps[i]
+			         x@sensor <- x@sensor[i]
+				     callNextMethod()
+	 })
+
+
 ## Making move a generic funtion
 setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))
 setMethod(f = "move", 
@@ -635,3 +642,16 @@ setMethod(f = "lineMidpoint",
             midSP <- SpatialPoints(coords=t(as.data.frame(x=mid, row.names=NULL)), proj4string=CRS("+proj=longlat"))
             })
 
+setGeneric("timestamps", function(this) standardGeneric("timestamps"))
+setMethod("timestamps", ".MoveTrack",
+   function(this) {
+      this@timestamps
+   }
+)
+setGeneric("timestamps<-", function(this, value) standardGeneric("timestamps<-"))
+setReplaceMethod("timestamps", ".MoveTrack",
+   function(this, value) {
+      this@timestamps <- value
+      this
+   }
+)
