@@ -1,7 +1,7 @@
 \name{plot}
 
 \alias{plot}
-\alias{plot,Move,missing-method}
+\alias{plot,.MoveTrackSingle,missing-method}
 \alias{plot,MoveStack,missing-method}
 
 \docType{methods}
@@ -11,7 +11,7 @@
 \description{Function for plotting a recorded track from a Move object or the probability values from a DBBMM object}
 
 \usage{
-  \S4method{plot}{Move,missing}(x, y,...)
+  \S4method{plot}{.MoveTrackSingle,missing}(x, y,...)
   \S4method{plot}{MoveStack,missing}(x, y, col=NA, ...)
 }
 

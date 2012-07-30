@@ -83,6 +83,8 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
       	 )
 
 
+ setAs(".MoveTrack","data.frame", function(from){return(data.frame(data.frame(from), sensor=from@sensor, timestamps=from@timestamps))})
+
 ## Making move a generic funtion
 setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))
 setMethod(f = "move", 
@@ -300,7 +302,7 @@ setMethod(f = "spTransform",
 
 ###MARCO change all plot functions to plot, default is points and lines, user can also plot p or l OR add p and l for Move AND MoveStacks
 setGeneric("lines") ##need to be different -- 
-setMethod("lines", "Move", function(x,add=FALSE,...){
+setMethod("lines", ".MoveTrackSingle", function(x,add=FALSE,...){
           if (add==FALSE) {plot(coordinates(x), type="l", ...)}
           else {lines(coordinates(x), type="l", ...)}
           }           
@@ -308,7 +310,7 @@ setMethod("lines", "Move", function(x,add=FALSE,...){
 
 setGeneric("plot") ###is not working properly!! returns that google is not a graphic parameter
 setMethod(f = "plot", 
-          signature = c(x="Move", y="missing"), 
+          signature = c(x=".MoveTrackSingle", y="missing"), 
           function(x, y, ...){
             plot(coordinates(x), type="p", ...)#creates points
             lines(x, add=TRUE, ...)

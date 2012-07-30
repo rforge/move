@@ -1,7 +1,7 @@
 \name{lines}
 
 \alias{lines}
-\alias{lines,Move-method}
+\alias{lines,.MoveTrackSingle-method}
 
 \docType{methods}
 
@@ -10,7 +10,7 @@
 \description{Function for plotting a recorded track from a Move object as lines}
 
 \usage{
-  \S4method{lines}{Move}(x,add=FALSE,...)
+  \S4method{lines}{.MoveTrackSingle}(x,add=FALSE,...)
 }
 
 \arguments{

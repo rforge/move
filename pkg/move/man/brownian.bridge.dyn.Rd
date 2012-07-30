@@ -27,7 +27,7 @@
   \item{object}{a \link{Move-class} object, which can be created with the function \code{move}}
   \item{raster}{can be a RasterLayer object or numeric. If it is a RasterObject and dimSize is not set, \code{brownian.bridge.dyn} starts to calculate the UD. If \code{raster} is numeric, it describes the cell.size of the raster. Default is 1}
   \item{dimSize}{can be numeric. If there is no input for raster, dimSize describes the number of cells of the largest x or y dimenstion. Default is 10}
-  \item{location.error}{required numeric value. Describes the error of the location (sender/receiver) system in map units.}
+  \item{location.error}{required numeric value. Describes the error of the location (sender/receiver) system in map units, or a character string with the name of the column containing the location error.}
   \item{margin}{The margin used for the behavioral change point analysis.}
   \item{time.step}{The size of the time steps taken for the calculation of the utilization density in minutes, if left null 15 steps are taken in the shortest time interval.}
   \item{window.size}{The size of the moving window along the track. Larger windows provide more stable/accurate estimates of the brownian motion variance but are less well able to capture more frequent changes in behaviour.}
