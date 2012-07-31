@@ -86,7 +86,6 @@ setMethod(f = "moveStack",
               data = DATA, 
               proj4string = CRS(proj4string(x[[1]])),# marco add a check if all projections are the same
               match.ID = TRUE)
-           browser() 
             res <- new("MoveStack", 
                        idData = IDDATA,
                        spdftmp, 

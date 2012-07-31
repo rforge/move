@@ -41,7 +41,7 @@ setMethod(f = "brownian.bridge.dyn", signature = c(object = ".MoveTrackSingle", 
     location.error <- do.call("$", list(object, location.error))
     if(is.null(location.error))
 	    stop('column indicated for location error probably does not exist')
-    brownian.bridge.dyn(object = object, location.error = location.error, raster = raster, 
+    brownian.bridge.dyn(object = object, location.error = location.error, raster = raster,ext=ext, 
         ...)
 })
 
