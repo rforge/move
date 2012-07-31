@@ -25,6 +25,7 @@ setClass(Class = "dBMvariance", contains = c(".MoveTrackSingle", "dBMvarianceTmp
         return(TRUE)
     })
 
+
 setClass(Class = "dBMvarianceStack", contains = c(".MoveTrackStack", "dBMvarianceTmp"), 
     validity = function(object) {
         if (length(object@means) != nrow(object@coords)) 
@@ -32,6 +33,26 @@ setClass(Class = "dBMvarianceStack", contains = c(".MoveTrackStack", "dBMvarianc
         return(TRUE)
     })
 
+setMethod("[", signature(x="dBMvarianceStack"), function(x, i, j, ...) {
+       if(!missing(i)){
+       	 x@means<- x@means[i]
+       	 x@interest<- x@interest[i]
+       	 x@in.windows<- x@in.windows[i]
+       	}else{i<-T}
+       if(missing(j))
+       	j<-T
+       	 callNextMethod(x=x,i=i,j=j,...)
+})
+setMethod("[", signature(x="dBMvariance"), function(x, i, j, ...) {
+       if(!missing(i)){
+       	 x@means<- x@means[i]
+       	 x@interest<- x@interest[i]
+       	 x@in.windows<- x@in.windows[i]
+       	}else{i<-T}
+       if(missing(j))
+       	j<-T
+       	 callNextMethod(x=x,i=i,j=j,...)
+})
 
 
 ## Making dBMvar a generic funtion if (!isGeneric('dBMvar')) {
