@@ -85,10 +85,17 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
 
  setAs(".MoveTrack","data.frame", function(from){return(data.frame(data.frame(from), sensor=from@sensor, timestamps=from@timestamps))})
 
-	 setMethod("[", ".MoveTrack", function(x, i, j, ..., drop = TRUE) {
-			     x@timestamps <- x@timestamps[i]
-			         x@sensor <- x@sensor[i]
-				     callNextMethod()
+	 setMethod("[", signature(x=".MoveTrack"), function(x, i, j, ...) {
+		if(!missing(i)){
+			 x@timestamps <- x@timestamps[i]
+			 x@sensor <- x@sensor[i]
+			}else{i<-T}
+		if(missing(j))
+			j<-T
+		#	 a<-sys.call()
+		#	 print(a)
+		#	 print("df")
+			 callNextMethod(x=x,i=i,j=j,...)
 	 })
 
 

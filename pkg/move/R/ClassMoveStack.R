@@ -26,10 +26,13 @@ setClass(Class = "MoveStack", contains = c(".MoveGeneral",".MoveTrackStack"),
     		}
         )
 
-setMethod("[", signature(x=".MoveTrackStack"),definition=function(x,i,j,..., drop=T){ #does not work
+setMethod("[", signature(x=".MoveTrackStack"),definition=function(x,i,j,...){ #does not work
+		if(!missing(i)){
 	      x@trackId=droplevels(x@trackId[i])
-	      x@idData=x@idData[as.character(unique(x@trackId[i])),]
-		callNextMethod()
+	      x@idData=x@idData[as.character(unique(x@trackId[i])),]}else{i<-T}
+		if(missing(j))
+			j<-T
+		callNextMethod(x=x,i=i,j=j,...)
 	      })
 	      
 setMethod(f = "plot", 
