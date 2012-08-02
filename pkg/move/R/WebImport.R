@@ -48,6 +48,7 @@ setMethod(f="getMovebank",
           definition = function(entity_type, login, ...){
             tmp <- unlist(list(...))
             url <- paste("://www.movebank.org/movebank/service/direct-read?entity_type=",entity_type  ,sep="")
+            try(if(class(study_id)=="character") study_id <- getMovebankID(study_id, login) ,silent=T)
             if(length(tmp!=0))
               url <- paste(url, sep="&",paste(names(tmp),tmp, collapse="&", sep="="))
             
@@ -63,13 +64,18 @@ setMethod(f="getMovebank",
               if (grepl(pattern="X.html..head..title.Apache.Tomcat", capture.output(data)[1])==TRUE) warning("It looks like you are not allowed to download this data.")
             } else {
               url <- paste(paste("http",url, sep=""), sep="&",paste("user=",login@username,"&password=",login@password, sep=""))
-              data <- read.csv(url, header=T, sep=",", as.is=T)
+              data <- read.csv(url, header=T, sep=",", as.is=T)# marco fix error checking also non rcurl download
             }
 print(url)            
             return(data)
           })
 
-
+setMethod(f="getMovebank", 
+          signature=c(entity_type="character", login="missing"), 
+          definition = function(entity_type, login, ...){
+            d<-movebankLogin()
+            getMovebank(entity_type=entity_type, login=d,...)
+          })
 #names of the studies
 setGeneric("searchMovebankStudies", function(x,login, sensor=FALSE) standardGeneric("searchMovebankStudies"))
 setMethod(f="searchMovebankStudies", 
@@ -141,12 +147,12 @@ setMethod(f="getMovebankSensors",
           return(data)
          })
 
-setMethod(f="getMovebankSensors", 
-          signature=c(study="character",login="MovebankLogin"), 
-          definition = function(study,login){   
-            studyNUM  <- getMovebankID(study,login)
-            return(getMovebankSensors(studyNUM, login))
-         })
+# setMethod(f="getMovebankSensors", 
+#           signature=c(study="character",login="MovebankLogin"), 
+#           definition = function(study,login){   
+#             studyNUM  <- getMovebankID(study,login)
+#             return(getMovebankSensors(studyNUM, login))
+#          })
 
 
 
@@ -167,12 +173,12 @@ setMethod(f="getMovebankSensorsAttributes",
            return(data2)
           })
 
-setMethod(f="getMovebankSensorsAttributes", 
-          signature=c(study="character",login="MovebankLogin"), 
-          definition = function(study,login){   
-            studyNUM  <- getMovebankID(study,login)
-            return(getMovebankSensorsAttributes(studyNUM, login))
-          })
+# setMethod(f="getMovebankSensorsAttributes", 
+#           signature=c(study="character",login="MovebankLogin"), 
+#           definition = function(study,login){   
+#             studyNUM  <- getMovebankID(study,login)
+#             return(getMovebankSensorsAttributes(studyNUM, login))
+#           })
             
 
 
@@ -188,7 +194,6 @@ setMethod(f="getMovebankID",
 setMethod(f="getMovebankID", 
           signature=c(x="character", login="MovebankLogin"), 
           definition = function(x=NA, login){
-#browser()            
           data <- getMovebank("study", login, sort="name", attributes="id%2Cname%2Ci_am_owner%2Ci_can_see_data%2Cthere_are_data_which_i_cannot_see")
           if (is.na(x)) {
             cat("####### STUDY ID #######\n")
@@ -219,23 +224,20 @@ setMethod(f="getMovebankStudy",
             getMovebankStudy(study=study,login=login)
           })
 
-setMethod(f="getMovebankStudy", 
-          signature=c(study="character", login="MovebankLogin"),
-          definition = function(study, login){
-              studyNUM  <- getMovebankID(study,login)   
-              getMovebankStudy(study=studyNUM,login=login)
-          }
-          )
-
-
+# setMethod(f="getMovebankStudy", 
+#           signature=c(study="character", login="MovebankLogin"),
+#           definition = function(study, login){
+#               studyNUM  <- getMovebankID(study,login)   
+#               getMovebankStudy(study=studyNUM,login=login)
+#           }
+#           )
 
 ##get all animals with their IDs
 setGeneric("getMovebankAnimals", function(study, login) standardGeneric("getMovebankAnimals"))
 setMethod(f="getMovebankAnimals",
-          c(study="numeric", login="MovebankLogin"),
+          c(study="ANY", login="MovebankLogin"),
           definition = function(study, login){  
-#print("2")  
-#browser()           
+            if(class(study)=="character") study  <- getMovebankID(study,login)
           tags <- getMovebank(entity_type="sensor", login, tag_study_id=study)
           animalID <- getMovebank("individual", login, study_id=study, attributes="id%2Clocal_identifier")
           deploymentID <- getMovebank("deployment", login=login, study_id=study, attributes="individual_id%2Ctag_id%2Cid")
@@ -256,18 +258,18 @@ setMethod(f="getMovebankAnimals",
           })
 
 setMethod(f="getMovebankAnimals",
-          c(study="character", login="MovebankLogin"),
-          definition = function(study, login){
-             studyNUM  <- getMovebankID(study,login)   
-            getMovebankAnimals(study=studyNUM,login=login)
-          })
-
-setMethod(f="getMovebankAnimals",
           c(study="ANY", login="missing"),
           definition = function(study, login){
             login <- movebankLogin()
             getMovebankAnimals(study=study,login=login)
           })
+
+# setMethod(f="getMovebankAnimals",
+#           c(study="character", login="MovebankLogin"),
+#           definition = function(study, login){
+#              studyNUM  <- getMovebankID(study,login)   
+#             getMovebankAnimals(study=studyNUM,login=login)
+#           })
 
 
 
@@ -279,83 +281,87 @@ setMethod(f="getMovebankData",
             login <- movebankLogin()
             getMovebankData(study=study, animalName=animalName, login=login, moveObject=moveObject,...)
           })
-
-setMethod(f="getMovebankData", 
-          signature=c(study="character",animalName="ANY", login="MovebankLogin"),
-          definition = function(study,animalName, login, ...){
-#print("1")
-#browser()            
-            studyNUM <- getMovebankID(study, login)
-            getMovebankData(study=studyNUM, animalName=animalName, login=login, moveObject=moveObject,...)
-          })
-          
-setMethod(f="getMovebankData", 
-            signature=c(study="numeric",animalName="ANY", login="MovebankLogin"),
-            definition = function(study, animalName, login, moveObject=T, ...){
-            data <- getMovebankAnimals(study=study, login)
-            attribs <- paste(collapse="%2C",getMovebankSensorsAttributes(study, login)$short_name)
-            if (is.na(animalName)) {getMovebankData(study=study, login=login, data=data, attributes=attribs, ...)}
-            else {getMovebankData(study=study,animalName=animalName,login=login, data=data, attributes=attribs, ...)}
-            })
+#           
+# setMethod(f="getMovebankData", 
+#             signature=c(study="ANY",animalName="ANY", login="MovebankLogin"),
+#             definition = function(study, animalName, login, moveObject=T, ...){
+#               #study <- getMovebankID(study, login)
+#               print("right")
+#             data <- getMovebankAnimals(study=study, login)
+#             attribs <- paste(collapse="%2C",getMovebankSensorsAttributes(study, login)$short_name)
+#             if (is.na(animalName)) {getMovebankDataData(study=study, login=login, data=data, attributes=attribs, ...)}
+#             else {getMovebankDataData(study=study,animalName=animalName,login=login, data=data, attributes=attribs, ...)}
+#             })
 
 ###create a Move or download data from a single animal within the study
+#setGeneric("getMovebankDataData", function(study,animalName,login, moveObject, ...) standardGeneric("getMovebankDataData"))
 setMethod(f="getMovebankData", 
-          signature=c(study="numeric",animalName="character", login="MovebankLogin"),
-          definition = function(study, animalName, login, moveObject=T, ...){            
+          signature=c(study="ANY",animalName="character", login="MovebankLogin"),
+          definition = function(study, animalName, login, moveObject=T, ...){          
             data <- getMovebankAnimals(study=study, login=login)
+            attribs <- paste(collapse="%2C",getMovebankSensorsAttributes(study, login)$short_name)
             name <- data[data$animalName==animalName,]
             trackDF <- getMovebank("event", login, study_id=study, sensor_sensor_type_id=name$sensor_type_id, individual_id=name$animalID)
             
             IDData <- getMovebank("individual", login=login, study_id=study)
             idData <- data.frame(IDData[IDData$local_identifier==animalName,],name) ##id.1 is m.E. = deployment ID!!
-            #rownames(idData)  <- idData$local_identifier
-            #idData <- idData[ ,names(idData)!="animalName"]
-#             df <- merge.data.frame(x=trackDF, y=idData, by.x="individual_id", by.y="animalID", all=TRUE)
-#             studyDF <- getMovebankStudy(study, login)
-#             df$study.name <- rep(as.character(studyDF$name),times=nrow(trackDF))
-#             df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")
-#             names(df) <- gsub('_', '.', names(df))
-#             names(df) <- gsub('local.identifier','individual.local.identifier',names(df))
-#             
-#             .move(x=list(df=df, proj=CRS("+proj=longlat")))
             .getMovebankData(trackDF=trackDF, idData=idData, study=study, login=login, ...)
             })
             
 ###create a MoveStack or download data from all animals within the study
 setMethod(f="getMovebankData", 
-          signature=c(study="numeric",animalName="missing", login="MovebankLogin"),
+          signature=c(study="ANY",animalName="missing", login="MovebankLogin"),
           definition = function(study, animalName, login, moveObject=T, ...){ 
+            data <- getMovebankAnimals(study=study, login)
+            attribs <- paste(collapse="%2C",getMovebankSensorsAttributes(study, login)$short_name)
                  idData <- getMovebank("individual", login=login, study_id=study)
-                 trackDF <- 
-                   getMovebank("event", login=login, study_id=study, attributes = "location_lat%2Clocation_long%2Ctimestamp%2Csensor_type_id%2Cindividual_id%2Ctag_id%2Cdeployment_id")
-#getMovebank("event", login=ms, individual_id=3616439, study_id=3615655, attributes="location_lat%2Clocation_long%2Ctimestamp%2Csensor_type_id")
-browser()              
+                 trackDF <- getMovebank("event", login=login, study_id=study, attributes = "location_lat%2Clocation_long%2Ctimestamp%2Csensor_type_id%2Cindividual_id%2Ctag_id%2Cdeployment_id")
                .getMovebankData(trackDF=trackDF, idData=idData, study=study, login=login, ...)
                 })
 
+#tst <- getMovebank("event", login=ms, individual_id=3616439, study_id=3615655, attributes="location_lat%2Clocation_long%2Ctimestamp%2Csensor_type_id%2Cindividual_id%2Ctag_id%2Cdeployment_id")
+#tst$deployment_id[1:50] <- tst[1:50, "deployment_id"]-2
 
 setGeneric(".getMovebankData", function(trackDF, idData, login, study, ...) standardGeneric(".getMovebankData"))
 setMethod(f=".getMovebankData", 
           signature=c("data.frame"),
-          definition = function(trackDF, idData, login, study,...){
-#print("3")            
-browser()
-#3615655
+          definition = function(trackDF, idData, login, study,...){         
+            ##which deployments are imporant
             deploymentID <- getMovebank("deployment", login=login, study_id=study, attributes="individual_id%2Ctag_id%2Cid")
-                 if (any(duplicated(deploymentID$id))) stop("Duplicated deplyoment IDs detected. Deployment IDs must be unique!")
-                 if (any(apply(deploymentID[,1:2], 2, FUN=duplicated)))##test whether animals
-                   tackDF$individual_id <- apply(deploymentID$id, 1, function(y) {paste(trackDF$individual_id, trackDF$deployment_id, sep="_")} )
-                   ##if there are multiple deployments: idData$local_identifier  <-  paste(localID_deploymentID)
-                #   df <- merge.data.frame(x=trackDF, y=idData, by.x="individual_id", by.y="id", all=TRUE)
-                # } else{
-                   df <- merge.data.frame(x=trackDF, y=idData, by.x="individual_id", by.y="id", all=TRUE)
-                # }
+              deploymentID <- deploymentID[deploymentID$id%in%unique(trackDF[,"deployment_id"]), ]
+            ##which track Data are important
+            sensors <- getMovebankSensors(study=study, login=login)
+              names(sensors)  <- c("sensor_id", "sensor_type_id", "tag_id")
+            new <- merge.data.frame(deploymentID, sensors, by.x="tag_id", by.y="tag_id") 
+              new <- merge.data.frame(new, idData, by.x="individual_id", by.y="id")
+            trackDF <- merge.data.frame(x=trackDF, y=new[, c(names(new)[!names(new)%in%names(trackDF)], "individual_id")], by.x="individual_id", by.y="individual_id", all=TRUE) ##as soon as I have the association between sensor_id and track I can add it to the trackDF
+            b <- getMovebank("tag_type", login=ms)
+              locSen <- b[as.logical(b$is_location_sensor),"id"] #reduce track to location only sensors
+            trackDF <- trackDF[trackDF$sensor_type_id%in%locSen,]
+            #clear sensor name instead of ID
+            trackDF$sensor_type_id <- as.vector(unlist(lapply(trackDF$sensor_type_id, function (y,b){ 
+                    b$external_id[which(b$id==y)]  },b=b))) 
+            #clear name for individuals, if different(!) names for all(!) individuals are set
+            if (!any(is.na(new$local_identifier)) & length(unique(new$individual_id))==length(unique(new$local_identifier))) 
+              trackDF$individual_id <- rep(unique(new$local_identifier), unlist(lapply(lapply(unique(trackDF$individual_id), "==", trackDF$individual_id), sum)))
+            #length(unique(paste(new$sensor_type_id, new$sensor_id, sep="_")))==length(unique()) ##if i get the sensor_id associated with the track, i can associate double e.g. gps sensors with the correct tag and animal!!
+
+                ##multiple sensors per tag
+                 if (length(unique(new$id))!=length(unique(new$sensor_id))){
+                   trackDF$individual_id  <- paste(trackDF$individual_id, trackDF$deployment_id, trackDF$sensor_type_id, sep="_") ##ADD sensorID!!!
+                  } else {
+                   ##individuals with multiple deployments?
+                   if (length(paste(new$id, new$individual_id, sep="_"))!=length(unique(new$id)))
+                     trackDF$individual_id <- paste(trackDF$individual_id, trackDF$deployment_id, trackDF$tag_id, sep="_")
+                  }
+#df <- merge.data.frame(x=trackDF, y=idData, by.x="individual_id", by.y="individual_id", all=TRUE)
+
                  studyDF <- getMovebankStudy(study, login)
-                 df$study.name <- rep(as.character(studyDF$name),times=nrow(trackDF))
-                 df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")
-                 names(df) <- gsub('_', '.', names(df))
-                 names(df) <- gsub('local.identifier','individual.local.identifier',names(df))
-                 df$study.name <- gsub(' +', " ", df$study.name)
+                 trackDF$study.name <- rep(as.character(studyDF$name),times=nrow(trackDF))
+                 trackDF$timestamp <- as.POSIXct(strptime(as.character(trackDF$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")
+                 names(trackDF) <- gsub('_', '.', names(trackDF))
+                 names(trackDF) <- gsub('local.identifier','individual.local.identifier',names(trackDF))
+                 trackDF$study.name <- gsub(' +', " ", trackDF$study.name)
             
-            .move(df=df, proj=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"))
+            .move(df=trackDF, proj=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"))
           })
