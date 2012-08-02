@@ -281,17 +281,6 @@ setMethod(f="getMovebankData",
             login <- movebankLogin()
             getMovebankData(study=study, animalName=animalName, login=login, moveObject=moveObject,...)
           })
-#           
-# setMethod(f="getMovebankData", 
-#             signature=c(study="ANY",animalName="ANY", login="MovebankLogin"),
-#             definition = function(study, animalName, login, moveObject=T, ...){
-#               #study <- getMovebankID(study, login)
-#               print("right")
-#             data <- getMovebankAnimals(study=study, login)
-#             attribs <- paste(collapse="%2C",getMovebankSensorsAttributes(study, login)$short_name)
-#             if (is.na(animalName)) {getMovebankDataData(study=study, login=login, data=data, attributes=attribs, ...)}
-#             else {getMovebankDataData(study=study,animalName=animalName,login=login, data=data, attributes=attribs, ...)}
-#             })
 
 ###create a Move or download data from a single animal within the study
 #setGeneric("getMovebankDataData", function(study,animalName,login, moveObject, ...) standardGeneric("getMovebankDataData"))
