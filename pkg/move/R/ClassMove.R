@@ -86,16 +86,16 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
  setAs(".MoveTrack","data.frame", function(from){return(data.frame(data.frame(from), sensor=from@sensor, timestamps=from@timestamps))})
 
 setMethod("[", signature(x=".MoveTrack"), function(x, i, j, ...) {
-	  if(class(i)=="character")
-		  stop("Not sure if these methods work for class character")
-	  if(class(j)=="character")
-		  stop("Not sure if these methods work for class character")
        if(!missing(i)){
        	 x@timestamps <- x@timestamps[i]
        	 x@sensor <- x@sensor[i]
        	}else{i<-T}
        if(missing(j))
        	j<-T
+	  if(class(i)=="character")
+		  stop("Not sure if these methods work for class character")
+	  if(class(j)=="character")
+		  stop("Not sure if these methods work for class character")
        	 callNextMethod(x=x,i=i,j=j,...)
 })
 
