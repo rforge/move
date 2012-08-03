@@ -68,7 +68,6 @@ setMethod(f = "brownian.bridge.dyn",
 setMethod(f = "brownian.bridge.dyn", 
           signature = c(object = "SpatialPointsDataFrame", raster = "missing", dimSize = "numeric", location.error = "ANY"), 
           function(object, raster, dimSize, location.error, ...) {
-browser()
               # print('object SPDF, dimSize numeric')
               if (!any(is.na(bbox))) {
                   Range <- extent(bbox)
@@ -129,7 +128,6 @@ setMethod(f = "brownian.bridge.dyn",
 setMethod(f = "brownian.bridge.dyn", 
           signature = c(object = "dBMvariance", raster = "RasterLayer", dimSize = "missing", location.error = "numeric"), 
           definition = function(object, raster, location.error, time.step, ...) {
-browser()
     # check for aeqd projection of the coordinates
     if (grepl("aeqd", proj4string(object)) == FALSE) 
         stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
