@@ -3,13 +3,23 @@
 # in.windows = 'array', interest = 'logical', break.list = 'ANY') )
 
 
-setClass(Class = "dBMvarianceTmp", representation = representation(window.size = "numeric", 
-    margin = "numeric", means = "numeric", in.windows = "numeric", interest = "logical", 
-    break.list = "numeric"), prototype = prototype(window.size = numeric(), margin = numeric(), 
-    means = numeric(), in.windows = numeric(), interest = logical(), break.list = numeric()), 
+setClass(Class = "dBMvarianceTmp", 
+         representation = representation(
+           window.size = "numeric", 
+           margin = "numeric", 
+           means = "numeric", 
+           in.windows = "numeric", 
+           interest = "logical", 
+           break.list = "numeric"), 
+         prototype = prototype(
+           window.size = numeric(), 
+           margin = numeric(), 
+           means = numeric(), 
+           in.windows = numeric(), 
+           interest = logical(), 
+           break.list = numeric()), 
     validity = function(object) {
-        if (length(unique(c(length(object@means), length(object@in.windows), length(object@interest)))) != 
-            1) 
+        if (length(unique(c(length(object@means), length(object@in.windows), length(object@interest)))) != 1) 
             stop("Length does not match")
         if (length(object@margin) != 1) 
             stop("Margin length not 1")
@@ -59,15 +69,12 @@ setMethod("[", signature(x="dBMvariance"), function(x, i, j, ...) {
 ## setGeneric('dBMvar', function(BMvars, BMvar, n.locs, break.list)
 ## standardGeneric('dBMvar')) } if (!isGeneric('brownian.motion.variance.dyn'))
 ## {
-setGeneric("brownian.motion.variance.dyn", function(object, location.error, window.size, 
-    margin) {
-    standardGeneric("brownian.motion.variance.dyn")
-})
+setGeneric("brownian.motion.variance.dyn", function(object, location.error, window.size, margin) {standardGeneric("brownian.motion.variance.dyn")})
 # }
 
-setMethod(f = "brownian.motion.variance.dyn", signature = c(object = ".MoveTrackSingle", 
-    location.error = "numeric", window.size = "numeric", margin = "numeric"), definition = function(object, 
-    location.error, window.size, margin) {
+setMethod(f = "brownian.motion.variance.dyn", 
+          signature = c(object = ".MoveTrackSingle", location.error = "numeric", window.size = "numeric", margin = "numeric"), 
+          definition = function(object, location.error, window.size, margin) {
     time.lag <- time.lag(object, units = "mins")  #units need to correspont between BBMM method and here
     if (grepl("aeqd", proj4string(object)) == FALSE) {
         stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
@@ -172,7 +179,6 @@ setMethod(f = "brownian.motion.variance.dyn", signature = c(object = ".MoveTrack
     if (is.null(breaks.found)) 
         breaks.found <- numeric()
     
-browser()
     DBMvar <- new("dBMvariance", 
                   as(object, ".MoveTrackSingle"),
                   margin = margin, 
