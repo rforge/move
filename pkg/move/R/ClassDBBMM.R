@@ -37,8 +37,8 @@ setClass(Class = "DBBMM", contains = c(".UD"),
 
 
 setGeneric("brownian.bridge.dyn", function(object, raster = 1, dimSize = 10, location.error, 
-    margin = 11, time.step, window.size = 31, ext, bbox = NA, ...) {
-    astandardGeneric("brownian.bridge.dyn")
+    margin = 11, window.size = 31, ext=.3, bbox = NA, ...) {
+    standardGeneric("brownian.bridge.dyn")
 })
 # This method is to enable pointing at a collumn that contains the location error
 setMethod(f = "brownian.bridge.dyn", 
@@ -127,7 +127,7 @@ setMethod(f = "brownian.bridge.dyn",
 
 setMethod(f = "brownian.bridge.dyn", 
           signature = c(object = "dBMvariance", raster = "RasterLayer", dimSize = "missing", location.error = "numeric"), 
-          definition = function(object, raster, location.error, time.step, ...) {
+          definition = function(object, raster, location.error,  ext, time.step,...) {
     # check for aeqd projection of the coordinates
     if (grepl("aeqd", proj4string(object)) == FALSE) 
         stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
@@ -137,6 +137,7 @@ setMethod(f = "brownian.bridge.dyn",
     if (missing(time.step)) {
         time.step <- (min(time.lag[-length(time.lag)])/15)
     }
+    print(time.step)
     
     T.Total <- sum(time.lag[object@interest])
     

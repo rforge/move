@@ -19,7 +19,7 @@
 
 \usage{
   brownian.bridge.dyn(object, raster, dimSize, location.error,
-                 margin=11, time.step=NULL, window.size=31, ext, bbox=NA,...)
+                 margin=11, window.size=31, ext=.3, bbox=NA,...)
 }
 
 
@@ -29,7 +29,6 @@
   \item{dimSize}{can be numeric. If there is no input for raster, dimSize describes the number of cells of the largest x or y dimenstion. Default is 10}
   \item{location.error}{required numeric value. Describes the error of the location (sender/receiver) system in map units, or a character string with the name of the column containing the location error.}
   \item{margin}{The margin used for the behavioral change point analysis.}
-  \item{time.step}{The size of the time steps taken for the calculation of the utilization density in minutes, if left null 15 steps are taken in the shortest time interval.}
   \item{window.size}{The size of the moving window along the track. Larger windows provide more stable/accurate estimates of the brownian motion variance but are less well able to capture more frequent changes in behaviour.}
   \item{ext}{numeric value >0; extension factor. Decribes the amount of extension of the bounding box of the animal track. It can be one (same extension into all four directions), two (first x, then y directional extension) or four numbers (xmin, xmax, ymin, ymax extension). Default is .25 (extends the bounding box by 25\%)}
   \item{bbox}{vector with 4 numbers defining a bounding box for the raster}
@@ -48,10 +47,14 @@
   When there are no values set, the default raster value is used to calculate and create a RasterLayer object, which is returned to the same function. Note: depending on the size of the area of interest, the default cell size value can result in a large number of cells which may take a very long time to calculate!
 
   The function prints an estimate of the size of the computational task ahead. This can give an indication of how long the computation is going to take. It should scale roughtly linearly with the duration of the computations. In our experience $1*10^9$ takes about a minute with a normal laptop. 
+
+  There is one further argument that can be given the \code{time.step}. The size of the time steps correspond to the minutes taken for every intergration step in minutes, if left null 15 steps are taken in the shortest time interval.
 }  
 
 \note{
 	Note that the first few and last few segments of the trajectory are omitted in the calculation of the UD since a lower number of estimates for the Brownian motion variance are obtained for those segments.
+
+	Thanks to Ryan Nielson for making the BBMM package that served as an example for early versions this code.
 }
 
 \author{Marco Smolla}
