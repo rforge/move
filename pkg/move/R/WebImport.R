@@ -384,8 +384,8 @@ setMethod(f="getMovebankAnimals",
 
 
 
-setGeneric("getMovebankData2", function(study,animalName=NA,login, moveObject=TRUE, ...) standardGeneric("getMovebankData2"))
-setMethod(f="getMovebankData2", 
+setGeneric("getMovebankData", function(study,animalName=NA,login, moveObject=TRUE, ...) standardGeneric("getMovebankData"))
+setMethod(f="getMovebankData", 
           signature=c(study="ANY",animalName="ANY", login="MovebankLogin"),
           definition = function(study, animalName, login, moveObject=T, ...){ 
       browser()      

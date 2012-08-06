@@ -166,7 +166,7 @@ setMethod(f="move",
             data$location.lat <- y
             data$timestamp <- time
             data$individual.local.identifier <- animal
-	    data$sensor.type<-sensor
+	          data$sensor <- sensor
             .move(df=data, proj=proj)
           }
           )
@@ -180,8 +180,8 @@ setMethod(f = ".move",
             if(any(is.na(df$location.long))==TRUE) warning("There were NA locations detected and omitted.")
             missedFixes<- df[(is.na(df$location.long)|is.na(df$location.lat)), ]$timestamp
             df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
-#	    sensor<-df$sensor.type
- #             df <- df[,names(df)!="sensor.type"]
+      	    df$sensor<-df$sensor.type
+            df <- df[,names(df)!="sensor.type"]
 
             
 	    if(length(unique(df$individual.local.identifier))>1 & any(unique(as.character(df$individual.local.identifier))==""))
@@ -192,19 +192,9 @@ setMethod(f = ".move",
 
 	    }
             ids <- as.list(as.character(unique(df$individual.local.identifier)))
-
-
-#            if (length(ids)>1){
-# i changed this becuause it gave a error when some were unique per id and others not              IDDATA <- lapply(ids, FUN= function(id) {df[df$individual.local.identifier==id, apply(df[df$individual.local.identifier==id,], MARGIN=2, FUN=function(y) {length(unique(y))==1}) ][1,]})
-#			      browser()
-#			      uniquePerID<-apply(df, MARGIN=2, function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=df$individual.local.identifier)
-#              idData <- df[!duplicated(df$individual.local.identifier), names(uniquePerID[uniquePerID])]
-#            } else {            
-#              idData <- df[1, unlist(lapply(lapply(apply(df, 2, unique), length), '==', 1))]
-#            }
 	    #this function should both work for one and multiple individuals
-	      uniquePerID<-apply(df, MARGIN=2, function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=df$individual.local.identifier)
-			      uniquePerID["sensor.type"]<-FALSE
+        uniquePerID<-apply(df, MARGIN=2, function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=factor(df$individual.local.identifier))
+			      uniquePerID["sensor"]<-FALSE
 	      idData<-subset(df, select=names(uniquePerID[uniquePerID]), !duplicated(individual.local.identifier))
 	      if(length(names(idData))!=1)# dont shorten it because we need something
 	     idData<-subset(idData, select=names(idData)!="individual.local.identifier")
@@ -237,7 +227,7 @@ setMethod(f = ".move",
             return(res)
           })
 
-
+# marco check sensor versus usage of sensor.type in .move and functions calling
 
 
 ###extract number of locations from Move
