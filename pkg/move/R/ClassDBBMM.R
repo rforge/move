@@ -10,8 +10,8 @@ setClass(Class = ".UD", contains = c("RasterLayer"),
          representation = representation(method = "character"), 
          prototype = prototype(method = as.character()), 
          validity = function(object) {
-        if (!isTRUE(all.equal(sum(values((object))), 1))) 
-            stop("The used raster is not a UD (sum unequal to 1)")
+        if (!isTRUE(all.equal(tmp<-sum(values((object))), 1))) 
+            stop("The used raster is not a UD (sum unequal to 1), sum is: ", sprintf("%.15f",tmp))
         return(TRUE)
     })
 
