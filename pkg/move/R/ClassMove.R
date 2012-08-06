@@ -200,7 +200,6 @@ setMethod(f = ".move",
 	     idData<-subset(idData, select=names(idData)!="individual.local.identifier")
 
               rownames(idData) <- unique(df$individual.local.identifier)
-              
 
               data <- data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp", colnames(idData))]])
               if (ncol(data)==0) data <- data.frame(data, empty=NA)
@@ -252,21 +251,22 @@ setMethod("time.lag", ".MoveTrackSingle", function(x, ...){
           )
 
 ###Redifining spTransform, because it changes the class of the object to SpatialPointsDataFrame 
+if(!isGeneric("spTransform")) {setGeneric("spTransform", function(x, center=FALSE, CRSobj, ...) standardGeneric("spTransform"))} ##??necessary
 setMethod(f = "spTransform", 
           signature = c(x = ".MoveTrack", CRSobj = "missing"), 
-          function(x, center=FALSE, ...){
+          function(x, center, ...){
             spTransform(x=x, center=center, CRSobj="+proj=aeqd")
           })
 
 setMethod(f = "spTransform", 
           signature = c(x = ".MoveTrack", CRSobj = "character"), 
-          function(x, CRSobj, center=FALSE, ...){
+          function(x, CRSobj, center, ...){
 		  spTransform(x=x, CRSobj=CRS(CRSobj), center=center)
 	  })
 
 setMethod(f = "spTransform", 
           signature = c(x = ".MoveTrack", CRSobj = "CRS"), 
-          function(x, CRSobj, center=FALSE, ...){
+          function(x, CRSobj, center, ...){
             if (center){ 
               mid.range.lon <- (max(coordinates(x)[ ,1])+min(coordinates(x)[ ,1]))/2
               mid.range.lat  <- (max(coordinates(x)[ ,2])+min(coordinates(x)[ ,2]))/2

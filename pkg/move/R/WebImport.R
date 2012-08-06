@@ -46,15 +46,19 @@ setGeneric("getMovebank", function(entity_type, login,...) standardGeneric("getM
 setMethod(f="getMovebank", 
           signature=c(entity_type="character", login="MovebankLogin"), 
           definition = function(entity_type, login, ...){
-        browser()
             tmp <- list(...)
             url <- paste("://www.movebank.org/movebank/service/direct-read?entity_type=",entity_type  ,sep="")
 
-            try(if(any(names(tmp)=="id")&class(tmp['id'])=="character") tmp['id'] <- getMovebankID(tmp['id'], login) ,silent=T)
-            try(if(any(names(tmp)=="study_id")&class(tmp['study_id'])=="character") tmp['study_id'] <- getMovebankID(tmp['study_id'], login) ,silent=T)
-            try(if(any(names(tmp)=="tag_study_id")&class(tmp['tag_study_id'])=="character") tmp['tag_study_id'] <- getMovebankID(tmp['tag_study_id'], login) ,silent=T)
-            if(length(tmp!=0))
+            try(if(any(names(tmp)=="id")&class(unlist(tmp['id']))=="character") 
+              tmp['id'] <- getMovebankID(unlist(tmp['id']), login) ,silent=T)
+            try(if(any(names(tmp)=="study_id")&class(unlist(tmp['study_id']))=="character") 
+              tmp['study_id'] <- getMovebankID(unlist(tmp['study_id']), login) ,silent=T)
+            try(if(any(names(tmp)=="tag_study_id")&class(unlist(tmp['tag_study_id']))=="character") 
+              tmp['tag_study_id'] <- getMovebankID(unlist(tmp['tag_study_id']), login) ,silent=T)
+            if(length(tmp)!=0){
+              tmp <- lapply(tmp, paste, collapse="%2C")
               url <- paste(url, sep="&",paste(names(tmp),tmp, collapse="&", sep="="))
+              }
             
             if (login@rcurl){
               require(RCurl)
@@ -62,14 +66,16 @@ setMethod(f="getMovebank",
               curlSetOpt( .opts = list(httpheader = c(user = login@username, password = login@password),verbose=FALSE), curl=curl)
               url <- paste("https", url, sep="")  
               web <- getURL(url, curl=curl, verbose=F, .encoding="UTF-8")
-              if(grepl(pattern="The requested download may contain copyrighted material", x=web)) stop("You need a permition to access this data set. Go to movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
               data <- read.csv(textConnection(web))
-              if(grepl(pattern="You.may.only.download.it.if.you.agree.with.the.terms", x=names(data)[1])) warning("You need a permition to access this data set. Go to movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
-              if (grepl(pattern="X.html..head..title.Apache.Tomcat", capture.output(data)[1])==TRUE) warning("It looks like you are not allowed to download this data.")
             } else {
               url <- paste(paste("http",url, sep=""), sep="&",paste("user=",login@username,"&password=",login@password, sep=""))
               data <- read.csv(url, header=T, sep=",", as.is=T)# marco fix error checking also non rcurl download
             }
+            
+              if(any(grepl(pattern="The requested download may contain copyrighted material", x=paste(data[,])))) stop("You need a permition to access this data set. Go to movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
+            if(length(grep(pattern="The proxy server could not handle",x=paste(data[,])))!=0) stop("Movebank is currently not available due to technical problems. Please try again later.")            
+              if(grepl(pattern="You.may.only.download.it.if.you.agree.with.the.terms", x=names(data)[1])) stop("You need a permition to access this data set. Go to movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
+              if (grepl(pattern="X.html..head..title.Apache.Tomcat", data[1])==TRUE) stop("It looks like you are not allowed to download this data.")
 print(url)            
             return(data)
           })
@@ -388,7 +394,7 @@ setGeneric("getMovebankData", function(study,animalName=NA,login, moveObject=TRU
 setMethod(f="getMovebankData", 
           signature=c(study="ANY",animalName="ANY", login="MovebankLogin"),
           definition = function(study, animalName, login, moveObject=T, ...){ 
-      browser()      
+      #browser()      
             #data <- getMovebankAnimals(study=study, login)
             idData <- getMovebank("individual", login=login, study_id=study)
 #            .getMovebankData(idData=idData, study=study, login=login, animalName=animalName, ...)
@@ -413,32 +419,24 @@ setMethod(f="getMovebankData",
               if(!is.na(animalName)) if(length(animalName)!=nrow(new)) stop("One or more animal names are spelled incorrectly.")
             b <- getMovebank("tag_type", login=ms)
             locSen <- b[as.logical(b$is_location_sensor),"id"] #reduce track to location only sensors & only the correct animals
-            attribs <- paste(paste(collapse="%2C",getMovebankSensorsAttributes(study, login)$short_name),sep='%2C', "sensor_type_id%2Cindividual_id%2Ctag_id%2Cdeployment_id")
-            trackDF <- getMovebank("event", login=login, study_id=study, attributes = attribs , deployment_id=paste(unique(new$id, collapse='%2C')), sensor_type_id=paste(locSen, sep='%2C'))
+            attribs <- paste(as.character(getMovebankSensorsAttributes(study, login)$short_name), "sensor_type_id", "individual_id", "tag_id", "deployment_id")
+            trackDF <- getMovebank("event", login=login, study_id=study, attributes = attribs , deployment_id=unique(new$id), sensor_type_id=locSen)
                      new <- new[new$id%in%unique(trackDF[,"deployment_id"]), ]
             
             trackDF <- merge.data.frame(x=trackDF, y=new[, c(names(new)[!names(new)%in%names(trackDF)], "individual_id")], by.x="individual_id", by.y="individual_id", all=TRUE) ##as soon as I have the association between sensor_id and track I can add it to the trackDF
             #trackDF <- trackDF[trackDF$sensor_type_id%in%locSen & trackDF$individual_id%in%new$individual_id,]
+      
             #clear sensor name instead of ID
             trackDF$sensor_type_id <- as.vector(unlist(lapply(trackDF$sensor_type_id, function (y,b){b$external_id[which(b$id==y)]  },b=b))) 
             
             #clear name for individuals, if different(!) names for all(!) individuals are set
             if (!any(is.na(new$local_identifier)) & length(unique(new$individual_id))==length(unique(new$local_identifier))) 
-              trackDF$individual_id <- rep(unique(new$local_identifier), unlist(lapply(lapply(unique(trackDF$individual_id), "==", trackDF$individual_id), sum)))#
-            
-            #([which(idData$local_identifier%in%animalName)]))
-            #length(unique(paste(new$sensor_type_id, new$sensor_id, sep="_")))==length(unique()) ##if i get the sensor_id associated with the track, i can associate double e.g. gps sensors with the correct tag and animal!!
-            
-            ##multiple sensors per tag
-            #                 if (length(unique(new$id))!=length(unique(new$sensor_id))){
-            #                   trackDF$individual_id  <- paste(trackDF$individual_id, trackDF$deployment_id, trackDF$sensor_type_id, sep="_") ##ADD sensorID!!!
-            #                 } else {
+              trackDF$individual_id <- rep(unique(new$local_identifier), unlist(lapply(lapply(unique(trackDF$individual_id), "==", trackDF$individual_id), sum)))
             ##individuals with multiple deployments?
             if (length(paste(new$id, new$individual_id, sep="_"))!=length(unique(new$id)))
               trackDF$individual_id <- paste(trackDF$individual_id, trackDF$deployment_id, trackDF$tag_id, sep="_")
-            #                }
-            #df <- merge.data.frame(x=trackDF, y=idData, by.x="individual_id", by.y="individual_id", all=TRUE)
-            
+browser()
+            #df <- merge.data.frame(x=trackDF, y=idData, by.x="individual_id", by.y="individual_id", all=TRUE)            
             studyDF <- getMovebankStudy(study, login)
             trackDF$study.name <- rep(as.character(studyDF$name),times=nrow(trackDF))
             trackDF$timestamp <- as.POSIXct(strptime(as.character(trackDF$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")
