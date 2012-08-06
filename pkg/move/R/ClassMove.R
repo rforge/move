@@ -182,49 +182,46 @@ setMethod(f = ".move",
             df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
       	    df$sensor<-df$sensor.type
             df <- df[,names(df)!="sensor.type"]
-
             
 	    if(length(unique(df$individual.local.identifier))>1 & any(unique(as.character(df$individual.local.identifier))==""))
 	    {# this is not so elegant from me (bart) since this function also gets used by non movebank data
-		    warning("omitting locations that have and empty local identifier (n=",sum(tmp<-as.character(df$individual.local.identifier)==""),") most likely the tag was not deployed") 
-		    df<-df[!tmp,]
-		    df$individual.local.identifier<-factor(df$individual.local.identifier)
-
-	    }
-            ids <- as.list(as.character(unique(df$individual.local.identifier)))
+  		    warning("omitting locations that have and empty local identifier (n=",sum(tmp<-as.character(df$individual.local.identifier)==""),") most likely the tag was not deployed") 
+  		    df<-df[!tmp,]
+  		    df$individual.local.identifier<-factor(df$individual.local.identifier)
+        }
+        ids <- as.list(as.character(unique(df$individual.local.identifier)))
 	    #this function should both work for one and multiple individuals
         uniquePerID<-apply(df, MARGIN=2, function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=factor(df$individual.local.identifier))
-			      uniquePerID["sensor"]<-FALSE
+			  uniquePerID["sensor"]<-FALSE
 	      idData<-subset(df, select=names(uniquePerID[uniquePerID]), !duplicated(individual.local.identifier))
 	      if(length(names(idData))!=1)# dont shorten it because we need something
-	     idData<-subset(idData, select=names(idData)!="individual.local.identifier")
-
-              rownames(idData) <- unique(df$individual.local.identifier)
-
-              data <- data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp", colnames(idData))]])
-              if (ncol(data)==0) data <- data.frame(data, empty=NA)
-              
-            tmp <- SpatialPointsDataFrame(
-                    coords = cbind(df$location.long,df$location.lat),
-                    data = data, 
-                    proj4string = proj,#CRS("+proj=longlat +ellps=WGS84"), # proj (function argument ) is not used here Marco
-                    match.ID = TRUE)
-            if (length(ids)==1){
-              res <- new("Move", 
-                         timestamps = df$timestamp, 
-			                   sensor = factor(df$sensor),
-                         tmp, 
-                         idData = idData,
-                         timesMissedFixes = missedFixes)
-              } else {
-               res <- new("MoveStack", 
-                 	        tmp, 
-                 	        idData = idData,
-			                    sensor = factor(df$sensor),
-               		        timestamps = df$timestamp, 
-               		        trackId = factor(df$individual.local.identifier))}
-            return(res)
-          })
+	        idData<-subset(idData, select=names(idData)!="individual.local.identifier")
+        rownames(idData) <- unique(df$individual.local.identifier)
+        
+        data <- data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp", colnames(idData))]])
+        if (ncol(data)==0) data <- data.frame(data, empty=NA)
+          
+        tmp <- SpatialPointsDataFrame(
+                coords = cbind(df$location.long,df$location.lat),
+                data = data, 
+                proj4string = proj,#CRS("+proj=longlat +ellps=WGS84"), # proj (function argument ) is not used here Marco
+                match.ID = TRUE)
+        if (length(ids)==1){
+          res <- new("Move", 
+                     timestamps = df$timestamp, 
+	                   sensor = factor(df$sensor),
+                     tmp, 
+                     idData = idData,
+                     timesMissedFixes = missedFixes)
+          } else {
+           res <- new("MoveStack", 
+             	        tmp, 
+             	        idData = idData,
+	                    sensor = factor(df$sensor),
+           		        timestamps = df$timestamp, 
+           		        trackId = factor(df$individual.local.identifier))}
+        return(res)
+        })
 
 # marco check sensor versus usage of sensor.type in .move and functions calling
 
@@ -251,22 +248,21 @@ setMethod("time.lag", ".MoveTrackSingle", function(x, ...){
           )
 
 ###Redifining spTransform, because it changes the class of the object to SpatialPointsDataFrame 
-if(!isGeneric("spTransform")) {setGeneric("spTransform", function(x, center=FALSE, CRSobj, ...) standardGeneric("spTransform"))} ##??necessary
 setMethod(f = "spTransform", 
           signature = c(x = ".MoveTrack", CRSobj = "missing"), 
-          function(x, center, ...){
+          function(x, center=FALSE, ...){
             spTransform(x=x, center=center, CRSobj="+proj=aeqd")
           })
 
 setMethod(f = "spTransform", 
           signature = c(x = ".MoveTrack", CRSobj = "character"), 
-          function(x, CRSobj, center, ...){
+          function(x, CRSobj, center=FALSE, ...){
 		  spTransform(x=x, CRSobj=CRS(CRSobj), center=center)
 	  })
 
 setMethod(f = "spTransform", 
           signature = c(x = ".MoveTrack", CRSobj = "CRS"), 
-          function(x, CRSobj, center, ...){
+          function(x, CRSobj, center=FALSE, ...){
             if (center){ 
               mid.range.lon <- (max(coordinates(x)[ ,1])+min(coordinates(x)[ ,1]))/2
               mid.range.lat  <- (max(coordinates(x)[ ,2])+min(coordinates(x)[ ,2]))/2
