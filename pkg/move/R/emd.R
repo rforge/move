@@ -8,10 +8,9 @@ setMethod(f="emd",
           signature=c(x="DBBMM", y="DBBMM", threshold="numeric", integer="logical", greatcircle="logical"), 
           definition = function(x,y,threshold=NA,integer,greatcircle=FALSE){
             emd(x=raster(x), y=raster(y), threshold=threshold, integer=integer, greatcircle=greatcircle)
-          }
-          )
+          })
 
-# test2 <- move(x="~/Documents/Programming/Rmove/BCI Ocelot.csv", proj=CRS("+proj=longlat"))
+# test2 <- move(x="~/Documents/Programming/Rmove/BCI Ocelot.csv")
 # p2 <- brownian.bridge.dyn(spTransform(test2), location.error=23.5, dimSize=55, ext=0.3, time.step=600)
 # emd(p2[[1]], p2[[2]],threshold=1, integer=T, greatcircle=F)
 #if threshold is set -> fast calculation 

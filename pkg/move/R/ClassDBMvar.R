@@ -186,7 +186,9 @@ setMethod(f = "brownian.motion.variance.dyn",
                   means = c(rep(NA, min(tmp$loc) - 1), tmp$BMvar[, "mean"], rep(NA, n.locs(object) - max(tmp$loc))), 
                   in.windows = c(rep(NA, min(tmp$loc) - 1), tmp$BMvar[, "length"], rep(NA, n.locs(object) - max(tmp$loc))), 
                   interest = c(rep(FALSE, min(tmp$loc) - 1), tmp$BMvar[, "length"] == max(tmp$BMvar[, "length"]), rep(FALSE, n.locs(object) - max(tmp$loc))), 
-                  break.list = breaks.found)
+                  break.list = breaks.found)#,
+                  #timestamps = object@timestamps,
+                  #coords = coordinates(object))
     return(DBMvar)
 })
 
