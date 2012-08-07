@@ -38,18 +38,6 @@ setClass(Class = ".MoveTrack",contains=c("SpatialPointsDataFrame"),
 	 	    }
 	      )
 
-# setClass(Class = ".MoveTrackBurst",
-#          representation = representation (
-#            burstID = "factor", ##to indicate the bursts of a single track
-#            burstSPDF = "SpatialPointsDataFrame"),
-#          prototype = prototype(
-#            burstID = as.factor(NA)),
-#          validity = function(object){
-#            if (length(object@burstID)!=nrow(coordinates(object)))
-#              stop("The length of burst IDs is not equal to the number of locations")
-#            return(TRUE)
-#          }
-#          )
 
 setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no missed fixes stored for a MoveStack?
 	       representation = representation (
