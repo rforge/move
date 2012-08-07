@@ -37,11 +37,14 @@ plot(dbbmm)
 contour(dbbmm, levels=c(.5,.9), add=TRUE, plot=TRUE)
 
 ##to store the contours as a SpatialLinesDataFrame use
-cnt  <- contour(dbbmm, levels=c(.4,.9))
+cnt  <- contour(dbbmm, levels=c(.4,.9), plot=FALSE)
 
 ##print the contour on a google map +add the track
 require("RgoogleMaps")
 cnt  <- contour(x=dbbmm, y=data, levels=c(.4,.9), google=TRUE)
 cnt  <- contour(x=dbbmm, y=data, levels=c(.4,.9), google=TRUE, track=TRUE)
+}
+\dontshow{
+contour(dbbmmStack, levels=c(.9,.5), col=c(2,5))
 }
 }

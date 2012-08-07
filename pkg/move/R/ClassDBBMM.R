@@ -1,6 +1,7 @@
 setClass(Class = ".UDStack", contains = c("RasterStack"), 
          representation = representation(method = "character"), 
-         prototype = prototype(method = as.character()), 
+         prototype = prototype(
+           method = as.character()), 
          validity = function(object) {
         if (!all(apply(values(object), MARGIN = 2, FUN = function(X) isTRUE(all.equal(sum(X), 1))))) 
             stop("One or more of the used rasters are not a UD (sum is not equal to 1)")
@@ -8,7 +9,8 @@ setClass(Class = ".UDStack", contains = c("RasterStack"),
 
 setClass(Class = ".UD", contains = c("RasterLayer"), 
          representation = representation(method = "character"), 
-         prototype = prototype(method = as.character()), 
+         prototype = prototype(
+           method = as.character()), 
          validity = function(object) {
         if (!isTRUE(all.equal(tmp<-sum(values((object))), 1))) 
             stop("The used raster is not a UD (sum unequal to 1), sum is: ", sprintf("%.15f",tmp))
@@ -17,15 +19,20 @@ setClass(Class = ".UD", contains = c("RasterLayer"),
 
 ### Defining the class of the Brownian Bridge Movement Model object
 setClass(Class = "DBBMMStack", contains = c(".UDStack"), 
-         representation = representation(DBMvar = "dBMvarianceStack", ext = "numeric"), 
-         prototype = prototype(ext = as.numeric()), 
+         representation = representation(
+           DBMvar = "dBMvarianceStack", 
+           ext = "numeric"), 
+         prototype = prototype(
+           ext = as.numeric()), 
          validity = function(object) {
     if (!all(unique(object@DBMvar@trackId) == object@layernames)) 
         stop("The layer names of the raster objects do not match the trackIDs of the DBMvarStack.")
 })
 
 setClass(Class = "DBBMM", contains = c(".UD"), 
-         representation = representation(DBMvar = "dBMvariance", ext = "numeric"), 
+         representation = representation(
+           DBMvar = "dBMvariance", 
+           ext = "numeric"), 
          prototype = prototype(ext = as.numeric()))
 
 # See if this validity check needs to go into this class why was it commented ?
@@ -130,7 +137,7 @@ setMethod(f = "brownian.bridge.dyn",
     # check for aeqd projection of the coordinates
     if (grepl("aeqd", proj4string(object)) == FALSE) 
         stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
-browser()
+
     time.lag <- c(time.lag(object, units = "mins"), 0)  #units need to match between here and dBBMMvar calculations
     
     if (missing(time.step)) {
@@ -272,16 +279,65 @@ setMethod(f = "outerProbability",
 setGeneric("contour", function(x, ...) standardGeneric("contour"))
 setMethod(f = "contour", 
           signature = c(x = ".UD"), 
-          definition = function(x, ...) {
+          definition = function(x, ...) {      
+            print("RasterLayer")
               ## enter nlevel for the number of levels, or levels for the correct levels!!
               newRaster <- x
               # raster2contour(x, ...)
               rank <- (1:length(values(newRaster)))[rank(values(newRaster))]
               values(newRaster) <- 1 - cumsum(sort(values(newRaster)))[rank]
-              
               x <- newRaster
               callNextMethod()
           })
+
+
+setMethod(f = "contour", 
+          signature = c(x = ".UDStack"), 
+          definition = function(x, ...){  
+            print(".UDStack")
+#             if(any(is.na(col)))
+#               col <- 1:length(as.character(unique(x@DBMvar@trackId)))
+#             if(length(col)!=length(x@DBMvar@trackId))
+#               col <- col[as.numeric(x@DBMvar@trackId)]
+            #x@col <- col
+            par(mfrow=1:ceiling(sqrt(length(unstack(x)))))
+            lapply(split(x), contour, ...) 
+          })
+
+
+setGeneric("split") 
+setMethod(f = "split",
+          signature = c(x="DBBMMStack", f="missing"),
+          definition = function(x, f, ...){
+            DBBMMList <- list()
+             for (Id in as.character(unique(x@DBMvar@trackId))) { 
+               UD <- new(Class=".UD", 
+                              method=x@method,
+                              x@layers[[Id]])
+               dbmv <- new(Class="dBMvariance",
+                              timestamps=x@DBMvar@timestamps[x@DBMvar@trackId==Id],
+                              coords.nrs=x@DBMvar@coords.nrs,
+                              coords=x@DBMvar@coords[x@DBMvar@trackId==Id, ],
+                              bbox=x@DBMvar@bbox,
+                              data=x@DBMvar@data[x@DBMvar@trackId==Id, ],
+                              proj4string=x@DBMvar@proj4string,
+                              sensor=x@DBMvar@sensor[x@DBMvar@trackId==Id],
+                              window.size=x@DBMvar@window.size,
+                              break.list=x@DBMvar@break.list,
+                              interest=as.logical(x@DBMvar@interest[x@DBMvar@trackId==Id]),
+                              means=x@DBMvar@means[x@DBMvar@trackId==Id],
+                              in.windows=x@DBMvar@in.windows[x@DBMvar@trackId==Id],
+                              margin=x@DBMvar@margin)
+              DBBMMObj <- new(Class="DBBMM",
+                              UD,
+                              ext=x@ext,
+                              DBMvar=dbmv)
+              DBBMMList[[Id]]  <- DBBMMObj
+            }
+            return(DBBMMList)
+          })
+
+
 # return the contour as SLDF object: plot=F, google=F if (plot==F && google==F
 # && track==F){ raster2contour(x,...) return(newRaster) } else { browser() plot
 # the contour line: plot=T, google=F if (plot==T && google==F){ contour(x =

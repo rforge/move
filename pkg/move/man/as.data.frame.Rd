@@ -28,6 +28,10 @@ data <- move(system.file("extdata","leroy.csv",package="move"))
 
 ## returns a data.frame with all information stored in the spatial data frame of the move object
 df <- as.data.frame(data)
+\dontshow{
+b <- moveStack(list(move(system.file("extdata","leroy.csv",package="move")),move(system.file("extdata","leroy.csv",package="move"))))
+data.frame(b)
+}
 }
 
 \author{Marco Smolla}

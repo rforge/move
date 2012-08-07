@@ -73,7 +73,11 @@ data2 <- spTransform(data, CRSobj="+proj=aeqd", center=TRUE)
 dbbmm <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=45, ext=.3, time.step=600)
 dbbmm <- brownian.bridge.dyn(object=data2[1:100,], location.error=23.5, dimSize=45, ext=.3)
 \dontshow{
-
+isaac <- move(system.file("extdata","leroy.csv",package="move"))
+yara <- move(system.file("extdata","leroy.csv",package="move"))
+b <- moveStack(list(isaac,yara))
+c <- brownian.bridge.dyn(object=spTransform(b), location.error=23.5, dimSize=75, time.step=6000)
+plot(c)
 }
 
 }
