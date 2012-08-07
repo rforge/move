@@ -10,9 +10,6 @@ setMethod(f="emd",
             emd(x=raster(x), y=raster(y), threshold=threshold, integer=integer, greatcircle=greatcircle)
           })
 
-# test2 <- move(x="~/Documents/Programming/Rmove/BCI Ocelot.csv")
-# p2 <- brownian.bridge.dyn(spTransform(test2), location.error=23.5, dimSize=55, ext=0.3, time.step=600)
-# emd(p2[[1]], p2[[2]],threshold=1, integer=T, greatcircle=F)
 #if threshold is set -> fast calculation 
 setMethod(f="emd", 
           signature=c(x="RasterLayer", y="RasterLayer", threshold="numeric", integer="logical", greatcircle="logical"), 
@@ -25,6 +22,7 @@ setMethod(f="emd",
             if(identical(all.equal(sum(r1$layer),1), FALSE))
               warning("Bart: Raster does not represent probability surface")
             
+            browser()
             res <- 1
             if (integer==FALSE){
               if (is.na(threshold)==TRUE){
