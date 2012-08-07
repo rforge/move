@@ -2,6 +2,7 @@
 
 \alias{getMovebankStudy}
 \alias{getMovebankStudy,ANY,MovebankLogin-method}
+\alias{getMovebankStudy,ANY,missing-method}
 
 \docType{methods}
 

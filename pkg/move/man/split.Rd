@@ -29,5 +29,12 @@
 \author{Marco Smolla}
 
 \examples{
-##we would need a moveStack object right here
+isaac <- move(system.file("extdata","leroy.csv", package="move"))
+isaac2 <- move(system.file("extdata","leroy.csv", package="move"))
+moveStack <- moveStack(list(isaac, isaac2))
+
+split(moveStack) #splitting a MoveStack
+dbbmmStack <- brownian.bridge.dyn(spTransform(moveStack), location.error=23.5, dimSize=85, time.step=6000)
+
+split(dbbmmStack)#splitting a DBBMMStack
 }

@@ -78,6 +78,6 @@ dbbmm <- brownian.bridge.dyn(object=data2[1:100,], location.error=23.5, dimSize=
   r <- moveStack(list(isaac, isaac2))
   t <- brownian.bridge.dyn(spTransform(r), location.error=23.5, dimSize=85, time.step=6000)
   plot(t)
-  contour(t, levels=c(.4,.9), add=F)
+  contour(t, levels=c(.4,.9), add=FALSE)
 }
 }

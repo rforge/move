@@ -2,6 +2,7 @@
 
 \alias{contour}
 \alias{contour,.UD-method}
+\alias{contour,.UDStack-method}
 
 \docType{methods}
 
@@ -11,10 +12,11 @@
 
 \usage{
   \S4method{contour}{.UD}(x, ...)
+  \S4method{contour}{.UDStack}(x, ...)
 }
 
 \arguments{
-  \item{x}{an object of the \link{DBBMM-class}}
+  \item{x}{an object of the \link{DBBMM-class} or \link{DBBMMStack-class} }
   \item{...}{additional arguments like levels and nlevels, see details}
 }
 
@@ -44,4 +46,5 @@ cnt  <- contour(dbbmm, levels=c(.4,.9), plot=FALSE)
 require("RgoogleMaps")
 cnt  <- contour(x=dbbmm, y=data, levels=c(.4,.9), google=TRUE)
 cnt  <- contour(x=dbbmm, y=data, levels=c(.4,.9), google=TRUE, track=TRUE)
+}
 }
