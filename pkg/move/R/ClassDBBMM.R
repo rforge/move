@@ -298,7 +298,6 @@ setMethod(f = "contour",
           })
 
 
-setGeneric("split") 
 setMethod(f = "split",
           signature = c(x="DBBMMStack", f="missing"),
           definition = function(x, f, ...){
