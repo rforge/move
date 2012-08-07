@@ -1,9 +1,7 @@
 \name{getMovebankStudy}
 
 \alias{getMovebankStudy}
-\alias{getMovebankStudy,ANY,missing-method}
-\alias{getMovebankStudy,numeric,MovebankLogin-method}
-\alias{getMovebankStudy,character,MovebankLogin-method}
+\alias{getMovebankStudy,ANY,MovebankLogin-method}
 
 \docType{methods}
 

@@ -2,6 +2,7 @@
 
 \alias{split}
 \alias{split,MoveStack,missing-method}
+\alias{split,DBBMMStack,missing-method}
 
 \docType{methods}
 

@@ -19,8 +19,9 @@
 }
 
 \details{
-The contour function creates a shape of the area in which there is a 90\% probability that the animal will be located. One or several probabilities can be set with \code{levels}. Choose values between 0 and 1. At least one level must be added, there is no default value set. You can also use \code{nlevel} to set a number of fixed distance levels. \cr
-To change parameters of the contour or line plotting use the usual parameters of the \code{plot} function.
+The contour function creates a shape of the area in which the animal were for a certain amount of time (e.g. 90\% of the time). One or several probabilities can be set with \code{levels}. Choose values between 0 and 1. At least one level must be added, there is no default value set. You can also use \code{nlevel} to set a number of fixed distance levels. \cr
+To change parameters of the contour or line plotting use the usual parameters of the \code{plot} function. 
+You can also add the contour lines to a plot with \code{add = TRUE}.
 }
 
 \author{Marco Smolla}
@@ -43,8 +44,4 @@ cnt  <- contour(dbbmm, levels=c(.4,.9), plot=FALSE)
 require("RgoogleMaps")
 cnt  <- contour(x=dbbmm, y=data, levels=c(.4,.9), google=TRUE)
 cnt  <- contour(x=dbbmm, y=data, levels=c(.4,.9), google=TRUE, track=TRUE)
-}
-\dontshow{
-contour(dbbmmStack, levels=c(.9,.5), col=c(2,5))
-}
 }

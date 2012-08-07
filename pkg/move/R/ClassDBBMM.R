@@ -279,8 +279,7 @@ setMethod(f = "outerProbability",
 setGeneric("contour", function(x, ...) standardGeneric("contour"))
 setMethod(f = "contour", 
           signature = c(x = ".UD"), 
-          definition = function(x, ...) {      
-            print("RasterLayer")
+          definition = function(x, ...) {  
               ## enter nlevel for the number of levels, or levels for the correct levels!!
               newRaster <- x
               # raster2contour(x, ...)
@@ -294,13 +293,7 @@ setMethod(f = "contour",
 setMethod(f = "contour", 
           signature = c(x = ".UDStack"), 
           definition = function(x, ...){  
-            print(".UDStack")
-#             if(any(is.na(col)))
-#               col <- 1:length(as.character(unique(x@DBMvar@trackId)))
-#             if(length(col)!=length(x@DBMvar@trackId))
-#               col <- col[as.numeric(x@DBMvar@trackId)]
-            #x@col <- col
-            par(mfrow=1:ceiling(sqrt(length(unstack(x)))))
+            par(mfrow=1:ceiling(sqrt(length(split(x)))))
             lapply(split(x), contour, ...) 
           })
 
