@@ -36,8 +36,7 @@ setClass(Class = "DBBMM", contains = c(".UD"),
 # extent which includes more of the probabilities.') } } }
 
 
-setGeneric("brownian.bridge.dyn", function(object, raster = 1, dimSize = 10, location.error, 
-    margin = 11, window.size = 31, ext=.3, bbox = NA, ...) {
+setGeneric("brownian.bridge.dyn", function(object, raster = 1, dimSize = 10, location.error, margin = 11, window.size = 31, ext=.3, bbox = NA, ...) {
     standardGeneric("brownian.bridge.dyn")
 })
 # This method is to enable pointing at a collumn that contains the location error
@@ -55,7 +54,7 @@ setMethod(f = "brownian.bridge.dyn",
 setMethod(f = "brownian.bridge.dyn", 
           signature = c(object = ".MoveTrackSingle", raster = "missing", dimSize = "missing", location.error = "numeric"), 
           function(object, raster, dimSize, location.error, ...) {
-              return(brownian.bridge.dyn(object = object, dimSize = dimSize, location.error = location.error, margin = margin, window.size = window.size, var = var, ext = ext, ...))
+              return(brownian.bridge.dyn(object = object, dimSize = dimSize, location.error = location.error, margin = margin, window.size = window.size, ext = ext, ...))
           })  #seems to be necessary
 
 
@@ -114,7 +113,7 @@ setMethod(f = "brownian.bridge.dyn",
               ncol <- ((xmax - xmin)/raster)
               ex <- extent(c(xmin, xmax, ymin, ymax))
               rst <- raster(ncols = ncol, nrows = nrow, crs = proj4string(object), ex)
-              return(brownian.bridge.dyn(object = object, raster = rst, location.error = location.error, margin = margin, window.size = window.size, var = var, ext = ext,  ...))
+              return(brownian.bridge.dyn(object = object, raster = rst, location.error = location.error, margin = margin, window.size = window.size, ext = ext,  ...))
           })
 
 setMethod(f = "brownian.bridge.dyn", 
@@ -131,7 +130,7 @@ setMethod(f = "brownian.bridge.dyn",
     # check for aeqd projection of the coordinates
     if (grepl("aeqd", proj4string(object)) == FALSE) 
         stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
-    
+browser()
     time.lag <- c(time.lag(object, units = "mins"), 0)  #units need to match between here and dBBMMvar calculations
     
     if (missing(time.step)) {
@@ -192,9 +191,7 @@ setMethod(f = "brownian.bridge.dyn",
               omitMove <- c()
               for (i in names(moveUnstacked)) {
                   if (nrow(moveUnstacked[[i]]@coords) > (window.size + margin)) {
-                      dbbmmLST[[i]] <- brownian.bridge.dyn(moveUnstacked[[i]], raster = raster, 
-                          ..., location.error = location.error, margin = margin, time.step = time.step, 
-                          window.size = window.size, var = var, ext = ext)
+                      dbbmmLST[[i]] <- brownian.bridge.dyn(moveUnstacked[[i]], raster = raster, location.error = location.error, margin = margin, window.size = window.size, ext = ext, ...)
                       # dbbmmLST[[i]] <- dbbmm
                   } else {
                       omitMove <- c(omitMove, i)
