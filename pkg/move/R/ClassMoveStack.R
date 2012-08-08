@@ -1,6 +1,8 @@
 setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack"),
-	       representation = representation(trackId = "factor"),
-	       prototype = prototype(trackId = factor()),
+	       representation = representation(
+           trackId = "factor"),
+	       prototype = prototype(
+           trackId = factor()),
 	       validity = function(object){
     			if(length(object@trackId)!=nrow(object@coords))
     				stop("Number of trackId does not match the number of coordinates")
@@ -15,8 +17,10 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack"),
 setAs( ".MoveTrackStack","data.frame", function(from){ return(data.frame(as(as(from,".MoveTrack"),"data.frame"), trackId=from@trackId))})
 
 setClass(Class = "MoveStack", contains = c(".MoveGeneral",".MoveTrackStack"),
-       	 representation = representation(idData = "data.frame"),
-       	 prototype = prototype(idData = data.frame()),
+       	 representation = representation(
+            idData = "data.frame"),
+       	 prototype = prototype(
+            idData = data.frame()),
       	 validity = function(object){
     			if(length(unique(object@trackId))!=nrow(object@idData))
     				stop("Not same number of IDs and rows in dataframe per ID")
@@ -26,14 +30,16 @@ setClass(Class = "MoveStack", contains = c(".MoveGeneral",".MoveTrackStack"),
     		}
         )
 
-setMethod("[", signature(x=".MoveTrackStack"),definition=function(x,i,j,...){ #does not work
-		if(!missing(i)){
-	      x@trackId=droplevels(x@trackId[i])
-	      x@idData=x@idData[as.character(unique(x@trackId[i])),]}else{i<-T}
-		if(missing(j))
-			j<-T
-		callNextMethod(x=x,i=i,j=j,...)
-	      })
+setMethod("[", 
+          signature(x=".MoveTrackStack"),
+          definition=function(x,i,j,...){ #does not work
+      		if(!missing(i)){
+      	      x@trackId=droplevels(x@trackId[i])
+      	      x@idData=x@idData[as.character(unique(x@trackId[i])),]}else{i<-T}
+      		if(missing(j))
+      			j<-T
+      		callNextMethod(x=x,i=i,j=j,...)
+	      })##bart this function gives an error when created: Error: package slot missing from signature for generic ‘[’ //and classes .MoveTrackStack, ANY, ANY // cannot use with duplicate class names (the package may need to be re-installed)
 	      
 setMethod(f = "plot", 
           signature = c(x="MoveStack", y="missing"), 
@@ -144,11 +150,15 @@ setMethod(f = "split",
               spdf <- SpatialPointsDataFrame(coords = matrix(x@coords[x@trackId==ID,], ncol=2),
                                              data=x@data[x@trackId==ID,],
                                              proj4string=x@proj4string)
-              moveObj <- new(Class="Move", 
+              mt <- new(Class=".MoveTrack",
                              spdf,
-                             idData=x@idData[ID, ],
                              timestamps=x@timestamps[x@trackId==ID],
-                             sensor=x@sensor[x@trackId==ID],
+                             sensor=x@sensor[x@trackId==ID]
+                            )
+                             #sensor=rep(x@idData$sensor.type[row.names(x@idData)==ID], sum(x@trackId==ID))
+              moveObj <- new(Class="Move", 
+                             mt,
+                             idData=x@idData[ID, ],
                              dateCreation=x@dateCreation,
                              study=x@study,
                              citation=x@citation,
