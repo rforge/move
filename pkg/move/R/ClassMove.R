@@ -28,7 +28,7 @@ setClass(Class = ".MoveTrack",contains=c("SpatialPointsDataFrame"),
 				   sensor="factor"),
 	       prototype = prototype(
            timestamps = as.POSIXct(NA),
-	   sensor=factor()),
+	         sensor=factor()),
       	 validity = function(object){
       			if(length(object@timestamps)!=nrow(object@coords))
       				stop("Number of timestamps does not match the number of coordinates")
@@ -154,7 +154,7 @@ setMethod(f="move",
             data$location.lat <- y
             data$timestamp <- time
             data$individual.local.identifier <- animal
-	          data$sensor <- sensor
+	          data$sensor <- sensor #if(length(sensor)==1) rep(sensor, length(time)) else sensor
             .move(df=data, proj=proj)
           }
           )
@@ -168,7 +168,8 @@ setMethod(f = ".move",
             if(any(is.na(df$location.long))==TRUE) warning("There were NA locations detected and omitted.")
             missedFixes<- df[(is.na(df$location.long)|is.na(df$location.lat)), ]$timestamp
             df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
-      	    df$sensor<-df$sensor.type
+            df$sensor<-df$sensor.type 
+            #if(is.null(df$sensor.type)) df$sensor <- rep(NA, nrow(df)) else df$sensor<-df$sensor.type
             df <- df[,names(df)!="sensor.type"]
             
 	    if(length(unique(df$individual.local.identifier))>1 & any(unique(as.character(df$individual.local.identifier))==""))
@@ -192,7 +193,7 @@ setMethod(f = ".move",
         tmp <- SpatialPointsDataFrame(
                 coords = cbind(df$location.long,df$location.lat),
                 data = data, 
-                proj4string = proj,#CRS("+proj=longlat +ellps=WGS84"), # proj (function argument ) is not used here Marco
+                proj4string = proj,
                 match.ID = TRUE)
         if (length(ids)==1){
           res <- new("Move", 
@@ -222,19 +223,18 @@ if (!isGeneric("n.locs"))
 
 setMethod("n.locs", "SpatialPointsDataFrame", function(obj){
             return(length(coordinates(obj)[ ,1]))
-          }
-          )
+          })
 
 
 ###extract time.lag from Move
 if (!isGeneric("time.lag")) {setGeneric("time.lag", function(x, ...) standardGeneric("time.lag"))}
 setMethod("time.lag", ".MoveTrackSingle", function(x, ...){
-#            return(difftime(time2=x@timestamps[-length(x@timestamps)], x@timestamps[-1],...)) #calculates the time differences between locations one less than locations! we need a more elegant way than just adding a zero 
-	                return(as.numeric(diff(x@timestamps),...)) #calculates the time differences between locations one less than locations! we need a more elegant way than just adding a zero 
-
-          }
-          )
-
+	        return(as.numeric(diff(x@timestamps),...)) #one less than locations! we need a more elegant way than just adding a zero 
+          })
+setMethod("time.lag", "MoveStack", function(x, ...){
+          return(lapply(split(x), time.lag))
+          })
+  
 ###Redifining spTransform, because it changes the class of the object to SpatialPointsDataFrame 
 setMethod(f = "spTransform", 
           signature = c(x = ".MoveTrack", CRSobj = "missing"), 
@@ -297,11 +297,11 @@ setMethod("lines", ".MoveTrackSingle", function(x,add=FALSE,...){
           }           
           )
 
-setGeneric("plot") ###is not working properly!! returns that google is not a graphic parameter
+setGeneric("plot") 
 setMethod(f = "plot", 
           signature = c(x=".MoveTrackSingle", y="missing"), 
           function(x, y, ...){
-            plot(coordinates(x), type="p", ...)#creates points
+            plot(coordinates(x), type="p", ...)
             lines(x, add=TRUE, ...)
           }
           )
@@ -310,7 +310,7 @@ setMethod(f = "plot",
 
 setGeneric("googleplot", function(obj, ...){standardGeneric("googleplot")})
 setMethod(f = "googleplot", 
-          signature = c(obj="Move"), 
+          signature = c(obj=".MoveTrack"), 
           function(obj, maptype="terrain",...){
               require(RgoogleMaps)
               lat <-coordinates(obj)[ ,2] 
@@ -630,6 +630,11 @@ setMethod("timestamps", ".MoveTrack",
       this@timestamps
    }
 )
+setMethod("timestamps", ".MoveTrackSingle",
+          function(this) {
+            this@timestamps
+          }
+          )
 setGeneric("timestamps<-", function(this, value) standardGeneric("timestamps<-"))
 setReplaceMethod("timestamps", ".MoveTrack",
    function(this, value) {
