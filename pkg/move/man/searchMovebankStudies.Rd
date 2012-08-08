@@ -32,7 +32,7 @@ See the 'browesMovebank' vignette (\href{http://move.r-forge.r-project.org/moveW
 \author{Marco Smolla}
 
 \examples{
-\dontshow{
+\dontrun{
 searchMovebankStudies("MPIO", login=login) #returns all studies that include this exact term
 }
 }
