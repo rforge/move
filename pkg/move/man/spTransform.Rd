@@ -45,7 +45,11 @@ proj4string(data2)
 "[1]   +proj=longlat +lon_0=-73.8871629 +lat_0=42.73884025 +ellps=WGS84"
 proj4string(data3)
 "[1]  +proj=moll +ellps=WGS84"
-\dontshow{spTransform(data, CRSobj=CRS("+proj=moll"))}
+\dontshow{
+spTransform(data, CRSobj=CRS("+proj=moll"))
+load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+spTransform(data2)
+}
 }
 
 \author{Marco Smolla}

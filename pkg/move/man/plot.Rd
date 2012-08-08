@@ -50,4 +50,7 @@ lines(data, add=TRUE)
 
 ## plot the raster of a DBBMM object
 plot(dbbmm)
+
+## plot the raster of a DBBMMStack object
+plot(dbbmm2)
 }

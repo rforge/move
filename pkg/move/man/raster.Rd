@@ -26,3 +26,10 @@
 }
 
 \author{Marco Smolla}
+
+\examples{
+load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+
+raster(dbbmm) #returns the raster of a DBBMM object
+raster(dbbmm2) # returns the raster of a DBBMMStack object
+}

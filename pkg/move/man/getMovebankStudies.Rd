@@ -28,3 +28,9 @@ See the 'browesMovebank' vignette (\href{http://move.r-forge.r-project.org/moveW
 
 
 \author{Marco Smolla}
+
+\examples{
+\dontrun{
+getMovebankStudies(login=login)
+}
+}

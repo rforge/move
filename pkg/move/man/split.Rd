@@ -36,5 +36,5 @@ moveStack <- moveStack(list(isaac, isaac2))
 split(moveStack) #splitting a MoveStack
 dbbmmStack <- brownian.bridge.dyn(spTransform(moveStack), location.error=23.5, dimSize=85, time.step=6000)
 
-split(dbbmmStack)#splitting a DBBMMStack
+split(dbbmmStack) #splitting a DBBMMStack
 }

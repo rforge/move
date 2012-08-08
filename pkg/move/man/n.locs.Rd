@@ -18,3 +18,10 @@
 }
 
 \author{Marco Smolla}
+
+\examples{
+load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+
+n.locs(data) #number of locations of Move object
+n.locs(data2) #number of locations of MoveStack object
+}

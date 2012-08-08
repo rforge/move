@@ -15,7 +15,7 @@
 
 \arguments{
   \item{study}{character, full name of the study, as stored on Movebank}
-  \item{animalName}{chracter, name of the individual as stored on Movebank}
+  \item{animalName}{chracter, single or a vector, with the name of the individual as stored on Movebank}
   \item{login}{a \code{\link[=MovebankLogin-class]{MovebankLogin}}, if empty you'll be asked to enter your username or password}
   \item{moveObject}{logical, if FALSE a data.frame with coordiantes and timestamps is returned. Default is TRUE}
   \item{...}{passing on additional arguments}
@@ -33,3 +33,11 @@ See the 'browesMovebank' vignette (\href{http://move.r-forge.r-project.org/moveW
 
 
 \author{Marco Smolla}
+
+\examples{
+\dontrun{
+getMovebankData(study="BCI Ocelot", login=login) #returns a MoveStack object from the specified study
+getMovebankData(study="BCI Agouti", login=login) #returns a Move object (there is only one individual in this study)
+getMovebankData(study=123413, animalName=c("Mancha","Yara"), login=login) #returns a MoveStack with two individuals
+}
+}

@@ -27,5 +27,10 @@ The function returns a \code{data.frame} that incldues the \code{animalID, anima
 See the 'browesMovebank' vignette (\href{http://move.r-forge.r-project.org/moveWEB/Downloads.html}{move website download section}) for more information about security and how to use Movebank from within R. 
 }
 
-
 \author{Marco Smolla}
+
+\examples{
+\dontrun{
+getMovebankAnimals(study=82207, login=login)
+}
+}

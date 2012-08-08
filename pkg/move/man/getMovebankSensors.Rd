@@ -31,3 +31,9 @@ See the 'browesMovebank' vignette (\href{http://move.r-forge.r-project.org/moveW
 
 
 \author{Marco Smolla}
+
+\examples{
+\dontrun{
+getMovebankSensors(study=123413, login=login)
+}
+}
