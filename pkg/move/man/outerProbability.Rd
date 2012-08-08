@@ -21,7 +21,7 @@
   \item{...}{hand over information}
 }
 
-\values{
+\value{
 The function returns either a numeric value with the outer probability from a single raster object, or a list with the outer probabilites from a DBBMMStack.
 }
 
