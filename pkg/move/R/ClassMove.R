@@ -109,6 +109,8 @@ setMethod(f = "move",
 
 	       }
 	       proj=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84")
+		  df$sensor<-df$sensor.type 
+		  df <- df[,names(df)!="sensor.type"]
 
       		try(df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS")),silent=T)
       		.move(df=df, proj=proj)
@@ -154,7 +156,7 @@ setMethod(f="move",
             data$location.lat <- y
             data$timestamp <- time
             data$individual.local.identifier <- animal
-	          data$sensor <- sensor #if(length(sensor)==1) rep(sensor, length(time)) else sensor
+	          data$sensor <- sensor 
             .move(df=data, proj=proj)
           }
           )
@@ -168,9 +170,9 @@ setMethod(f = ".move",
             if(any(is.na(df$location.long))==TRUE) warning("There were NA locations detected and omitted.")
             missedFixes<- df[(is.na(df$location.long)|is.na(df$location.lat)), ]$timestamp
             df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
-            df$sensor<-df$sensor.type 
+            #df$sensor<-df$sensor.type 
             #if(is.null(df$sensor.type)) df$sensor <- rep(NA, nrow(df)) else df$sensor<-df$sensor.type
-            df <- df[,names(df)!="sensor.type"]
+            #df <- df[,names(df)!="sensor.type"]
             
 	    if(length(unique(df$individual.local.identifier))>1 & any(unique(as.character(df$individual.local.identifier))==""))
 	    {# this is not so elegant from me (bart) since this function also gets used by non movebank data

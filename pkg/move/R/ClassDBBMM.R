@@ -143,7 +143,6 @@ setMethod(f = "brownian.bridge.dyn",
     if (missing(time.step)) {
         time.step <- (min(time.lag[-length(time.lag)])/15)
     }
-    print(time.step)
     
     T.Total <- sum(time.lag[object@interest])
     
