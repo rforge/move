@@ -25,9 +25,11 @@ setClass(Class = ".MoveGeneral",
 setClass(Class = ".MoveTrack",contains=c("SpatialPointsDataFrame"),
 	       representation = representation(
 				   timestamps = "POSIXct",
+				   idData = "data.frame",
 				   sensor="factor"),
 	       prototype = prototype(
            timestamps = as.POSIXct(NA),
+	   idData = data.frame(),
 	         sensor=factor()),
       	 validity = function(object){
       			if(length(object@timestamps)!=nrow(object@coords))
@@ -60,9 +62,9 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no misse
 
 setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
        	 representation = representation (
-       	   idData = "data.frame"),
+       	   ),
       	 prototype = prototype(
-           idData = data.frame()),
+           ),
       	 validity = function(object){
       			if(nrow(object@idData)>1)
               stop("There are more than 1 row stored in the idData")

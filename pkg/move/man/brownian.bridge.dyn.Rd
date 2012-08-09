@@ -46,7 +46,7 @@
   4. Using default raster \cr
   When there are no values set, the default raster value is used to calculate and create a RasterLayer object, which is returned to the same function. Note: depending on the size of the area of interest, the default cell size value can result in a large number of cells which may take a very long time to calculate!
 
-  The function prints an estimate of the size of the computational task ahead. This can give an indication of how long the computation is going to take. It should scale roughtly linearly with the duration of the computations. In our experience $1*10^9$ takes about a minute with a normal laptop. 
+  The function prints an estimate of the size of the computational task ahead. This can give an indication of how long the computation is going to take. It should scale roughly linearly with the duration of the computations. In our experience $1*10^9$ takes about a minute with a normal laptop. 
 
   There is one further argument that can be given the \code{time.step}. The size of the time steps correspond to the minutes taken for every intergration step in minutes, if left null 15 steps are taken in the shortest time interval.
 }  

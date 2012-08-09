@@ -17,10 +17,8 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack"),
 setAs( ".MoveTrackStack","data.frame", function(from){ return(data.frame(as(as(from,".MoveTrack"),"data.frame"), trackId=from@trackId))})
 
 setClass(Class = "MoveStack", contains = c(".MoveGeneral",".MoveTrackStack"),
-       	 representation = representation(
-            idData = "data.frame"),
-       	 prototype = prototype(
-            idData = data.frame()),
+       	 representation = representation(),
+       	 prototype = prototype(),
       	 validity = function(object){
     			if(length(unique(object@trackId))!=nrow(object@idData))
     				stop("Not same number of IDs and rows in dataframe per ID")
