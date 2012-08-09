@@ -88,15 +88,13 @@ setMethod("[", signature(x=".MoveTrack"), function(x, i, j, ...) {
 })
 
 
-## Making move a generic funtion
 setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))
 setMethod(f = "move", 
-      	  signature = c(x="character",y='missing',time='missing', data='missing', proj='missing'), # marco maybe also make these this fucntion work with files with multiple ids by combining moveStack and move functions all into move functions
+      	  signature = c(x="character",y='missing',time='missing', data='missing', proj='missing'), 
       	  definition = function(x){
 		  if(!file.exists(x))
 			  stop("x should be a file on disk but it cant be found")
       		df <- read.csv(x, header=TRUE, sep=",", dec=".")
-      		#check whether data are really from movebank
       		if (!all(c("timestamp", "location.long",  "location.lat", "study.timezone", "study.local.timestamp", "sensor.type", "individual.local.identifier", "individual.taxon.canonical.name")%in%colnames(df)))
       		        stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
 		if(any(dups<-duplicated(apply(df[,names(df)!="event.id"], 1, paste, collapse="__")))){
@@ -214,7 +212,6 @@ setMethod(f = ".move",
         return(res)
         })
 
-# marco check sensor versus usage of sensor.type in .move and functions calling
 
 
 ###extract number of locations from Move
@@ -280,16 +277,23 @@ setMethod(f = "spTransform",
 #            }
 #            )
 
-# Marco i think this function needs to be uncommented since it would be nice to be able to plot points for move objects
 ###plotting 
-#setGeneric("points")
-#setMethod("points", "Move", function(x,add=FALSE,...){
-#          if (add==FALSE) {plot(coordinates(x), type="p", ...)}
-#          else {points(coordinates(x), type="p", ...)}
-#          }          
-#          )
-#
+setGeneric("plot") 
+setMethod(f = "plot", 
+          signature = c(x=".MoveTrackSingle", y="missing"), 
+          function(x, y, ...){
+            plot(coordinates(x), type="p", ...)
+            lines(x, add=TRUE, ...)
+          }
+          )
 
+# Marco i think this function needs to be uncommented since it would be nice to be able to plot points for move objects
+setGeneric("points")
+setMethod("points", "Move", function(x,add=FALSE,...){
+         if (add==FALSE) {plot(coordinates(x), type="p", ...)}
+         else {points(coordinates(x), type="p", ...)}
+         }          
+         )
 
 ###MARCO change all plot functions to plot, default is points and lines, user can also plot p or l OR add p and l for Move AND MoveStacks
 setGeneric("lines") ##need to be different -- 
@@ -299,14 +303,6 @@ setMethod("lines", ".MoveTrackSingle", function(x,add=FALSE,...){
           }           
           )
 
-setGeneric("plot") 
-setMethod(f = "plot", 
-          signature = c(x=".MoveTrackSingle", y="missing"), 
-          function(x, y, ...){
-            plot(coordinates(x), type="p", ...)
-            lines(x, add=TRUE, ...)
-          }
-          )
 
 
 

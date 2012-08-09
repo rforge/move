@@ -4,15 +4,9 @@ if (!isGeneric("emd")) {
   }
 
 ##DBBMM for emd
+#NOTE: only works with integer=F (otherwise values maybe so small that all are rounded to 0 if not multiplied with a huge number!)
 setMethod(f="emd", 
-          signature=c(x="DBBMM", y="DBBMM", threshold="numeric", integer="logical", greatcircle="logical"), 
-          definition = function(x,y,threshold=NA,integer,greatcircle=FALSE){
-            emd(x=raster(x), y=raster(y), threshold=threshold, integer=integer, greatcircle=greatcircle)
-          })
-
-#if threshold is set -> fast calculation 
-setMethod(f="emd", 
-          signature=c(x="RasterLayer", y="RasterLayer", threshold="numeric", integer="logical", greatcircle="logical"), 
+          signature=c(x=".UD", y=".UD", threshold="numeric", integer="logical", greatcircle="logical"), 
           definition = function(x,y,threshold=NA,integer,greatcircle=FALSE){
             r1 <- as.data.frame(rasterToPoints(x))
             r2 <- as.data.frame(rasterToPoints(y))
@@ -22,13 +16,13 @@ setMethod(f="emd",
             if(identical(all.equal(sum(r1$layer),1), FALSE))
               warning("Bart: Raster does not represent probability surface")
             
-            browser()
             res <- 1
             if (integer==FALSE){
-              if (is.na(threshold)==TRUE){
+              if (is.na(threshold)){
               fun <- "emdR"                
               }
-              if (is.na(threshold)==FALSE){
+              #if (!is.na(threshold)){
+              if (!is.na(greatcircle)){
                 fun <- "emdR_gd"
                # if(any(paste(r2$y,r2$x)!=paste(r1$y, r1$x)))
                #   stop("Rasters unequal not sure if that works")
@@ -47,10 +41,11 @@ setMethod(f="emd",
                     greatcircle=as.integer(greatcircle))
             }
             if (integer==TRUE){
-              if (is.na(threshold)==TRUE){
+              if (is.na(threshold)){
                 fun <- "emdRint"                
               }
-              if (is.na(threshold)==FALSE){
+              #if (!is.na(threshold)){
+              if (!is.na(greatcircle)){
                 fun <- "emdR_gdint"
                 if(any(paste(r2$y,r2$x)!=paste(r1$y, r1$x)))
                   stop("Rasters unequal not sure if that works")
