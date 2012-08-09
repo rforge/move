@@ -36,6 +36,8 @@
 
 \examples{
   \dontrun{
-    load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+    \dontshow{
+      .C('emdR', as.integer(4) ,as.integer(4),as.double(1:4/4),as.double(1:4/4), as.double(1:4/4), as.double(1:4/4), as.double(1:4/4), as.double(4:1/4), as.double(1.3), as.double(100.3), as.integer(0))
+    }
   }
 }
