@@ -47,9 +47,8 @@ setMethod(f="getMovebank",
               tmp['study_id'] <- getMovebankID(unlist(tmp['study_id']), login) ,silent=T)
             try(if(any(names(tmp)=="tag_study_id")&class(unlist(tmp['tag_study_id']))=="character") 
               tmp['tag_study_id'] <- getMovebankID(unlist(tmp['tag_study_id']), login) ,silent=T)
-          
             if(length(tmp)!=0){
-              tmp<-lapply(tmp, paste, collapse='%2C')
+              tmp <- lapply(tmp, paste, collapse='%2C')
               url <- paste(url, sep="&",paste(names(tmp),tmp, collapse="&", sep="="))
             }
             if (login@rcurl){
@@ -64,6 +63,7 @@ setMethod(f="getMovebank",
               url <- paste(paste("http",url, sep=""), sep="&",paste("user=",login@username,"&password=",login@password, sep=""))
               data <- read.csv(url, header=T, sep=",", as.is=T)# marco fix error checking also non rcurl download
             }
+#print(tmp)
 #print(url)            
 #print(str(data))
               if(grepl(pattern="You.may.only.download.it.if.you.agree.with.the.terms", x=names(data)[1])) stop("You need a permition to access this data set. Go to movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
@@ -157,15 +157,16 @@ setMethod(f="getMovebankSensorsAttributes",
           definition = function(study,login){
            data <- getMovebank("sensor", login, tag_study_id=study)
            studySensors <- unique(data$sensor_type_id)
-           data2 <- getMovebank("study_attribute", login, study_id=study, sensor_type_id=studySensors[1])
-           if(length(studySensors)>1){
-            for (i in 2:length(studySensors)){ 
-              dataNew <- getMovebank("study_attribute", login, study_id=study, sensor_type_id=studySensors[i])
-              data2<-merge(data2,dataNew)
-            }
-           }         
+           data2 <- lapply(studySensors, function(y, login, study) getMovebank("study_attribute", login, study_id=study, sensor_type_id=y) ,login=login, study=study)
+           #data2 <- getMovebank("study_attribute", login, study_id=study, sensor_type_id=studySensors[1])
+#            if(length(studySensors)>1){
+#             for (i in 2:length(studySensors)){ 
+#               dataNew <- getMovebank("study_attribute", login, study_id=study, sensor_type_id=studySensors[i])
+#               data2<-merge(data2,dataNew)
+#             }
+#            }         
           cat("##### ATTRIBUTES OF THE SENSORS IN STUDY ID: ",study," \n")
-           return(data2)
+           return(as.data.frame(do.call(rbind, data2)))
           })
             
 
@@ -251,18 +252,17 @@ setGeneric("getMovebankData", function(study,animalName=NA,login, moveObject=TRU
 setMethod(f="getMovebankData", 
           signature=c(study="ANY",animalName="ANY", login="MovebankLogin"),
           definition = function(study, animalName, login, moveObject=T, ...){ 
-            #data <- getMovebankAnimals(study=study, login)
             idData <- getMovebank("individual", login=login, study_id=study)         
             ##which deployments are imporant
-            deploymentID <- getMovebank("deployment", login=login, study_id=study, attributes="individual_id%2Ctag_id%2Cid") ###???NAs introduced by coercion ¿¿¿¿
+            deploymentID <- getMovebank("deployment", login=login, study_id=study, attributes="individual_id%2Ctag_id%2Cid") 
             ##which track Data are important
             sensors <- getMovebankSensors(study=study, login=login)
-            names(sensors)  <- c("sensor", "sensor_type_id", "tag_id") ##sensor is sensor_id, changed it because .move works only with 'sensor' ##be sure that the col names are always this way
+            names(sensors)  <- c("sensor", "sensor_type_id", "tag_id") ##sensor = sensor_id, changed it because .move works only with 'sensor' ##be sure that the col names are always this way
             new <- merge.data.frame(deploymentID, sensors, by.x="tag_id", by.y="tag_id") 
               new <- merge.data.frame(new, idData, by.x="individual_id", by.y="id")
             if (!all(is.na(animalName))) {
               new <- new[new$local_identifier%in%animalName, ]
-              if(length(animalName)!=nrow(new)) stop("One or more animal names are spelled incorrectly.")
+              if(length(animalName)!=length(unique(new$individual_id))) stop("One or more animal names are spelled incorrectly.")
               }
             b <- getMovebank("tag_type", login=ms)
             locSen <- b[as.logical(b$is_location_sensor),"id"] #reduce track to location only sensors & only the correct animals
@@ -289,8 +289,6 @@ setMethod(f="getMovebankData",
             ##individuals with multiple deployments?
             if (length(paste(new$id, new$individual_id, sep="_"))!=length(unique(new$id)))
               trackDF$individual_id <- paste(trackDF$individual_id, trackDF$deployment_id, trackDF$tag_id, sep="_")
-            #                }
-            #df <- merge.data.frame(x=trackDF, y=idData, by.x="individual_id", by.y="individual_id", all=TRUE)
 
             studyDF <- getMovebankStudy(study, login)
             trackDF$study.name <- rep(as.character(studyDF$name),times=nrow(trackDF))
