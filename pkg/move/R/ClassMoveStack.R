@@ -48,7 +48,7 @@ setMethod(f = "plot",
              col <- col[as.numeric(x@trackId)]
             x$col <- col
             unstacked <- split(x)
-              lines(unstacked[[1]], col=x$col, xlim=c(min(coordinates(x)[,1]),max(coordinates(x)[,1])), ylim=c(min(coordinates(x)[,2]), max(coordinates(x)[,2])), ... ) #create first plot
+              lines(unstacked[[1]], col=x$col, xlim=c(min(coordinates(x)[,1]),max(coordinates(x)[,1])), ylim=c(min(coordinates(x)[,2]), max(coordinates(x)[,2])), add=F, ... ) #create first plot
             l = lapply(unstacked[-1], function(x,...){lines(x, col=x$col, add=T, ...)}, ...)
           })
 
@@ -151,8 +151,7 @@ setMethod(f = "split",
               mt <- new(Class=".MoveTrack",
                              spdf,
                              timestamps=x@timestamps[x@trackId==ID],
-                             sensor=x@sensor[x@trackId==ID]
-                            )
+                             sensor=x@sensor[x@trackId==ID])
                              #sensor=rep(x@idData$sensor.type[row.names(x@idData)==ID], sum(x@trackId==ID))
               moveObj <- new(Class="Move", 
                              mt,
@@ -183,14 +182,14 @@ setMethod("print",".MoveTrackStack",function(x){
             cat("coord.ref    :", proj4string(x),"\n")
             cat("ndatacols    :", ncol(x@data),"\n")
             cat("variables    :", paste(colnames(x@data),collapse=", "), "\n")
-  if (exists("study.name",x@idData)==TRUE){
-    cat("study name   :",levels(x@idData$study.name),"\n")}
-  if (exists("individual.taxon.canonical.name", where=x@idData)==TRUE){
-    cat("species      :",as.character(unique(x@idData$individual.taxon.canonical.name)),"\n")}
-  cat("no. of indiv :",nlevels(x@trackId),"\n")
-  cat("indiv. ids   :",paste(levels(x@trackId),collapse=", "),"\n")
-  pp <- split(x@coords[,1],x@trackId)
-  cat("no. of fixes :",unlist(lapply(pp,length)),"\n")
+            if (exists("study.name",x@idData)==TRUE){
+              cat("study name   :",levels(x@idData$study.name),"\n")}
+            if (exists("individual.taxon.canonical.name", where=x@idData)==TRUE){
+              cat("species      :",as.character(unique(x@idData$individual.taxon.canonical.name)),"\n")}
+            cat("no. of indiv :",nlevels(x@trackId),"\n")
+            cat("indiv. ids   :",paste(levels(x@trackId),collapse=", "),"\n")
+            pp <- split(x@coords[,1],x@trackId)
+            cat("no. of fixes :",unlist(lapply(pp,length)),"\n")
       })
 
 setMethod("print","MoveStack",
@@ -214,5 +213,4 @@ setMethod("print","MoveStack",
 
 setMethod("show", "MoveStack", function(object){
   print(object) 
-}         
-)
+})

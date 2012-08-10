@@ -145,8 +145,8 @@ setMethod(f = "move",
 setMethod(f="move",
           signature=c(x="numeric", y="numeric", time="POSIXct", data="missing", proj="CRS"),
           definition = function(x,y,time,data,proj, ...){
-		  data<-data.frame(x,y,time)
-		  move(x=x,y=y,time=time,proj=proj,data=data,...)
+      		  data<-data.frame(x,y,time)
+      		  move(x=x,y=y,time=time,proj=proj,data=data,...)
           }
           )
 setMethod(f="move",
@@ -285,27 +285,25 @@ setMethod(f = "plot",
           signature = c(x=".MoveTrackSingle", y="missing"), 
           function(x, y, ...){
             plot(coordinates(x), type="p", ...)
-            lines(x, add=TRUE, ...)
-          }
-          )
+            #points(x, add=FALSE, ...)
+            lines(x, ...)
+          })
 
 # Marco i think this function needs to be uncommented since it would be nice to be able to plot points for move objects
 setGeneric("points")
-setMethod("points", "Move", function(x,add=FALSE,...){
-         if (add==FALSE) {plot(coordinates(x), type="p", ...)}
+setMethod("points", ".MoveTrackSingle", function(x,add=TRUE,...){
+         if (add==FALSE) {rm(add)
+                          plot(coordinates(x), type="p", ...)}
          else {points(coordinates(x), type="p", ...)}
-         }          
-         )
+         })
 
 ###MARCO change all plot functions to plot, default is points and lines, user can also plot p or l OR add p and l for Move AND MoveStacks
 setGeneric("lines") ##need to be different -- 
-setMethod("lines", ".MoveTrackSingle", function(x,add=FALSE,...){
-          if (add==FALSE) {plot(coordinates(x), type="l", ...)}
+setMethod("lines", ".MoveTrackSingle", function(x,add=TRUE,...){
+          if (add==FALSE) {rm(add)
+                           plot(coordinates(x), type="l", ...)}
           else {lines(coordinates(x), type="l", ...)}
-          }           
-          )
-
-
+          })
 
 
 setGeneric("googleplot", function(obj, ...){standardGeneric("googleplot")})
@@ -383,8 +381,7 @@ setMethod("print",".MoveTrackSingle",
 ### Show Method for the data object Move
 setMethod("show", "Move", function(object){
             print(object)
-            }
-          )
+            })
 # setMethod("show", "MoveStack", function(object){
 #   print(object) 
 # }         
