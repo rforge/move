@@ -39,18 +39,10 @@
 \examples{
 load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
 
-## plot a Move object
-plot(data)
+plot(data) # plot a Move object
+plot(data2, col=5, lwd=3) # plot a MoveStack object
 
-#to plot a google map with overlayed track 
-#plot(data, google=TRUE)
+plot(dbbmm) # plot the raster of a DBBMM object
 
-## add a track from a Move object to a plot
-lines(data, add=TRUE)
-
-## plot the raster of a DBBMM object
-plot(dbbmm)
-
-## plot the raster of a DBBMMStack object
-plot(dbbmm2)
+plot(dbbmm2) # plot the raster of a DBBMMStack object
 }

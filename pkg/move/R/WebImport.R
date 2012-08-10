@@ -138,7 +138,7 @@ setMethod(f="getMovebankSensors",
           signature=c(study="missing",login="MovebankLogin"), 
           definition = function(study,login){
             data <- getMovebank("tag_type", login)
-            cat("##### LIST OF ALL SENSOR TYPES IN MOVEBANK #####\n")
+            #cat("##### LIST OF ALL SENSOR TYPES IN MOVEBANK #####\n")
             return(data)
           })
 
@@ -165,7 +165,7 @@ setMethod(f="getMovebankSensorsAttributes",
 #               data2<-merge(data2,dataNew)
 #             }
 #            }         
-          cat("##### ATTRIBUTES OF THE SENSORS IN STUDY ID: ",study," \n")
+          #cat("##### ATTRIBUTES OF THE SENSORS IN STUDY ID: ",study," \n")
            return(as.data.frame(do.call(rbind, data2)))
           })
             
@@ -185,7 +185,7 @@ setMethod(f="getMovebankID",
           definition = function(x=NA, login){
           data <- getMovebank("study", login, sort="name", attributes="id%2Cname%2Ci_am_owner%2Ci_can_see_data%2Cthere_are_data_which_i_cannot_see")
           if (is.na(x)) {
-            cat("####### STUDY ID #######\n")
+            #cat("####### STUDY ID #######\n")
             return(data[ ,c("id","name")])
             } else {
               studyNUM <- data[gsub(" ","", data$name)==gsub(" ","", x),c("id")] #get rid of all spaces to avoid miss matching between different spaces words
@@ -202,7 +202,7 @@ setMethod(f="getMovebankStudy",
           signature=c(study="ANY", login="MovebankLogin"),
           definition = function(study, login){
               data <- getMovebank("study", login, id=study)
-              cat("**** SUMMARY OF THE REQUESTED STUDY: ",levels(data$name)," ****\n")
+              #cat("**** SUMMARY OF THE REQUESTED STUDY: ",levels(data$name)," ****\n")
               return(data)
           })
 
@@ -252,6 +252,7 @@ setGeneric("getMovebankData", function(study,animalName=NA,login, moveObject=TRU
 setMethod(f="getMovebankData", 
           signature=c(study="ANY",animalName="ANY", login="MovebankLogin"),
           definition = function(study, animalName, login, moveObject=T, ...){ 
+            if (class(study)=="character") study <- getMovebankID(study, login) ##added this to make the function faster, otherwise it calls this funciton for every function that needs the study_ID
             idData <- getMovebank("individual", login=login, study_id=study)         
             ##which deployments are imporant
             deploymentID <- getMovebank("deployment", login=login, study_id=study, attributes="individual_id%2Ctag_id%2Cid") 

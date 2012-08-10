@@ -2,6 +2,7 @@
 
 \alias{Move-class}
 \alias{.MoveTrack-class}
+\alias{.MoveGeneral-class}
 \alias{.MoveTrackSingle-class}
 \alias{.MoveTrack}
 \alias{.MoveTrackSingle}
