@@ -61,7 +61,7 @@ setMethod(f="getMovebank",
               data <- read.csv(textConnection(web))
             } else {
               url <- paste(paste("http",url, sep=""), sep="&",paste("user=",login@username,"&password=",login@password, sep=""))
-              data <- read.csv(url, header=T, sep=",", as.is=T)# marco fix error checking also non rcurl download
+              data <- read.csv(url, header=T, sep=",", as.is=T)
             }
 #print(tmp)
 #print(url)            

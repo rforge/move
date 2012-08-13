@@ -15,7 +15,7 @@
 
 \title{Creates a DBBMM object}
 
-\description{The brownian.bridge.dyn function uses a Move object (see \code{\link{Move-class}}) to calculate the utilization density (UD) of the given track. It uses the dynamic Brownian Bridge Movement Model (dBBMM) to do so. The dBBMM has the advantage over the other Brownian Bridge Movement Model that changes in behaviour are accounted for. It does so by using the behavioral change point analysis in a sliding window. For details see Kranstauber et al. (2012).}
+\description{The brownian.bridge.dyn function uses a Move object (see \code{\link{Move-class}}) to calculate the utilization distribution, UD, of the given track. It uses the dynamic Brownian Bridge Movement Model (dBBMM) to do so. The dBBMM has the advantage over the other Brownian Bridge Movement Model that changes in behaviour are accounted for. It does so by using the behavioral change point analysis in a sliding window. For details see Kranstauber et al. (2012).}
 
 \usage{
   brownian.bridge.dyn(object, raster, dimSize, location.error,
@@ -54,7 +54,7 @@
 \note{
 	Note that the first few and last few segments of the trajectory are omitted in the calculation of the UD since a lower number of estimates for the Brownian motion variance are obtained for those segments.
 
-	Thanks to Ryan Nielson for making the BBMM package that served as an example for early versions this code.
+	Thanks to Ryan Nielson for making the BBMM package that served as an example for early versions of this code.
 }
 
 \author{Marco Smolla}

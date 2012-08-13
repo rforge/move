@@ -289,7 +289,7 @@ setMethod(f = "plot",
             lines(x, ...)
           })
 
-# Marco i think this function needs to be uncommented since it would be nice to be able to plot points for move objects
+
 setGeneric("points")
 setMethod("points", ".MoveTrackSingle", function(x,add=TRUE,...){
          if (add==FALSE) {rm(add)
@@ -402,7 +402,7 @@ setMethod("summary", "Move", function(object){
     names(animalID)  <- "animalID"
     tagID  <- as.data.frame(object@data$tag.local.identifier[1])
     names(tagID) <- "tagID" 
-    species <- object@species # Marco why not use object@species here?
+    species <- object@species 
     trackProj <- proj4string(object)    
     #check whether trac is in long/lat
     if (grepl("longlat",proj4string(object)) == FALSE) {stop("\n The projeciton of the coordinates needs to be \"longlat\". \n")}else{}

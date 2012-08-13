@@ -91,7 +91,7 @@ setMethod(f = "moveStack",
             spdftmp <- SpatialPointsDataFrame(
               coords = coords,
               data = DATA, 
-              proj4string = CRS(proj4string(x[[1]])),# marco add a check if all projections are the same
+              proj4string = CRS(proj4string(x[[1]])), #projection tested above
               match.ID = TRUE)
             res <- new("MoveStack", 
                        idData = IDDATA,

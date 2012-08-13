@@ -16,8 +16,8 @@ move is a package that contains functions to access movement data stored at \url
  The package implements classes for movement data and supports
   \itemize{
     \item Creation of Move objects (see Move-class) representing animals and their track
-    \item Calculation of utilization densities using the dynamic Brownian bridge Movement Model
-    \item Plotting tracks, utilization densities and contours
+    \item Calculation of utilization distributions using the dynamic Brownian bridge Movement Model
+    \item Plotting tracks, utilization distributions and contours
     \item Access to raster, n.col, projection and coordinates
     \item Different CRS projection methods such as longlat or aeqd
   }
@@ -26,12 +26,14 @@ move is a package that contains functions to access movement data stored at \url
 \section{I. Creating Move objects}{
 
 Move objects can be created from files with the function:
-  %\tabular{ll}{
-    \code{move} To create a Move object
-  %}
+  \tabular{ll}{
+    \code{move} To create an object containing one animal track
+    \code{moveStack} To create am object containing multiple animals or/and multiple tracks
+    \code{getMovebankData} Creates a Move or a MoveStack object with data from the Movebank database
+  }
 }
 
-\section{II. Calculation of the utilization density}{
+\section{II. Calculation of the utilization distribution}{
 
 With the function below the dynamic Brownian Bridge Movement Model calculates the utilization density from a Move object:
   \tabular{ll}{
@@ -52,16 +54,16 @@ With the function below the dynamic Brownian Bridge Movement Model calculates th
 
 \section{IV. Plotting data}{
 
-The track or the utilization density can be plotted with the following functions:
+The track or the utilization distribution can be plotted with the following functions:
   \tabular{ll}{
-    \code{plot}\tab plots the utilization density with fixed width and height ratio (see DBBMM-class)\cr or the track (see Move-class) \cr
-    \code{image}\tab plots the utilization density fitted to the window \cr
-    \code{contour}\tab adds the contours of utilization densities to a plot\cr 
+    \code{plot}\tab plots the utilization distribution with fixed width and height ratio (see DBBMM-class)\cr or the track (see Move-class) \cr
+    \code{image}\tab plots the utilization distribution fitted to the window \cr
+    \code{contour}\tab adds the contours of utilization distribution to a plot\cr 
   }
 }
 
 \author{
-Bart Kranstauber, Marco Smolla, Kamran Safi \cr \cr
+Bart Kranstauber, Marco Smolla \cr \cr
 Maintainer: Bart Kranstauber \email{kranstauber@orn.mpg.de}, Marco Smolla \email{msmolla@orn.mpg.de}
 }
 

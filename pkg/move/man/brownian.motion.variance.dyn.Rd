@@ -5,7 +5,7 @@
 	Calculate the dynamic brownian motion variance
 }
 \description{
-	A function to calculate the dynamic brownian motion variance for a movement track.
+	A function to calculate the dynamic brownian motion variance for a movement track. It is mostly exported for other people to program against.
 }
 \usage{
 \S4method{brownian.motion.variance.dyn}{.MoveTrackSingle,numeric,numeric,numeric}(object, location.error, window.size, margin)
