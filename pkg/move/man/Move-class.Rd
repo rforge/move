@@ -14,7 +14,7 @@ The Move class
 }
 
 \description{
-The Move object is created with the \code{\link{move}} function. It is the required object class for the \code{\link{brownian.bridge.dyn}} function which calculates the utilization density.
+The Move object is created with the \code{\link{move}} function. 
 }
 
 \section{Slots}{

@@ -5,7 +5,7 @@
 
 \docType{methods}
 
-\title{Plotting a track as points}
+\title{Plotting the points of a track}
 
 \description{Function for plotting a recorded track from a Move object as points}
 

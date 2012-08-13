@@ -33,10 +33,10 @@ load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
 
 ## to add a 50\% and 90\% contour to a plot from DBBMM object dbbmm
 plot(dbbmm)
-contour(dbbmm, levels=c(.5,.9), add=TRUE, plot=TRUE)
+contour(dbbmm, levels=c(.5,.9), add=TRUE)
 
 ##to store the contours as a SpatialLinesDataFrame use
-#cnt  <- contour(dbbmm, levels=c(.4,.9), plot=FALSE)
+#cnt  <- contour(dbbmm, levels=c(.4,.9), add=FALSE)
 
 ##print the contour on a google map +add the track
 #cnt  <- contour(x=dbbmm, y=data, levels=c(.4,.9), google=TRUE)

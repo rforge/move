@@ -79,25 +79,21 @@ setMethod(f="getMovebank",
             getMovebank(entity_type=entity_type, login=d,...)
           })
 #names of the studies
-setGeneric("searchMovebankStudies", function(x,login, sensor=FALSE) standardGeneric("searchMovebankStudies"))
+setGeneric("searchMovebankStudies", function(x,login) standardGeneric("searchMovebankStudies"))
 setMethod(f="searchMovebankStudies", 
           signature=c(x="character",login="MovebankLogin"), 
-          definition = function(x,login, sensor=FALSE){  
+          definition = function(x,login){  
           data <- getMovebank("study", login, sort="name", attributes="id%2Cname%2Ci_am_owner%2Ci_can_see_data%2Cthere_are_data_which_i_cannot_see")
-          if (sensor==FALSE){
             res <- as.data.frame(data$name[grepl(x,data$name,useBytes=TRUE)])
             names(res) <- paste("##### Results for ",x,"#####")
             if(nrow(res)>0){return(res)}else{"No study matches your search criteria"}
-            } else {
-              ### if sensor == TRUE search for studies incldugin this sensor type
-            }
           })
 
 setMethod(f="searchMovebankStudies", 
           signature=c(x="character",login="missing"), 
-          definition = function(x,login, sensor=FALSE){  
+          definition = function(x,login){  
             login=movebankLogin()
-            searchMovebankStudies(x=x,login=login, sensor=sensor)
+            searchMovebankStudies(x=x,login=login)
           })
 
 
@@ -290,15 +286,12 @@ setMethod(f="getMovebankData",
             ##individuals with multiple deployments?
             if (length(paste(new$id, new$individual_id, sep="_"))!=length(unique(new$id)))
               trackDF$individual_id <- paste(trackDF$individual_id, trackDF$deployment_id, trackDF$tag_id, sep="_")
-
             studyDF <- getMovebankStudy(study, login)
             trackDF$study.name <- rep(as.character(studyDF$name),times=nrow(trackDF))
+            trackDF$citation <- rep(as.character(studyDF$citation),times=nrow(trackDF))
             trackDF$timestamp <- as.POSIXct(strptime(as.character(trackDF$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")
             names(trackDF) <- gsub('_', '.', names(trackDF))
             names(trackDF) <- gsub('local.identifier','individual.local.identifier',names(trackDF))
             trackDF$study.name <- gsub(' +', " ", trackDF$study.name)
             .move(df=trackDF, proj=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"))
           })
-
-
-

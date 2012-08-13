@@ -16,8 +16,7 @@ Create a Move object
 }
 
 \description{
-The move method creates a Move object from a Movebank file. Additionally the projection method must be set with the 'proj' argument.\cr
-An alternative to this method is to import one's own data, and specify the location and timestamp columns. 
+The move method creates Move or MoveStack object from Movebank or other csv files. If you use your own data you need to set the projection method with the 'proj' argument and specify in which column of your data the function finds locations and timestamps. 
 }
 
 \usage{
@@ -37,17 +36,18 @@ An alternative to this method is to import one's own data, and specify the locat
 }
 
 \details{
-  There are two ways to import data to make a Move object. Either the path to a file downloaded from \url{www.movebank.org} is set for the x argument, or the file is first imported with the base \code{\link{read.csv}} function and then the columns with the x and y coordinates, and the timestamp, as well as the whole data.frame of the imported data are given to the \code{\link{move}} function. 
+The easiest way to import data is to download the study you are interested in from \url{www.movebank.org}. Set the file path as the x argument of the move function. The function detects whether there are single or multiple individuals in this file and automatically creates either a Move or MoveStack object. 
+Another way is to read in your data using \code{\link{read.csv}}. Then the columns with the x and y coordinates, and the timestamp, as well as the whole data.frame of the imported data are given to the \code{\link{move}} function. Again the function detects whether to return a Move or a MoveStack object
 }
 
 \note{
-The imported data set is checked whether it is in a Movebank format. If this is not the case, you have to use the alternative import for non-Movebank data. \cr
-Because the SpatialPointsDataFrame function that creates the spatial data frame (\code{sdf}) of the \code{Move} object can not process NA location values, all rows with NA locations are omitted. A list of the omitted timestamps is stored in the \code{timesMissedFixes} argument of the \code{Move} object. \cr
+The imported data set is checked whether it is in a Movebank format. If this is not the case, you have to use the alternative import for non-Movebank data (see above). 
+Because the SpatialPointsDataFrame function that creates the spatial data frame (\code{sdf}) of the \code{Move} object can not process NA location values, all rows with NA locations are omitted. A list of the omitted timestamps is stored in the \code{timesMissedFixes} slot of the \code{Move} object. \cr
 If the data include double timestamps check your data for valitdity. You may want to consider a function to delete double timetamps, like: \cr \code{data <- data[which(!duplicated(data$timestamp)), ]}
 }
 
 
-\author{Marco Smolla }
+\author{Marco Smolla}
 
 \examples{
 ## create a move object from a Movebank csv file

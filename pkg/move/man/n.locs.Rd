@@ -5,7 +5,7 @@
 
 \docType{methods}
 
-\title{Extract the number of locations of a track from a Move or MoveStack object}
+\title{Extract the number of locations of a Move or MoveStack object}
 
 \description{The n.locs method returns the number of locations of a track from a Move or MovesStack object.}
 

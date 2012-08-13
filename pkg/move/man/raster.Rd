@@ -2,23 +2,25 @@
 
 \alias{raster}
 \alias{raster,DBBMM-method}
+\alias{raster,DBBMMStack-method}
 
 \docType{methods}
 
 \title{Extract raster from DBBMM}
 
-\description{raster plot of a RasterLayer from a DBBMM object.}
+\description{Extrachts the RasterLayer from a DBBMM and DBBMMStack object.}
 
 \usage{
   \S4method{raster}{DBBMM}(x)
+  \S4method{raster}{DBBMMStack}(x)
 }
 
 \arguments{
-  \item{x}{a DBBMM object}
+  \item{x}{a DBBMM or DBBMMStack object}
 }
 
 \details{
-  The raster function extraxcts the raster object from the DBBMM object.
+  The raster function extraxcts the raster object from a DBBMM or DBBMMStack object.
 }
 
 \value{
@@ -32,4 +34,6 @@ load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
 
 raster(dbbmm) #returns the raster of a DBBMM object
 raster(dbbmm2) # returns the raster of a DBBMMStack object
+
+plot(raster2contour(dbbmm, levels=c(.5,.9)), col=c(5,4)) # plot the raster lines of a DBBMM
 }

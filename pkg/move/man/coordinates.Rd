@@ -7,7 +7,7 @@
 
 \title{Extract the track coordinates from a Move/MoveStack object}
 
-\description{The coordinates method extracts the coordinates of the track in a Move or MoveStack object.}
+\description{The coordinates method extracts the coordinates of a track.}
 
 \usage{
   \S4method{coordinates}{Move}(obj,...)
@@ -19,7 +19,7 @@
 }
 
 \details{
-  \code{obj} The move object includes a special data frame with the track coordinates and a time stamp. They are returned as a matrix.
+ The coordinates method extracts the coordinates of the track in a Move or MoveStack object. They are returned as a matrix.
 }
 
 \examples{

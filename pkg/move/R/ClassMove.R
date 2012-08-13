@@ -14,8 +14,8 @@ setClass(Class = ".MoveGeneral",
       	 validity = function(object){
       			#if(length(object@study)>1)
       		#		stop("Study has length unequal to 0 or 1")
-      			if(length(object@citation)>1)
-      				stop("Citation has length unequal to 0 or 1")
+      			#if(length(object@citation)>1)
+      			#	stop("Citation has length unequal to 0 or 1")
       			if(length(object@license)>1)
       				stop("License has length unequal to 0 or 1")
       			return(TRUE)
@@ -187,11 +187,12 @@ setMethod(f = ".move",
 	      idData<-subset(df, select=names(uniquePerID[uniquePerID]), !duplicated(individual.local.identifier))
 	      if(length(names(idData))!=1)# dont shorten it because we need something
 	        idData<-subset(idData, select=names(idData)!="individual.local.identifier")
+            
+        if(length(idData$citation)!=0) citation <- as.character(idData$citation)[1] else citation <- character()###note I only take here the first element, if we want to include different citations per stack for example, then we need to change the class definition of .MoveGeneral
+        idData <- idData[,names(idData)!="citation"]
         rownames(idData) <- unique(df$individual.local.identifier)
-        
         data <- data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp", colnames(idData))]])
         if (ncol(data)==0) data <- data.frame(data, empty=NA)
-          
         tmp <- SpatialPointsDataFrame(
                 coords = cbind(df$location.long,df$location.lat),
                 data = data, 
@@ -202,6 +203,7 @@ setMethod(f = ".move",
                      timestamps = df$timestamp, 
 	                   sensor = factor(df$sensor),
                      tmp, 
+                     citation = citation,
                      idData = idData,
                      timesMissedFixes = missedFixes)
           } else {
@@ -210,6 +212,7 @@ setMethod(f = ".move",
              	        idData = idData,
 	                    sensor = factor(df$sensor),
            		        timestamps = df$timestamp, 
+                      citation = citation,
            		        trackId = factor(df$individual.local.identifier))}
         return(res)
         })

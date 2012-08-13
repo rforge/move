@@ -24,7 +24,7 @@ The function returns a \code{data.frame} that incldues the \code{animalID, anima
 }
 
 \note{
-See the 'browesMovebank' vignette (\href{http://move.r-forge.r-project.org/moveWEB/Downloads.html}{move website download section}) for more information about security and how to use Movebank from within R. 
+See the 'browesMovebank' vignette (\href{http://move.r-forge.r-project.org/moveWEB/Downloads_files/browseMovebank.pdf}{move website download section}) for more information about security and how to use Movebank from within R. 
 }
 
 \author{Marco Smolla}

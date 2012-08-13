@@ -20,4 +20,4 @@ plot(data)
 
 }
 
-\author{Marco Smolla}
+\author{Scott LaPoint}

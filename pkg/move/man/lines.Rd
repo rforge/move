@@ -26,6 +26,6 @@
 \examples{
 load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
 
-lines(data, col=7) # add a track from a Move object to a plot
-#lines(data2, add=FALSE) # add a track from a MoveStack object to a plot
+lines(data, col=7, add=FALSE) # add a track from a Move object to a plot
+#lines(testtest2, col="blue", add=F) # add a track from a MoveStack object to a plot
 }

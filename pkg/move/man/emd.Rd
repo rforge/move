@@ -17,9 +17,9 @@
 \arguments{
   \item{x}{a DBBMM object}
   \item{y}{a DBBMM object}
-  \item{threshold}{...}
-  \item{integer}{...}
-  \item{greatcircle}{...}
+  \item{threshold}{numeric value that indicates at which distance no costs are calculated anymore}
+  \item{integer}{logical, if TRUE the less precise but faster to calculate integers are used instead of dobules}
+  \item{greatcircle}{logical, if TRUE distances are calculated for a great circle}
 }
 
 \details{
