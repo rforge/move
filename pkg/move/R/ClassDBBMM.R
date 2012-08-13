@@ -136,7 +136,7 @@ setMethod(f = "brownian.bridge.dyn",
           definition = function(object, raster, location.error,  ext, time.step,...) {
     # check for aeqd projection of the coordinates
     if (grepl("aeqd", proj4string(object)) == FALSE) 
-        stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
+        stop("The projection of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
 
     time.lag <- c(time.lag(object, units = "mins"), 0)  #units need to match between here and dBBMMvar calculations
     
