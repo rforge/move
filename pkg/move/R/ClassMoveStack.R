@@ -214,3 +214,8 @@ setMethod("print","MoveStack",
 setMethod("show", "MoveStack", function(object){
   print(object) 
 })
+
+
+setMethod("time.lag", "MoveStack", function(x, ...){
+  return(lapply(split(x), time.lag))
+})
