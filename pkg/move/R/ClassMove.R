@@ -14,8 +14,8 @@ setClass(Class = ".MoveGeneral",
       	 validity = function(object){
       			#if(length(object@study)>1)
       		#		stop("Study has length unequal to 0 or 1")
-      			#if(length(object@citation)>1)
-      			#	stop("Citation has length unequal to 0 or 1")
+      			if(length(object@citation)>1)
+      				stop("Citation has length unequal to 0 or 1")
       			if(length(object@license)>1)
       				stop("License has length unequal to 0 or 1")
       			return(TRUE)
@@ -173,7 +173,7 @@ setMethod(f = ".move",
             #df$sensor<-df$sensor.type 
             #if(is.null(df$sensor.type)) df$sensor <- rep(NA, nrow(df)) else df$sensor<-df$sensor.type
             #df <- df[,names(df)!="sensor.type"]
-            
+
 	    if(length(unique(df$individual.local.identifier))>1 & any(unique(as.character(df$individual.local.identifier))==""))
 	    {# this is not so elegant from me (bart) since this function also gets used by non movebank data
   		    warning("omitting locations that have and empty local identifier (n=",sum(tmp<-as.character(df$individual.local.identifier)==""),") most likely the tag was not deployed") 
@@ -188,8 +188,11 @@ setMethod(f = ".move",
 	      if(length(names(idData))!=1)# dont shorten it because we need something
 	        idData<-subset(idData, select=names(idData)!="individual.local.identifier")
             
-        if(length(idData$citation)!=0) citation <- as.character(idData$citation)[1] else citation <- character()###note I only take here the first element, if we want to include different citations per stack for example, then we need to change the class definition of .MoveGeneral
-        idData <- idData[,names(idData)!="citation"]
+        if(length(unique(idData$citation))==1) citation <- as.character(unique(idData$citation)) else citation <- character()
+        if(length(unique(idData$citation))>1) {
+          warning("There were more than one citation for this study found! Only using the first.")
+          citation <- as.character(unique(idData$citation))[1]}
+        #idData <- idData[,names(idData)!="citation"]
         rownames(idData) <- unique(df$individual.local.identifier)
         data <- data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp", colnames(idData))]])
         if (ncol(data)==0) data <- data.frame(data, empty=NA)
@@ -216,7 +219,6 @@ setMethod(f = ".move",
            		        trackId = factor(df$individual.local.identifier))}
         return(res)
         })
-
 
 
 ###extract number of locations from Move
