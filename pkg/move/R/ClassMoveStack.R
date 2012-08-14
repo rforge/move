@@ -166,11 +166,6 @@ setMethod(f = "split",
           }) ###when splitting a MoveStack there is a warning issued like: In min(x) : no non-missing arguments to min; returning Inf;; this is due to the data that are coerced by the show function for 'min values' and 'max values';; and this is because the original print function ahndels na.rm=T and thus there are no data anymore
 
 
-setGeneric("citation", function(obj) standardGeneric("citation"))
-setMethod("citation", ".MoveGeneral", function(obj){
-  return(obj@citation)
-})
-
 
 ##Print function for a Move and MoveStack object
 setGeneric("print")

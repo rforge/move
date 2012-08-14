@@ -2,6 +2,7 @@
 
 \alias{.UD}
 \alias{.UD-class}
+\alias{.UDStack-class}
 
 \docType{class}
 

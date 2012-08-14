@@ -628,17 +628,35 @@ setGeneric("timestamps", function(this) standardGeneric("timestamps"))
 setMethod("timestamps", ".MoveTrack",
    function(this) {
       this@timestamps
-   }
-)
+   })
+
 setMethod("timestamps", ".MoveTrackSingle",
           function(this) {
             this@timestamps
-          }
-          )
+          })
+
 setGeneric("timestamps<-", function(this, value) standardGeneric("timestamps<-"))
 setReplaceMethod("timestamps", ".MoveTrack",
    function(this, value) {
-      this@timestamps <- value
-      this
-   }
-)
+     if (length(value)!=length(this@timestamps)) 
+       stop(paste("The number of timestamps does not match the original number of timestamps! (",length(value),":",length(this@timestamps),")"))
+    this@timestamps <- value
+    this
+   })
+
+
+
+setGeneric("citation", function(obj) standardGeneric("citation"))
+setMethod("citation", ".MoveGeneral", function(obj){
+                  return(obj@citation)
+                })
+
+setGeneric("citation<-", function(obj, value) standardGeneric("citation<-"))
+setReplaceMethod("citation", ".MoveGeneral", function(obj, value){
+                   if (length(value)!=1) {
+                     value <- as.character(value[1])
+                     warning("There were more than one citation entered. Only using the first element!")
+                   }
+                   obj@citation <- value
+                   obj
+                 })
