@@ -395,15 +395,15 @@ setGeneric("summary")
 setMethod("summary", 
           signature=".MoveTrackSingle", 
           definition=function(object){
+            if (any(grepl('maptools', installed.packages()))) require(maptools) else stop("You need to install the maptools package to proceed") #angle
+            if (any(grepl('circular', installed.packages()))) require(circular) else stop("You need to install the maptools package to proceed") #angle
             if (!grepl("longlat",proj4string(object))) {
               object <- spTransform(object, CRSobj="+proj=longlat")
-              warning("\n The projeciton of the object was changed to \"longlat\" within this function!")}
-            
-            object <- distance(object)
-            object <- time(object)
-            object <- speed(object)
-            object <- angle(object)
-            return(object)
+              warning("\n The projeciton of the object was changed to \"longlat\" within this function!")}            
+            print(distance(object))
+            print(time(object))
+            print(speed(object))
+            print(angle(object))
           })
 
 setGeneric("seglength", function(x){standardGeneric("seglength")})
@@ -422,16 +422,15 @@ setMethod("distance",
           signature=".MoveTrackSingle",
           definition=function(x){ 
             track <- coordinates(x)
-            x@idData$SEDist <- distHaversine(p1 = track[1, ], p2=track[nrow(track), ])  #start to end straight distance in meters
             Dists <- seglength(x)*1000 #vector of all distances in meters
-            x@idData$TravDist <- sum(distHaversine(p1 = track[-nrow(track), ], p2=track[-1, ]))    #travel distance in meters
-            x@idData$MaxDist <- max(Dists) #largest distance
-            x@idData$MinDist <- min(Dists) #shortest distance
-            x@idData$FarthDist <- max(spDistsN1(pts=track,pt=track[1,],longlat=TRUE))*1000 #farthest distance from the start in meters
-            x@idData$AverDist <- mean(Dists)    #mean distance between relocations in meters
-            x@idData$SDDist <- sd(Dists)      #standard deviation of distances between relocations
-            x@data$Dists <- c(Dists, NA)
-            return(x)
+            df <- data.frame(TravDist=sum(distHaversine(p1 = track[-nrow(track), ], p2=track[-1, ])))    #travel distance in meters
+            df$MaxDist <- max(Dists) #largest distance
+            df$MinDist <- min(Dists) #shortest distance
+            df$FarthDist <- max(spDistsN1(pts=track,pt=track[1,],longlat=TRUE))*1000 #farthest distance from the start in meters
+            df$AverDist <- mean(Dists)    #mean distance between relocations in meters
+            df$SDDist <- sd(Dists)      #standard deviation of distances between relocations
+            df$SEDist <- distHaversine(p1 = track[1, ], p2=track[nrow(track), ])  #start to end straight distance in meters
+            return(df)
           })
 
 
@@ -441,45 +440,40 @@ setMethod("time",
           definition=function(x){           
             date <- timestamps(x)
             TimeDiff <- time.lag(x) #time differences in minutes
-            x@data$TimeDiff <- c(TimeDiff, NA)
             #             out <- boxplot(seglength(x)/(as.numeric(TimeDiff+0.0000001)), range=10, plot=F)$out ##marco there must be an easier way than this
             #             if(length(out)!=0) x@idData$out <- out else x@idData$out <- NA
             #             x@idData$outliners <- length(out[out > median(out)])>0   #check whether there are strong outliers in speed
-            x@idData$dupl <- any((TimeDiff)<(1/3600))            #check whether any two relocations are closer than a second to each other
-            x@idData$multseason <-  any(TimeDiff > (24*30))      #check whether any two subsequent relocations are more than one month apart
-            
-            x@idData$Dur <- difftime(date[length(date)], date[1], units="hours") #total duration of the track in hours
-            x@idData$AverDur <- mean(TimeDiff)       #mean time difference between relocations
-            x@idData$SDDur <- sd(TimeDiff)           #standard deviation of time differences between relocations
-            return(x)
+            df <- data.frame(Duration=difftime(date[length(date)], date[1], units="hours")) #total duration of the track in hours
+            df$AverDur <- mean(TimeDiff)       #mean time difference between relocations
+            df$SDDur <- sd(TimeDiff)           #standard deviation of time differences between relocations
+            df$dupl <- any((TimeDiff)<(1/3600))            #check whether any two relocations are closer than a second to each other
+            df$multseason <-  any(TimeDiff > (24*30))      #check whether any two subsequent relocations are more than one month apart
+            return(df)
           })
 
-setGeneric("speed", function(x){standardGeneric("speed")})
+setGeneric("speed", function(x,values=F){standardGeneric("speed")})
 setMethod("speed", 
           signature=".MoveTrackSingle",
-          definition=function(x){
-            Speed <- (seglength(x)*1000)/time.lag(x)
-            x@data$Speed <- c(Speed, NA) #meter per min
-            x@idData$AverSpeed <- mean(Speed, na.rm=TRUE)
-            x@idData$MaxSpeed <- max(Speed)
-            x@idData$VarSpeed <- var(Speed, na.rm=T)
-            return(x)
+          definition=function(x,values){
+            Speed <- (seglength(x)*1000)/time.lag(x) #meter per min
+            df  <- data.frame(AverSpeed=mean(Speed, na.rm=TRUE))
+            df$VarSpeed <- var(Speed, na.rm=T)
+            df$MaxSpeed <- max(Speed)
+            if(values) return(Speed) else return(df)
           })
 
-setGeneric("angle", function(x){standardGeneric("angle")})
+setGeneric("angle", function(x,values=F){standardGeneric("angle")})
 setMethod("angle", 
           signature=".MoveTrackSingle",
-          definition=function(x){
+          definition=function(x,values){
             if (any(grepl('maptools', installed.packages()))) require(maptools) else stop("You need to install the maptools package to proceed") #trackAzimuth
             if (any(grepl('circular', installed.packages()))) require(circular) else stop("You need to install the maptools package to proceed") #var.circular
             if (!grepl("longlat",proj4string(x))) x <- spTransform(x, CRSobj="+proj=longlat")
             tAzimuth <- trackAzimuth(coordinates(x))
-            x@data$tAzimuth <- c(tAzimuth, NA)
-            #AverAzimuth <- mean(tAzimuth,na.rm=T)  #mean direction
-            x@idData$AverAzimuth <- as.numeric(mean.circular(circular(tAzimuth,units="degrees"),na.rm=T) )
-            x@idData$VarAzimuth <- as.numeric(var(circular(tAzimuth,units="degrees"),na.rm=T) )
-            x@idData$SEAzimuth <- bearing(round(coordinates(x)[1,],5), round(coordinates(x)[nrow(coordinates(x)),],5))  #start to end straight Azimuth
-            return(x)
+            df <- data.frame(AverAzimuth=as.numeric(mean.circular(circular(tAzimuth,units="degrees"),na.rm=T)))
+            df$VarAzimuth <- as.numeric(var(circular(tAzimuth,units="degrees"),na.rm=T) )
+            df$SEAzimuth <- bearing(round(coordinates(x)[1,],5), round(coordinates(x)[nrow(coordinates(x)),],5))  #start to end straight Azimuth
+            if(values) return(tAzimuth) else return(df)
           })
 
 

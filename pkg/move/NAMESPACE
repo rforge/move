@@ -1,6 +1,6 @@
 #importFrom(graphics, "plot")
 exportClasses(DBBMM, DBBMMStack, Move, MovebankLogin, MoveStack, .UD, .UDStack,.MoveTrack, .MoveTrackSingle,.MoveGeneral)
-exportMethods(brownian.bridge.dyn, burstTrack, citation, "citation<-",contour, emd, getMovebank, getMovebankAnimals, getMovebankData, getMovebankID, getMovebankSensors, getMovebankSensorsAttributes, getMovebankStudies, getMovebankStudy, googleplot, lines, move, movebankLogin, moveStack,n.locs, outerProbability,  plot, plotBursts, points, raster2contour, seglength, show, split, summary, searchMovebankStudies, time.lag, brownian.motion.variance.dyn, timestamps, "timestamps<-")
+exportMethods(angle, brownian.bridge.dyn, burstTrack, citation, "citation<-",contour, distance, emd, getMovebank, getMovebankAnimals, getMovebankData, getMovebankID, getMovebankSensors, getMovebankSensorsAttributes, getMovebankStudies, getMovebankStudy, googleplot, lines, move, movebankLogin, moveStack,n.locs, outerProbability,  plot, plotBursts, points, raster2contour, seglength, show, speed, split, summary, searchMovebankStudies, time, time.lag, brownian.motion.variance.dyn, timestamps, "timestamps<-")
 useDynLib(move)
 
 
