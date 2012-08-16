@@ -374,15 +374,4 @@ setMethod(f = "raster2contour",
               rasterToContour(x, ...)
           })
 
-### SUMMARY FOR THE DBBMM OBJECT
-setGeneric("summary")
-setMethod(f = "summary", 
-          signature = c(object = "DBBMM"), 
-          definition = function(object) {
-              cat("Raster projection: ", object@crs@projargs, "\n")
-              cat("Raster extent \n")
-              print(object@extent)
-              cat("Raster maximum: ", maxValue(object), "\n")
-              cat("Raster minimum: ", minValue(object), "\n")
-          })
  
