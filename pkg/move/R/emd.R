@@ -6,6 +6,7 @@ if (!isGeneric("emd")) {
 ##DBBMM for emd
 #NOTE: only works with integer=F (otherwise values maybe so small that all are rounded to 0 if not multiplied with a huge number!)
 setMethod(f="emd", 
+          #signature=c(x="RasterLayer", y="RasterLayer", threshold="numeric", integer="logical", greatcircle="logical"),
           signature=c(x=".UD", y=".UD", threshold="numeric", integer="logical", greatcircle="logical"), 
           definition = function(x,y,threshold=NA,integer,greatcircle=FALSE){
             r1 <- as.data.frame(rasterToPoints(x))
