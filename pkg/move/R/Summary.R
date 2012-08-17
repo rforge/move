@@ -34,21 +34,6 @@ setMethod("summary",
             return(lst)
           })
 
-setGeneric("seglength", function(x){standardGeneric("seglength")})
-setMethod("seglength", 
-          signature=".MoveTrack",
-          definition=function(x){            
-            #if (!grepl("longlat",proj4string(x))) x <- spTransform(x, CRSobj="+proj=longlat")
-            track <- coordinates(x)
-            segM <- cbind(as.data.frame(track)[-nrow(track),], as.data.frame(track)[-1,])
-            if (grepl("longlat",proj4string(x))) {
-              Dists <- as.numeric(apply(segM, 1, function(segM) spDistsN1(as.matrix(t(segM[1:2])), as.matrix(t(segM[3:4])), longlat=T)))*1000
-              } else {
-                Dists <- sqrt(rowSums((coordinates(x)[-1,]-coordinates(x)[-n.locs(x),])^2))
-                }
-            return(Dists)
-          })
-
 setGeneric("distance", function(x,values=FALSE){standardGeneric("distance")})
 setMethod("distance", 
           signature=".MoveTrackSingle",

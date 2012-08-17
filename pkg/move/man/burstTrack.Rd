@@ -1,7 +1,7 @@
 \name{burstTrack}
 
 \alias{burstTrack}
-\alias{burstTrack,Move,numeric-method}
+\alias{burstTrack,.MoveTrackSingle,numeric-method}
 
 \docType{methods}
 
@@ -10,7 +10,7 @@
 \description{Bursting a track by specified variable}
 
 \usage{
-  \S4method{burstTrack}{Move,numeric}(object, by, breaks=5, sizeFUN="relTime")
+  \S4method{burstTrack}{.MoveTrackSingle,numeric}(object, by, breaks=5, sizeFUN="relTime")
 }
 
 \arguments{
@@ -31,5 +31,26 @@ The burstTrack function bursts (divides) a track in segments that are specified 
 \author{Marco Smolla}
 
 \examples{
-##here we need a annotated csv file
+test <- move(system.file("extdata","leroy.csv", package="move"))
+test@data$behav <- c(rep(1:91,each=10), rep(92, 9))
+testB1 <- burstTrack(object=test,by=test@data$behav)
+plot(test)
+plotBursts(testB1, pch=19)
+
+testB2 <- burstTrack(object=test,by=test@data$behav, sizeFUN=function(ll, object) lapply(lapply(ll, length), FUN= function(x) (x/nrow(coordinates(object)))))
+plot(test)
+plotBursts(testB2, pch=19)
+
+\dontshow{
+testB3<- burstTrack(object=test,by=test@data$sensor)
+plot(test)
+plotBursts(testB3, pch=19)
+
+t <- data.frame(A=c(1:7),B=c(1,1,1,1,2,3,4))
+tM <- move(x=t$A,y=t$B,time=as.POSIXct(c(1:7), origin='1970-1-1'),proj=CRS('+proj=longlat'), animal=c(rep('anim',7)))
+tM@data$behav <- c(rep(c(1,2),c(2,5)))
+tMB <- burstTrack(tM,by=tM@data$behav)
+plot(t)
+plotBursts(tMB, pch=19) ##marco->wonder why the first point is larger than the second point 
+}
 }

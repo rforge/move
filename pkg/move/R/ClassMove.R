@@ -404,7 +404,7 @@ setGeneric("burstTrack", function(object, by, breaks=5, sizeFUN="relTime"){stand
 
 
 setMethod(f = "burstTrack", 
-          signature = c(object="Move", by="numeric"),
+          signature = c(object=".MoveTrackSingle", by="numeric"),
           definition = function(object, by, breaks, sizeFUN){
             fixes <- nrow(coordinates(object))
             totalDur <- difftime(object@timestamps[fixes], object@timestamps[1], units="mins") #duration in MIN
@@ -426,11 +426,12 @@ setMethod(f = "burstTrack",
             if (class(sizeFUN)!="function") {
               sizeLST <- lapply(lapply(ll, function(y) {diff.POSIXt(c(y@data$timestamps[nrow(y)], time2=y@data$timestamps[1]), units="mins")} ), FUN= function(x) (as.numeric(x)/as.numeric(totalDur))) 
               } else {FUN <- match.fun(sizeFUN)
-                      sizeLST  <- FUN(ll)}
+                      sizeLST  <- FUN(ll, object)}
             sizes  <- as.numeric(cut(unlist(sizeLST), breaks=breaks))/max(as.numeric(cut(unlist(sizeLST), breaks=breaks))) 
             df <- cbind(as.data.frame(do.call(rbind, colLST)),
                         sizes, 
-                        as.data.frame(do.call(rbind, midLST)))
+                        #as.data.frame(do.call(rbind, midLST)))
+                        data.frame(do.call(rbind, midLST)))
             colnames(df) <- c("color", "size","x","y")
             spdf <- SpatialPointsDataFrame(coords=do.call(rbind, midLST),data=df[,1:2], proj4string=CRS("+proj=longlat"))    
             return(spdf)
@@ -461,6 +462,22 @@ setMethod(f = "plotBursts",
 
 
 
+setGeneric("seglength", function(x){standardGeneric("seglength")})
+setMethod("seglength", 
+          signature=".MoveTrack",
+          definition=function(x){            
+            #if (!grepl("longlat",proj4string(x))) x <- spTransform(x, CRSobj="+proj=longlat")
+            track <- coordinates(x)
+            segM <- cbind(as.data.frame(track)[-nrow(track),], as.data.frame(track)[-1,])
+            if (grepl("longlat",proj4string(x))) {
+              Dists <- as.numeric(apply(segM, 1, function(segM) spDistsN1(as.matrix(t(segM[1:2])), as.matrix(t(segM[3:4])), longlat=T)))*1000
+            } else {
+              Dists <- sqrt(rowSums((coordinates(x)[-1,]-coordinates(x)[-n.locs(x),])^2))
+            }
+            return(Dists)
+          })
+
+
 setGeneric("lineMidpoint", function(object){standardGeneric("lineMidpoint")})
 setMethod(f = "lineMidpoint",
           signature="SpatialPointsDataFrame",
@@ -475,14 +492,13 @@ setMethod(f = "lineMidpoint",
               }
               
               if (nrow(track)>2){
-#                  dreck <- cbind(as.data.frame(track)[-nrow(track),], as.data.frame(track)[-1,])
-#                  names(dreck) <- c("X1", "Y1", "X2", "Y2")
-#                  seglength <- function(dreck)
-#                  {
-#                    spDistsN1(as.matrix(t(dreck[1:2])), as.matrix(t(dreck[3:4])), longlat=FALSE)
-#                  }
-                #dists <- apply(dreck, 1, seglength)
-                dists <- seglength(dreck)
+                 dreck <- cbind(as.data.frame(track)[-nrow(track),], as.data.frame(track)[-1,])
+                 names(dreck) <- c("X1", "Y1", "X2", "Y2")
+                 seglength <- function(dreck)
+                 {
+                   spDistsN1(as.matrix(t(dreck[1:2])), as.matrix(t(dreck[3:4])), longlat=FALSE)
+                 }
+                dists <- apply(dreck, 1, seglength)
                 
                 totalDist <- sum(dists)
                 cumsum <- cumsum(dists)
@@ -494,6 +510,7 @@ setMethod(f = "lineMidpoint",
               }
             }
             midSP <- SpatialPoints(coords=t(as.data.frame(x=mid, row.names=NULL)), proj4string=CRS("+proj=longlat"))
+            #return(midSP)
             })
 
 setGeneric("timestamps", function(this) standardGeneric("timestamps"))
