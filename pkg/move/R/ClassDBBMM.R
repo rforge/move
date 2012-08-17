@@ -3,7 +3,7 @@ setClass(Class = ".UDStack", contains = c("RasterStack"),
          prototype = prototype(
            method = as.character()), 
          validity = function(object) {
-        if (!all(apply(values(object), MARGIN = 2, FUN = function(X) isTRUE(all.equal(sum(X), 1))))) 
+        if (!all(apply(values(object), MARGIN = 2, FUN = function(X) isTRUE(all.equal(sum(X), 1, check.attributes=F))))) 
             stop("One or more of the used rasters are not a UD (sum is not equal to 1)")
     })
 
