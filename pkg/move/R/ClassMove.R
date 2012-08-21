@@ -468,7 +468,7 @@ setMethod(f = "lineMidpoint",
           signature="SpatialPointsDataFrame",
           definition=function(object){
             track <- coordinates(object)
-            #should we include a check for projection bart
+            if (!grepl("longlat",proj4string(object))) stop(paste("Coordinates need longlat projection! Projection is:",proj4string(object)))
             if (nrow(track)<2) { ##make the point at the coordinate
               mid <- t(coordinates(track))
             } else {
@@ -476,13 +476,14 @@ setMethod(f = "lineMidpoint",
                 mid <- (coordinates(track)[2,]-coordinates(track)[1,])*.5+coordinates(track)[1,]
               }
               if (nrow(track)>2){
-                 dreck <- cbind(as.data.frame(track)[-nrow(track),], as.data.frame(track)[-1,])
-                 names(dreck) <- c("X1", "Y1", "X2", "Y2")
-                 segmentlength <- function(dreck)
-                 {
-                   spDistsN1(as.matrix(t(dreck[1:2])), as.matrix(t(dreck[3:4])), longlat=FALSE)
-                 }
-                dists <- apply(dreck, 1, segmentlength)
+                # dreck <- cbind(as.data.frame(track)[-nrow(track),], as.data.frame(track)[-1,])
+                # names(dreck) <- c("X1", "Y1", "X2", "Y2")
+                # segmentlength <- function(dreck)
+                # {
+                #   spDistsN1(as.matrix(t(dreck[1:2])), as.matrix(t(dreck[3:4])), longlat=FALSE)
+                # }
+                #dists <- apply(dreck, 1, segmentlength)
+                dists <- seglength(object)
                 
                 totalDist <- sum(dists)
                 cumsum <- cumsum(dists)
