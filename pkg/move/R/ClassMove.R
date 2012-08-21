@@ -462,21 +462,6 @@ setMethod(f = "plotBursts",
 
 
 
-setGeneric("seglength", function(x){standardGeneric("seglength")})
-setMethod("seglength", 
-          signature=".MoveTrack",
-          definition=function(x){            
-            #if (!grepl("longlat",proj4string(x))) x <- spTransform(x, CRSobj="+proj=longlat")
-            track <- coordinates(x)
-            segM <- cbind(as.data.frame(track)[-nrow(track),], as.data.frame(track)[-1,])
-            if (grepl("longlat",proj4string(x))) {
-              Dists <- as.numeric(apply(segM, 1, function(segM) spDistsN1(as.matrix(t(segM[1:2])), as.matrix(t(segM[3:4])), longlat=T)))*1000
-            } else {
-              Dists <- sqrt(rowSums((coordinates(x)[-1,]-coordinates(x)[-n.locs(x),])^2))
-            }
-            return(Dists)
-          })
-
 
 setGeneric("lineMidpoint", function(object){standardGeneric("lineMidpoint")})
 setMethod(f = "lineMidpoint",
@@ -490,15 +475,14 @@ setMethod(f = "lineMidpoint",
               if (nrow(track)==2) { ##make the point at the center of the line
                 mid <- (coordinates(track)[2,]-coordinates(track)[1,])*.5+coordinates(track)[1,]
               }
-              
               if (nrow(track)>2){
                  dreck <- cbind(as.data.frame(track)[-nrow(track),], as.data.frame(track)[-1,])
                  names(dreck) <- c("X1", "Y1", "X2", "Y2")
-                 seglength <- function(dreck)
+                 segmentlength <- function(dreck)
                  {
                    spDistsN1(as.matrix(t(dreck[1:2])), as.matrix(t(dreck[3:4])), longlat=FALSE)
                  }
-                dists <- apply(dreck, 1, seglength)
+                dists <- apply(dreck, 1, segmentlength)
                 
                 totalDist <- sum(dists)
                 cumsum <- cumsum(dists)
