@@ -6,9 +6,9 @@
 
 \docType{methods}
 
-\title{Convert a Move object to adehabitat compatible object}
+\title{Convert a Move or MoveStack object to adehabitat compatible object}
 
-\description{Convert a Move object to adehabitat compatible object}
+\description{Convert a Move or MoveStack object to adehabitat compatible object}
 
 \usage{
   \S4method{move2ade}{.MoveTrackSingle}(x)
@@ -20,7 +20,7 @@
 }
 
 \details{
-   Convert a Move object to adehabitat compatible object
+   Convert a Move or MoveStack object to an object that can be used with the adeHabitat package.
 }
 
 \value{

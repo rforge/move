@@ -162,7 +162,7 @@ setMethod(f = "split",
                              #sensor=rep(x@idData$sensor.type[row.names(x@idData)==ID], sum(x@trackId==ID))
               moveObj <- new(Class="Move", 
                              mt,
-                             idData=x@idData[ID, ],
+                             idData=x@idData[row.names(x@idData)==ID, ,drop=F],
                              dateCreation=x@dateCreation,
                              study=x@study,
                              citation=x@citation,

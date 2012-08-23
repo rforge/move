@@ -29,4 +29,8 @@ setMethod("hrBootstrap",
             return(quantLines)
           })
  
-
+setMethod("hrBootstrap", 
+          signature=c(x=".MoveTrack"),
+          definition=function(x,rep,plot,...){
+            return(lapply(split(x), hrBootstrap, ...))
+          })
