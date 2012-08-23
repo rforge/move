@@ -2,6 +2,7 @@
 
 \alias{move2ade}
 \alias{move2ade,.MoveTrackSingle-method}
+\alias{move2ade,.MoveTrack-method}
 
 \docType{methods}
 
@@ -11,10 +12,11 @@
 
 \usage{
   \S4method{move2ade}{.MoveTrackSingle}(x)
+  \S4method{move2ade}{.MoveTrack}(x)
 }
 
 \arguments{
-  \item{x}{a Move object}
+  \item{x}{a Move or MoveStack object}
 }
 
 \details{
@@ -29,5 +31,6 @@
 
 \examples{
   load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
-  move2ade(data)
+  move2ade(data) #for a Move object
+  move2ade(data2) #for a MoveStack object
 }

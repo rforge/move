@@ -67,6 +67,13 @@ setMethod(f = "moveStack",
             #if (length(unique(as.character(lapply(x,proj4string))))!=1)
             if(!all(unlist(lapply(proj, identical, y=proj[[1]]))))      
               stop("One or more objects in the list have differnt projections. All projections have to be the same")
+            if(any(duplicated(unlist(lapply(lapply(x, slot, "idData"), rownames))))){
+              nnames <- make.names(unlist(lapply(lapply(x, slot, "idData"), rownames)),unique=T)
+              lapply(1:length(nnames), function(z, nnames, x) {rownames(x[[z]]@idData)<-nnames[z]
+                                                               return(x[[z]])}, x=x, nnames=nnames)
+              warning("Detected duplicated names. Renamed the duplicated individuals accordingly.")
+              #check: lapply(split(moveStack(list(data,data))), slot, 'idData')
+            }
             length <- lapply(lapply(x, coordinates), nrow)
             coords <- do.call(rbind, lapply(x, coordinates))
             colnames(coords) <- c("location.long", "location.lat")
