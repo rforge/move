@@ -1,25 +1,36 @@
-setClass(Class = ".MoveTrackSingleBurst", contains = c(".MoveTrackSingle"), representation = representation(burstId = "factor" 
-		), prototype = prototype(burstId = factor()), 
+setClass(Class = ".MoveTrackSingleBurst", contains = c(".MoveTrackSingle"), 
+         representation = representation(
+           burstId = "factor"), 
+         prototype = prototype(
+           burstId = factor()), 
     validity = function(object) {
 	    if(length(object@burstId)!=(length(object@timestamps)-1))
 		    stop("Burst ids need to be one shorter than rest since it is a segment property")
         return(TRUE)
-    })
+      })
+
 setClass(Class = "MoveBurst", contains = c(".MoveTrackSingleBurst", ".MoveGeneral"), 
     validity = function(object) {
         return(TRUE)
     })
-setGeneric("burst", function(x, f, ...) {
-    standardGeneric("burst")
-})
-setMethod("burst", c(x = "Move", f = "factor"), definition = function(x, f, ...) {
-    new("MoveBurst", as(x, ".MoveTrackSingle"), burstId = f, as(x, ".MoveGeneral"), 
-        idData = x@idData)
-    
-})
-setMethod("burst", c(x = "Move", f = "numeric"), definition = function(x, f, ...) {
-    burst(x = x, f = as.factor(f))
-})
+
+setGeneric("burst", function(x, f, ...) {standardGeneric("burst")})
+setMethod("burst", 
+          signature=c(x = "Move", f = "factor"), 
+          definition = function(x, f, ...) {
+          new("MoveBurst", 
+              as(x, ".MoveTrackSingle"), 
+              as(x, ".MoveGeneral"), 
+              burstId = f, 
+              idData = x@idData)
+          })
+
+setMethod("burst", 
+          signature=c(x = "Move", f = "numeric"), 
+          definition = function(x, f, ...) {
+            burst(x = x, f = as.factor(f))
+          })
+
 setMethod("burst", c(x = "Move", f = "character"), definition = function(x, f, ...) {
     if (length(f) == 1) {
         burst(x = x, f = do.call("$", list(x, f))[-n.locs(x)])
