@@ -11,4 +11,4 @@ URL: http://computational-ecology.com/main-move.html
 LazyLoad: yes
 Depends: sp, raster, rgdal, methods, geosphere, R (>= 2.14.0)
 Suggests: RgoogleMaps, RCurl
-Collate: ClassMove.R ClassMoveStack.R ClassDBMvar.R ClassDBBMM.R emd.R Summary.R hrBootstrap.R WebImport.R
+Collate: ClassMove.R ClassMoveStack.R ClassDBMvar.R ClassDBBMM.R emd.R Summary.R hrBootstrap.R WebImport.R burst.R

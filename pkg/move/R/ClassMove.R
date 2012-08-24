@@ -54,6 +54,8 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no misse
 				      stop("The dataset includes unsorted time stamps")
 		  	    if (any(dups<-duplicated(data.frame(object@timestamps, object@sensor))))
 				      stop("The dataset includes double timestamps (first one:",object@timestamps[dups][1],")")
+      			if(nrow(object@idData)>1)
+              stop("There are more than 1 row stored in the idData")
             #if (length(object@burstID)!=nrow(coordinates(object)))
               #stop("The length of burst IDs is not equal to the number of locations")
 			      return(TRUE)
@@ -66,8 +68,6 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
       	 prototype = prototype(
            ),
       	 validity = function(object){
-      			if(nrow(object@idData)>1)
-              stop("There are more than 1 row stored in the idData")
       			return(TRUE)
       	 }
       	 )
