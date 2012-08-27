@@ -11,7 +11,7 @@ setMethod(f = "move",
               warning("Exact duplicate records removed (n=",sum(dups),") (movebank allows them but the move package cant deal with them)")
               df<-df[!dups,]
             }	       
-            df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") 
+            df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") # need to make character out of it to ensure milli seconds are considerd
             if(any(tapply(df$sensor.type, df$individual.local.identifier, length)!=1)){
               df<-df[with(df, order(individual.local.identifier, timestamp)), ]
               
