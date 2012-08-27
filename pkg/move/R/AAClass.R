@@ -52,7 +52,7 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no misse
          validity = function(object){
            if(any(object@timestamps!=sort(object@timestamps)))
              stop("The dataset includes unsorted time stamps")
-           if (any(dups<-duplicated(data.frame(object@timestamps, object@sensor))))
+           if (any(dups<-duplicated(data.frame(format(object@timestamps,"%Y %m %d %H %M %OS3"), object@sensor))))
              stop("The dataset includes double timestamps (first one:",object@timestamps[dups][1],")")
            if(nrow(object@idData)>1)
              stop("There are more than 1 row stored in the idData")
