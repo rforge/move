@@ -1,7 +1,7 @@
 Package: move
 Type: Package
 Title: Visualizing and analyzing animal track data
-Version: 0.5.5
+Version: 0.5.6
 Date: 2012-05-07
 Author:   Bart Kranstauber <bart.kranstauber@uni-konstanz.de>, Marco Smolla <msmolla@orn.mpg.de>
 Maintainer: Marco Smolla <msmolla@orn.mpg.de>
@@ -11,4 +11,4 @@ URL: http://computational-ecology.com/main-move.html
 LazyLoad: yes
 Depends: sp, raster, rgdal, methods, geosphere, R (>= 2.14.0)
 Suggests: RgoogleMaps, RCurl
-Collate: ClassMove.R ClassMoveStack.R ClassDBMvar.R ClassDBBMM.R emd.R Summary.R hrBootstrap.R WebImport.R burst.R
+Collate: AAClassMove.R AAClassMoveStack.R AAClassDBMvar.R AAClassDBBMM.R timelag.R burst.R citation.R emd.R googleplot.R hrBootstrap.R lineMidpoint.R lines.R move.R nlocs.R plot.R plotBursts.R points.R print.R show.R spTransform.R subset.R Summary.R timestamps.R WebImport.R moveStack.R split.R brownianbridgedyn.R extractDBMvar.R extcalc.R outerProbability.R contour.R raster2contour.R brownianmotionvariancedyn.R
