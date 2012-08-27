@@ -9,5 +9,5 @@ Description: move is a package that contains functions to access movement data s
 License: GPL (>=3)
 URL: http://computational-ecology.com/main-move.html
 LazyLoad: yes
-Depends: sp, raster, rgdal, methods, geosphere, R (>= 2.14.0)
+Depends: sp, raster, rgdal, methods, geosphere, ggmap, R (>= 2.14.0)
 Suggests: RgoogleMaps, RCurl
