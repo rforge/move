@@ -2,6 +2,7 @@
 
 \alias{[,MoveStack,ANY,ANY-method}
 \alias{[,.MoveTrack,ANY,ANY-method}
+\alias{[,.MoveTrackSingleBurst,ANY,ANY-method}
 \alias{[,.MoveTrackStack,ANY,ANY-method}
 \alias{[,dBMvariance,ANY,ANY-method}
 \alias{[,dBMvarianceStack,ANY,ANY-method}

@@ -394,74 +394,46 @@ setMethod("show", "Move", function(object){
 
 
 #			#Find below the functions to plot a "centroid" point on the line of a certain line segment
-setGeneric("burstTrack", function(object, by, breaks=5, sizeFUN="relTime"){standardGeneric("burstTrack")}) 
-# setMethod(f = "burstTrack", 
-#           signature = c(object="MoveStack", by="integer"),
-#           definition = function(object, by, breaks, sizeFUN){
-#             moveUnstacked <- split(x=object) #split MoveStack into individual Move objects
-#             spdfLST <- as.list(lapply(moveUnstacked, FUN=burstTrack, by=by, breaks=breaks, sizeFUN=sizeFUN))                             
-#           })##function was not tested yet
-
-
-setMethod(f = "burstTrack", 
-          signature = c(object=".MoveTrackSingle", by="numeric"),
-          definition = function(object, by, breaks, sizeFUN){
-            fixes <- nrow(coordinates(object))
-            totalDur <- difftime(object@timestamps[fixes], object@timestamps[1], units="mins") #duration in MIN
-            if (length(by)!=fixes)
-              stop("The length of burst IDs is not equal to the number of locations")
-              starts <- c(1,which(diff(x=as.numeric(by))!=0))
-              stops  <- c(which(diff(x=as.numeric(by))!=0),length(as.numeric(by)))
-            l  <- apply(data.frame(Starts=starts, Stops=stops), 1, function(x) data.frame(coordinates(object),object@timestamps)[x[1]:x[2],])
-            ll <- lapply(l, function(x) { SpatialPointsDataFrame(coords=data.frame(x[1:2]), 
-                                                                 proj4string=CRS("+proj=longlat"), 
-                                                                 data=data.frame(timestamps=x$object.timestamps))})
-            midLST <- lapply(X=ll, FUN=lineMidpoint)
-            
-            col <- rgb(runif(unique(by)),runif(unique(by)),runif(unique(by))) #make color changeable
-            coll <- as.list(split(data.frame(by),cumsum(c(0,abs(diff(as.numeric(by)))))))
-            colLST <- lapply(lapply(coll, unique), function(x) return(col[as.numeric(x)]))
-            #sizeLST <- lapply(lapply(ll, length), FUN= function(x) (x/nrow(coordinates(object))))
-            
-            if (class(sizeFUN)!="function") {
-              sizeLST <- lapply(lapply(ll, function(y) {diff.POSIXt(c(y@data$timestamps[nrow(y)], time2=y@data$timestamps[1]), units="mins")} ), FUN= function(x) (as.numeric(x)/as.numeric(totalDur))) 
-              } else {FUN <- match.fun(sizeFUN)
-                      sizeLST  <- FUN(ll, object)}
-            sizes  <- as.numeric(cut(unlist(sizeLST), breaks=breaks))/max(as.numeric(cut(unlist(sizeLST), breaks=breaks))) 
-            df <- cbind(as.data.frame(do.call(rbind, colLST)),
-                        sizes, 
-                        #as.data.frame(do.call(rbind, midLST)))
-                        data.frame(do.call(rbind, midLST)))
-            colnames(df) <- c("color", "size","x","y")
-            spdf <- SpatialPointsDataFrame(coords=do.call(rbind, midLST),data=df[,1:2], proj4string=CRS("+proj=longlat"))    
-            return(spdf)
-          })
-
 #			##add classfication for color and size marco
-setGeneric("plotBursts", function(object, add=TRUE, ...){standardGeneric("plotBursts")})
+setGeneric("plotBursts", function(object, add=TRUE, sizeFUN=function(x){as.numeric(diff(range(timestamps(x))), units='mins')}, col=NA, breaks=3, ...){standardGeneric("plotBursts")})
 setMethod(f = "plotBursts", 
           signature = c(object="list"),
-          definition = function(object, add, ...){
-            lapply(object, FUN=plotBursts, add=add, ...)
+          definition = function(object, add, sizeFUN, ...){
+            lapply(object, FUN=plotBursts, add=add, sizeFUN=sizeFUN, ...)
           })
 
 setMethod(f = "plotBursts", 
-          signature = c(object="SpatialPointsDataFrame"),
-          definition = function(object, add, ...){
-            if (add==FALSE) 
+          signature = c(object=".MoveTrackSingleBurst"),
+          definition = function(object, add, sizeFUN, col, breaks, ...){
+            totalDur <- difftime(object@timestamps[n.locs(object)], object@timestamps[1], units="mins") #duration in MIN
+            splitobject <- split(object)
+            midLST <- lapply(X=splitobject, FUN=lineMidpoint)
+          
+            if (length(col)==length(levels(object@burstId))){
+              col <- col[as.numeric(names(midLST))]###marco: use levels of the factor instead of the names, because this is independent of being 
+              } else {
+              if(length(levels(object@burstId))>8) warning("There are more burst IDs than colors.")
+                col <- as.numeric(names(midLST))}
+            
+#            if (class(sizeFUN)!="function") 
+            #sizesdf <- as.numeric(lapply(lapply(lapply(split(object), timestamps), range), diff))/as.numeric(totalDur)
+            sizesdf<-unlist(lapply(splitobject, sizeFUN))
+              #} else {FUN <- match.fun(sizeFUN)
+            #        sizeLST  <- FUN(ll, object)} #think about what to enter for FUN
+            #sizes  <- as.numeric(cut(unlist(sizeLST), breaks=breaks))/max(as.numeric(cut(unlist(sizeLST), breaks=breaks))) 
+            sizes  <- as.numeric(cut(sizesdf, breaks=breaks))/max(as.numeric(cut(sizesdf, breaks=breaks)))*2
+            df <- cbind(col, sizes, do.call('rbind', lapply(midLST, data.frame)))
+            colnames(df) <- c("color", "size","x","y")
+            spdf <- SpatialPointsDataFrame(coords=do.call(rbind, midLST), data=df[,1:2], proj4string=CRS("+proj=longlat"))           
+          
+            if (add) {
+              points(x=df[1,3], y=df[1,4], cex=as.numeric(df[1,2]), col=df[1,1],...)
+              apply(df[-1,], MARGIN=1, function(x,...){points(x=x[3], y=x[4], cex=as.numeric(x['size']), col=x['color'],...)}, ...)
+            } else {
               plot(coordinates(object), type="l", ...)
-            #if(!add)
-              df <- data.frame(color=object@data$color, size=object@data$size, coordinates=coordinates(object))
               apply(df, MARGIN=1, function(x,...){points(x=x[3], y=x[4], cex=as.numeric(x['size']), col=x['color'],...)}, ...)
+            }
           })
-#             } else {}
-#             if(plot) {return(invisible(spdf))}
-#             else {return(spdf)}
-#spdf <- plotBursts(trackb, data$beh_code, breaks=10, pch=19)
-#head(plotBursts(trackb, by=trackb@data$beh_code, plot=F))
-
-
-
 
 setGeneric("lineMidpoint", function(object){standardGeneric("lineMidpoint")})
 setMethod(f = "lineMidpoint",
@@ -476,13 +448,6 @@ setMethod(f = "lineMidpoint",
                 mid <- (coordinates(track)[2,]-coordinates(track)[1,])*.5+coordinates(track)[1,]
               }
               if (nrow(track)>2){
-                # dreck <- cbind(as.data.frame(track)[-nrow(track),], as.data.frame(track)[-1,])
-                # names(dreck) <- c("X1", "Y1", "X2", "Y2")
-                # segmentlength <- function(dreck)
-                # {
-                #   spDistsN1(as.matrix(t(dreck[1:2])), as.matrix(t(dreck[3:4])), longlat=FALSE)
-                # }
-                #dists <- apply(dreck, 1, segmentlength)
                 dists <- seglength(object)
                 
                 totalDist <- sum(dists)

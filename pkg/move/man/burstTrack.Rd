@@ -31,6 +31,7 @@ The burstTrack function bursts (divides) a track in segments that are specified 
 \author{Marco Smolla}
 
 \examples{
+\dontrun{
 test <- move(system.file("extdata","leroy.csv", package="move"))
 test@data$behav <- c(rep(1:91,each=10), rep(92, 9))
 testB1 <- burstTrack(object=test,by=test@data$behav)
@@ -41,7 +42,6 @@ testB2 <- burstTrack(object=test,by=test@data$behav, sizeFUN=function(ll, object
 plot(test)
 plotBursts(testB2, pch=19)
 
-\dontshow{
 testB3<- burstTrack(object=test,by=test@data$sensor)
 plot(test)
 plotBursts(testB3, pch=19)

@@ -4,16 +4,16 @@
 \newcommand{\class}[1]{{`\code{#1}'}}
 \SweaveOpts{engine = R, strip.white = true, keep.source = true, eps = false}
 
-\author{ Marco Smolla \And Bart Kranstauber}
+\author{Marco Smolla \And Bart Kranstauber}
 \Plainauthor{Marco Smolla, Bart Kranstauber}
 
-\title{Using the move package}
+\title{A short introduction on how to use the 'move' package}
 \Plaintitle{Using the move package}
 
 \Keywords{animal track, time series, utilization density, gps}
 
 \Abstract{
-  This vignette gives examples of how to use the \pkg{move} package. It explains how to load data in the \pkg{move} functions using \fct{read.csv} and \fct{move}, transform data into a different projection method with \fct{spTransform}, and calculate the utilization density using \fct{brownian.bridge.dyn}. Further functions to extract information from the Move object and plot the track and utilization density will be explained as well. \\
+  The move package provides a series of functions to import, visualize and anylize animal movement related data in an object oriented way. The introduced classes allow to store data that are related to an individual in one object, such as coordinates and timestamps, name, species, age, sex, study site and so on. This makes working with multiple animals, or multiple seasons much easier. Furthermore, the package includes functions to calculate home ranges (Minimum Convex Polygon Bootstrap) and utilization distributions, UDs. The latter one uses the Dynamic Browninan Bridge Movement Model to calculate animal UDs.\\
 }
 
 \Address{
