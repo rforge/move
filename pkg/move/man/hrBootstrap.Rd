@@ -41,7 +41,7 @@
   
 \examples{
   m <- move(x=rnorm(70), y=rnorm(70), time=as.POSIXct(1:70, origin="1970-1-1"), proj=CRS("+proj=aeqd"))    
-  hrBootstrap(m,rep=250, unout="m2", plot=TRUE) #for a Move object
+  hrBootstrap(m,rep=25, unout="m2", plot=TRUE) #for a Move object
   hrBootstrap(moveStack(list(m,m)),rep=25, unout="m2", plot=FALSE) #for a MoveStack object
 }
 

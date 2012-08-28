@@ -38,8 +38,8 @@ The window size used for the variance calculation.
 \code{\link{brownian.bridge.dyn}}
 }
 \examples{
-data <- move(system.file("extdata","leroy.csv",package="move"))
+data <- move(system.file("extdata","leroy.csv",package="move"))[1:400,]
 data2 <- spTransform(data, CRSobj="+proj=aeqd", center=TRUE)
-dBMvar <- brownian.motion.variance.dyn(object=data2, location.error=rep(23.5,n.locs(data2)), margin=11, window.size=31)
+dBMvar <- brownian.motion.variance.dyn(object=data2, location.error=rep(23.5,n.locs(data2)), margin=13, window.size=31)
 dBMvar
 }
