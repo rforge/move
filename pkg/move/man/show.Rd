@@ -3,6 +3,14 @@
 \alias{show}
 \alias{show,Move-method}
 \alias{show,MoveStack-method}
+\alias{show,MoveBurst-method}
+\alias{show,dBMvariance-method}
+\alias{show,dBMvarianceTmp-method}
+\alias{show,.MoveTrack-method}
+\alias{show,.MoveGeneral-method}
+\alias{show,.MoveTrackStack-method}
+\alias{show,.MoveTrackSingle-method}
+\alias{show,.MoveTrackSingleBurst-method}
 
 \docType{methods}
 
