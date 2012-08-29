@@ -95,7 +95,7 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack"),
 
 setAs( ".MoveTrackStack","data.frame", function(from){ return(data.frame(as(as(from,".MoveTrack"),"data.frame"), trackId=from@trackId))})
 
-setClass(Class = "MoveStack", contains = c(".MoveGeneral",".MoveTrackStack"),
+setClass(Class = "MoveStack", contains = c(".MoveTrackStack",".MoveGeneral"),
          representation = representation(),
          prototype = prototype(),
          validity = function(object){
@@ -190,6 +190,22 @@ setClass(Class = "DBBMM", contains = c(".UD"),
            DBMvar = "dBMvariance", 
            ext = "numeric"), 
          prototype = prototype(ext = as.numeric()))
+
+setClass(Class = ".MoveTrackSingleBurst", contains = c(".MoveTrackSingle"), 
+         representation = representation(
+           burstId = "factor"), 
+         prototype = prototype(
+           burstId = factor()), 
+    validity = function(object) {
+	    if(length(object@burstId)!=(length(object@timestamps)-1))
+		    stop("Burst ids need to be one shorter than rest since it is a segment property")
+        return(TRUE)
+      })
+
+setClass(Class = "MoveBurst", contains = c(".MoveTrackSingleBurst", ".MoveGeneral"), 
+    validity = function(object) {
+        return(TRUE)
+    })
 
 # See if this validity check needs to go into this class why was it commented ?
 # validity = function(object){ if(is.na(outerProbability(object))){ stop('The

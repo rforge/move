@@ -1,18 +1,3 @@
-setClass(Class = ".MoveTrackSingleBurst", contains = c(".MoveTrackSingle"), 
-         representation = representation(
-           burstId = "factor"), 
-         prototype = prototype(
-           burstId = factor()), 
-    validity = function(object) {
-	    if(length(object@burstId)!=(length(object@timestamps)-1))
-		    stop("Burst ids need to be one shorter than rest since it is a segment property")
-        return(TRUE)
-      })
-
-setClass(Class = "MoveBurst", contains = c(".MoveTrackSingleBurst", ".MoveGeneral"), 
-    validity = function(object) {
-        return(TRUE)
-    })
 
 setGeneric("burst", function(x, f, ...) {standardGeneric("burst")})
 setMethod("burst", 

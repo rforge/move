@@ -55,7 +55,6 @@ setMethod("print",".MoveTrackSingle",
 # )
 
 ##Print function for a Move and MoveStack object
-setGeneric("print")
 setMethod("print",".MoveTrackStack",function(x){
   #callNextMethod(x)
   cat("Class        :", class(x),"\n")
