@@ -30,8 +30,8 @@
 \author{Marco Smolla}
 
 \examples{
-isaac <- move(system.file("extdata","leroy.csv", package="move"))
-isaac2 <- move(system.file("extdata","leroy.csv", package="move"))
+isaac <- move(system.file("extdata","leroy.csv", package="move"))[1:300,]
+isaac2 <- move(system.file("extdata","leroy.csv", package="move"))[400:600,]
 moveStack <- moveStack(list(isaac, isaac2))
 
 split(moveStack) #splitting a MoveStack
