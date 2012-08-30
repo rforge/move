@@ -16,8 +16,8 @@ setMethod("summary",
 setMethod("summary", 
           signature=".MoveTrackSingle", 
           definition=function(object){
-            if (any(grepl('maptools', installed.packages()))) require(maptools) else stop("You need to install the maptools package to proceed") #angle
-            if (any(grepl('circular', installed.packages()))) require(circular) else stop("You need to install the maptools package to proceed") #angle
+            if (!require(circular)) 
+              stop("You need to install the circular package to proceed") #angle
             if (!grepl("longlat",proj4string(object))) {
               object <- spTransform(object, CRSobj="+proj=longlat")
               warning("\n The projeciton of the object was changed to \"longlat\" within this function!")}            
@@ -137,10 +137,14 @@ setMethod("angle",
           signature=".MoveTrackSingle",
           definition=function(x,values){
             if(nrow(coordinates(x))>=3){
-              if (any(grepl('maptools', installed.packages()))) require(maptools) else stop("You need to install the maptools package to proceed") #trackAzimuth
-              if (any(grepl('circular', installed.packages()))) require(circular) else stop("You need to install the maptools package to proceed") #var.circular
+              if(!require(geosphere))
+                stop("You need to install the geosphere package to proceed")
+              #if (any(grepl('maptools', installed.packages()))) require(maptools) else stop("You need to install the maptools package to proceed") #trackAzimuth
+              if (!require(circular)) 
+                stop("You need to install the circular package to proceed") #var.circular
               if (!grepl("longlat",proj4string(x))) x <- spTransform(x, CRSobj="+proj=longlat")
-              tAzimuth <- trackAzimuth(coordinates(x))
+              #tAzimuth <- trackAzimuth(coordinates(x)) #works with maptools
+              tAzimuth <- bearing(coordinates(x)[-n.locs(x), ], coordinates(x)[-1, ])
               df <- data.frame(AverAzimuth=as.numeric(mean.circular(circular(tAzimuth,units="degrees"),na.rm=T)))
               df$VarAzimuth <- as.numeric(var(circular(tAzimuth,units="degrees"),na.rm=T) )
               df$SEAzimuth <- bearing(round(coordinates(x)[1,],5), round(coordinates(x)[nrow(coordinates(x)),],5))  #start to end straight Azimuth
