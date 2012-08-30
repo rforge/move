@@ -10,4 +10,4 @@ License: GPL (>=3)
 URL: http://computational-ecology.com/main-move.html
 LazyLoad: yes
 Depends: sp, raster, rgdal, methods, geosphere, R (>= 2.14.0)
-Suggests: RCurl, RUnit, maptools
+Suggests: RCurl, RUnit, maptools, adehabitatHR

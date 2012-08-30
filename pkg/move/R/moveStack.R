@@ -11,7 +11,8 @@ setMethod(f = "moveStack",
             
             proj <- lapply(lapply(x, proj4string), strsplit, split=" ")
             #if (length(unique(as.character(lapply(x,proj4string))))!=1)
-            if(!all(unlist(lapply(proj, identical, y=proj[[1]]))))      
+            #if(!all(unlist(lapply(proj, identical, y=proj[[1]]))))      
+            if(!all(unlist(lapply(lapply(lapply(proj, unlist), grepl, pattern=unlist(proj[[1]])[2]), any))))
               stop("One or more objects in the list have differnt projections. All projections have to be the same")
             if(any(duplicated(unlist(lapply(lapply(x, slot, "idData"), rownames))))){
               nnames <- make.names(unlist(lapply(lapply(x, slot, "idData"), rownames)),unique=T)
