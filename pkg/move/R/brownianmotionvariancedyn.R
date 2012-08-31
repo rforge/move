@@ -111,7 +111,6 @@ setMethod(f = "brownian.motion.variance.dyn",
             })
             if (is.null(breaks.found)) 
               breaks.found <- numeric()
-            
             DBMvar <- new("dBMvariance", 
                           #  as(object, ".MoveTrackSingle"),
                           object,

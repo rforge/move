@@ -40,6 +40,8 @@ setClass(Class = ".MoveTrack",contains=c("SpatialPointsDataFrame"),
          }
          )
 
+setAs(".MoveTrack","data.frame", function(from){return(data.frame(data.frame(from), sensor=from@sensor, timestamps=from@timestamps))})
+
 
 setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no missed fixes stored for a MoveStack?
          representation = representation (
@@ -62,6 +64,7 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no misse
          }
          )
 
+
 setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
          representation = representation (
            ),
@@ -71,10 +74,6 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
            return(TRUE)
          }
          )
-
-
-setAs(".MoveTrack","data.frame", function(from){return(data.frame(data.frame(from), sensor=from@sensor, timestamps=from@timestamps))})
-
 
 
 setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack"),
@@ -89,11 +88,14 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack"),
              stop("The data set includes double timestamps per ID (first one:", object@trackId[tmp][1]," ",object@sensor[tmp][1]," ",object@timestamps[tmp][1], ")")
            if(any(unlist(lapply(tapply(object@timestamps,object@trackId, order),diff))!=1))
              stop("Not ordered timestamps per individual")
+           if(any(levels(object@trackId)!=raster:::.goodNames(levels(object@trackId))))
+             stop('no good names')
            return(TRUE)
          }
          )
 
 setAs( ".MoveTrackStack","data.frame", function(from){ return(data.frame(as(as(from,".MoveTrack"),"data.frame"), trackId=from@trackId))})
+
 
 setClass(Class = "MoveStack", contains = c(".MoveTrackStack",".MoveGeneral"),
          representation = representation(),
@@ -138,6 +140,7 @@ setClass(Class = "dBMvarianceTmp",
            return(TRUE)
          })
 
+
 setClass(Class = "dBMvariance", contains = c(".MoveTrackSingle", "dBMvarianceTmp"), 
          validity = function(object) {
            if (length(object@means) != nrow(object@coords)) 
@@ -163,6 +166,7 @@ setClass(Class = ".UDStack", contains = c("RasterStack"),
              stop("One or more of the used rasters are not a UD (sum is not equal to 1)")
          })
 
+
 setClass(Class = ".UD", contains = c("RasterLayer"), 
          representation = representation(method = "character"), 
          prototype = prototype(
@@ -172,6 +176,7 @@ setClass(Class = ".UD", contains = c("RasterLayer"),
              stop("The used raster is not a UD (sum unequal to 1), sum is: ", sprintf("%.15f",tmp))
            return(TRUE)
          })
+
 
 ### Defining the class of the Brownian Bridge Movement Model object
 setClass(Class = "DBBMMStack", contains = c(".UDStack"), 
@@ -185,27 +190,34 @@ setClass(Class = "DBBMMStack", contains = c(".UDStack"),
              stop("The layer names of the raster objects do not match the trackIDs of the DBMvarStack.")
          })
 
+
 setClass(Class = "DBBMM", contains = c(".UD"), 
          representation = representation(
            DBMvar = "dBMvariance", 
            ext = "numeric"), 
-         prototype = prototype(ext = as.numeric()))
+         prototype = prototype(
+           ext = as.numeric())
+         )
+
 
 setClass(Class = ".MoveTrackSingleBurst", contains = c(".MoveTrackSingle"), 
          representation = representation(
            burstId = "factor"), 
          prototype = prototype(
            burstId = factor()), 
-    validity = function(object) {
-	    if(length(object@burstId)!=(length(object@timestamps)-1))
-		    stop("Burst ids need to be one shorter than rest since it is a segment property")
-        return(TRUE)
-      })
+         validity = function(object) {
+         if(any(levels(object@burstId)!=raster:::.goodNames(levels(object@burstId))))
+           stop('no good names')
+     	    if(length(object@burstId)!=(length(object@timestamps)-1))
+     		    stop("Burst ids need to be one shorter than rest since it is a segment property")
+             return(TRUE)
+          })
+
 
 setClass(Class = "MoveBurst", contains = c(".MoveTrackSingleBurst", ".MoveGeneral"), 
-    validity = function(object) {
-        return(TRUE)
-    })
+        validity = function(object) {
+            return(TRUE)
+        })
 
 # See if this validity check needs to go into this class why was it commented ?
 # validity = function(object){ if(is.na(outerProbability(object))){ stop('The

@@ -73,18 +73,22 @@ setGeneric(".move", function(df, proj) standardGeneric(".move"))
 setMethod(f = ".move", 
           signature = c(df="data.frame", proj="CRS"), 
           definition = function(df, proj){
+            
             #            df <- x[['df']]
             #            proj <- x[[2]]
             if(any(is.na(df$location.long))==TRUE) warning("There were NA locations detected and omitted.")
             missedFixes<- df[(is.na(df$location.long)|is.na(df$location.lat)), ]$timestamp
             df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
+            #df$individual.local.identifier <- raster:::.goodNames(unique(df$individual.local.identifier)) 
+            
+            levels(df$individual.local.identifier)<-raster:::.goodNames(levels(factor(df$individual.local.identifier))) #changing names to 'goodNames' skipping spaces
             #df$sensor<-df$sensor.type 
             #if(is.null(df$sensor.type)) df$sensor <- rep(NA, nrow(df)) else df$sensor<-df$sensor.type
             #df <- df[,names(df)!="sensor.type"]
             
             if(length(unique(df$individual.local.identifier))>1 & any(unique(as.character(df$individual.local.identifier))==""))
             {# this is not so elegant from me (bart) since this function also gets used by non movebank data
-              warning("omitting locations that have and empty local identifier (n=",sum(tmp<-as.character(df$individual.local.identifier)==""),") most likely the tag was not deployed") 
+              warning("omitting locations that have an empty local identifier (n=",sum(tmp<-as.character(df$individual.local.identifier)==""),") most likely the tag was not deployed") 
               df<-df[!tmp,]
               df$individual.local.identifier<-factor(df$individual.local.identifier)
             }
@@ -96,10 +100,11 @@ setMethod(f = ".move",
             if(length(names(idData))!=1)# dont shorten it because we need something
               idData<-subset(idData, select=names(idData)!="individual.local.identifier")
             
-            if(length(unique(idData$citation))==1) citation <- as.character(unique(idData$citation)) else citation <- character()
             if(length(unique(idData$citation))>1) {
               warning("There were more than one citation for this study found! Only using the first.")
-              citation <- as.character(unique(idData$citation))[1]}
+              citations <- as.character(unique(idData$citation))[1]}
+            if(length(unique(idData$citation))==1) {citations <- as.character(unique(idData$citation))
+                                                    } else {citations <- character()}
             #idData <- idData[,names(idData)!="citation"]
             rownames(idData) <- unique(df$individual.local.identifier)
             data <- data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp", colnames(idData))]])
@@ -114,7 +119,7 @@ setMethod(f = ".move",
                          timestamps = df$timestamp, 
                          sensor = factor(df$sensor),
                          tmp, 
-                         citation = citation,
+                         citation = citations,
                          idData = idData,
                          timesMissedFixes = missedFixes)
             } else {
@@ -123,7 +128,7 @@ setMethod(f = ".move",
                          idData = idData,
                          sensor = factor(df$sensor),
                          timestamps = df$timestamp, 
-                         citation = citation,
+                         citation = citations,
                          trackId = factor(df$individual.local.identifier))}
             return(res)
           })

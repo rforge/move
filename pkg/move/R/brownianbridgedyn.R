@@ -166,12 +166,16 @@ setMethod(f = "brownian.bridge.dyn",
             rasterStack <- stack(lapply(dbbmmLST, as, "RasterLayer"))
             DBMvarLST <- lapply(dbbmmLST, slot, "DBMvar")
             objectAnimalsOmitted <- object[as.character(object@trackId) %in% names(DBMvarLST)]
-            dBMvarianceStack <- new("dBMvarianceStack", objectAnimalsOmitted, in.windows = unlist(lapply(DBMvarLST, 
-                                                                                                         slot, "in.windows")), interest = unlist(lapply(DBMvarLST, slot, "interest")), 
-                                    means = unlist(lapply(DBMvarLST, slot, "means")), margin = unique(unlist(lapply(DBMvarLST, 
-                                                                                                                    slot, "margin"))), window.size = unique(unlist(lapply(DBMvarLST, slot, 
-                                                                                                                                                                          "window.size"))))
+            dBMvarianceStack <- new("dBMvarianceStack", 
+                                    objectAnimalsOmitted, 
+                                    in.windows = unlist(lapply(DBMvarLST, slot, "in.windows")), 
+                                    interest = unlist(lapply(DBMvarLST, slot, "interest")), 
+                                    means = unlist(lapply(DBMvarLST, slot, "means")), 
+                                    margin = unique(unlist(lapply(DBMvarLST, slot, "margin"))), 
+                                    window.size = unique(unlist(lapply(DBMvarLST, slot, "window.size"))))
             # bart break lst should still be inhereted here
+            
+            browser()
             DBBMMStack <- new("DBBMMStack", DBMvar = dBMvarianceStack, rasterStack)
             return(DBBMMStack)
           })
