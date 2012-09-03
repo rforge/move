@@ -2,9 +2,7 @@ setGeneric("plot")
 setMethod(f = "plot", 
           signature = c(x=".MoveTrackSingle", y="missing"), 
           function(x, y, ...){
-            plot(coordinates(x), type="p", ...)
-            #points(x, add=FALSE, ...)
-            lines(x, ...)
+            plot(coordinates(x), ...)
           })
 
 setMethod(f = "plot", 
