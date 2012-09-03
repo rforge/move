@@ -32,7 +32,7 @@ setMethod(f = "split",
             for (Id in as.character(unique(x@DBMvar@trackId))) { 
               UD <- new(Class=".UD", 
                         method=x@method,
-                        x@layers[[Id]])
+                        x[[Id]])
               dbmv <- new(Class="dBMvariance",
                           timestamps=x@DBMvar@timestamps[x@DBMvar@trackId==Id],
                           coords.nrs=x@DBMvar@coords.nrs,

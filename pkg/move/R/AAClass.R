@@ -186,7 +186,7 @@ setClass(Class = "DBBMMStack", contains = c(".UDStack"),
          prototype = prototype(
            ext = as.numeric()), 
          validity = function(object) {
-           if (!all(unique(object@DBMvar@trackId) == object@layernames)) 
+           if (!all(unique(object@DBMvar@trackId) == layerNames(object))) 
              stop("The layer names of the raster objects do not match the trackIDs of the DBMvarStack.")
          })
 

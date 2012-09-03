@@ -1,4 +1,7 @@
 \documentclass[article,nojss]{jss}
+
+\usepackage{listings}
+
 \DeclareGraphicsExtensions{.pdf,.eps}
 \newcommand{\fct}[1]{{\code{#1()}}}
 \newcommand{\class}[1]{{`\code{#1}'}}
@@ -13,7 +16,7 @@
 \Keywords{animal track, time series, utilization density, gps}
 
 \Abstract{
-  The move package provides a series of functions to import, visualize and anylize animal movement related data in an object oriented way. The introduced classes allow to store data that are related to an individual in one object, such as coordinates and timestamps, name, species, age, sex, study site and so on. This makes working with multiple animals, or multiple seasons much easier. Furthermore, the package includes functions to calculate home ranges (Minimum Convex Polygon Bootstrap) and utilization distributions, UDs. The latter one uses the Dynamic Brownian Bridge Movement Model to calculate animal UDs.\\
+  The move package provides a series of functions to import, visualize and analyze animal movement related data in an object oriented way. The introduced classes allow to store data that are related to an individual in one object, such as coordinates and timestamps, name, species, age, sex, study site and so on. This makes working with multiple animals, or multiple seasons much easier. Furthermore, the package includes functions to calculate home ranges (Minimum Convex Polygon Bootstrap) and utilization distributions, UDs. The latter one uses the Dynamic Brownian Bridge Movement Model to calculate animal UDs.\\
 }
 
 \Address{
@@ -30,7 +33,6 @@
 \SweaveOpts{concordance=TRUE}
 
 \SweaveOpts{engine=R,eps=FALSE}
-
 %\VignetteIndexEntry{How to use the move package}
 %\VignetteDepends{sp, raster, rgdal, methods, geosphere}
 %\VignetteKeywords{GPS, time series, track}
@@ -46,7 +48,7 @@ Movement data that are associated with individual animals or a group of animals 
 A lot of data sets are available on a database called Movebank (\url{www.movebank.org}). If a user has the permission to see a data set, he can download it as a csv (comma separated values) file. Files from Movebank can be directly imported into R. \\
 A more recent update of the Move package added a web-interface. Now, it is possible to directly download whole data-sets from within R. The only requirement is an account on Movebank and the rights to see the data (see the "browsing Movebank" vignette for more information). \\
 Besides importing data from Movebank it is also possible to use own data-sets as long as they meet the minimum requirements of timestamps, coordinates and animal IDs. \\
-A series of functions allows to plot, summarize and analyze the movement data. Individual \class{Move} objects can be stacked to a MoveStack object which incldues a series of animals and the additional data that are associated with them. This allows to operate on many animals at the same time. \\
+A series of functions allows to plot, summarize and analyze the movement data. Individual \class{Move} objects can be stacked to a MoveStack object which includes a series of animals and the additional data that are associated with them. This allows to operate on many animals at the same time. \\
 A new feature, called burst, allows to subset track information. This can be interesting for example if a track should be analyzed depending on specific behaviors (migratory, non-migratory, resting behavior). \\
 One of the main features of the move package is the calculation of the Utilization Distribution (UD), a measure to estimate the home range of an animal. In this version of the package we use the Dynamic Brownian Bridge Movement Model (DBBMM) to calculate the UD. The UD can be calculated for individuals or for a stack of individuals. This results in the object types \class{DBBMM} or \class{DBBMMStack}. These objects store all information that are needed to visualize the UD, like the raster it was calculated for, and the values per raster cell.\\
 The following sections introduce the different functions we implemented for the \class{Move}, \class{MoveStack}, \class{DBBMM}, and \class{DBBMMStack} objects. We demonstrate how functions can be used to import, analyze and visualize animal movement data. The aim of this vignette is to enable all users unfamiliar with the package to handle all basic functions.
@@ -58,7 +60,7 @@ The following sections introduce the different functions we implemented for the 
 The import of data into R can happen on two ways. Either by importing data files with a csv extension (using the \fct{move} function) or by using the web interface of the move package (using the \fct{getMovebankData} function). The web interface allows to access and download data sets from Movebank. 
 
 \subsection{Import of Movebank data}
-Files from Movebank (\url{www.movebank.org}) can be imported with \texttt{move(x="path")}, where "path" is character string wich locates the file on the harddrive. It may look like: \\ \\ \texttt{> data <- move(x="/User/Documents/test.csv")}. \\ \\
+Files from Movebank (\url{www.movebank.org}) can be imported with \texttt{move(x="path")}, where "path" is character string which locates the file on the hard-drive. It may look like: \\ \\ \texttt{> data <- move(x="/User/Documents/test.csv")}. \\ \\
 The following line imports the "leroy.csv" filet that is part of the move package.
 
 <<importData, results=hide>>=
@@ -70,20 +72,23 @@ If data sets are not published on Movebank but stored on the hard drive they can
 Import of a non-Movebank csv file that is attached to this package:
 
 <<importNonMovebank>>=
-data2 <- read.csv(system.file("extdata","yorel.csv",package="move"))
-head(data2) ##see the structure of the data-frames first six rows
+data2 <- read.csv(system.file("extdata","ricky.csv",package="move"))
+
+##see the structure of the data-frames first six rows
+head(data2) 
+
 test2 <- move(x=data2$long, y=data2$lat, time=as.POSIXct(data2$timestamps, 
             format="%Y-%m-%d %H:%M:%OS", tz="UTC"), proj=CRS("+proj=longlat"), 
             data=data2, animal=data2$ID, sensor=data2$sensor)
 test2 
 @
 
-Entering the object name calls the \fct{show} function of \class{Move} objects. This function provides an overview of the object. It returns the object class (\class{Move}), the animal ID (Yorel), number of coordinates (100), the extent of the coordinates, the coordinates reference system (or projection, here longitude-latitude), the number of columns of the imported data.frame and the names of the columns of the dara.frame, as well es the first and last timestamp and the duration of the observation.The \fct{show} works in a similar way for all other object types.\\
+Entering the object name calls the \fct{show} function of \class{Move} objects. This function provides an overview of the object. It returns the object class (\class{Move}), the animal ID (ricky), number of coordinates (100), the extent of the coordinates, the coordinates reference system (or projection, here longitude-latitude), the number of columns of the imported data.frame and the names of the columns of the data.frame, as well es the first and last timestamp and the duration of the observation.The \fct{show} works in a similar way for all other object types.\\
 
 
 \subsection{Handling multiple animals}
 If the data-set includes more than one animal, it is necessary to indicate the column with the animal IDs. The \fct{move} automatically creates a stack of Move objects called \class{MoveStack}. \\
-Sometimes it is desireable to work with stacked Move objects. The most functions of the Move pakage are capable to work with stacks. Stacks are either created when csv files with multiple animal IDs are imported, or when a \class(list) of \class(Move) objects is passed on to the staking function \fct{moveStack}.
+Sometimes it is desirable to work with stacked Move objects. The most functions of the Move package are capable to work with stacks. Stacks are either created when csv files with multiple animal IDs are imported, or when a \class(list) of \class(Move) objects is passed on to the staking function \fct{moveStack}.
 
 <<StackMoveObjects>>=
 list <- list(test, test2)
@@ -91,35 +96,37 @@ stack <- moveStack(list)
 stack
 @
 
-The show function works also for the stack object. It combinds the information of all objects that are stored in the \class{MoveStack}. \\
+The show function works also for the stack object. It combines the information of all objects that are stored in the \class{MoveStack}. \\
 It is also possible to break down a \class{MoveStack} into single \class{Move} objects using the \fct{split} function. It returns a list of all \class{Move} objects.
 
-<<SplitMoveStacks>>=
+
+<<SplitMoveStacks, tidy=TRUE>>=
 unstacked <- split(stack)
 unstacked[[1]] #use show(unstacked) to see all objects of unstacked
 @
 
 \subsection{Import of Movebank data-sets using the web-interface}
-The Move package includes a bunch of functions to access the Movebank database. A simple function to 
+The Move package includes a bunch of functions to access the Movebank database. With \fct{getMovebankData} whole data sets can be downloaded and stored as a \class{Move} or \class{MoveStack} object (we can not offer a working example in this vignette due to fact that Movebank does not allow dummy accounts). You can use the function as follows: \\ \\ \texttt{> bobby <- getMovebankData(study="BCI Ocelot", animalName="Bobby", login=abc)} \\ \\ With this command the data associated with the animal ID "Bobby" from the study "BCI Ocelot" is stored in a \class{Move} object (because it is only one animal) called \texttt{bobby}. \\ The following command will downlad the full study: \\ \\ \texttt{> ocelot <- getMovebankData(study="BCI Ocelot", login=abc)} \\ \\ This funciton will create a \class{MoveStack} object. Note, it is neccessary to provide a login object to access the Movebank database. More information about the Movebank browsing functions are in the additional vignette "browsing Movebank".
 
 
-
-<<importData2, results=hide>>=
-#
-@
-
-In both cases you create an object of the class \class{Move}. It stores among others the timestamps and coordinates which are necessary for the following functions. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Transform coordinates projection}
-For technical reasons the coordinates of the Move object must be in the \texttt{aeqd}, or Azimuthal Equidistant, projection. To check the projection of your coordinates you can use the \fct{proj4string} method. If your data are not in the right projection, use the following command to change it. 
+\section{Visualizing and analyuing Move objects}
+In the previous chapter we presented the \fct{moveStack} and \fct{split} functions to stack and unstack \class{Move} objects. In this chapter we present further functions to work with the two objects. 
+
+\subsection{Plot and show} 
+
+
+\subsection{Transform coordinates projection}
+For technical reasons the coordinates of the Move object must be in \texttt{aeqd} projection, which stands for Azimuthal Equidistant. To check the projection of your coordinates you can use the \fct{proj4string} method. If your data are not in the right projection, use the following command to change it. 
 
 <<transformData>>=
-#proj4string(data)
-#data2 <- spTransform(x=data, CRSobj="+proj=aeqd", center=TRUE)  
-#proj4string(data2)
+proj4string(test2)
+test2 <- spTransform(x=test2, CRSobj="+proj=aeqd", center=TRUE)  
+proj4string(test2)
 @
-The data are now in the right projection and the coordinate system is now centred to the center of the track. 
+
+The data are now in the right projection and the coordinate system is now centered to the center of the track. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Using the dynamic Brownian Bridge Movement Model}
@@ -127,9 +134,9 @@ To calculate the utilization density (UD) with the dynamic Brownian Bridge Movem
 You can either set the number of the raster cells along the longest dimension of your map by setting a numeric value for the \texttt{dimSize} argument, or - if you know the extent of your map - you can set the size of the raster cells with a numeric value for the \texttt{raster} argument (you can only set one of them). \\
 When the \fct{brownian.bridge.dyn} function issues the warning, the extent of your raster is too small, that is that a large part of the UD is at the borders of the raster. You can change the extent of the raster by setting the \texttt{ext} argument. If you want to extend the raster in all four directions equally choose one number. Use a vector of two numbers to extend the x and the y dimension differently, or even a vector with four numbers to extend differently in all four directions. \\
 
-<<transformData, results=hide>>=
-#p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=12, ext=.3)
-@
+%<<bb, results=hide>>=
+%#p <- brownian.bridge.dyn(object=data2, location.error=23.5, dimSize=12, ext=.3)
+%@
 
 Running the \fct{brownian.bridge.dyn} creates an object of the \class{DBBMM} class, which among others stores the raster of the map with the values from the UD. 
 
@@ -139,14 +146,14 @@ Running the \fct{brownian.bridge.dyn} creates an object of the \class{DBBMM} cla
 To plot the track of the animal, simply use the following functions. You can just use \fct{plot} on a \class{Move} object and get the track with dots and lines. If you only want to plot points or lines use the respective functions. With the \texttt{add} and \texttt{col} arguments you can add the plots to another plot or change the colors. \\
 If you want to plot the track of the animal on a real map, use the \fct{plot} function with the \texttt{google} argument set \texttt{TRUE}.\\ 
 
-<<label=fig1plot,include=FALSE, results=hide>>=
-#attach(mtcars)
-#par(mfrow=c(2,2))
-#plot(data2)
-#points(data2, col="blue")
-#lines(data2, col="green")
-#plot(data)
-@
+%<<label=fig1plot,include=FALSE, results=hide>>=
+%#attach(mtcars)
+%#par(mfrow=c(2,2))
+%#plot(data2)
+%#points(data2, col="blue")
+%#lines(data2, col="green")
+%#plot(data)
+%@
 
 %\begin{figure}
 %\begin{center}
@@ -166,16 +173,16 @@ To plot contour lines from the raster use the \fct{contour} function and set the
 
 
 
-<<label=fig2plot,include=FALSE, results=hide>>=
-#attach(mtcars)
-#par(mfrow=c(2,2))
-#plot(p)
-#image(p)
-#plot(p)
-#contour(p, levels=c(.5,.9), add=TRUE)
-#image(p)
-#lines(data2, add=TRUE, col="black")
-@
+%<<label=fig2plot,include=FALSE, results=hide>>=
+%#attach(mtcars)
+%#par(mfrow=c(2,2))
+%#plot(p)
+%#image(p)
+%#plot(p)
+%#contour(p, levels=c(.5,.9), add=TRUE)
+%#image(p)
+%#lines(data2, add=TRUE, col="black")
+%@
 
 %\begin{figure}
 %\begin{center}

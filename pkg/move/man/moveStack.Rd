@@ -24,6 +24,12 @@
   This function stacks single Move objects to a \link[=MoveStack-class]{MoveStack} object. %, or creates a MoveStack from a Movebank file with several individuals. 
 }
 
+\note{
+All animal names are converted into 'good names' which means, that the names have no space and are unique. 
+'Leroy, Leroy' becomes 'Leroy, Leroy.1' 
+'Ricky T' becomes 'Ricky.T'
+}
+
 \author{Marco Smolla}
 
 \examples{
