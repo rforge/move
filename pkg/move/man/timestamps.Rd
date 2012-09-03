@@ -26,10 +26,10 @@
 \author{Marco Smolla}
 
 \examples{
-  load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
   
-  timestamps(data) #get the timestamps from a Move object
-  timestamps(data2) #get the timestamps from a MoveStack object
-  timestamps(data) <- timestamps(data)+60 #change the timestamps and set it for a Move object
-  timestamps(data2) <- timestamps(data2)+60 #change the timestamps and set it for a MoveStack object
+  timestamps(leroy) #get the timestamps from a Move object
+  timestamps(stack) #get the timestamps from a MoveStack object
+  timestamps(leroy) <- timestamps(leroy)+60 #change the timestamps and set it for a Move object
+  timestamps(stack) <- timestamps(stack)+60 #change the timestamps and set it for a MoveStack object
 }

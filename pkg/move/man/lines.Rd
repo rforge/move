@@ -2,6 +2,7 @@
 
 \alias{lines}
 \alias{lines,.MoveTrackSingle-method}
+\alias{lines,.MoveTrackStack-method}
 
 \docType{methods}
 
@@ -10,22 +11,25 @@
 \description{Function for plotting a recorded track from a Move object as lines}
 
 \usage{
-  \S4method{lines}{.MoveTrackSingle}(x,add=TRUE,...)
+  \S4method{lines}{.MoveTrackSingle}(x,...)
+  \S4method{lines}{.MoveTrackStack}(x,col=NA,...)
 }
 
 \arguments{
   \item{x}{Move object}
-  \item{add}{if TRUE the lines are added to a plot}
+  \item{col}{a vector of colors (same length as the number of objects)}
   \item{...}{arguments to be passed on, e.g. \code{col} for color, or \code{add} to add the lines to a plot.}
 }
 
 
 \author{Marco Smolla}
 
-
 \examples{
-load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 
-lines(data, col=7, add=FALSE) # add a track from a Move object to a plot
-#lines(testtest2, col="blue", add=F) # add a track from a MoveStack object to a plot
+plot(rickydbbmm)
+lines(spTransform(ricky), col=3) # add a track from a Move object to a plot
+\dontshow{
+lines(stack, col=3:4, pch=4) %just test whether MoveStacks can be plotted
+}
 }

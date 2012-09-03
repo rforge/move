@@ -23,11 +23,11 @@
 \author{Marco Smolla}
 
 \examples{
-  load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 \dontrun{  
-  angle(data) # summary of angle measures of a Move object
-  angle(data2) # summary of angle measures of a MoveStack object
-  angle(data, values=TRUE) #angles from a Move object 
-  angle(testtest2, values=TRUE) #angles from a MoveStack object
+  angle(leroy) # summary of angle measures of a Move object
+  angle(stack) # summary of angle measures of a MoveStack object
+  angle(leroy, values=TRUE) #angles from a Move object 
+  angle(stack, values=TRUE) #angles from a MoveStack object
 }# failes on cran build
 }

@@ -8,8 +8,8 @@ setMethod(f = "summary",
 setMethod("summary", 
           signature=".UDStack", 
           definition=function(object){
-            lst <- lapply(split(object), summary)
-            names(lst) <- rep(rownames(as.character(dbbmm@DBMvar$individual.local.identifier[1])), length(lst))
+            lst <- lapply(split(object), summary) ##marco here is a problem with the layernames and the split function
+            #names(lst) <- rep(rownames(as.character(object@DBMvar$individual.local.identifier[1])), length(lst))
             return(lst)
           })
 

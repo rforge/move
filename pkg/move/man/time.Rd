@@ -22,11 +22,11 @@
 \author{Marco Smolla}
 
 \examples{
-  load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
   
-  time(data) # summary of time measures of a Move object
-  time(data2) # summary of time measures of a MoveStack object
+  time(ricky) # summary of time measures of a Move object
+  time(stack) # summary of time measures of a MoveStack object
   
-  time.lag(data)
-  time.lag(testtest2)
+  time.lag(leroy)
+  time.lag(stack)
 }

@@ -2,7 +2,7 @@
 
 \alias{plot}
 \alias{plot,.MoveTrackSingle,missing-method}
-\alias{plot,MoveStack,missing-method}
+\alias{plot,.MoveTrackStack,missing-method}
 
 \docType{methods}
 
@@ -12,15 +12,14 @@
 
 \usage{
   \S4method{plot}{.MoveTrackSingle,missing}(x, y,...)
-  \S4method{plot}{MoveStack,missing}(x, y, col=NA, ...)
+  \S4method{plot}{.MoveTrackStack,missing}(x, y, type="p", ...)
 }
 
 \arguments{
   \item{x}{Move or a DBBMM object}
   \item{y}{keep empty}
-%  \item{google}{logical argument for a Move object. If TRUE, a map from googlemaps is downloaded and the track is plotted on top}
-%  \item{maptype}{defines the type of map to construct. There are several possible maptype values, including satellite, terrain, hybrid, and mobile.}
-  \item{col}{specifies color. For Movestacks default is NA (R colors are used). It can also be a vector wich is as long as the number of tracks or coordinates}
+  \item{type}{defines the type of the plot (e.g. 'l', 'p', 'b', 'o')}
+  %\item{col}{specifies color. For Movestacks default is NA (R colors are used). It can also be a vector wich is as long as the number of tracks or coordinates}
   \item{...}{arguments to be passed to methods, such as graphical parameters, and the logical add argument (see \code{\link{par}})}
 }
 
@@ -33,11 +32,13 @@
 
 
 \examples{
-load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 
-plot(data) # plot a Move object
-plot(data2, col=5, lwd=3) # plot a MoveStack object
+plot(leroy) # plot a Move object
+plot(leroy, type="o", col=3)
+plot(stack, col=c(3,5), lwd=3) # plot a MoveStack object
+plot(stack, type="l", col=c(3,5), lwd=3)
 
-plot(dbbmm) # plot the raster of a DBBMM object
-plot(dbbmm2) # plot the raster of a DBBMMStack object
+plot(leroydbbmm) # plot the raster of a DBBMM object
+plot(dbbmmstack) # plot the raster of a DBBMMStack object
 }

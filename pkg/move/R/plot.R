@@ -6,14 +6,19 @@ setMethod(f = "plot",
           })
 
 setMethod(f = "plot", 
-          signature = c(x="MoveStack", y="missing"), 
-          function(x, y, col=NA, ...){
-            if(any(is.na(col)))
-              col <- 1:length(unique(x@trackId))
-            if(length(col)!=n.locs(x))
-              col <- col[as.numeric(x@trackId)]
-            x$col <- col
-            unstacked <- split(x)
-            lines(unstacked[[1]], col=x$col, xlim=c(min(coordinates(x)[,1]),max(coordinates(x)[,1])), ylim=c(min(coordinates(x)[,2]), max(coordinates(x)[,2])), add=F, ... ) #create first plot
-            l = lapply(unstacked[-1], function(x,...){lines(x, col=x$col, add=T, ...)}, ...)
+          signature = c(x=".MoveTrackStack", y="missing"), 
+          function(x, y, type='p',...){
+   #         if(any(is.na(col)))
+  #            col <- 1:length(unique(x@trackId))
+  #          if(length(col)!=n.locs(x))
+   #           col <- col[as.numeric(x@trackId)]
+    #        x$col <- col
+    #        unstacked <- split(x)
+            plot(coordinates(x), type='n')
+            if(type %in% c('p','o','b'))
+              points(x,...)
+    #        l = lapply(unstacked, function(x,...){points(x, col=x$col, ...)}, ...)
+            if(type %in% c('l','o','b'))
+              lines(x,...)
+    #        l = lapply(unstacked, function(x,...){lines(x, col=x$col,...)}, ...)            
           })

@@ -30,7 +30,7 @@
 \author{Marco Smolla}
 
 \examples{
-  load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
-  move2ade(data) #for a Move object
-  move2ade(data2) #for a MoveStack object
+  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+  move2ade(ricky) #for a Move object
+  move2ade(stack) #for a MoveStack object
 }

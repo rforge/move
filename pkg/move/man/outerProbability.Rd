@@ -26,18 +26,12 @@ The function returns either a numeric value with the outer probability from a si
 }
 
 \examples{
-load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 
 #calculate the probabilities of 20\% of the raster at the border from a DBBMM
-outerProbability(dbbmm, border=.2)
-"[1] 0.001669491"
+outerProbability(leroydbbmm, border=.2)
 
 #calculate the probabilities of 50\% of the raster at the border from a DBBMMStack
-outerProbability(dbbmm2, border=.5)
-"$Leroy"
-"[1] 0.6739206"
-
-"$Leroy1"
-"[1] 0.6739206"
+outerProbability(leroydbbmm, border=.5)
 }
 \author{Marco Smolla}

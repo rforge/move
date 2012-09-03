@@ -64,7 +64,7 @@ Files from Movebank (\url{www.movebank.org}) can be imported with \texttt{move(x
 The following line imports the "leroy.csv" filet that is part of the move package.
 
 <<importData, results=hide>>=
-test <- move(system.file("extdata","leroy.csv",package="move"))
+leroy <- move(system.file("extdata","leroy.csv",package="move"))
 @
 
 \subsection{Import of non-Movebank data}
@@ -72,18 +72,14 @@ If data sets are not published on Movebank but stored on the hard drive they can
 Import of a non-Movebank csv file that is attached to this package:
 
 <<importNonMovebank>>=
-data2 <- read.csv(system.file("extdata","ricky.csv",package="move"))
-
-##see the structure of the data-frames first six rows
-head(data2) 
-
-test2 <- move(x=data2$long, y=data2$lat, time=as.POSIXct(data2$timestamps, 
+data <- read.csv(system.file("extdata","ricky.csv",package="move"))
+ricky <- move(x=data$location.long, y=data$location.lat, time=as.POSIXct(data$timestamp, 
             format="%Y-%m-%d %H:%M:%OS", tz="UTC"), proj=CRS("+proj=longlat"), 
-            data=data2, animal=data2$ID, sensor=data2$sensor)
-test2 
+            data=data, animal=data$individual.local.identifier, sensor=data$sensor)
+ricky 
 @
 
-Entering the object name calls the \fct{show} function of \class{Move} objects. This function provides an overview of the object. It returns the object class (\class{Move}), the animal ID (ricky), number of coordinates (100), the extent of the coordinates, the coordinates reference system (or projection, here longitude-latitude), the number of columns of the imported data.frame and the names of the columns of the data.frame, as well es the first and last timestamp and the duration of the observation.The \fct{show} works in a similar way for all other object types.\\
+Entering the object name calls the \fct{show} function of \class{Move} objects. This function provides an overview of the object. It returns the object class (\class{Move}), the animal ID (ricky), number of coordinates (8961), the extent of the coordinates, the coordinates reference system (or projection, here longitude-latitude), the number of columns of the imported data.frame and the names of the columns of the data.frame, as well es the first and last timestamp and the duration of the observation.The \fct{show} works in a similar way for all other object types.\\
 
 
 \subsection{Handling multiple animals}
@@ -91,7 +87,7 @@ If the data-set includes more than one animal, it is necessary to indicate the c
 Sometimes it is desirable to work with stacked Move objects. The most functions of the Move package are capable to work with stacks. Stacks are either created when csv files with multiple animal IDs are imported, or when a \class(list) of \class(Move) objects is passed on to the staking function \fct{moveStack}.
 
 <<StackMoveObjects>>=
-list <- list(test, test2)
+list <- list(leroy, ricky)
 stack <- moveStack(list)
 stack
 @
@@ -112,18 +108,25 @@ The Move package includes a bunch of functions to access the Movebank database. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Visualizing and analyuing Move objects}
-In the previous chapter we presented the \fct{moveStack} and \fct{split} functions to stack and unstack \class{Move} objects. In this chapter we present further functions to work with the two objects. 
+In the previous chapter we presented the \fct{moveStack} and \fct{split} functions to stack and unstack \class{Move} objects. In this chapter we present further functions to work with the two object types. 
 
 \subsection{Plot and show} 
+An important function to work with objects is the \fct{show} funciton. Depending on the implementaiton it gives an overview of the object one is working with. The funciton can either called by the function name or just by entering the name of the object:
 
+<<showFunction>>=
+show(leroy)
+leroy
+@
+
+Both ways return the same information. This is for Move objects the class name, number of coordinates, the map extent, the coordinate reference system, number of additional variables, names of the additional variables and their minimum and maximum values, the sensor type
 
 \subsection{Transform coordinates projection}
 For technical reasons the coordinates of the Move object must be in \texttt{aeqd} projection, which stands for Azimuthal Equidistant. To check the projection of your coordinates you can use the \fct{proj4string} method. If your data are not in the right projection, use the following command to change it. 
 
 <<transformData>>=
-proj4string(test2)
-test2 <- spTransform(x=test2, CRSobj="+proj=aeqd", center=TRUE)  
-proj4string(test2)
+proj4string(ricky)
+ricky <- spTransform(x=ricky, CRSobj="+proj=aeqd", center=TRUE)  
+proj4string(ricky)
 @
 
 The data are now in the right projection and the coordinate system is now centered to the center of the track. 

@@ -29,11 +29,11 @@ You can also add the contour lines to a plot with \code{add = TRUE}.
 \author{Marco Smolla}
 
 \examples{
-load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 
 ## to add a 50\% and 90\% contour to a plot from DBBMM object dbbmm
-plot(dbbmm)
-contour(dbbmm, levels=c(.5,.9), add=TRUE)
+plot(leroydbbmm)
+contour(leroydbbmm, levels=c(.5,.9), add=TRUE)
 
 ##to store the contours as a SpatialLinesDataFrame use
 #cnt  <- contour(dbbmm, levels=c(.4,.9), add=FALSE)

@@ -34,7 +34,7 @@ All animal names are converted into 'good names' which means, that the names hav
 
 \examples{
 \dontshow{
-load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
-moveStack(list(data, data))
+load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+moveStack(list(ricky, leroy))
 }
 }

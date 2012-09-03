@@ -29,8 +29,8 @@
 \author{Marco Smolla}
 
 \examples{
-load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
-head(time.lag(data)) #calculate timelags for a Move object
-head(time.lag(data2)) #calculate timelags for a MoveStack object
-head(time.lag(data2, units="hours")) #calculate timelags in different units
+load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+head(time.lag(leroy)) #calculate timelags for a Move object
+head(time.lag(stack)) #calculate timelags for a MoveStack object
+head(time.lag(stack, units="hours")) #calculate timelags in different units
 }

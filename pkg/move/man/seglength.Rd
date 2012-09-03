@@ -28,7 +28,7 @@
 \author{Marco Smolla}
 
 \examples{
-  load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
-  head(seglength(data)) #Move object in longlat projection
-  head(seglength(testtest2)) #MoveStack object in aeqd projection
+  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+  head(seglength(leroy)) #Move object in longlat projection
+  head(seglength(stack)) #MoveStack object in aeqd projection
 }

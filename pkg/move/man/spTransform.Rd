@@ -29,26 +29,21 @@
 
 \examples{
 ## create a Move object
-data <- move(system.file("extdata","leroy.csv",package="move"))
+leroy <- move(system.file("extdata","leroy.csv",package="move"))
 
 ## transform the Move object by default into "+aeqd" projection method 
 ## and center the coordinate system
-data2 <- spTransform(data, center=TRUE)
+spTransform(leroy, center=TRUE)
 
 ## transform the Move object into another projection method, like mollweide
-data3 <- spTransform(data, CRSobj="+proj=moll")
+spTransform(leroy, CRSobj="+proj=moll")
 
 ##check projection method
-proj4string(data)
-"[1]  +proj=longlat +ellps=WGS84"
-proj4string(data2)
-"[1]   +proj=longlat +lon_0=-73.8871629 +lat_0=42.73884025 +ellps=WGS84"
-proj4string(data3)
-"[1]  +proj=moll +ellps=WGS84"
+proj4string(leroy)
 \dontshow{
-spTransform(data, CRSobj=CRS("+proj=moll"))
-load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
-spTransform(data2)
+spTransform(leroy, CRSobj=CRS("+proj=moll"))
+load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+spTransform(stack)
 }
 }
 

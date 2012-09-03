@@ -25,7 +25,6 @@
 \author{Marco Smolla}
 
 \examples{
-  load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
-  
-  raster2contour(dbbmm)
+  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+  raster2contour(leroydbbmm)
 }

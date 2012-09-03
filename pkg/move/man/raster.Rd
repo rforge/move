@@ -30,10 +30,10 @@
 \author{Marco Smolla}
 
 \examples{
-load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 
-raster(dbbmm) #returns the raster of a DBBMM object
-raster(dbbmm2) # returns the raster of a DBBMMStack object
+raster(rickydbbmm) #returns the raster of a DBBMM object
+raster(dbbmmstack) # returns the raster of a DBBMMStack object
 
-plot(raster2contour(dbbmm, levels=c(.5,.9)), col=c(5,4)) # plot the raster lines of a DBBMM
+plot(raster2contour(rickydbbmm, levels=c(.5,.9)), col=c(5,4)) # plot the raster lines of a DBBMM
 }

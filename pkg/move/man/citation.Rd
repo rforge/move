@@ -24,10 +24,10 @@
 \author{Marco Smolla}
 
 \examples{
-  load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
   
-  citation(data) #get the citation from a Move object
-  citation(data2) #get the citation from a MoveStack object
-  citation(data) <- "No paper available" #change the citation and set it for a Move object
-  citation(data2) <- "Nothing to cite" #change the citation and set it for a MoveStack object
+  citation(leroy) #get the citation from a Move object
+  citation(stack) #get the citation from a MoveStack object
+  citation(leroy) <- "No paper available" #change the citation and set it for a Move object
+  citation(stack) <- "Nothing to cite" #change the citation and set it for a MoveStack object
 }

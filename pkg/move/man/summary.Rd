@@ -30,10 +30,10 @@ Returns the projection, extent, and maximum and minimum values of the raster sto
 \author{Marco Smolla}
 
 \examples{
-  load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
   
-  summary(data) # summary of angle measures of a Move object
-  summary(data2) # summary of angle measures of a MoveStack object
-  summary(dbbmm) # summary of a DBBMM object
-  summary(dbbmm2) # summary of a DBBMMStack object
+  summary(leroy) # summary of angle measures of a Move object
+  summary(stack) # summary of angle measures of a MoveStack object
+  summary(leroydbbmm) # summary of a DBBMM object
+  #summary(dbbmmstack) # summary of a DBBMMStack object
 }

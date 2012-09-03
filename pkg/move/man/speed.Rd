@@ -23,10 +23,10 @@
 \author{Marco Smolla}
 
 \examples{
-  load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
   
-  speed(data) # summary of speed measures of a Move object
-  speed(data2) # summary of speed measures of a MoveStack object
-  speed(data, values=TRUE) #speeds from a Move object 
-  speed(testtest2, values=TRUE) #speeds from a MoveStack object
+  speed(leroy) # summary of speed measures of a Move object
+  speed(stack) # summary of speed measures of a MoveStack object
+  speed(ricky, values=TRUE) #speeds from a Move object 
+  speed(stack, values=TRUE) #speeds from a MoveStack object
 }

@@ -23,10 +23,10 @@
 \author{Marco Smolla}
 
 \examples{
-load(system.file("extdata", "leroy.RData", package="move"), .GlobalEnv)
+load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 
-distance(data) # summary of distance measures of a Move object
-distance(data2) # summary of distance measures of a MoveStack object
-distance(data, values=TRUE) #distances from a Move object 
-distance(data2, values=TRUE) #distances from a MoveStack object
+distance(leroy) # summary of distance measures of a Move object
+distance(stack) # summary of distance measures of a MoveStack object
+distance(leroy, values=TRUE) #distances from a Move object 
+distance(stack, values=TRUE) #distances from a MoveStack object
 }
