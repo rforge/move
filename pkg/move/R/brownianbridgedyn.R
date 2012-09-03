@@ -175,7 +175,6 @@ setMethod(f = "brownian.bridge.dyn",
                                     window.size = unique(unlist(lapply(DBMvarLST, slot, "window.size"))))
             # bart break lst should still be inhereted here
             
-            browser()
             DBBMMStack <- new("DBBMMStack", DBMvar = dBMvarianceStack, rasterStack)
             return(DBBMMStack)
           })
