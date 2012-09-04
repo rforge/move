@@ -1,6 +1,7 @@
 \documentclass[article,nojss]{jss}
 
 \usepackage{listings}
+\usepackage{hyperref}
 
 \DeclareGraphicsExtensions{.pdf,.eps}
 \newcommand{\fct}[1]{{\code{#1()}}}
@@ -199,9 +200,17 @@ leroy_b <- burst(x=leroy, f=behavior)
 class(leroy_b)
 @
 
-Bursted tracks can be plotted with \fct{plotBursts}. The function plots different colored 
-%%marco plotBursts does not work!!
-%plotBursts(leroy_b, breaks=3, add=FALSE, pch=19)
+Bursted tracks can be plotted with \fct{plotBursts}. The function plots different colored circles that indicate different categories of the track. The size of the circles is by default the realtive time per segment compared to the track. It is possible to calculate the size with a different function using the \texttt{sizeFun} argument of the function. (Figure \ref{fig:burst})
+
+\begin{figure}
+\begin{center}
+<<label=figburst, fig=TRUE, echo=TRUE, results=hide>>=
+plotBursts(leroy_b, breaks=3, add=FALSE, pch=19)
+@
+\end{center}
+\caption{Plotting the track and adding the burst information as colored circles. Here the circle size indicates the relative time per segment compared to the whole track and the color indicates different behaviors that were assigned before.}
+\label{fig:burst}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -235,13 +244,12 @@ If only certain objects of a \class{DBBMMStack} are needed, the stack can be spl
 \begin{figure}
 \begin{center}
 <<label=fig1, fig=TRUE, echo=TRUE, results=hide>>=
-attach(mtcars)
-par(mfrow=c(3,1))
+par(mfrow=c(1,3))
 plot(ricky_dbbmm, xlab="location_long", ylab="location_lat")
 plot(ricky_dbbmm, xlab="location_long", ylab="location_lat")
-lines(spTransform(ricky, center=TRUE), col=3, lwd=2)
-plot(ricky_dbbmm, xlab="location_long", ylab="location_lat")
-points(spTransform(ricky, center=TRUE), col=8)
+lines(spTransform(ricky[1:500,], center=TRUE), col=3, lwd=2)
+#plot(ricky_dbbmm, xlab="location_long", ylab="location_lat")
+#points(spTransform(ricky[1:500, ], center=TRUE), col=8)
 @
 \end{center}
 \caption{Plotting the UD (left) and adding the track as a line (center) or as points(right)}
