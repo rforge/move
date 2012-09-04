@@ -13,8 +13,11 @@ setMethod(f = "split",
                         timestamps=x@timestamps[x@trackId==ID],
                         sensor=x@sensor[x@trackId==ID])
               #sensor=rep(x@idData$sensor.type[row.names(x@idData)==ID], sum(x@trackId==ID))
+tmf<-x@timesMissedFixes[x@timesMissedFixes==ID]
+attr(tmf, "names")<-NULL
               moveObj <- new(Class="Move", 
                              mt,
+			     timesMissedFixes=tmf,
                              idData=x@idData[row.names(x@idData)==ID, ,drop=F],
                              dateCreation=x@dateCreation,
                              study=x@study,

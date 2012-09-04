@@ -78,10 +78,15 @@ setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
 
 setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack"),
          representation = representation(
+           timesMissedFixes = ".OptionalPOSIXct",
            trackId = "factor"),
          prototype = prototype(
+	   timesMissedFixes=NULL,
            trackId = factor()),
          validity = function(object){
+	   if(length(object@timesMissedFixes)!=0)
+		   if(!all(names(object@timesMissedFixes)%in% levels(object@trackId)))
+			   stop("No correct naming timesMissedFixes")
            if(length(object@trackId)!=nrow(object@coords))
              stop("Number of trackId does not match the number of coordinates")
            if(any(tmp<-duplicated(cbind(object@timestamps, object@trackId, object@sensor))))

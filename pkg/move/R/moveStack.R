@@ -1,4 +1,4 @@
-setGeneric("moveStack", function(x, proj) standardGeneric("moveStack"))
+setGeneric("moveStack", function(x, proj) standardGeneric("moveStack"))#marco what is proj here?
 setMethod(f = "moveStack", 
           signature = c(x="list"),
           definition = function(x){
@@ -47,7 +47,15 @@ setMethod(f = "moveStack",
               data = DATA, 
               proj4string = CRS(proj4string(x[[1]])), #projection tested above
               match.ID = TRUE)
+	    tmf<-lapply(x, slot,"timesMissedFixes")
+	    tz<-unique(unlist(lapply(tmf, attr, "tzone")))
+	    if(!(length(tz)==1|is.null(tz )))
+		    stop("Concatinating multiple time zone for timest missed fixes")
+	    tmfVector<-do.call('c',lapply(1:length(tmf), function(i, tmf, names){tmp<-tmf[[i]]; names(tmp)<-rep(names[i], length(tmp)); return(tmp)}, tmf=tmf, names=rownames(IDDATA)))
+	    if(!is.null(tz))
+	     tmfVector<-as.POSIXct(format(tmfVector, tz=tz,usetz=T),tz=tz)
             res <- new("MoveStack", 
+		       timesMissedFixes=tmfVector,
                        idData = IDDATA,
                        spdftmp, 
                        timestamps = do.call("c", lapply(x, timestamps)),
