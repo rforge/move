@@ -8,17 +8,19 @@ setMethod(f = "plot",
 setMethod(f = "plot", 
           signature = c(x=".MoveTrackStack", y="missing"), 
           function(x, y, type='p',...){
-   #         if(any(is.na(col)))
-  #            col <- 1:length(unique(x@trackId))
-  #          if(length(col)!=n.locs(x))
-   #           col <- col[as.numeric(x@trackId)]
-    #        x$col <- col
-    #        unstacked <- split(x)
             plot(coordinates(x), type='n')
             if(type %in% c('p','o','b'))
               points(x,...)
-    #        l = lapply(unstacked, function(x,...){points(x, col=x$col, ...)}, ...)
             if(type %in% c('l','o','b'))
-              lines(x,...)
-    #        l = lapply(unstacked, function(x,...){lines(x, col=x$col,...)}, ...)            
+              lines(x,...)        
           })
+
+setMethod(f = "plot", 
+          signature = c(x=".MoveTrackSingleBurst", y="missing"), 
+          function(x, y, ...){
+            coords <- coordinates(x)
+            plot(coords, type="n")
+            segments(x0=coords[-nrow(coords),1], y0=coords[-nrow(coords),2], x1=coords[-1,1], y1=coords[-1,2], col=x@burstId, ...)
+            if(length(levels(x@burstId))>8) warning("There are more burst IDs than colors, therefore colors are recycled.")
+          }) #make a individual lines and points function and bundle it in plot
+

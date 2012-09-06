@@ -223,15 +223,19 @@ leroy_b <- burst(x=leroy, f=behavior)
 class(leroy_b)
 @
 
-Bursted tracks can be plotted with \fct{plotBursts}. The function plots different colored circles that indicate different categories of the track. The size of the circles is by default the relative time per segment compared to the track. It is possible to calculate the size with a different function using the \texttt{sizeFun} argument of the function. (Figure \ref{fig:burst})
+Bursted tracks can be plotted with the basic \fct{plot} and the more complex \fct{plotBursts} function. Both functions use colors to indicate to which burstID a segment belongs. \\
+The \fct{plot} function simply plots the different segments as colored lines. \\
+The \fct{plotBursts} plots a circle for every segment right at the midpoint of the segment. The circles have a size that that is calculated with an extra size function. By default it is the relative time of the segment compared to the whole track. It is possible to calculate the size with a different function using the \texttt{sizeFun} argument of the function. (Figure \ref{fig:burst})
 
 \begin{figure}
 \begin{center}
-<<label=figburst, fig=TRUE, echo=TRUE, results=hide>>=
+<<label=figburst, fig=TRUE, echo=TRUE, results=hide, height=4>>=
+par(mfrow=c(1,2))
+plot(leroy_b, lwd=2)
 plotBursts(leroy_b, breaks=3, add=FALSE, pch=19)
 @
 \end{center}
-\caption{Plotting the track and adding the burst information as colored circles. Here the circle size indicates the relative time per segment compared to the whole track and the color indicates different behaviors that were assigned before.}
+\caption{Plotting the track and adding the burst information as colored lines or circles (the color corresponds to the brustID; the size of the circles represents in three steps the realtive amount of time per segment)}
 \label{fig:burst}
 \end{figure}
 
