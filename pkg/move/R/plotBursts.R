@@ -18,7 +18,7 @@ setMethod(f = "plotBursts",
               col <- col[as.numeric(names(midLST))]###marco: use levels of the factor instead of the names, because this is independent of being 
             } else {
               if(length(levels(object@burstId))>8) warning("There are more burst IDs than colors.")
-              col <- as.numeric(names(midLST))}
+              col <- as.numeric(factor(names(midLST)))}
             
             #            if (class(sizeFUN)!="function") 
             #sizesdf <- as.numeric(lapply(lapply(lapply(split(object), timestamps), range), diff))/as.numeric(totalDur)
@@ -26,7 +26,7 @@ setMethod(f = "plotBursts",
             #} else {FUN <- match.fun(sizeFUN)
             #        sizeLST  <- FUN(ll, object)} #think about what to enter for FUN
             #sizes  <- as.numeric(cut(unlist(sizeLST), breaks=breaks))/max(as.numeric(cut(unlist(sizeLST), breaks=breaks))) 
-            sizes  <- as.numeric(cut(sizesdf, breaks=breaks))/max(as.numeric(cut(sizesdf, breaks=breaks)))*2
+            sizes  <- as.numeric(cut(sizesdf, breaks=breaks))/max(as.numeric(cut(sizesdf, breaks=breaks)),na.rm=T)*2
             df <- cbind(col, sizes, do.call('rbind', lapply(midLST, data.frame)))
             colnames(df) <- c("color", "size","x","y")
             spdf <- SpatialPointsDataFrame(coords=do.call(rbind, midLST), data=df[,1:2], proj4string=CRS("+proj=longlat"))           

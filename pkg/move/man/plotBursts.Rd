@@ -38,6 +38,8 @@ plot(coordinates(test),type="l")
 plotBursts(testb, breaks=3, add=TRUE, pch=19)
 plotBursts(testb, breaks=5, add=FALSE, pch=19)
 
+##plotBursts(leroy_b, breaks=c(-Inf,4000,6000, Inf), add=FALSE, pch=19) ##marco -> tell that is possible to difine breaks
+
 #bursting track by realtive segment length
 plotBursts(object=testb, breaks=3, sizeFUN=function(x) sum(seglength(x)), pch=19, add=FALSE)
 

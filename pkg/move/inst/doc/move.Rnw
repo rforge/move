@@ -103,7 +103,7 @@ unstacked <- split(stack)
 @
 
 \subsection{Import of Movebank data-sets using the web-interface}
-The Move package includes a bunch of functions to access the Movebank database. With \fct{getMovebankData} whole data sets can be downloaded and stored as a \class{Move} or \class{MoveStack} object (we can \textbf{not} offer a \textbf{working example} in this vignette due to fact that Movebank does not allow dummy accounts). You can use the function as follows: \\ \\ \texttt{> bobby <- getMovebankData(study="BCI Ocelot", animalName="Bobby", login=abc)} \\ \\ With this command the data associated with the animal ID "Bobby" from the study "BCI Ocelot" is stored in a \class{Move} object (because it is only one animal) called \texttt{bobby}. \\ The following command will downlad the full study: \\ \\ \texttt{> ocelot <- getMovebankData(study="BCI Ocelot", login=abc)} \\ \\ This funciton will create a \class{MoveStack} object. Note, it is neccessary to provide a login object to access the Movebank database. More information about the Movebank browsing functions are in the additional vignette "browsing Movebank".
+The Move package includes a bunch of functions to access the Movebank database. With \fct{getMovebankData} whole data sets can be downloaded and stored as a \class{Move} or \class{MoveStack} object (we can \textbf{not} offer a \textbf{working example} in this vignette due to fact that Movebank does not allow dummy accounts). You can use the function as follows: \\ \\ \texttt{> bobby <- getMovebankData(study="BCI Ocelot", animalName="Bobby", login=abc)} \\ \\ With this command the data associated with the animal ID "Bobby" from the study "BCI Ocelot" is stored in a \class{Move} object (because it is only one animal) called \texttt{bobby}. \\ The following command will download the full study: \\ \\ \texttt{> ocelot <- getMovebankData(study="BCI Ocelot", login=abc)} \\ \\ This function will create a \class{MoveStack} object. Note, it is necessary to provide a login object to access the Movebank database. More information about the Movebank browsing functions are in the additional vignette "browsing Movebank".
 
 
 \newpage
@@ -112,7 +112,7 @@ The Move package includes a bunch of functions to access the Movebank database. 
 In the previous chapter we presented the \fct{moveStack} and \fct{split} functions to stack and unstack \class{Move} objects. In this chapter we present further functions to work with the two object types. 
 
 \subsection{Show and summarize} 
-An important function to work with objects is the \fct{show} funciton. Depending on the implementaiton it gives an overview of the object one is working with. The funciton can either called by entering the name of the object directly, or by calling the function with the object:
+An important function to work with objects is the \fct{show} function. Depending on the implementation it gives an overview of the object one is working with. The function can either called by entering the name of the object directly, or by calling the function with the object:
 
 <<showFunction>>=
 show(leroy)
@@ -154,15 +154,38 @@ plot(stack, col=c(6,5), lwd=2, xlab="location_long", ylab="location_lat")
 
 \setkeys{Gin}{width=0.8\textwidth}
 
-\begin{figure}[ht]
+\begin{figure}
 \begin{center}
-<<label=fig1, fig=TRUE, echo=FALSE, results=hide, height=4>>=
+<<label=figTrack, fig=TRUE, echo=FALSE, results=hide, height=4>>=
 <<fig1plot>>
 @
 \end{center}
 \caption{Using the \fct{plot} function to plot the track and its coordinates of a \class{Move} (left) and a \class{MoveStack} (right) object.}
 \label{fig:one}
 \end{figure}
+
+
+\subsection{Google plot}
+An interesting addition to plot the pure track is to plot the track on a map. The easiest way to use for example OpenStreetMap, Stamen Map, Cloudmade or Google Maps is to use the ggmap package, which is based on ggplot.\\
+Note, that the function requires two further packages (\texttt{ggmap} and \texttt{mapproj}). The \fct{get\_map} function makes a call to the online data bases and retrieves a map which is defined by the bounding box (\texttt{bbox}). The source argument allows to choose between OpenStreetMap (\texttt{'osm'}), Stamen Maps (\texttt{'stamen'}), Clodumade (\texttt{'cloudmade'}) and Google Maps (\texttt{'google'}). The \fct{ggmap} function plots the map in a new graphics device and \texttt{geom\_path()} adds the track of the \class{Move} object (see Figure \ref{fig:google}).  
+
+<<googleplot>>=
+require(ggmap) #these packages are necessecary to work with google maps
+require(mapproj)
+leroy_df <- as(leroy, "data.frame")
+m <- get_map(bbox(extent(leroy)*1.1), source="stamen", zoom=14)
+ggmap(m)+geom_path(data=leroy_df, aes(x=coords.x1, y=coords.x2))
+@
+\begin{figure}
+\begin{center}
+<<label=figGoogle, fig=TRUE, results=hide, echo=FALSE, height=4>>=
+<<googleplot>>
+@
+\end{center}
+\caption{Plotting a track on a map using \fct{ggmap}.}
+\label{fig:google}
+\end{figure}
+
 
 
 \subsection{Subset and transform objects}
@@ -200,7 +223,7 @@ leroy_b <- burst(x=leroy, f=behavior)
 class(leroy_b)
 @
 
-Bursted tracks can be plotted with \fct{plotBursts}. The function plots different colored circles that indicate different categories of the track. The size of the circles is by default the realtive time per segment compared to the track. It is possible to calculate the size with a different function using the \texttt{sizeFun} argument of the function. (Figure \ref{fig:burst})
+Bursted tracks can be plotted with \fct{plotBursts}. The function plots different colored circles that indicate different categories of the track. The size of the circles is by default the relative time per segment compared to the track. It is possible to calculate the size with a different function using the \texttt{sizeFun} argument of the function. (Figure \ref{fig:burst})
 
 \begin{figure}
 \begin{center}
@@ -239,12 +262,12 @@ If only certain objects of a \class{DBBMMStack} are needed, the stack can be spl
 \class{DBBMM} objects can be plotted with the \fct{plot} function. It produces a fixed cell size ratio graphic from the raster (see Figure \ref{fig:two}). A second function - \fct{image} - produces a variable cell size ratio graphic (not prone to distortions after resizing the graphics window) from the raster. \\
 
 
-\setkeys{Gin}{width=0.8\textwidth}
+%\setkeys{Gin}{width=0.8\textwidth}
 
 \begin{figure}
 \begin{center}
-<<label=fig1, fig=TRUE, echo=TRUE, results=hide>>=
-par(mfrow=c(1,3))
+<<label=fig1, fig=TRUE, echo=TRUE, results=hide, height=4>>=
+par(mfrow=c(1,2))
 plot(ricky_dbbmm, xlab="location_long", ylab="location_lat")
 plot(ricky_dbbmm, xlab="location_long", ylab="location_lat")
 lines(spTransform(ricky[1:500,], center=TRUE), col=3, lwd=2)
