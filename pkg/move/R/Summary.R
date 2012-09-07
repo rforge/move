@@ -88,7 +88,7 @@ setMethod("distance",
             return(lst)
           })
 
-setGeneric("time", function(x){standardGeneric("time")})
+setGeneric("time")#, function(x){standardGeneric("time")})
 setMethod("time", 
           signature=".MoveTrackSingle",
           definition=function(x){           
