@@ -14,7 +14,7 @@
 \usage{
   \S4method{plot}{.MoveTrackSingle,missing}(x, y,...)
   \S4method{plot}{.MoveTrackStack,missing}(x, y, type="p", ...)
-  \S4method{plot}{.MoveTrackSingleBurst,missing}(x, y,...)
+  \S4method{plot}{.MoveTrackSingleBurst,missing}(x, y, type="p", ...)
 }
 
 \arguments{
@@ -27,7 +27,7 @@
 
 \details{
   If \code{x} is a Move, MoveStack object a track is plotted with points and lines. The track can be added to another plot with the \code{add = TRUE}. \cr
-  If \code{x} is a MoveBurst object the bursted segment of the track a plotted in colors according to the burst ID. If there are more Burst IDs than standard R colors (=8) the colors are recycled. %%%marco: make colors changeable!
+  If \code{x} is a MoveBurst object colored lines (according to the burstID) are plotted if the type is set to 'l'. By default it is 'p' which plots the real coordinates of the Move object as points.
   If \code{x} is a DBBMM object its raster object is plotted with the corresponding cell values. Unlike the \code{\link{image}} function, the cell size ratio keeps the same when the plot window is resized.
 }
 

@@ -80,7 +80,7 @@ dbbmm <- brownian.bridge.dyn(object=data2[1:100,], location.error=23.5, dimSize=
   leroy <- move(system.file("extdata","leroy.csv", package="move"))[1:104,]
   ricky <- move(system.file("extdata","ricky.csv", package="move"))[1:105,]
   r <- moveStack(list(leroy, ricky))
-  r2 <- spTransform(r)
+  r2 <- spTransform(r, center=TRUE)
   t <- brownian.bridge.dyn(r2, location.error=23.5, dimSize=25, time.step=6000)
   plot(t)
   contour(t, levels=c(.4,.9), add=FALSE)

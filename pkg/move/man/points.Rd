@@ -3,6 +3,7 @@
 \alias{points}
 \alias{points,.MoveTrackSingle-method}
 \alias{points,.MoveTrackStack-method}
+\alias{points,.MoveTrackSingleBurst-method}
 
 \docType{methods}
 
@@ -13,6 +14,7 @@
 \usage{
   \S4method{points}{.MoveTrackSingle}(x,...)
   \S4method{points}{.MoveTrackStack}(x,col=NA,...)
+  \S4method{points}{.MoveTrackSingleBurst}(x,...)
 }
 
 \arguments{

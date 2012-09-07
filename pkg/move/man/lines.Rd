@@ -3,6 +3,7 @@
 \alias{lines}
 \alias{lines,.MoveTrackSingle-method}
 \alias{lines,.MoveTrackStack-method}
+\alias{lines,.MoveTrackSingleBurst-method}
 
 \docType{methods}
 
@@ -13,6 +14,7 @@
 \usage{
   \S4method{lines}{.MoveTrackSingle}(x,...)
   \S4method{lines}{.MoveTrackStack}(x,col=NA,...)
+  \S4method{lines}{.MoveTrackSingleBurst}(x,...)
 }
 
 \arguments{
