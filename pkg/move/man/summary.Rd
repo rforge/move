@@ -35,5 +35,5 @@ Returns the projection, extent, and maximum and minimum values of the raster sto
   summary(leroy) # summary of angle measures of a Move object
   summary(stack) # summary of angle measures of a MoveStack object
   summary(leroydbbmm) # summary of a DBBMM object
-  #summary(dbbmmstack) # summary of a DBBMMStack object
+  summary(dbbmmstack) # summary of a DBBMMStack object
 }

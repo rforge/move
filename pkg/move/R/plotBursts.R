@@ -15,7 +15,7 @@ setMethod(f = "plotBursts",
             midLST <- lapply(X=splitobject, FUN=lineMidpoint)
             
             if (length(col)==length(levels(object@burstId))){
-              col <- col[as.numeric(names(midLST))]###marco: use levels of the factor instead of the names, because this is independent of being 
+              col <- col[as.numeric(factor(names(midLST)))]###marco: use levels of the factor instead of the names, because this is independent of being 
             } else {
               if(length(levels(object@burstId))>8) warning("There are more burst IDs than colors.")
               col <- as.numeric(factor(names(midLST)))}

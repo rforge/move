@@ -1,8 +1,8 @@
-\name{time}
+\name{timeSummary}
 
-\alias{time}
-\alias{time,.MoveTrackSingle-method}
-\alias{time,.MoveTrackStack-method}
+\alias{timeSummary}
+\alias{timeSummary,.MoveTrackSingle-method}
+\alias{timeSummary,.MoveTrackStack-method}
 
 \docType{methods}
 
@@ -11,8 +11,8 @@
 \description{This function returns a summary about time related measurments of a track or track stack}
 
 \usage{
-  \S4method{time}{.MoveTrackSingle}(x)
-  \S4method{time}{.MoveTrackStack}(x)
+  \S4method{timeSummary}{.MoveTrackSingle}(x)
+  \S4method{timeSummary}{.MoveTrackStack}(x)
 }
 
 \arguments{
@@ -23,10 +23,8 @@
 
 \examples{
   load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-  
-  time(ricky) # summary of time measures of a Move object
-  time(stack) # summary of time measures of a MoveStack object
-  
   time.lag(leroy)
   time.lag(stack)
+  timeSummary(ricky) # summary of time measures of a Move object
+  timeSummary(stack) # summary of time measures of a MoveStack object
 }

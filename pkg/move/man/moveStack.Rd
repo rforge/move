@@ -12,16 +12,14 @@
 
 \usage{
   \S4method{moveStack}{list}(x)
-  %\S4method{moveStack}{character}(x, proj)
 }
 
 \arguments{
   \item{x}{a list of Move objects}
-  %\item{proj}{the projection of the coordinates}
 }
 
 \details{
-  This function stacks single Move objects to a \link[=MoveStack-class]{MoveStack} object. %, or creates a MoveStack from a Movebank file with several individuals. 
+  This function stacks single Move objects to a \link[=MoveStack-class]{MoveStack} object. 
 }
 
 \note{

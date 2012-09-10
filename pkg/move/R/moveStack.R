@@ -1,4 +1,4 @@
-setGeneric("moveStack", function(x, proj) standardGeneric("moveStack"))#marco what is proj here?
+setGeneric("moveStack", function(x) standardGeneric("moveStack"))#marco what is proj here?
 setMethod(f = "moveStack", 
           signature = c(x="list"),
           definition = function(x){
@@ -65,36 +65,3 @@ setMethod(f = "moveStack",
             return(res)
           })
 
-# setMethod(f="moveStack", 
-# 	        signature=c(x="character"), 
-# 	        definition = function(x, proj){
-# 		        df <- read.csv(x, header=TRUE, sep=",", dec=".")
-# 		        #check whether data are really from movebank
-# 		        if (!all(c("timestamp","location.long", "location.lat","study.timezone","study.local.timestamp","sensor.type","individual.local.identifier","individual.taxon.canonical.name")%in%colnames(df)))
-# 		        stop("The specified file does not seem to be from Movebank. Please use the alternative import function.")
-#       		df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") 
-#       		df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))            
-#       		missedFixes <- df[(is.na(df$location.long)|is.na(df$location.lat)), ]
-#       		df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
-# browser()
-#             
-#       		# p is a vector with unique variables of the individual
-#       		#p <- unlist(lapply(lapply(lapply(lapply(apply(df, 2, tapply, df$individual.local.identifier, unique), lapply, length),unlist),'==',1),all))
-#             
-# #       		tmp <- SpatialPointsDataFrame(
-# #       		      	coords = cbind(df$location.long,df$location.lat),
-# #       		      	data = data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp","individual.local.identifier", names(p)[p])]]), 
-# #       		      	proj4string = CRS("+proj=longlat +ellps=WGS84"), # proj is not used here
-# #       		      	match.ID = TRUE)
-# #       		idData <- df[!duplicated(df$individual.local.identifier),names(p)[p]]
-# #       		rownames(idData) <- idData$individual.local.identifier
-# #       		
-# #           res <- new("MoveStack", 
-# #       		        tmp, 
-# #       		        idData = idData[ ,names(idData)!="individual.local.identifier"],
-# #       		        timestamps = df$timestamp, 
-# #       		        trackId = df$individual.local.identifier
-# #       		        )
-#             
-#       		return(res)
-#       	  })

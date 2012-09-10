@@ -1,5 +1,5 @@
 ###create a list of Move objects from a Move Stack (hand over additional arguments!)
-setGeneric("split") ##check whether this is necessary or screws up the original method marco
+setGeneric("split") 
 setMethod(f = "split",
           signature = c(x="MoveStack", f="missing"),
           definition = function(x, f, ...){
