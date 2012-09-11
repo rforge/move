@@ -32,7 +32,7 @@ setMethod("distanceSummary",
           })
 
 
-setGeneric("distance", function(x){standardGeneric("distance")})
+#setGeneric("distance")#, function(x){standardGeneric("distance")})
 setMethod("distance", 
           signature=".MoveTrackSingle",
           definition=function(x){ 
