@@ -92,8 +92,11 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack"),
 			   stop("No correct naming timesMissedFixes")
            if(length(object@trackId)!=nrow(object@coords))
              stop("Number of trackId does not match the number of coordinates")
-           if(any(tmp<-duplicated(cbind(object@timestamps, object@trackId, object@sensor))))
+           if(!all(unlist(tapply(object@timestamps, list(object@trackId, object@sensor),diff))>0))
+	   {
+		tmp<-duplicated(cbind(object@timestamps, object@trackId, object@sensor))# made new test in check for higher speed but have this one still here for more clear reporting
              stop("The data set includes double timestamps per ID (first one:", object@trackId[tmp][1]," ",object@sensor[tmp][1]," ",object@timestamps[tmp][1], ")")
+	   }
            if(any(unlist(lapply(tapply(object@timestamps,object@trackId, order),diff))!=1))
              stop("Not ordered timestamps per individual")
            if(any(levels(object@trackId)!=raster:::.goodNames(levels(object@trackId))))

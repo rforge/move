@@ -20,7 +20,7 @@ setMethod(f = "move",
             df$sensor<-df$sensor.type 
             df <- df[,names(df)!="sensor.type"]
             
-            try(df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS")),silent=T)
+            df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))
             .move(df=df, proj=proj)
           }
           )
@@ -80,7 +80,7 @@ setMethod(f = ".move",
             missedFixes<- df[(is.na(df$location.long)|is.na(df$location.lat)), ]$timestamp
             df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
             #df$individual.local.identifier <- raster:::.goodNames(unique(df$individual.local.identifier)) 
-            
+	   df$individual.local.identifier<-factor(df$individual.local.identifier)
             levels(df$individual.local.identifier) <- raster:::.goodNames(levels(factor(df$individual.local.identifier))) #changing names to 'goodNames' skipping spaces
             #df$sensor<-df$sensor.type 
             #if(is.null(df$sensor.type)) df$sensor <- rep(NA, nrow(df)) else df$sensor<-df$sensor.type

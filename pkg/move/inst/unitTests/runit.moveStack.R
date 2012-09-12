@@ -9,6 +9,7 @@ test.moveStack<-function()
 	aa<-list(unnamed=a,a=b)
 	row.names(aa[[2]])<-1:10
 	row.names(bb[[2]])<-1:10
+	bb<-lapply(bb, function(x){x@idData$individual.local.identifier<-factor(x@idData$individual.local.identifier); return(x)})
 	checkEquals(bb,aa)# one problem seems to be moveStack does not deal with missed fixes, the other the rownames of the data frame
 	row.names(d@idData)<-sub('a','A A', row.names(d@idData))
 	checkException(new('MoveStack', d , trackId=factor(sub('a','A A', as.character(d@trackId))), idData=d@idData))# track ids are no good names

@@ -51,7 +51,7 @@ setMethod(f = "moveStack",
 	    tz<-unique(unlist(lapply(tmf, attr, "tzone")))
 	    if(!(length(tz)==1|is.null(tz )))
 		    stop("Concatinating multiple time zone for timest missed fixes")
-	    tmfVector<-do.call('c',lapply(1:length(tmf), function(i, tmf, names){tmp<-tmf[[i]]; names(tmp)<-rep(names[i], length(tmp)); return(tmp)}, tmf=tmf, names=rownames(IDDATA)))
+	    tmfVector<-do.call('c',lapply(1:length(tmf), function(i, tmf, names){tmp<-tmf[[i]]; if(!is.null(tmp)) names(tmp)<-rep(names[i], length(tmp)); return(tmp)}, tmf=tmf, names=rownames(IDDATA)))
 	    if(!is.null(tz))
 	     tmfVector<-as.POSIXct(format(tmfVector, tz=tz,usetz=T),tz=tz)
             res <- new("MoveStack", 
