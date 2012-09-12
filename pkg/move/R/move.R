@@ -7,7 +7,7 @@ setMethod(f = "move",
             df <- read.csv(x, header=TRUE, sep=",", dec=".")
             if (!all(c("timestamp", "location.long",  "location.lat", "study.timezone", "study.local.timestamp", "sensor.type", "individual.local.identifier", "individual.taxon.canonical.name")%in%colnames(df)))
               stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
-            if(any(dups<-duplicated(apply(df[,names(df)!="event.id"], 1, paste, collapse="__")))){
+            if(any(dups<-duplicated( do.call('paste',c(df[duplicated(df$timestamp)|duplicated(df$timestamp, fromLast=T),names(df)!="event.id"], list(sep="__")))))){#first find atleast the ones where the timestamp (factor) is duplicated
               warning("Exact duplicate records removed (n=",sum(dups),") (movebank allows them but the move package cant deal with them)")
               df<-df[!dups,]
             }	       
@@ -94,7 +94,8 @@ setMethod(f = ".move",
             }
             ids <- as.list(as.character(unique(df$individual.local.identifier)))
             #this function should both work for one and multiple individuals
-            uniquePerID<-apply(df, MARGIN=2, function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=factor(df$individual.local.identifier))
+       #     uniquePerID<-apply(df, MARGIN=2, function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=factor(df$individual.local.identifier))
+            uniquePerID<-unlist(lapply(df,  function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=factor(df$individual.local.identifier)))
             uniquePerID["sensor"]<-FALSE
             idData<-subset(df, select=names(uniquePerID[uniquePerID]), !duplicated(individual.local.identifier))
             if(length(names(idData))!=1)# dont shorten it because we need something
