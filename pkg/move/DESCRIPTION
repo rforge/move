@@ -1,8 +1,8 @@
 Package: move
 Type: Package
 Title: Visualizing and analyzing animal track data
-Version: 0.5.7-283
-Date: 2012-09-11
+Version: 0.5.7-288
+Date: 2012-09-12
 Author:   Bart Kranstauber <bart.kranstauber@uni-konstanz.de>, Marco Smolla <msmolla@orn.mpg.de>
 Maintainer: Marco Smolla <msmolla@orn.mpg.de>
 Description: move is a package that contains functions to access movement data stored in movebank.org as well as tools to visualize and statistically analyse animal movement data. Move addresses movement ecological questions.

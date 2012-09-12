@@ -1,6 +1,7 @@
 \name{MoveBurst}
 
 \alias{MoveBurst-class}
+\alias{.MoveTrackSingleBurst-class}
 
 \docType{class}
 
