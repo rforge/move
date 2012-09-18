@@ -12,8 +12,8 @@ setMethod("show", ".MoveTrack", function(object){
 	  cat("\nindiv. data :", sep=", ", names(object@idData),fill=T)
 })
 setMethod("show", "dBMvarianceTmp", function(object){
-	  cat("\nmargin      :", object@margin)
-	  cat("\nwindow size :", object@window.size)# bart have to add means usw
+	  cat("margin      :", object@margin,"\n")
+	  cat("window size :", object@window.size,"\n")# bart have to add means usw
 })
 setMethod("show", ".MoveTrackSingle", function(object){
 	  callNextMethod()

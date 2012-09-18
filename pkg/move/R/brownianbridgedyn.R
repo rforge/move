@@ -105,6 +105,8 @@ setMethod(f = "brownian.bridge.dyn",
             print(paste("Computational size:", sprintf("%.1e", compsize)))
             
             interest <- (c(object@interest, 0) + c(0, object@interest))[1:length(object@interest)] != 0
+	    if(nrow(object)!=length(location.error))
+		    stop('fix length location error')
             # Fortran agguments n.locs gridSize timeDiff total time x track y track
             # variance estimates loc error x raster y raster interpolation time step prop
             # vector filled
