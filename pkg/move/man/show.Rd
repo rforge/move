@@ -25,6 +25,7 @@
 
 \arguments{
   \item{object}{a Move or MoveStack object}
+  %\item{...}{arguments handed over; here to the \fct{cat} function; use fill to specify whether line breaks (logical) should be inserted or how long a line shoud maximally be (numerical)}
 }
 
 \details{

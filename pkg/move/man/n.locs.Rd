@@ -2,6 +2,7 @@
 
 \alias{n.locs}
 \alias{n.locs,SpatialPointsDataFrame-method}
+\alias{n.locs,MoveStack-method}
 
 \docType{methods}
 
@@ -11,6 +12,7 @@
 
 \usage{
   \S4method{n.locs}{SpatialPointsDataFrame}(obj)
+  \S4method{n.locs}{MoveStack}(obj)
 }
 
 \arguments{
