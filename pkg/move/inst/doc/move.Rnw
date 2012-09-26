@@ -232,8 +232,8 @@ The \fct{plotBursts} plots a circle for every segment right at the midpoint of t
 <<label=figburst, fig=TRUE, echo=TRUE, results=hide, height=6>>=
 par(mfrow=c(2,2))
 plot(leroy_b, type="l", lwd=2)
-plot(midPoint(coordinates(leroy_b)[-n.locs(leroy_b), ], coordinates(leroy_b)[-1, ]), 
-     col=leroy_b@burstId, pch=20)
+plot(midPoint(coordinates(leroy_b)[-n.locs(leroy_b), ], 
+              coordinates(leroy_b)[-1, ]), col=leroy_b@burstId, pch=20)
 plotBursts(leroy_b, breaks=3, add=FALSE, pch=19)
 @
 \end{center}
@@ -250,7 +250,8 @@ When the \fct{brownian.bridge.dyn} function issues the warning, the extent of yo
 
 <<dbbmm>>=
 r <- spTransform(ricky[1:500,], center=T)
-ricky_dbbmm <- brownian.bridge.dyn(r, dimSize=150, location.error=23, ext=.3, time.step=60)
+ricky_dbbmm <- brownian.bridge.dyn(r, dimSize=150, location.error=23, 
+                                   ext=.3, time.step=60)
 @
 
 Running the \fct{brownian.bridge.dyn} creates an object of the \class{DBBMM} class, which among others stores the raster of the map with the values from the UD. You can also run the function with a \class{MoveStack}. The returned object will then be a \class{DBBMMStack}.\\
@@ -301,7 +302,30 @@ contour(ricky_dbbmm, levels=c(.5, .95), col=c(6,2), add=TRUE, lwd=2)
 \fct{raster}              : returns the information of the stored raster\\
 \fct{outerProbability}    : calculates the probabilities of the UD at the border of the raster\\
 
-\newpage
+
+\subsection{Storing and loading objects}
+If one or more objects should be stored and loaded at another timer again into R, there is an easy way to save them. The \fct{save} function saves all listed objects from the workspace (in the example below it is only ricky\_dbbmm). The file format is \texttt{RData}. More than one or the whole workspace can be stored in a \texttt{RData} file. Complicated calculations (e.g. brownian bridges), can be calculated once and then stored. \\
+\texttt{RData} files can be loaded using the \fct{load} function. It loads all objects from the file again into the workspace. In the following example we save the object \texttt{ricky\_dbbmm} as \texttt{test.RData}, remove the object (it does not appear any more in the workspace), and load it again.
+
+<<saveLoad, eval=FALSE>>=
+save(x=ricky_dbbmm, file="~/Desktop/test.RData")
+rm(ricky_dbbmm)
+load(file="~/Desktop/test.RData")
+@
+
+
+\subsection{Store a track as KML file}
+A \class{Move} objects can also be saved as KML (keyhole markup language) files. KML files can easily loaded into GoogleEarth and GoogleMaps. Therefore the \texttt{plotKML} package is needed. Once installed the \fct{kml} function creates a file with the ending \texttt{.kml} and the name of the object. The kml file is stored in the current working directory. \\
+The following code creates the file \texttt{leroy.kml} from the \class{Move} object named \texttt{leroy}. If GoogleEarth is installed a double click on that file opens the locations of the track in GoogleEarth.
+
+<<saveKML, eval=FALSE>>=
+install.packages('plotKML')
+require(plotKML)
+kml(leroy)
+@
+
+
+%\newpage
 
 \section{Home Range Bootstrap using Minimum Convex Polygons}
 The move package includes a method to calculate minimum convex polygons (MCP) using \fct{hrBootstrap}. A minimum convex polygon describes an area that is formed by the points of a track. It is called convex because no line that connects two points within this polygon crosses the border of the polygon. \\

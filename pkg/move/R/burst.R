@@ -1,4 +1,3 @@
-
 setGeneric("burst", function(x, f, ...) {standardGeneric("burst")})
 setMethod("burst", 
           signature=c(x = "Move", f = "factor"), 
