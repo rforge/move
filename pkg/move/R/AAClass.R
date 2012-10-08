@@ -58,7 +58,7 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no misse
            stop("The dataset includes unsorted time stamps")
 	       tmp <- c(T, tmp==0)|c(tmp==0,T)#only check for those that have the same time if the sensor is different
          if (any(dups <- duplicated(data.frame(format(object@timestamps[tmp],"%Y %m %d %H %M %OS4"), object@sensor[tmp]))))
-           stop("The dataset includes double timestamps 8first one:", object@timestamps[tmp][dups][1], ")")
+           stop("The dataset includes double timestamps first one:", object@timestamps[tmp][dups][1], ")")
          if(nrow(object@idData)>1)
            stop("There are more than 1 row stored in the idData")
          #if (length(object@burstID)!=nrow(coordinates(object)))
