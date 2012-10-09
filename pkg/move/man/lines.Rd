@@ -14,7 +14,7 @@
 \usage{
   \S4method{lines}{.MoveTrackSingle}(x,...)
   \S4method{lines}{.MoveTrackStack}(x,col=NA,...)
-  \S4method{lines}{.MoveTrackSingleBurst}(x,...)
+  \S4method{lines}{.MoveTrackSingleBurst}(x,col=NA,...)
 }
 
 \arguments{

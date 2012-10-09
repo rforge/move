@@ -4,23 +4,24 @@ setMethod("distanceSummary",
           definition=function(x){ 
             track <- coordinates(x)
             if(nrow(track)>2){
-              Dists <- seglength(x)*1000 #vector of all distances in meters
-              df <- data.frame(TravDist=sum(Dists))    #travel distance in meters
+              Dists <- seglength(x) #vector of all distances in km
+              df <- data.frame(TravDist=sum(Dists))    #travel distance in km
               df$MaxDist <- max(Dists) #largest distance
               df$MinDist <- min(Dists) #shortest distance
-              if (grepl("longlat",proj4string(x))) {
-                df$FarthDist <- max(spDistsN1(pts=track,pt=track[1,],longlat=T))*1000
+              #if (grepl("longlat",proj4string(x))) {
+              if(isLonLat(x)){
+                df$FarthDist <- max(spDistsN1(pts=track,pt=track[1,],longlat=T))
               } else {
                 df$FarthDist <- max(spDistsN1(pts=track,pt=track[1,],longlat=F))
-              } #farthest distance from the start in meters
+              } #farthest distance from the start in km
               #df$FarthDist <- max(spDistsN1(pts=track,pt=track[1,],longlat=grepl(proj4string(x),"longlat")))*1000 
-              df$AverDist <- mean(Dists)    #mean distance between relocations in meters
+              df$AverDist <- mean(Dists)    #mean distance between relocations in km
               df$SDDist <- sd(Dists)      #standard deviation of distances between relocations
               if (grepl("longlat",proj4string(x))) {
-                df$SEDist <- max(as.numeric(spDistsN1(pts=t(as.matrix(track[n.locs(x),])),pt=track[1,],longlat=T))*1000)
+                df$SEDist <- max(as.numeric(spDistsN1(pts=t(as.matrix(track[n.locs(x),])),pt=track[1,],longlat=T)))
               } else {
                 df$SEDist <- max(as.numeric(spDistsN1(pts=t(as.matrix(track[n.locs(x),])),pt=track[1,],longlat=F)))
-              } #start to end straight distance in meters
+              } #start to end straight distance in km
               return(df)} else {NA}#{warning("Two or less locations.")}
           })
 
@@ -38,7 +39,7 @@ setMethod("distance",
           definition=function(x){ 
             track <- coordinates(x)
             if(nrow(track)>2){
-              Dists <- seglength(x)*1000 #vector of all distances in meters
+              Dists <- seglength(x) #vector of all distances in km IF PROJECTION IS LONLAT!!!
               } else {Dists <- NA}#{warning("Two or less locations.")}
             return(Dists)
           })

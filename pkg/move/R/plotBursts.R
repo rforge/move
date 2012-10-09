@@ -33,9 +33,9 @@ setMethod(f = "plotBursts",
             
             if (add) {
               points(x=df[1,3], y=df[1,4], cex=as.numeric(df[1,2]), col=df[1,1],...)
-              apply(df[-1,], MARGIN=1, function(x,...){points(x=x[3], y=x[4], cex=as.numeric(x['size']), col=x['color'],...)}, ...)
+              res <- apply(df[-1,], MARGIN=1, function(x,...){points(x=x[3], y=x[4], cex=as.numeric(x['size']), col=x['color'],...)}, ...)
             } else {
               plot(coordinates(object), type="l", ...)
-              apply(df, MARGIN=1, function(x,...){points(x=x[3], y=x[4], cex=as.numeric(x['size']), col=x['color'],...)}, ...)
+              res <- apply(df, MARGIN=1, function(x,...){points(x=x[3], y=x[4], cex=as.numeric(x['size']), col=x['color'],...)}, ...)
             }
             })

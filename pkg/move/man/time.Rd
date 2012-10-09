@@ -11,12 +11,13 @@
 \description{This function returns a summary about time related measurments of a track or track stack}
 
 \usage{
-  \S4method{timeSummary}{.MoveTrackSingle}(x)
-  \S4method{timeSummary}{.MoveTrackStack}(x)
+  \S4method{timeSummary}{.MoveTrackSingle}(x, units="hours")
+  \S4method{timeSummary}{.MoveTrackStack}(x, units="hours")
 }
 
 \arguments{
   \item{x}{Move or MoveStack object}
+  \item{units}{defines the output uni, 'secs', 'mins', 'hours', 'days', ...}
 }
 
 \author{Marco Smolla}
@@ -26,5 +27,5 @@
   time.lag(leroy)
   time.lag(stack)
   timeSummary(ricky) # summary of time measures of a Move object
-  timeSummary(stack) # summary of time measures of a MoveStack object
+  timeSummary(stack, units="hours") # summary of time measures of a MoveStack object
 }

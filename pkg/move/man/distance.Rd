@@ -24,6 +24,10 @@
   \item{x}{Move or MoveStack object}
 }
 
+\value{
+All values are returned in kilometer if the projection of the coordinates is longlat.
+}
+
 \author{Marco Smolla}
 
 \examples{

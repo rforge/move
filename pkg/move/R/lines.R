@@ -12,8 +12,18 @@ setMethod("lines", ".MoveTrackStack", function(x,col=NA,...){
              segments(x0=coords[-nrow(coords),1], y0=coords[-nrow(coords),2], x1=coords[-1,1], y1=coords[-1,2], col=col[x@trackId==Id], ...)},x=x, ...)
 })
 
-setMethod("lines", ".MoveTrackSingleBurst", function(x,...){
+setMethod("lines", ".MoveTrackSingleBurst", function(x,col=NA,...){
     coords <- coordinates(x)
-    segments(x0=coords[-nrow(coords),1], y0=coords[-nrow(coords),2], x1=coords[-1,1], y1=coords[-1,2], col=x@burstId, ...)
-    if(length(levels(x@burstId))>8) warning("There are more burst IDs than colors, therefore colors are recycled.")
+    
+    if (length(col)==1 && is.na(col)) {
+      col <- x@burstId
+    } else {
+      if (length(col)==length(unique(x@burstId))){
+        col <- col[as.numeric(x@burstId)]
+      } else {
+        stop("The number of defined colors is unequal to the number of burst IDs")
+      }
+    }
+    if(length(levels(x@burstId))>8) warning("There are more burst IDs than colors (recycling colors).")
+    segments(x0=coords[-nrow(coords),1], y0=coords[-nrow(coords),2], x1=coords[-1,1], y1=coords[-1,2], col=col, ...)
   }) 

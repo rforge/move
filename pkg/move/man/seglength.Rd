@@ -22,7 +22,7 @@
 }
 
 \value{
-  If the SptialPointsDataFrame is projected in longitude latitude coordiantes, the returned values are in kilometer. If not the distnces are calculated with the Pythagoras' theorem.
+  If the SptialPointsDataFrame is projected in longitude latitude coordinates, the returned values are in kilometer. If not the distances are calculated with the Pythagoras' theorem.
 }
 
 \author{Marco Smolla}

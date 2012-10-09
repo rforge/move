@@ -5,7 +5,8 @@ setMethod("seglength",
             #if (!grepl("longlat",proj4string(x))) x <- spTransform(x, CRSobj="+proj=longlat")
             track <- coordinates(x)
             segM <- cbind(as.data.frame(track)[-nrow(track),], as.data.frame(track)[-1,])
-            if (grepl("longlat",proj4string(x))) {
+            #if (grepl("longlat",proj4string(x))) {
+            if(isLonLat(x)){
               #if proj is long lat the segment lengths are calculated as kilometers on a great circle
               Dists <- as.numeric(apply(segM, 1, function(segM) spDistsN1(as.matrix(t(segM[1:2])), as.matrix(t(segM[3:4])), longlat=T)))
             } else {
