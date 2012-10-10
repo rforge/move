@@ -10,9 +10,9 @@ setMethod(f = "plot",
           function(x, y, type='p',...){
             plot(coordinates(x), type='n')
             if(type %in% c('p','o','b'))
-              points(x,...)
+              res <- points(x,...)
             if(type %in% c('l','o','b'))
-              lines(x,...)        
+              res <- lines(x,...)        
           })
 
 setMethod(f = "plot", 
@@ -20,8 +20,8 @@ setMethod(f = "plot",
           function(x, y, type='p', ...){
             plot(coordinates(x), type="n")
             if(type %in% c("p", "o", "b"))
-              points(x, ...)
+              res <- points(x, ...)
             if(type %in% c("l", "o", "b"))
-              lines(x, ...)
+              res <- lines(x, ...)
           }) 
 
