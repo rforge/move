@@ -2,7 +2,7 @@ setGeneric("points")
 setMethod("points", ".MoveTrackStack", function(x,col=NA,...){
   if(any(is.na(col)))
     col <- 1:length(unique(x@trackId))
-  if(length(col)!=n.locs(x))
+  if(all(length(col)!=n.locs(x)))
     col <- col[as.numeric(x@trackId)]# needs to correspond to lines function
   points(coordinates(x), col=col,...)
 })
