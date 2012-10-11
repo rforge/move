@@ -29,7 +29,7 @@ The burst function bursts (divides) a track in segments that are specified by th
 
 \examples{
 test <- move(system.file("extdata","leroy.csv", package="move"))
-behav <- c(rep(1:91,each=10), rep(92, 8))
+behav <- c(rep(1:4,each=200), rep(5, 118))
 testb <- burst(x=test, f=behav)
 head(testb)
 }

@@ -15,6 +15,7 @@ setMethod("lines", ".MoveTrackStack", function(x,col=NA,...){
 setMethod("lines", ".MoveTrackSingleBurst", function(x,col=NA,...){
     coords <- coordinates(x)
     
+    
     if (length(col)==1 && is.na(col)) {
       col <- x@burstId
     } else {
