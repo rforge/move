@@ -3,8 +3,10 @@ setGeneric("brownian.bridge.dyn", function(object, raster = 1, dimSize = 10, loc
 })
 # This method is to enable pointing at a collumn that contains the location error
 setMethod(f = "brownian.bridge.dyn", 
-          signature = c(object = ".MoveTrackSingle", raster = "RasterLayer", dimSize = "missing", location.error = "character"), 
+          signature = c(object = ".MoveTrackSingle", raster = "RasterLayer", dimSize = "missing", location.error = "numeric"), 
           function(object, raster, dimSize, location.error, ...) {
+            if(!proj4string(raster)==proj4string(object)) #check equal projection of raster and Move
+              stop(paste("The projection of the raster and the Move object are not equal. \n raster:", proj4string(raster), "\n object:", proj4string(object), "\n"))
             location.error <- do.call("$", list(object, location.error))
             if(is.null(location.error))
               stop('column indicated for location error probably does not exist')
