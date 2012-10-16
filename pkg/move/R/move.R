@@ -7,6 +7,11 @@ setMethod(f = "move",
             df <- read.csv(x, header=TRUE, sep=",", dec=".")
             if (!all(c("timestamp", "location.long",  "location.lat", "study.timezone", "study.local.timestamp", "sensor.type", "individual.local.identifier", "individual.taxon.canonical.name")%in%colnames(df)))
               stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
+	    if(any(is.na(df$individual.local.identifier)))
+	    {
+		    warnings('Undeployed locations removed (n=', sum(is.na(individual.local.identifier)), ')')
+		    df<-df[!is.na(df$individual.local.identifier),]
+	    }
             if(any(dups<-duplicated( do.call('paste',c(df[duplicated(df$timestamp)|duplicated(df$timestamp, fromLast=T),names(df)!="event.id"], list(sep="__")))))){#first find atleast the ones where the timestamp (factor) is duplicated
               warning("Exact duplicate records removed (n=",sum(dups),") (movebank allows them but the move package cant deal with them)")
               df<-df[!duplicated( do.call('paste',c(df[,names(df)!="event.id"], list(sep="__")))),]# cant use dups here since it that uses the optimization of only looking at timestamps first
