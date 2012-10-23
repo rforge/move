@@ -92,7 +92,7 @@ setMethod(f = "brownian.bridge.dyn",
             # check for aeqd projection of the coordinates
             if (grepl("aeqd", proj4string(object)) == FALSE) 
               stop("The projection of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
-            if(!proj4string(raster)==proj4string(object)) #check equal projection of raster and Move
+            if(!projection(raster)==projection(object)) #check equal projection of raster and Move
               stop(paste("The projection of the raster and the Move object are not equal. \n raster:", proj4string(raster), "\n object:", proj4string(object), "\n"))
             
             time.lag <- c(time.lag(object, units = "mins"), 0)  #units need to match between here and dBBMMvar calculations
