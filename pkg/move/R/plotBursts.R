@@ -27,7 +27,8 @@ setMethod(f = "plotBursts",
             #        sizeLST  <- FUN(ll, object)} #think about what to enter for FUN
             #sizes  <- as.numeric(cut(unlist(sizeLST), breaks=breaks))/max(as.numeric(cut(unlist(sizeLST), breaks=breaks))) 
             sizes  <- as.numeric(cut(sizesdf, breaks=breaks))/max(as.numeric(cut(sizesdf, breaks=breaks)),na.rm=T)*2
-            df <- cbind(col, sizes, do.call('rbind', lapply(midLST, data.frame)))
+            #df <- cbind(col, sizes, do.call('rbind', lapply(midLST, data.frame)))
+            df <- cbind(col, sizes, data.frame(do.call(rbind, midLST)))
             colnames(df) <- c("color", "size","x","y")
             spdf <- SpatialPointsDataFrame(coords=do.call(rbind, midLST), data=df[,1:2], proj4string=CRS("+proj=longlat"))           
             
@@ -38,4 +39,5 @@ setMethod(f = "plotBursts",
               plot(coordinates(object), type="l", ...)
               res <- apply(df, MARGIN=1, function(x,...){points(x=x[3], y=x[4], cex=as.numeric(x['size']), col=x['color'],...)}, ...)
             }
+            #return(spdf)
             })
