@@ -1,8 +1,8 @@
 \name{hrBootstrap}
 
 \alias{hrBootstrap}
-\alias{hrBootstrap,.MoveTrackSingle-method}
-\alias{hrBootstrap,.MoveTrack-method}
+\alias{hrBootstrap,SpatialPoints-method}
+\alias{hrBootstrap,.MoveTrackStack-method}
 
 \docType{methods}
 
@@ -11,13 +11,13 @@
 \description{Calculates and plot the Minimum Convex Polygon for a track}
 
 \usage{
-  \S4method{hrBootstrap}{.MoveTrackSingle}(x, rep=100, plot=TRUE, unin='km', unout='m2', ...)
-  \S4method{hrBootstrap}{.MoveTrack}(x, rep=100, plot=TRUE, unin="km", unout="m2", ...)
+  \S4method{hrBootstrap}{SpatialPoints}(x, rep=100, plot=TRUE, unin='km', unout='m2', ...)
+  \S4method{hrBootstrap}{.MoveTrackStack}(x, rep=100, plot=TRUE, unin="km", unout="m2", ...)
 
 }
 
 \arguments{
-  \item{x}{a Move or MoveStack object}
+  \item{x}{a Move or MoveStack object, or a simple SpatialPoints object}
   \item{rep}{numeric value for the number of repetitions per sample size, default is 100}
   \item{plot}{logical value that indicates whether the graph is plotted or not, default is TRUE}
   \item{unin}{units form the input values (can be 'm' or 'km')(as in adehabitat)}
