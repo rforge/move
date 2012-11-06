@@ -21,7 +21,7 @@
     \item{extent}{part of the \link{Raster-class}}
     \item{filename}{part of the \link{Raster-class}}
     \item{layers}{part of the \link{Raster-class}}    
-    \item{layernames}{part of the \link{Raster-class}}
+    %\item{layernames}{part of the \link{Raster-class}}
     \item{method}{the method that was used to calculate the utilization distribution, e.g. dynamic Brwonian Bridge}
     \item{ncols}{part of the \link{Raster-class}}
     \item{nrows}{part of the \link{Raster-class}}

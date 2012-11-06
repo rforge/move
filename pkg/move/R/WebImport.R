@@ -261,7 +261,7 @@ setMethod(f="getMovebankData",
               new <- new[new$local_identifier%in%animalName, ]
               if(length(animalName)!=length(unique(new$individual_id))) stop("One or more animal names are spelled incorrectly.")
               }
-            b <- getMovebank("tag_type", login=ms)
+            b <- getMovebank("tag_type", login=login)
             locSen <- b[as.logical(b$is_location_sensor),"id"] #reduce track to location only sensors & only the correct animals
             attribs <- c(as.character(getMovebankSensorsAttributes(study, login)$short_name),"sensor_type_id","individual_id","tag_id","deployment_id")
             trackDF <- getMovebank("event", login=login, study_id=study, attributes = attribs , deployment_id=unique(new$id), sensor_type_id=locSen)

@@ -9,7 +9,7 @@ setMethod(f = "move",
               stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
 	    if(any(is.na(df$individual.local.identifier)))
 	    {
-		    warnings('Undeployed locations removed (n=', sum(is.na(individual.local.identifier)), ')')
+		    warnings('Undeployed locations removed (n=', sum(is.na(df$individual.local.identifier)), ')')
 		    df<-df[!is.na(df$individual.local.identifier),]
 	    }
             if(any(dups<-duplicated( do.call('paste',c(df[duplicated(df$timestamp)|duplicated(df$timestamp, fromLast=T),names(df)!="event.id"], list(sep="__")))))){#first find atleast the ones where the timestamp (factor) is duplicated
@@ -18,7 +18,7 @@ setMethod(f = "move",
             }	       
             df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") # need to make character out of it to ensure milli seconds are considerd
             if(any(tapply(df$sensor.type, df$individual.local.identifier, length)!=1)){
-              df<-df[with(df, order(individual.local.identifier, timestamp)), ]
+              df<-df[with(df, order(df$individual.local.identifier, timestamp)), ]
               
             }
             proj=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84")
@@ -102,7 +102,7 @@ setMethod(f = ".move",
        #     uniquePerID<-apply(df, MARGIN=2, function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=factor(df$individual.local.identifier))
             uniquePerID<-unlist(lapply(df,  function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=factor(df$individual.local.identifier)))
             uniquePerID["sensor"]<-FALSE
-            idData<-subset(df, select=names(uniquePerID[uniquePerID]), !duplicated(individual.local.identifier))
+            idData<-subset(df, select=names(uniquePerID[uniquePerID]), !duplicated(df$individual.local.identifier))
             if(length(names(idData))!=1)# dont shorten it because we need something
               idData<-subset(idData, select=names(idData)!="individual.local.identifier")
             

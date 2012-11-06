@@ -22,7 +22,7 @@ The DBBMM object is created within the brownian.bridge.dyn function from a Move 
     \item{extent}{part of the \link{Raster-class}}
     \item{file}{part of the \link{Raster-class}}
     \item{history}{part of the \link{Raster-class}}
-    \item{layernames}{part of the \link{Raster-class}}
+    %\item{layernames}{part of the \link{Raster-class}}
     \item{legend}{part of the \link{Raster-class}}
     \item{method}{stores the method that was used to calculate the utilization distribution (UD), e.g. dynamic Brwonian Bridge}
     \item{ncols}{part of the \link{Raster-class}}
