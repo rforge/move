@@ -6,7 +6,7 @@ setMethod("lines", ".MoveTrackSingle", function(x,...){
 setMethod("lines", ".MoveTrackStack", function(x,col=NA,...){
   if(any(is.na(col)))
     col <- 1:length(unique(x@trackId))
-  if(all(length(col)!=n.locs(x)-1))
+  if(all(length(col)!=length(x@trackId)-1))
     col <- col[as.numeric(x@trackId)] # needs to correspond to points function
     res <- lapply(levels(x@trackId), function(Id, x, ...) {coords <- coordinates(x)[x@trackId==Id,] 
              segments(x0=coords[-nrow(coords),1], y0=coords[-nrow(coords),2], x1=coords[-1,1], y1=coords[-1,2], col=col[x@trackId==Id], ...)},x=x, ...)

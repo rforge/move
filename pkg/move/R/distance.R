@@ -17,11 +17,11 @@ setMethod("distanceSummary",
               #df$FarthDist <- max(spDistsN1(pts=track,pt=track[1,],longlat=grepl(proj4string(x),"longlat")))*1000 
               df$AverDist <- mean(Dists)    #mean distance between relocations in km
               df$SDDist <- sd(Dists)      #standard deviation of distances between relocations
-              if (grepl("longlat",proj4string(x))) {
-                df$SEDist <- max(as.numeric(spDistsN1(pts=t(as.matrix(track[n.locs(x),])),pt=track[1,],longlat=T)))
-              } else {
-                df$SEDist <- max(as.numeric(spDistsN1(pts=t(as.matrix(track[n.locs(x),])),pt=track[1,],longlat=F)))
-              } #start to end straight distance in km
+           #   if (!is.longrepl("longlat",proj4string(x))) {
+                df$SEDist <- max(as.numeric(spDistsN1(pts=t(as.matrix(track[n.locs(x),])),pt=track[1,],longlat=isLonLat(x))))
+           #   } else {
+           #     df$SEDist <- max(as.numeric(spDistsN1(pts=t(as.matrix(track[n.locs(x),])),pt=track[1,],longlat=F)))
+           #   } #start to end straight distance in km
               return(df)} else {NA}#{warning("Two or less locations.")}
           })
 
