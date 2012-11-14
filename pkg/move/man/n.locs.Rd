@@ -2,7 +2,7 @@
 
 \alias{n.locs}
 \alias{n.locs,SpatialPointsDataFrame-method}
-\alias{n.locs,MoveStack-method}
+\alias{n.locs,.MoveTrackStack-method}
 
 \docType{methods}
 
