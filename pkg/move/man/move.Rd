@@ -16,7 +16,7 @@ Create a Move object
 }
 
 \description{
-The move method creates Move or MoveStack object from Movebank or other csv files. If you use your own data you need to set the projection method with the 'proj' argument and specify in which column of your data the function finds locations and timestamps. 
+The move method creates Move or MoveStack object from Movebank or other (compressed) csv files. If you use your own data you need to set the projection method with the 'proj' argument and specify in which column of your data the function finds locations and timestamps. 
 }
 
 \usage{
@@ -53,10 +53,10 @@ Due to convention all names are turned into 'good names' which means, without sp
 
 \examples{
 ## create a move object from a Movebank csv file
-data <- move(system.file("extdata","leroy.csv",package="move"))
+data <- move(system.file("extdata","leroy.csv.gz",package="move"))
 
 ## create a move object from non-Movebank data
-file <- read.table(system.file("extdata","leroy.csv",package="move"), header=TRUE, sep=",", dec=".")
+file <- read.table(system.file("extdata","leroy.csv.gz",package="move"), header=TRUE, sep=",", dec=".")
 data <- move(x=file$location.long, y=file$location.lat, time=as.POSIXct(file$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC"), data=file, proj=CRS("+proj=longlat"), animal="Leroy")
 \dontshow{
 move(x=file$location.long, y=file$location.lat, time=as.POSIXct(file$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC"), data=file, proj=CRS("+proj=longlat"))

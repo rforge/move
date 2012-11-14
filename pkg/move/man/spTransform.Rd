@@ -29,7 +29,7 @@
 
 \examples{
 ## create a Move object
-leroy <- move(system.file("extdata","leroy.csv",package="move"))
+leroy <- move(system.file("extdata","leroy.csv.gz",package="move"))
 
 ## transform the Move object by default into "+aeqd" projection method 
 ## and center the coordinate system

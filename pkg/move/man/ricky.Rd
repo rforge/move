@@ -15,7 +15,7 @@ For more information, contact Scott LaPoint \email{sdlapoint@gmail.com}
 
 \examples{
 ## create a Move object from the data set
-data <- move(system.file("extdata","ricky.csv",package="move"))
+data <- move(system.file("extdata","ricky.csv.gz",package="move"))
 plot(data)
 
 }

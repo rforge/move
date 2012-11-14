@@ -12,7 +12,7 @@
 
 \usage{
   \S4method{n.locs}{SpatialPointsDataFrame}(obj)
-  \S4method{n.locs}{MoveStack}(obj)
+  \S4method{n.locs}{.MoveTrackStack}(obj)
 }
 
 \arguments{

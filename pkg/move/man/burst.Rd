@@ -28,7 +28,7 @@ The burst function bursts (divides) a track in segments that are specified by th
 \author{Marco Smolla}
 
 \examples{
-test <- move(system.file("extdata","leroy.csv", package="move"))
+test <- move(system.file("extdata","leroy.csv.gz", package="move"))
 behav <- c(rep(1:4,each=200), rep(5, 118))
 testb <- burst(x=test, f=behav)
 head(testb)

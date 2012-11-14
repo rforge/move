@@ -64,7 +64,7 @@
 
 \examples{
 ## create a move object
-data <- move(system.file("extdata","leroy.csv",package="move"))
+data <- move(system.file("extdata","leroy.csv.gz",package="move"))
 
 ## change projection method to aequd and center the coordinate system to the track
 data2 <- spTransform(data, CRSobj="+proj=aeqd", center=TRUE)
@@ -73,12 +73,12 @@ data2 <- spTransform(data, CRSobj="+proj=aeqd", center=TRUE)
 dbbmm <- brownian.bridge.dyn(object=data2[1:100,], location.error=23.5, dimSize=45, ext=.3, time.step=600)
 dbbmm <- brownian.bridge.dyn(object=data2[1:100,], location.error=23.5, dimSize=45, ext=.3)
 \dontshow{
-  leroy <- move(system.file("extdata","leroy.csv", package="move"))[1:50,]
-  leroy2 <- move(system.file("extdata","leroy.csv", package="move"))[1:50,]
+  leroy <- move(system.file("extdata","leroy.csv.gz", package="move"))[1:50,]
+  leroy2 <- move(system.file("extdata","leroy.csv.gz", package="move"))[1:50,]
   p <- moveStack(list(leroy, leroy2))
 
-  leroy <- move(system.file("extdata","leroy.csv", package="move"))[1:104,]
-  ricky <- move(system.file("extdata","ricky.csv", package="move"))[1:105,]
+  leroy <- move(system.file("extdata","leroy.csv.gz", package="move"))[1:104,]
+  ricky <- move(system.file("extdata","ricky.csv.gz", package="move"))[1:105,]
   r <- moveStack(list(leroy, ricky))
   r2 <- spTransform(r, center=TRUE)
   t <- brownian.bridge.dyn(r2, location.error=23.5, dimSize=25, time.step=6000)

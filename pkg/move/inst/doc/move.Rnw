@@ -62,10 +62,10 @@ The import of data into R can happen on two ways. Either by importing data files
 
 \subsection{Import of Movebank data}
 Files from Movebank (\url{www.movebank.org}) can be imported with \texttt{move(x="path")}, where "path" is character string which locates the file on the hard-drive. It may look like: \\ \\ \texttt{> data <- move(x="/User/Documents/test.csv")}. \\ \\
-The following line imports the "leroy.csv" filet that is part of the move package.
+The following line imports the "leroy.csv.gz" file that is part of the move package.
 
 <<importData, results=hide>>=
-leroy <- move(system.file("extdata","leroy.csv",package="move"))
+leroy <- move(system.file("extdata","leroy.csv.gz",package="move"))
 @
 
 \subsection{Import of non-Movebank data}
@@ -73,7 +73,7 @@ If data sets are not published on Movebank but stored on the hard drive they can
 Import of a non-Movebank csv file that is attached to this package:
 
 <<importNonMovebank>>=
-data <- read.csv(system.file("extdata","ricky.csv",package="move"))
+data <- read.csv(system.file("extdata","ricky.csv.gz",package="move"))
 ricky <- move(x=data$location.long, y=data$location.lat, time=as.POSIXct(data$timestamp, 
             format="%Y-%m-%d %H:%M:%OS", tz="UTC"), proj=CRS("+proj=longlat"), 
             data=data, animal=data$individual.local.identifier, sensor=data$sensor)

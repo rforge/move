@@ -31,7 +31,7 @@ The plotBursts function plots bursted Move objects. Use the \code{burst} functio
 \author{Marco Smolla}
 
 \examples{
-test <- move(system.file("extdata","leroy.csv", package="move"))
+test <- move(system.file("extdata","leroy.csv.gz", package="move"))
 behav <- c(rep(1:4,each=200), rep(5, 118))
 testb <- burst(test, f=behav)
 plot(coordinates(test),type="l")
