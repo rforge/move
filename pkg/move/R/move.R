@@ -5,24 +5,29 @@ setMethod(f = "move",
             if(!file.exists(x))
               stop("x should be a file on disk but it cant be found")
             df <- read.csv(x, header=TRUE, sep=",", dec=".")
+            
             if (!all(c("timestamp", "location.long",  "location.lat", "study.timezone", "study.local.timestamp", "sensor.type", "individual.local.identifier", "individual.taxon.canonical.name")%in%colnames(df)))
               stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
-	    if(any(tmp<-(is.na(df$individual.local.identifier)| df$individual.local.identifier=='')))
-	    {
-		    warnings('Undeployed locations removed (n=', sum(tmp), ')')
-		    df<-df[!tmp,]
-	    }
+      	    
+            if(any(tmp <- (is.na(df$individual.local.identifier)| df$individual.local.identifier==''))) 
+      	    {
+      		    warnings('Undeployed locations removed (n=', sum(tmp), ')')
+      		    df <- df[!tmp,]
+      	    }
+            
             if(any(dups<-duplicated( do.call('paste',c(df[duplicated(df$timestamp)|duplicated(df$timestamp, fromLast=T),names(df)!="event.id"], list(sep="__")))))){#first find atleast the ones where the timestamp (factor) is duplicated
               warning("Exact duplicate records removed (n=",sum(dups),") (movebank allows them but the move package cant deal with them)")
-              df<-df[!duplicated( do.call('paste',c(df[,names(df)!="event.id"], list(sep="__")))),]# cant use dups here since it that uses the optimization of only looking at timestamps first
-            }	       
-            df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") # need to make character out of it to ensure milli seconds are considerd
-            if(any(tapply(df$sensor.type, df$individual.local.identifier, length)!=1)){
-              df<-df[with(df, order(df$individual.local.identifier, timestamp)), ]
-              
+              df <- df[!duplicated( do.call('paste',c(df[,names(df)!="event.id"], list(sep="__")))),]# cant use dups here since it that uses the optimization of only looking at timestamps first
             }
+            
+            df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") # need to make character out of it to ensure milli seconds are considerd
+            
+            if(any(tapply(df$sensor.type, df$individual.local.identifier, length)!=1)){
+              df <- df[with(df, order(df$individual.local.identifier, timestamp)), ]  
+            }
+            
             proj=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84")
-            df$sensor<-df$sensor.type 
+            df$sensor <- df$sensor.type 
             df <- df[,names(df)!="sensor.type"]
             
             df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))
@@ -30,30 +35,6 @@ setMethod(f = "move",
           }
           )
 
-#setMethod(f="move",
-#          signature=c(x='ANY', y='ANY', time='ANY', data='ANY', proj='ANY',sensor='missing', animal='ANY'),
-#          definition = function(x, y, time, data, proj,sensor, animal, ...){
-#		  move(x=x, y=y, time=time, data=data, proj=proj,sensor='unknown', animal=animal,...)
-#	  }
-#	  )
-#setMethod(f="move",
-#          signature=c(x='ANY', y='ANY', time='ANY', data='ANY', proj='ANY',sensor='character', animal='ANY'),
-#          definition = function(x, y, time, data, proj,sensor, animal, ...){
-#		  move(x=x, y=y, time=time, data=data, proj=proj,sensor=factor(sensor), animal=animal,...)
-#	  }
-#	  )
-#setMethod(f="move",
-#          signature=c(x='ANY', y='ANY', time='ANY', data='ANY', proj='ANY',sensor='ANY', animal='character'),
-#          definition = function(x, y, time, data, proj,sensor, animal, ...){
-#		  move(x=x, y=y, time=time, data=data, proj=proj,sensor=sensor, animal=factor(animal),...)
-#	  }
-#	  )
-#setMethod(f="move",
-#          signature=c(x='ANY', y='ANY', time='ANY', data='ANY', proj='ANY',sensor='ANY', animal='missing'),
-#          definition = function(x, y, time, data, proj,sensor, animal, ...){
-#		  move(x=x, y=y, time=time, data=data, proj=proj,sensor=sensor, animal='unknown',...)
-#	  }
-#	  )
 #if non-Movebank data are used, table is new defined 
 setMethod(f="move",
           signature=c(x="numeric", y="numeric", time="POSIXct", data="missing", proj="CRS"),
@@ -94,32 +75,40 @@ setMethod(f = ".move",
             if(length(unique(df$individual.local.identifier))>1 & any(unique(as.character(df$individual.local.identifier))==""))
             {# this is not so elegant from me (bart) since this function also gets used by non movebank data
               warning("omitting locations that have an empty local identifier (n=",sum(tmp<-as.character(df$individual.local.identifier)==""),") most likely the tag was not deployed") 
-              df<-df[!tmp,]
-              df$individual.local.identifier<-factor(df$individual.local.identifier)
+              df <- df[!tmp,]
+              df$individual.local.identifier <- factor(df$individual.local.identifier)
             }
             ids <- as.list(as.character(unique(df$individual.local.identifier)))
             #this function should both work for one and multiple individuals
        #     uniquePerID<-apply(df, MARGIN=2, function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=factor(df$individual.local.identifier))
-            uniquePerID<-unlist(lapply(df,  function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=factor(df$individual.local.identifier)))
-            uniquePerID["sensor"]<-FALSE
-            idData<-subset(df, select=names(uniquePerID[uniquePerID]), !duplicated(df$individual.local.identifier))
+            uniquePerID <- unlist(lapply(df,  function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=factor(df$individual.local.identifier)))
+            uniquePerID["sensor"] <- FALSE
+            idData <- subset(df, select=names(uniquePerID[uniquePerID]), !duplicated(df$individual.local.identifier))
+            
             if(length(names(idData))!=1)# dont shorten it because we need something
               idData<-subset(idData, select=names(idData)!="individual.local.identifier")
             
-            if(length(unique(idData$citation))>1) {
+            if(length(unique(idData$citation))>1) 
+              {
               warning("There were more than one citation for this study found! Only using the first.")
-              citations <- as.character(unique(idData$citation))[1]}
-            if(length(unique(idData$citation))==1) {citations <- as.character(unique(idData$citation))
-                                                    } else {citations <- character()}
+              citations <- as.character(unique(idData$citation))[1]
+            }
+            
+            if(length(unique(idData$citation))==1) 
+              {citations <- as.character(unique(idData$citation))} else {citations <- character()}
+            
             #idData <- idData[,names(idData)!="citation"]
             rownames(idData) <- unique(df$individual.local.identifier)
             data <- data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp", colnames(idData))]])
+            
             if (ncol(data)==0) data <- data.frame(data, empty=NA)
+            
             tmp <- SpatialPointsDataFrame(
               coords = cbind(df$location.long,df$location.lat),
               data = data, 
               proj4string = proj,
               match.ID = TRUE)
+            
             if (length(ids)==1){
               res <- new("Move", 
                          timestamps = df$timestamp, 
