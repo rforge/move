@@ -9,6 +9,10 @@ setMethod(f = "brownian.motion.variance.dyn",
           signature = c(object = ".MoveTrackSingle", location.error = "numeric", window.size = "numeric", margin = "numeric"), 
           definition = function(object, location.error, window.size, margin) {
             time.lag <- time.lag(object, units = "mins")  #units need to correspont between BBMM method and here
+	  if(n.locs(object)!= length(location.error))
+		  stop("The location error vector is not same length as the move object")
+	  if(any(is.na(location.error)))
+		  stop("The location error contains NAs")
             if (grepl("aeqd", proj4string(object)) == FALSE) {
               stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
             } else {

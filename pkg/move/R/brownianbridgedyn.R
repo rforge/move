@@ -90,6 +90,10 @@ setMethod(f = "brownian.bridge.dyn",
           signature = c(object = "dBMvariance", raster = "RasterLayer", dimSize = "missing", location.error = "numeric"), 
           definition = function(object, raster, location.error,  ext, time.step,...) {
             # check for aeqd projection of the coordinates
+	  if(n.locs(object)!= length(location.error))
+		  stop("The location error vector is not same length as the move object")
+	  if(any(is.na(location.error)))
+		  stop("The location error contains NAs")
             if (grepl("aeqd", proj4string(object)) == FALSE) 
               stop("The projection of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
             if(!projection(raster)==projection(object)) #check equal projection of raster and Move
@@ -107,8 +111,6 @@ setMethod(f = "brownian.bridge.dyn",
             print(paste("Computational size:", sprintf("%.1e", compsize)))
             
             interest <- (c(object@interest, 0) + c(0, object@interest))[1:length(object@interest)] != 0
-	    if(nrow(object)!=length(location.error))
-		    stop('fix length location error')
             # Fortran agguments n.locs gridSize timeDiff total time x track y track
             # variance estimates loc error x raster y raster interpolation time step prop
             # vector filled
