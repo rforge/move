@@ -31,6 +31,10 @@
   If \code{x} is a DBBMM object its raster object is plotted with the corresponding cell values. Unlike the \code{\link{image}} function, the cell size ratio keeps the same when the plot window is resized.
 }
 
+\note{
+Have a look on the proportion of the graphic device when printing a track or raster. The plot function does not use equal sized units on both axes.
+}
+
 \author{Marco Smolla}
 
 

@@ -1,4 +1,4 @@
-setGeneric("move", function(x, y, time, data, proj, ...) standardGeneric("move"))
+setGeneric("move", function(x, y, time, data, proj=NA, ...) standardGeneric("move"))
 setMethod(f = "move", 
           signature = c(x="character",y='missing',time='missing', data='missing', proj='missing'), 
           definition = function(x){
@@ -37,14 +37,14 @@ setMethod(f = "move",
 
 #if non-Movebank data are used, table is new defined 
 setMethod(f="move",
-          signature=c(x="numeric", y="numeric", time="POSIXct", data="missing", proj="CRS"),
+          signature=c(x="numeric", y="numeric", time="POSIXct", data="missing", proj="ANY"),
           definition = function(x,y,time,data,proj, ...){
             data<-data.frame(x,y,time)
             move(x=x,y=y,time=time,proj=proj,data=data,...)
           }
           )
 setMethod(f="move",
-          signature=c(x="numeric", y="numeric", time="POSIXct", data="data.frame", proj="CRS"),
+          signature=c(x="numeric", y="numeric", time="POSIXct", data="data.frame", proj="ANY"),
           definition = function(x,y,time,data,proj,sensor='unknown',animal='unnamed', ...){
             data$location.long <- x
             data$location.lat <- y
@@ -57,7 +57,7 @@ setMethod(f="move",
 
 setGeneric(".move", function(df, proj) standardGeneric(".move"))
 setMethod(f = ".move", 
-          signature = c(df="data.frame", proj="CRS"), 
+          signature = c(df="data.frame", proj="ANY"), 
           definition = function(df, proj){
             
             #            df <- x[['df']]
@@ -103,6 +103,7 @@ setMethod(f = ".move",
             
             if (ncol(data)==0) data <- data.frame(data, empty=NA)
             
+            if(!is(proj,"CRS")) proj <- CRS(proj)
             tmp <- SpatialPointsDataFrame(
               coords = cbind(df$location.long,df$location.lat),
               data = data, 

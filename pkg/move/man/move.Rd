@@ -4,8 +4,8 @@
 %\alias{move,character,ANY,ANY,ANY,ANY,ANY-method}
 %\alias{move,character,ANY,ANY,ANY,ANY-method}
 \alias{move,character,missing,missing,missing,missing-method}
-\alias{move,numeric,numeric,POSIXct,data.frame,CRS-method}
-\alias{move,numeric,numeric,POSIXct,missing,CRS-method}
+\alias{move,numeric,numeric,POSIXct,data.frame,ANY-method}
+\alias{move,numeric,numeric,POSIXct,missing,ANY-method}
 %\alias{move,character-method}
 %\alias{move,numeric,numeric,POSIXct,data.frame,CRS-method}
 
@@ -21,7 +21,7 @@ The move method creates Move or MoveStack object from Movebank or other (compres
 
 \usage{
 \S4method{move}{character,missing,missing,missing,missing}(x)
-\S4method{move}{numeric,numeric,POSIXct,data.frame,CRS}(x, y, time, data, proj, sensor='unknown',animal='unnamed',...)
+\S4method{move}{numeric,numeric,POSIXct,data.frame,ANY}(x, y, time, data, proj, sensor='unknown',animal='unnamed',...)
 }
 
 \arguments{
@@ -29,7 +29,7 @@ The move method creates Move or MoveStack object from Movebank or other (compres
 \item{y}{column indicator for non-Movebank data for the y coordinates}
 \item{time}{column indicator for non-Movebank data for the time stamps, with POSIXct conversion, i.e. \code{as.POSIXct(data$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC")}}
 \item{data}{Optional extra data associated with the relocation, if empty it is filled with the coordinates and timestamps}
-\item{proj}{projection method for non-Movebank data; requires a valid CRS (see \code{\link{CRS-class}}) object, like CRS("+proj=longlat +ellps=WGS84")}
+\item{proj}{projection method for non-Movebank data; requires a valid CRS (see \code{\link{CRS-class}}) object, like CRS("+proj=longlat +ellps=WGS84"); default is NA}
 \item{sensor}{sensor name, either single character or a vector with length of the number of coordinates}
 \item{animal}{animal ID or name, either single character or a vector with length of the number of coordinates}
 \item{...}{Additional arguments}  

@@ -14,12 +14,15 @@ setMethod("print", "dBMvarianceTmp", function(x){
 })
 setMethod("print", ".MoveTrackSingle", function(x){
 	  callNextMethod()
+	      cat("indiv. value:", paste(apply(x@idData, 2,min)),"\n")
 	  try(silent=TRUE, if(length(x@timesMissedFixes)>=1)
 	      cat("missed fixes:", length(x@timesMissedFixes),"\n") )
 })
 setMethod("print", ".MoveTrackStack", function(x){
 	  callNextMethod()
-	  cat("individuals :",paste(as.character(unique(x@trackId)), collapse=", "),"\n")
+	  cat("min ID Data :", paste(apply(x@idData, 2,min)),"\n")
+	  cat("max ID Data :", paste(apply(x@idData, 2,max)),"\n")
+	  cat("individuals :", paste(as.character(na.omit(unique(x@trackId))[1:15]), collapse=", "),"\n")
 })
 setMethod("print", "dBMvariance", function(x){
 	  callNextMethod()
