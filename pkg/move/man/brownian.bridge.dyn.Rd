@@ -27,7 +27,7 @@
   \item{object}{a \link{Move-class} object, which can be created with the function \code{move}}
   \item{raster}{can be a RasterLayer object or numeric. If it is a RasterObject and dimSize is not set, \code{brownian.bridge.dyn} starts to calculate the UD. If \code{raster} is numeric, it describes the cell.size of the raster. Default is 1}
   \item{dimSize}{can be numeric. If there is no input for raster, dimSize describes the number of cells of the largest x or y dimenstion. Default is 10}
-  \item{location.error}{required numeric value. Describes the error of the location (sender/receiver) system in map units, or a character string with the name of the column containing the location error.}
+  \item{location.error}{required numeric value or vector that describes the error of the location (sender/receiver) system in map units, or a character string with the name of the column containing the location error.}
   \item{margin}{The margin used for the behavioral change point analysis.}
   \item{window.size}{The size of the moving window along the track. Larger windows provide more stable/accurate estimates of the brownian motion variance but are less well able to capture more frequent changes in behaviour.}
   \item{ext}{numeric value >0; extension factor. Decribes the amount of extension of the bounding box of the animal track. It can be one (same extension into all four directions), two (first x, then y directional extension) or four numbers (xmin, xmax, ymin, ymax extension). Default is .25 (extends the bounding box by 25\%)}

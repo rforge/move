@@ -4,4 +4,6 @@ test.brownian.bridge.dyn<-function(){
   
   r <- raster(nrows=100, ncols=100, xmn=0, xmx=10)
   checkException(brownian.bridge.dyn(spTransform(data), raster=r, location.error=20))
+  checkException(brownian.bridge.dyn(spTransform(data), raster=r, location.error='2345'))
+  checkException(brownian.bridge.dyn(spTransform(data), raster=r, location.error=1:5))
 }
