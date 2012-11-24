@@ -13,10 +13,11 @@ setMethod(f = "brownian.motion.variance.dyn",
 		  stop("The location error vector is not same length as the move object")
 	  if(any(is.na(location.error)))
 		  stop("The location error contains NAs")
-            if (grepl("aeqd", proj4string(object)) == FALSE) {
-              stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
-            } else {
-            }
+            if(isLonLat(object)) stop("You can not use longitude latitude projection for this funciton. To transform your cooridnateas use the spTransform funciton. \n")
+#             if (grepl("aeqd", proj4string(object)) == FALSE) {
+#               stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
+#             } else {
+#             }
             if (any((c(margin, window.size)%%2) != 1)) 
               stop("Margin and window size need to be uneven")
             # function to calculate brownian.motion.variance for a piece of track

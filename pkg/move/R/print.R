@@ -22,7 +22,7 @@ setMethod("print", ".MoveTrackStack", function(x){
 	  callNextMethod()
 	  cat("min ID Data :", paste(apply(x@idData, 2,min)),"\n")
 	  cat("max ID Data :", paste(apply(x@idData, 2,max)),"\n")
-	  cat("individuals :", paste(as.character(na.omit(unique(x@trackId))[1:15]), collapse=", "),"\n")
+	  cat("individuals :", paste(as.character(na.omit(unique(x@trackId)[1:15])), collapse=", "),"\n")
 })
 setMethod("print", "dBMvariance", function(x){
 	  callNextMethod()

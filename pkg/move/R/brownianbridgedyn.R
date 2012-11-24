@@ -94,7 +94,7 @@ setMethod(f = "brownian.bridge.dyn",
 	  if(any(is.na(location.error)))
 		  stop("The location error contains NAs")
             # check for aeqd projection of the coordinates
-            if(isLonLat(object)) stop("You can not use longitude latitude projection for this funciton. To transform your cooridnateas  use the spTransform funciton. \n")
+            if(isLonLat(object)) stop("You can not use longitude latitude projection for this funciton. To transform your cooridnateas use the spTransform funciton. \n")
 #             if (grepl("aeqd", proj4string(object)) == FALSE) 
 #               stop("The projection of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
             if(projection(raster)!=projection(object)) #check equal projection of raster and Move

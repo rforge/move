@@ -20,4 +20,11 @@ test.moveStack<-function()
 	tmp<-options(warn=2)$warn
 	checkException(moveStack(list(a,a2)))# warn about duplicate ids
 	options(warn=tmp)
+  
+  projection(a2) <- CRS(NA)
+  checkException(moveStack(list(a,a2,a2)))
+	checkException(moveStack(list(a,a,a2)))
+	checkException(moveStack(list(a2,a2,a)))
+	checkException(moveStack(list(a,a2,a)))
+	checkException(moveStack(list(a2,a,a2)))
 }
