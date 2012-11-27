@@ -2,7 +2,7 @@
 
 \alias{time.lag}
 \alias{time.lag,.MoveTrackSingle-method}
-\alias{time.lag,MoveStack-method}
+\alias{time.lag,.MoveTrackStack-method}
 
 \docType{methods}
 
@@ -12,7 +12,7 @@
 
 \usage{
   \S4method{time.lag}{.MoveTrackSingle}(x,...)
-  \S4method{time.lag}{MoveStack}(x,...)
+  \S4method{time.lag}{.MoveTrackStack}(x,...)
 }
 
 \arguments{
@@ -20,7 +20,7 @@
   \item{...}{further arguments}
 }
 
-\details{Optionally the argument units can be passed on to ensure the time lag in a certain unit. For more information on the units argument see the help of difftime.}
+\details{Optionally the argument units can be passed on to ensure the time lag in a certain unit, this is especially usefull in case a move stack is bursted. For more information on the units argument see the help of difftime.}
 
 \value{
   The function returns a numeric vector with the time lags.
