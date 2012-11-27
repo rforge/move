@@ -1,236 +1,267 @@
 setClassUnion(".OptionalPOSIXct", c("POSIXct","NULL"))
 
 setClass(Class = ".MoveGeneral",
-         representation = representation(
-           dateCreation = "POSIXct",
-           study = "character",
-           citation = "character",
-           license = "character"),
-         prototype = prototype(
-           dateCreation = Sys.time(),
-           study = as.character(),
-           citation = as.character(),
-           license = as.character()),
-         validity = function(object){
-           #if(length(object@study)>1)
-           #		stop("Study has length unequal to 0 or 1")
-           if(length(object@citation)>1)
-             stop("Citation has length unequal to 0 or 1")
-           if(length(object@license)>1)
-             stop("License has length unequal to 0 or 1")
-           return(TRUE)
-         }
-         )
+	 representation = representation(
+					 dateCreation = "POSIXct",
+					 study = "character",
+					 citation = "character",
+					 license = "character"),
+	 prototype = prototype(
+			       dateCreation = Sys.time(),
+			       study = as.character(),
+			       citation = as.character(),
+			       license = as.character()),
+	 validity = function(object){
+		 if(length(object@citation)>1)
+			 stop("Citation has length unequal to 0 or 1")
+		 if(length(object@license)>1)
+			 stop("License has length unequal to 0 or 1")
+		 return(TRUE)
+	 }
+	 )
+setClass(Class='.unUsedRecords',
+	 representation=representation(
+				       timestampsUnUsedRecords = ".OptionalPOSIXct",
+				       sensorUnUsedRecords="factor",
+				       dataUnUsedRecords='data.frame'
+				       ),
+	 prototype = prototype(
+			       timestampsUnUsedRecords = NULL,
+			       sensorUnUsedRecords=factor(),
+			       dataUnUsedRecords=rbind(data.frame())# rbind needed so that the unit check thinks it is the same after deparsing
+			       ),
+	 validity = function(object){
+		 if(length(object@sensorUnUsedRecords)!=nrow(object@dataUnUsedRecords))
+			 stop("Sensor and data length for unused records does not match")
+		 if(length(object@timestampsUnUsedRecords)!=nrow(object@dataUnUsedRecords))
+			 stop("timestamps and data length for unused records does not match")
+		 return(TRUE)
+	 }
+	 )
+setClass(Class='.unUsedRecordsStack',contains='.unUsedRecords',# maybe at somestage introduce checking of duplicate timestamps in unused records
+	 representation=representation(
+				       trackIdUnUsedRecords='factor'
+				       ),
+	 prototype = prototype(
+			       trackIdUnUsedRecords=factor()
+			       ),
+	 validity = function(object){
+		 if(length(object@trackIdUnUsedRecords)!=nrow(object@dataUnUsedRecords))
+			 stop("trackId and data length for unused records does not match")
+		 return(TRUE)
+	 }
+	 )
+
 
 setClass(Class = ".MoveTrack",contains=c("SpatialPointsDataFrame"),
-         representation = representation(
-           timestamps = "POSIXct",
-           idData = "data.frame",
-           sensor="factor"),
-         prototype = prototype(
-           timestamps = as.POSIXct(NA),
-           idData = data.frame(),
-           sensor=factor()),
-         validity = function(object){
-           if(length(object@timestamps)!=nrow(object@coords))
-             stop("Number of timestamps does not match the number of coordinates")
-           if(length(object@sensor)!=nrow(object@coords))
-             stop("Number of sensors observations does not match the number of coordinates")
-           return(TRUE)
-         }
-         )
+	 representation = representation(
+					 timestamps = "POSIXct",
+					 idData = "data.frame",
+					 sensor="factor"
+					 ),
+	 prototype = prototype(
+			       timestamps = as.POSIXct(NA),
+			       idData = data.frame(),
+			       sensor=factor()
+			       ),
+	 validity = function(object){
+		 if(length(object@timestamps)!=nrow(object@coords))
+			 stop("Number of timestamps does not match the number of coordinates")
+		 if(length(object@sensor)!=nrow(object@coords))
+			 stop("Number of sensors observations does not match the number of coordinates")
+		 return(TRUE)
+	 }
+	 )
 
-setAs(".MoveTrack","data.frame", function(from){return(data.frame(data.frame(from), sensor=from@sensor, timestamps=from@timestamps))})
 
 
-setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack"), ##why are no missed fixes stored for a MoveStack?
-         representation = representation (
-           timesMissedFixes = ".OptionalPOSIXct"),
-         #  burstID = "factor", ##to indicate the bursts of a single track
-         #  burstSPDF = "SpatialPointsDataFrame"),
-         prototype = prototype(
-           timesMissedFixes = NULL),
-         # burstID = as.factor(NA)),
-         validity = function(object){
-           #if(any(object@timestamps!=sort(object@timestamps)))
-          #   stop("The dataset includes unsorted time stamps")
-	       if(any((tmp <- time.lag(object))<0))
-           stop("The dataset includes unsorted time stamps")
-	       tmp <- c(T, tmp==0)|c(tmp==0,T)#only check for those that have the same time if the sensor is different
-         if (any(dups <- duplicated(data.frame(format(object@timestamps[tmp],"%Y %m %d %H %M %OS4"), object@sensor[tmp]))))
-           stop("The dataset includes double timestamps first one:", object@timestamps[tmp][dups][1], ")")
-         if(nrow(object@idData)>1)
-           stop("There are more than 1 row stored in the idData")
-         #if (length(object@burstID)!=nrow(coordinates(object)))
-         #stop("The length of burst IDs is not equal to the number of locations")
-         return(TRUE)
-         }
-         )
+setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack",'.unUsedRecords'), 
+	 representation = representation(),
+	 prototype = prototype(),
+	 validity = function(object){
+		 if(any((tmp <- time.lag(object))<0))
+			 stop("The dataset includes unsorted time stamps")
+		 tmp <- c(T, tmp==0)|c(tmp==0,T)#only check for those that have the same time if the sensor is different
+		 if (any(dups <- duplicated(data.frame(format(object@timestamps[tmp],"%Y %m %d %H %M %OS4"), object@sensor[tmp]))))
+			 stop("The dataset includes double timestamps first one:", object@timestamps[tmp][dups][1], ")")
+		 if(nrow(object@idData)>1)
+			 stop("There are more than 1 row stored in the idData")
+		 timestampsUnUsedDuplicated<-object@timestampsUnUsedRecords[object@timestampsUnUsedRecords %in% object@timestamps]
+		 if(length(timestampsUnUsedDuplicated)!=0)
+		 {
+		 s<-c(object@timestamps, object@timestampsUnUsedRecords)%in% timestampsUnUsedRecords
+		 	if (any(dups <- duplicated(data.frame(format(c(object@timestamps, object@timestampsUnUsedRecords)[s],"%Y %m %d %H %M %OS4"), c(object@sensor, object@sensorUnUsedRecords)[s]))))
+				 stop("A timestamps of a unused record coincides with a normal timestamps")
+
+		 }
+		 return(TRUE)
+	 }
+	 )
 
 
 setClass(Class = "Move", contains=c(".MoveTrackSingle",".MoveGeneral"),
-         representation = representation (
-           ),
-         prototype = prototype(
-           ),
-         validity = function(object){
-           return(TRUE)
-         }
-         )
+	 representation = representation (
+					  ),
+	 prototype = prototype(
+			       ),
+	 validity = function(object){
+		 return(TRUE)
+	 }
+	 )
 
 
-setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack"),
-         representation = representation(
-           timesMissedFixes = ".OptionalPOSIXct",
-           trackId = "factor"),
-         prototype = prototype(
-	   timesMissedFixes=NULL,
-           trackId = factor()),
-         validity = function(object){
-	   if(length(object@timesMissedFixes)!=0)
-		   if(!all(names(object@timesMissedFixes)%in% levels(object@trackId)))
-			   stop("No correct naming timesMissedFixes")
-           if(length(object@trackId)!=nrow(object@coords))
-             stop("Number of trackId does not match the number of coordinates")
-           if(!all(unlist(tapply(object@timestamps, list(object@trackId, object@sensor),diff))>0))
-	   {
-		tmp<-duplicated(cbind(object@timestamps, object@trackId, object@sensor))# made new test in check for higher speed but have this one still here for more clear reporting
-             stop("The data set includes double timestamps per ID (first one:", object@trackId[tmp][1]," ",object@sensor[tmp][1]," ",object@timestamps[tmp][1], ")")
-	   }
-           if(any(unlist(lapply(tapply(object@timestamps,object@trackId, order),diff))!=1))
-             stop("Not ordered timestamps per individual")
-           if(any(levels(object@trackId)!=raster:::.goodNames(levels(object@trackId))))
-             stop('no good names')
-           return(TRUE)
-         }
-         )
+setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack", ".unUsedRecordsStack"),
+	 representation = representation(
+					 trackId = "factor"),
+	 prototype = prototype(
+			       trackId = factor()),
+	 validity = function(object){
+		 if(length(object@trackId)!=nrow(object@coords))
+			 stop("Number of trackId does not match the number of coordinates")
+		 if(!all(unlist(tapply(object@timestamps, list(object@trackId, object@sensor),diff))>0))
+		 {
+			 tmp<-duplicated(cbind(object@timestamps, object@trackId, object@sensor))# made new test in check for higher speed but have this one still here for more clear reporting
+			 stop("The data set includes double timestamps per ID (first one:", object@trackId[tmp][1]," ",object@sensor[tmp][1]," ",object@timestamps[tmp][1], ")")
+		 }
+		 if(any(unlist(lapply(tapply(object@timestamps,object@trackId, order),diff))!=1))
+			 stop("Not ordered timestamps per individual")
+		 if(any(levels(object@trackId)!=raster:::.goodNames(levels(object@trackId))))
+			 stop('no good names')
+		 if(length(unique(object@trackId))!=nrow(object@idData))
+			 stop("Not same number of IDs and rows in dataframe per ID")
+		 if(any(sort(as.character(unique(object@trackId)))!=sort(unique(rownames(object@idData))))){
+			 stop("No match between rownames in idData and ids along track")} 
+		 if(!all(unique(object@trackIdUnUsedRecords)%in%unique(object@trackId)))
+			 stop("There are records for individuals where not real records are present")
+		 timestampsUnUsedDuplicated<-object@timestampsUnUsedRecords[object@timestampsUnUsedRecords %in% object@timestamps]
+		 if(length(timestampsUnUsedDuplicated)!=0)
+		 {
+		 s<-c(object@timestamps, object@timestampsUnUsedRecords)%in% timestampsUnUsedRecords
+		 	if (any(dups <- duplicated(cbind(
+							  format(c(object@timestamps, object@timestampsUnUsedRecords)[s],"%Y %m %d %H %M %OS4"), 
+							  c(object@sensor, object@sensorUnUsedRecords)[s], 
+							  c(object@trackId, object@trackIdUnUsedRecords)[s]))))
+				 stop("A timestamps of a unused record coincides with a normal timestamps")
 
-setAs( ".MoveTrackStack","data.frame", function(from){ return(data.frame(as(as(from,".MoveTrack"),"data.frame"), trackId=from@trackId))})
+		 }
+		 return(TRUE)
+	 }
+	 )
+
 
 
 setClass(Class = "MoveStack", contains = c(".MoveTrackStack",".MoveGeneral"),
-         representation = representation(),
-         prototype = prototype(),
-         validity = function(object){
-           if(length(unique(object@trackId))!=nrow(object@idData))
-             stop("Not same number of IDs and rows in dataframe per ID")
-           if(any(sort(as.character(unique(object@trackId)))!=sort(unique(rownames(object@idData))))){
-             stop("No match between rownames in idData and ids along track")} 
-           return(TRUE)
-         }
-         )
-
-
-# Defining the class of the Dynamic Brownian Motion Variance object
-# setClass(Class = 'DBMvar', representation = representation ( means = 'array',
-# in.windows = 'array', interest = 'logical', break.list = 'ANY') )
+	 representation = representation(),
+	 prototype = prototype(),
+	 validity = function(object){
+		 return(TRUE)
+	 }
+	 )
 
 
 setClass(Class = "dBMvarianceTmp", 
-         representation = representation(
-           window.size = "numeric", 
-           margin = "numeric", 
-           means = "numeric", 
-           in.windows = "numeric", 
-           interest = "logical", 
-           break.list = "numeric"), 
-         prototype = prototype(
-           window.size = numeric(), 
-           margin = numeric(), 
-           means = numeric(), 
-           in.windows = numeric(), 
-           interest = logical(), 
-           break.list = numeric()), 
-         validity = function(object) {
-           if (length(unique(lengths<-c(length(object@means), length(object@in.windows), length(object@interest)))) != 1) 
-             stop("Length does not match ", paste(lengths, collapse=', '))
-           if (length(object@margin) != 1) 
-             stop("Margin length not 1")
-           if (length(object@window.size) != 1) 
-             stop("Window size length not 1")
-           return(TRUE)
-         })
+	 representation = representation(
+					 window.size = "numeric", 
+					 margin = "numeric", 
+					 means = "numeric", 
+					 in.windows = "numeric", 
+					 interest = "logical", 
+					 break.list = "numeric"), 
+	 prototype = prototype(
+			       window.size = numeric(), 
+			       margin = numeric(), 
+			       means = numeric(), 
+			       in.windows = numeric(), 
+			       interest = logical(), 
+			       break.list = numeric()), 
+	 validity = function(object) {
+		 if (length(unique(lengths<-c(length(object@means), length(object@in.windows), length(object@interest)))) != 1) 
+			 stop("Length does not match ", paste(lengths, collapse=', '))
+		 if (length(object@margin) != 1) 
+			 stop("Margin length not 1")
+		 if (length(object@window.size) != 1) 
+			 stop("Window size length not 1")
+		 return(TRUE)
+	 })
 
 
 setClass(Class = "dBMvariance", contains = c(".MoveTrackSingle", "dBMvarianceTmp"), 
-         validity = function(object) {
-           if (length(object@means) != nrow(object@coords)) 
-             stop("Number of coordinates does not match the number of means")
-           return(TRUE)
-         })
+	 validity = function(object) {
+		 if (length(object@means) != nrow(object@coords)) 
+			 stop("Number of coordinates does not match the number of means")
+		 return(TRUE)
+	 })
 
 
 setClass(Class = "dBMvarianceStack", contains = c(".MoveTrackStack", "dBMvarianceTmp"), 
-         validity = function(object) {
-           if (length(object@means) != nrow(object@coords)) 
-             stop("Number of coordinates does not match the number of means")
-           return(TRUE)
-         })
-setAs( "dBMvariance","data.frame", function(from){ return(data.frame(as(as(from,".MoveTrack"),"data.frame"), as(as(from,"dBMvarianceTmp"),"data.frame")))})
-setAs('dBMvarianceTmp','data.frame',function(from){data.frame(window.size=from@window.size, margin=from@margin, means=from@means, in.windows=from@in.windows, interest=from@interest)})
+	 validity = function(object) {
+		 if (length(object@means) != nrow(object@coords)) 
+			 stop("Number of coordinates does not match the number of means")
+		 return(TRUE)
+	 })
 
 
 setClass(Class = ".UDStack", contains = c("RasterStack"), 
-         representation = representation(method = "character"), 
-         prototype = prototype(
-           method = as.character()), 
-         validity = function(object) {
-           if (!all(apply(values(object), MARGIN = 2, FUN = function(X) isTRUE(all.equal(sum(X), 1, check.attributes=F))))) 
-             stop("One or more of the used rasters are not a UD (sum is not equal to 1)")
-         })
+	 representation = representation(method = "character"), 
+	 prototype = prototype(
+			       method = as.character()), 
+	 validity = function(object) {
+		 if (!all(apply(values(object), MARGIN = 2, FUN = function(X) isTRUE(all.equal(sum(X), 1, check.attributes=F))))) 
+			 stop("One or more of the used rasters are not a UD (sum is not equal to 1)")
+	 })
 
 
 setClass(Class = ".UD", contains = c("RasterLayer"), 
-         representation = representation(method = "character"), 
-         prototype = prototype(
-           method = as.character()), 
-         validity = function(object) {
-           if (!isTRUE(all.equal(tmp<-sum(values((object))), 1))) 
-             stop("The used raster is not a UD (sum unequal to 1), sum is: ", sprintf("%.15f",tmp))
-           return(TRUE)
-         })
+	 representation = representation(method = "character"), 
+	 prototype = prototype(
+			       method = as.character()), 
+	 validity = function(object) {
+		 if (!isTRUE(all.equal(tmp<-sum(values((object))), 1))) 
+			 stop("The used raster is not a UD (sum unequal to 1), sum is: ", sprintf("%.15f",tmp))
+		 return(TRUE)
+	 })
 
 
 ### Defining the class of the Brownian Bridge Movement Model object
 setClass(Class = "DBBMMStack", contains = c(".UDStack"), 
-         representation = representation(
-           DBMvar = "dBMvarianceStack", 
-           ext = "numeric"), 
-         prototype = prototype(
-           ext = as.numeric()), 
-         validity = function(object) {
-           if (!all(unique(object@DBMvar@trackId) == layerNames(object))) 
-             stop("The layer names of the raster objects do not match the trackIDs of the DBMvarStack.")
-         })
+	 representation = representation(
+					 DBMvar = "dBMvarianceStack", 
+					 ext = "numeric"), 
+	 prototype = prototype(
+			       ext = as.numeric()), 
+	 validity = function(object) {
+		 if (!all(unique(object@DBMvar@trackId) == layerNames(object))) 
+			 stop("The layer names of the raster objects do not match the trackIDs of the DBMvarStack.")
+	 })
 
 
 setClass(Class = "DBBMM", contains = c(".UD"), 
-         representation = representation(
-           DBMvar = "dBMvariance", 
-           ext = "numeric"), 
-         prototype = prototype(
-           ext = as.numeric())
-         )
+	 representation = representation(
+					 DBMvar = "dBMvariance", 
+					 ext = "numeric"), 
+	 prototype = prototype(
+			       ext = as.numeric())
+	 )
 
 
 setClass(Class = ".MoveTrackSingleBurst", contains = c(".MoveTrackSingle"), 
-         representation = representation(
-           burstId = "factor"), 
-         prototype = prototype(
-           burstId = factor()), 
-         validity = function(object) {
-         if(any(levels(object@burstId)!=raster:::.goodNames(levels(object@burstId))))
-           stop('no good names')
-     	    if(length(object@burstId)!=(length(object@timestamps)-1))
-     		    stop("Burst ids need to be one shorter than rest since it is a segment property")
-             return(TRUE)
-          })
+	 representation = representation(
+					 burstId = "factor"), 
+	 prototype = prototype(
+			       burstId = factor()), 
+	 validity = function(object) {
+		 if(any(levels(object@burstId)!=raster:::.goodNames(levels(object@burstId))))
+			 stop('no good names')
+		 if(length(object@burstId)!=(length(object@timestamps)-1))
+			 stop("Burst ids need to be one shorter than rest since it is a segment property")
+		 return(TRUE)
+	 })
 
 
 setClass(Class = "MoveBurst", contains = c(".MoveTrackSingleBurst", ".MoveGeneral"), 
-        validity = function(object) {
-            return(TRUE)
-        })
+	 validity = function(object) {
+		 return(TRUE)
+	 })
 
 # See if this validity check needs to go into this class why was it commented ?
 # validity = function(object){ if(is.na(outerProbability(object))){ stop('The

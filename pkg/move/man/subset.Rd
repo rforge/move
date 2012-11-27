@@ -6,6 +6,8 @@
 \alias{[,.MoveTrackStack,ANY,ANY-method}
 \alias{[,dBMvariance,ANY,ANY-method}
 \alias{[,dBMvarianceStack,ANY,ANY-method}
+\alias{[,.unUsedRecordsStack,ANY,ANY-method}
+\alias{[,.unUsedRecords,ANY,ANY-method}
 
 \docType{methods}
 

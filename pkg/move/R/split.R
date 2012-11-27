@@ -4,25 +4,26 @@ setMethod(f = "split",
 	  signature = c(x="MoveStack", f="missing"),
 	  definition = function(x, f, ...){
 		  moveList <- list()
+		  unUsed<-as(x,".unUsedRecordsStack")
 		  for (ID in unique(x@trackId)) {
-			  spdf <- SpatialPointsDataFrame(coords = matrix(x@coords[x@trackId==ID,], ncol=2),
-							 data=x@data[x@trackId==ID,],
+			  s<-x@trackId==ID
+			  spdf <- SpatialPointsDataFrame(coords = matrix(x@coords[s,], ncol=2),
+							 data=x@data[s,],
 							 proj4string=x@proj4string)
 			  mt <- new(Class=".MoveTrack",
 				    spdf,
-				    timestamps=x@timestamps[x@trackId==ID],
-				    sensor=x@sensor[x@trackId==ID])
+				    timestamps=x@timestamps[s],
+				    sensor=x@sensor[s])
+			  unUsedSub<-as(unUsed[unUsed@trackIdUnUsedRecords==ID,T],'.unUsedRecordsStack')
 			  #sensor=rep(x@idData$sensor.type[row.names(x@idData)==ID], sum(x@trackId==ID))
-			  tmf<-x@timesMissedFixes[x@timesMissedFixes==ID]
-			  attr(tmf, "names")<-NULL
 			  moveObj <- new(Class="Move", 
 					 mt,
-					 timesMissedFixes=tmf,
 					 idData=x@idData[row.names(x@idData)==ID, ,drop=F],
 					 dateCreation=x@dateCreation,
 					 study=x@study,
 					 citation=x@citation,
-					 license=x@license)
+					 license=x@license,
+					 unUsedSub)
 			  moveList[[ID]]  <- moveObj
 		  }
 		  return(moveList)
