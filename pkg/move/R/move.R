@@ -8,6 +8,10 @@ setMethod(f = "move",
             
             if (!all(c("timestamp", "location.long",  "location.lat", "study.timezone", "study.local.timestamp", "sensor.type", "individual.local.identifier", "individual.taxon.canonical.name")%in%colnames(df)))
               stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
+	    if(any(names(df)=='visible'))# in case of a movebank file outliers need to be removed
+	    {
+		    df[as.character(df$visible)=='false',c('location.long','location.lat')]<-NA
+	    }
       	    
             if(any(tmp <- (is.na(df$individual.local.identifier)| df$individual.local.identifier==''))) 
       	    {
