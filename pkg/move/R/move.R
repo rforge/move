@@ -23,7 +23,13 @@ setMethod(f = "move",
 		  df$individual.local.identifier<-as.factor( df$individual.local.identifier)
 		  levels(df$individual.local.identifier) <- raster:::.goodNames(levels(factor(df$individual.local.identifier))) #changing names to 'goodNames' skipping spaces
 
-		  unUsed<-is.na(df$location.long)|is.na(df$location.lat)|df$visible=='false'| is.na(df$individual.local.identifier)| df$individual.local.identifier==''
+		  if("visible" %in% colnames(df))
+		  {
+			  v<-df$visible=='false'
+		  }else{
+			  v<-F
+	  }
+		  unUsed<-is.na(df$location.long)|is.na(df$location.lat)|v| is.na(df$individual.local.identifier)| df$individual.local.identifier==''
 		  sensor<-df$sensor.type
 		  timestamps<-df$timestamp
 		  individual.local.identifier<-df$individual.local.identifier
