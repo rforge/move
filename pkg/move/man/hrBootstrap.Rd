@@ -43,9 +43,11 @@
   
 \examples{
   m <- move(x=rnorm(70), y=rnorm(70), time=as.POSIXct(1:70, origin="1970-1-1"), proj=CRS("+proj=aeqd"))    
-  hrBootstrap(m,rep=11, level=99, unout="m2", plot=TRUE) #for a Move object
-  hrBootstrap(moveStack(list(m,m)),rep=11, unout="m2", plot=FALSE) #for a MoveStack object
+  hrBootstrap(m,rep=5, level=99, unout="m2", plot=TRUE) #for a Move object
   
-  hrBootstrap(as(m,"SpatialPoints"),rep=25, unout="m2", plot=TRUE) #for a SpatialPoints object
+  mstack <- moveStack(list(m,m))
+  hrBootstrap(mstack,rep=5, unout="m2", plot=FALSE) #for a MoveStack object
+  
+  hrBootstrap(as(m,"SpatialPoints"),rep=5, unout="m2", plot=TRUE) #for a SpatialPoints object
 }
 

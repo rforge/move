@@ -1,8 +1,8 @@
-setGeneric("hrBootstrap", function(x,rep=100,plot=TRUE, level=95, levelMax=100, unin='km', unout='m2',...){standardGeneric("hrBootstrap")})
+setGeneric("hrBootstrap", function(x, rep=100, plot=TRUE, level=95, levelMax=100, unin='km', unout='m2',...){standardGeneric("hrBootstrap")})
 setMethod("hrBootstrap", 
           #signature=c(x=".MoveTrackSingle"),
           signature=c(x="SpatialPoints"),
-          definition=function(x,rep,plot,...){
+          definition=function(x, ...){
             if (any(grepl('adehabitatHR', installed.packages()))) require(adehabitatHR) else stop("You need to install the adehabitatHR package to proceed")
             if (class(x)=="SpatialPoints") nlocs <- length(x) else nlocs <- n.locs(x)
             j <- round(exp(log(10)*seq(log10(5),log10(nlocs),by=0.1)))
@@ -32,7 +32,7 @@ setMethod("hrBootstrap",
 
 setMethod("hrBootstrap", 
           signature=c(x=".MoveTrackStack"),
-          definition=function(x,rep,plot,...){
-            return(lapply(split(x), hrBootstrap, ...))
+          definition=function(x, ...){
+            return(lapply(split(x), hrBootstrap, rep=rep, plot=plot, level=level, levelMax=levelMax, unin=unin, unout=unout, ...))
           })
 
