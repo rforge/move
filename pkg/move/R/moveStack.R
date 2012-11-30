@@ -9,11 +9,8 @@ setMethod(f = "moveStack",
 		  if (length(unique(as.character(lapply(x, function(y) attr(slot(y, "timestamps"), "tzone")) )))!=1)
 			  stop("One or more objects in the list have no UTC timestamps")
 
-		  proj <- lapply(lapply(x, proj4string), strsplit, split=" ")
-		  try(projs<-length(unique(do.call(rbind,lapply(proj, unlist))[,2]))!=1, TRUE) #check all euql projections
-		  if(!exists("projs")) try(projs<-length(unique(do.call(rbind,lapply(proj, unlist))))!=1, TRUE) #check all projections == NA
-		  if(projs)
-			  stop("One or more objects in the list have differnt projections. All projections have to be the same")
+      if(!equalProj(x)) stop("All objects need to be equally projected.")#check projection
+      
 		  if(any(duplicated(unlist(lapply(lapply(x, slot, "idData"), rownames))))){
 			  nnames <- make.names(unlist(lapply(lapply(x, slot, "idData"), rownames)),unique=T)
 			  lapply(1:length(nnames), function(z, nnames, x) {rownames(x[[z]]@idData)<-nnames[z]
@@ -49,12 +46,12 @@ setMethod(f = "moveStack",
 						    proj4string = CRS(proj4string(x[[1]])), #projection tested above
 						    match.ID = TRUE)
 
-
 		  # unused records
 		  unUsedList<-lapply(x, as, ".unUsedRecords")
 		  tz<-unique(unlist(lapply(ts<-lapply(unUsedList,slot,"timestampsUnUsedRecords"), attr, "tzone")))
 		  if(!(length(tz)==1|is.null(tz )))
 			  stop("Concatinating multiple time zone for unusedrecords")
+# browser()
 		  dataUnUsed<-lapply(unUsedList, slot, 'dataUnUsedRecords')
 		  cols<-unique(unlist(lapply(dataUnUsed, colnames)))
 		  dataUnUsed<-lapply(dataUnUsed, function(x,i){i<-i[!(i%in%colnames(x))]; x[,i]<-NA;x}, i=cols)# fill unused columns with NA

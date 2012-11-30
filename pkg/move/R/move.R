@@ -80,7 +80,7 @@ setMethod(f = ".move",
 	  definition = function(df, proj){
 
 		  if(any(is.na(df$location.long))){ 
-			  warning("There were NA locations detected and omitted. Currently there not stored unusedrecords")
+			  warning("There were NA locations detected and omitted. Currently they are not stored in unusedrecords")
 			  df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
 		  }
 		  df$individual.local.identifier<-factor(df$individual.local.identifier)
