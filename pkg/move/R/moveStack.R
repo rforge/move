@@ -9,8 +9,8 @@ setMethod(f = "moveStack",
 		  if (length(unique(as.character(lapply(x, function(y) attr(slot(y, "timestamps"), "tzone")) )))!=1)
 			  stop("One or more objects in the list have no UTC timestamps")
 
-      if(!equalProj(x)) stop("All objects need to be equally projected.")#check projection
-      
+		  if(!equalProj(x)) stop("All objects need to be equally projected.")#check projection
+
 		  if(any(duplicated(unlist(lapply(lapply(x, slot, "idData"), rownames))))){
 			  nnames <- make.names(unlist(lapply(lapply(x, slot, "idData"), rownames)),unique=T)
 			  lapply(1:length(nnames), function(z, nnames, x) {rownames(x[[z]]@idData)<-nnames[z]
@@ -51,24 +51,28 @@ setMethod(f = "moveStack",
 		  tz<-unique(unlist(lapply(ts<-lapply(unUsedList,slot,"timestampsUnUsedRecords"), attr, "tzone")))
 		  if(!(length(tz)==1|is.null(tz )))
 			  stop("Concatinating multiple time zone for unusedrecords")
-# browser()
 		  dataUnUsed<-lapply(unUsedList, slot, 'dataUnUsedRecords')
 		  cols<-unique(unlist(lapply(dataUnUsed, colnames)))
-		  dataUnUsed<-lapply(dataUnUsed, function(x,i){i<-i[!(i%in%colnames(x))]; x[,i]<-NA;x}, i=cols)# fill unused columns with NA
+		  dataUnUsed<-lapply(dataUnUsed, function(x,i){
+				     i<-i[!(i%in%colnames(x))]
+				     if(nrow(x)==0){
+					     x<-as.data.frame(matrix(nrow=0, ncol=length(i)))
+					     colnames(x)<-i
+				     }else{
+					     x[,i]<-NA
+				     }
+				     return(x)
+						    }, i=cols)# fill unused columns with NA
 		  unUsed<-new(".unUsedRecordsStack",
 			      timestampsUnUsedRecords=do.call('c',ts) ,
 			      dataUnUsedRecords=do.call('rbind',dataUnUsed ),
 			      sensorUnUsedRecords=as.factor(unlist(lapply(unUsedList, slot, 'sensorUnUsedRecords') )),
 			      trackIdUnUsedRecords=as.factor(unlist(mapply(rep, id, unlist(lapply(ts, length)))))
 			      )
-		  #	    tmfVector<-do.call('c',lapply(1:length(tmf), function(i, tmf, names){tmp<-tmf[[i]]; if(!is.null(tmp)) names(tmp)<-rep(names[i], length(tmp)); return(tmp)}, tmf=tmf, names=rownames(IDDATA)))
-		  #	    if(!is.null(tz))
-		  #	     tmfVector<-as.POSIXct(format(tmfVector, tdz=tz,usetz=T),tz=tz)
 		  res <- new("MoveStack", 
 			     idData = IDDATA,
 			     spdftmp, 
 			     timestamps = do.call("c", lapply(x, timestamps)),
-			     #as.POSIXct(do.call(rbind, (lapply(x, function(y) {as.data.frame(y@timestamps)})))[,1], tz="UTC"), #timezone?
 			     sensor =factor(do.call('c',lapply(lapply(x, slot, 'sensor'),as.character))),# do.call("factor", (lapply(x, slot, "sensor"))), 
 			     trackId = as.factor(rep(id, length)),
 			     unUsed)
