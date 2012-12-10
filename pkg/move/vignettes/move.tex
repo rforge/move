@@ -60,11 +60,11 @@ The import of data into R can happen on two ways. Either by importing data files
 
 \subsection{Import of Movebank data}
 Files from Movebank (\url{www.movebank.org}) can be imported with \texttt{move(x="path")}, where "path" is character string which locates the file on the hard-drive. It may look like: \\ \\ \texttt{> data <- move(x="/User/Documents/test.csv")}. \\ \\
-The following line imports the "leroy.csv" filet that is part of the move package.
+The following line imports the "leroy.csv.gz" file that is part of the move package.
 
 \begin{Schunk}
 \begin{Sinput}
-> leroy <- move(system.file("extdata","leroy.csv",package="move"))
+> leroy <- move(system.file("extdata","leroy.csv.gz",package="move"))
 \end{Sinput}
 \end{Schunk}
 
@@ -74,7 +74,7 @@ Import of a non-Movebank csv file that is attached to this package:
 
 \begin{Schunk}
 \begin{Sinput}
-> data <- read.csv(system.file("extdata","ricky.csv",package="move"))
+> data <- read.csv(system.file("extdata","ricky.csv.gz",package="move"))
 > ricky <- move(x=data$location.long, y=data$location.lat, time=as.POSIXct(data$timestamp, 
 +             format="%Y-%m-%d %H:%M:%OS", tz="UTC"), proj=CRS("+proj=longlat"), 
 +             data=data, animal=data$individual.local.identifier, sensor=data$sensor)
@@ -82,18 +82,18 @@ Import of a non-Movebank csv file that is attached to this package:
 \end{Sinput}
 \begin{Soutput}
 class       : Move 
-nfeatures   : 8961 
-extent      : -74.00481, -73.84202, 42.80671, 42.89606  (xmin, xmax, ymin, ymax)
+nfeatures   : 8958 
+extent      : -73.94032, -73.8683, 42.82073, 42.851  (xmin, xmax, ymin, ymax)
 coord. ref. : +proj=longlat +ellps=WGS84 
-nvariables  : 19
-variables   : event.id, eobs.battery.voltage, eobs.fix.battery.voltage, eobs.horizontal.accuracy.estimate, eobs.key.bin.checksum, eobs.speed.accuracy.estimate, eobs.start.timestamp, eobs.temperature, eobs.used.time.to.get.fix, ground.speed, heading, height.above.ellipsoid, manually.marked.outlier, visible, individual.local.identifier, ... 
-min values  : 44295482, 3449, 3081,  2.05,     524362,  0.22, 2010-02-09 17:00:00.000,   0,   3,  0.00,   0.00,    0.0, , false, Ricky.T, ... 
-max values  : 44529025, 3740, 3559, 95.23, 4294919150, 48.67, 2010-03-31 17:30:02.000, -12, 120, 43.12, 359.79, 9318.3, true, true, Ricky.T, ... 
+nvariables  : 18
+names       :     X, event.id, eobs.battery.voltage, eobs.fix.battery.voltage, eobs.horizontal.accuracy.estimate, eobs.key.bin.checksum, eobs.speed.accuracy.estimate,    eobs.start.timestamp, eobs.temperature, eobs.used.time.to.get.fix, ground.speed, heading, height.above.ellipsoid, individual.local.identifier, utm.easting, ... 
+min values  :     2, 44295482,                 3449,                     3081,                              2.05,                524362,                         0.22, 2010-02-09 17:00:00.000,                0,                         3,         0.00,    0.00,                    0.0,                     Ricky.T,    586587.2, ... 
+max values  : 10760, 44529025,                 3740,                     3559,                             95.23,            4294919150,                        48.67, 2010-03-31 17:30:02.000,              -12,                       120,        43.12,  359.79,                 -315.6,                     Ricky.T,    592500.3, ... 
 timestamps  : 2010-02-09 17:01:23...2010-03-31 17:31:26 Time difference of 50 days  (start...end, duration) 
 sensors     : gps 
-indiv. data : behavioural.classification, eobs.status, eobs.type.of.fix, sensor.type, individual.taxon.canonical.name, tag.local.identifier, study.name, utm.zone, study.timezone 
-missed fixes : 1888 
-date created: 2012-09-07 16:18:58 
+indiv. data : behavioural.classification, eobs.status, eobs.type.of.fix, manually.marked.outlier, visible, sensor.type, individual.taxon.canonical.name, tag.local.identifier, study.name, utm.zone, study.timezone 
+indiv. value: NA A 3 NA true gps Martes pennanti 1016 Urban fisher GPS tracking 18N Eastern Standard Time 
+date created: 2012-12-10 14:13:42 
 \end{Soutput}
 \end{Schunk}
 
@@ -112,18 +112,21 @@ Sometimes it is desirable to work with stacked Move objects. The most functions 
 \end{Sinput}
 \begin{Soutput}
 class       : MoveStack 
-nfeatures   : 9880 
-extent      : -74.00481, -73.84202, 42.70898, 42.89606  (xmin, xmax, ymin, ymax)
+nfeatures   : 9877 
+extent      : -73.94032, -73.84366, 42.70898, 42.851  (xmin, xmax, ymin, ymax)
 coord. ref. : +proj=longlat +ellps=WGS84 +datum=WGS84 +towgs84=0,0,0 
-nvariables  : 19
-variables   : eobs.battery.voltage, eobs.horizontal.accuracy.estimate, eobs.key.bin.checksum, eobs.speed.accuracy.estimate, eobs.start.timestamp, eobs.temperature, eobs.used.time.to.get.fix, ground.speed, heading, height.above.ellipsoid, individual.local.identifier, utm.easting, utm.northing, study.local.timestamp, sensor, ... 
-min values  : 3449,  2.05,     524362,  0.22, 2009-02-11 12:14:59.000,   0,   3,  0.00,   0.00,    0.0, Leroy, 581253.3, 4729143, 2009-02-11 07:16:45, gps, ... 
-max values  : 3740, 97.02, 4294919150, 48.67, 2010-03-31 17:30:02.000, -12, 120, 43.12, 359.79, 9318.3, Ricky.T, 594680.9, 4749753, 2010-03-31 13:31:26, gps, ... 
+nvariables  : 22
+names       :           timestamp, eobs.battery.voltage, eobs.horizontal.accuracy.estimate, eobs.key.bin.checksum, eobs.speed.accuracy.estimate,    eobs.start.timestamp, eobs.status, eobs.temperature, eobs.type.of.fix, eobs.used.time.to.get.fix, ground.speed, heading, height.above.ellipsoid, utm.easting, utm.northing, ... 
+min values  : 2009-02-11 12:16:45,                 3449,                              2.05,                524362,                         0.22, 2009-02-11 12:14:59.000,           A,                0,                3,                         3,         0.00,    0.00,                    0.0,    586587.2,      4729143, ... 
+max values  : 2009-03-04 09:16:59,                 3740,                             97.02,            4294919150,                        48.67, 2010-03-31 17:30:02.000,           A,              -12,                3,                       120,        43.12,  359.79,                 -315.6,    594679.4,      4744839, ... 
 timestamps  : 2009-02-11 13:16:45...2010-03-31 19:31:26 Time difference of 413 days  (start...end, duration) 
 sensors     : gps 
-indiv. data : eobs.fix.battery.voltage, eobs.status, eobs.type.of.fix, manually.marked.outlier, visible, individual.taxon.canonical.name, tag.local.identifier, study.name, utm.zone, study.timezone, behavioural.classification, sensor.type 
+indiv. data : eobs.fix.battery.voltage, manually.marked.outlier, visible, sensor.type, individual.taxon.canonical.name, tag.local.identifier, individual.local.identifier, study.name, study.timezone, behavioural.classification, eobs.status, eobs.type.of.fix, utm.zone 
+min ID Data : NA NA true gps Martes pennanti   74 NA Urban fisher GPS tracking Eastern Standard Time NA NA NA NA 
+max ID Data : NA NA true gps Martes pennanti 1016 NA Urban fisher GPS tracking Eastern Standard Time NA NA NA NA 
 individuals : Leroy, Ricky.T 
-date created: 2012-09-07 16:18:58 
+unused rec. : 1071 
+date created: 2012-12-10 14:13:42 
 \end{Soutput}
 \end{Schunk}
 
@@ -159,15 +162,16 @@ class       : Move
 nfeatures   : 919 
 extent      : -73.93067, -73.84366, 42.70898, 42.7687  (xmin, xmax, ymin, ymax)
 coord. ref. : +proj=longlat +ellps=WGS84 +datum=WGS84 +towgs84=0,0,0 
-nvariables  : 15
-variables   : eobs.battery.voltage, eobs.horizontal.accuracy.estimate, eobs.key.bin.checksum, eobs.speed.accuracy.estimate, eobs.start.timestamp, eobs.temperature, eobs.used.time.to.get.fix, ground.speed, heading, height.above.ellipsoid, individual.local.identifier, utm.easting, utm.northing, study.local.timestamp, sensor 
-min values  : 3596,  3.07,    3258904,  0.27, 2009-02-11 12:14:59.000, 13,   4,  0.01,   0.00,    3.3, Leroy, 587507.8, 4729143, 2009-02-11 07:16:45, gps 
-max values  : 3666, 97.02, 4291715164, 33.04, 2009-03-04 09:15:01.000, 35, 119, 31.71, 359.79, -169.6, Leroy, 594679.4, 4735720, 2009-03-04 04:16:59, gps 
+nvariables  : 17
+names       :           timestamp, eobs.battery.voltage, eobs.horizontal.accuracy.estimate, eobs.key.bin.checksum, eobs.speed.accuracy.estimate,    eobs.start.timestamp, eobs.status, eobs.temperature, eobs.type.of.fix, eobs.used.time.to.get.fix, ground.speed, heading, height.above.ellipsoid, utm.easting, utm.northing, ... 
+min values  : 2009-02-11 12:16:45,                 3596,                              3.07,               3258904,                         0.27, 2009-02-11 12:14:59.000,           A,               13,                3,                         4,         0.01,    0.00,                    3.3,    587507.8,      4729143, ... 
+max values  : 2009-03-04 09:16:59,                 3666,                             97.02,            4291715164,                        33.04, 2009-03-04 09:15:01.000,           A,               35,                3,                       119,        31.71,  359.79,                 -169.6,    594679.4,      4735720, ... 
 timestamps  : 2009-02-11 12:16:45...2009-03-04 09:16:59 Time difference of 21 days  (start...end, duration) 
 sensors     : gps 
-indiv. data : eobs.fix.battery.voltage, eobs.status, eobs.type.of.fix, manually.marked.outlier, visible, individual.taxon.canonical.name, tag.local.identifier, study.name, utm.zone, study.timezone 
-missed fixes : 1071 
-date created: 2012-09-07 16:18:58 
+indiv. data : eobs.fix.battery.voltage, manually.marked.outlier, visible, sensor.type, individual.taxon.canonical.name, tag.local.identifier, individual.local.identifier, study.name, study.timezone 
+indiv. value: 0 NA true gps Martes pennanti 74 Leroy Urban fisher GPS tracking Eastern Standard Time 
+unused rec. : 1071 
+date created: 2012-12-10 14:13:42 
 \end{Soutput}
 \end{Schunk}
 
@@ -180,20 +184,20 @@ The \fct{summary} can be used to summarize important information of \class{Move}
 \end{Sinput}
 \begin{Soutput}
 $Ricky.T
-  TravDist  MaxDist   MinDist FarthDist AverDist   SDDist   SEDist
-1   409134 7758.682 0.1573102  10181.32 45.66227 159.2503 759.3597
+  TravDist  MaxDist      MinDist FarthDist   AverDist     SDDist    SEDist
+1 375.6887 2.128399 0.0001573102  3.478313 0.04194358 0.05295704 0.7593597
 
 $Ricky.T
-        Duration  AverDur   SDDur  dupl multseason
-1 1200.501 hours 482.3441 2638.43 FALSE       TRUE
+        Duration   AverDur     SDDur  dupl multseason
+1 1200.501 hours 0.1340293 0.7330165 FALSE      FALSE
 
 $Ricky.T
-  AverSpeed VarSpeed MaxSpeed
-1 0.3290363 2.882038 100.7703
+  AverSpeed  VarSpeed MaxSpeed
+1 0.2897605 0.1066355 9.780862
 
 $Ricky.T
   AverAzimuth VarAzimuth SEAzimuth
-1   -153.0871  0.9906407  16.37971
+1   -153.1399  0.9906986  16.37971
 \end{Soutput}
 \begin{Sinput}
 > #summary(stack) ##works also for stacks
@@ -207,7 +211,7 @@ More information of the object do the following functions return:
 > n.locs(ricky)
 \end{Sinput}
 \begin{Soutput}
-[1] 8961
+[1] 8958
 \end{Soutput}
 \end{Schunk}
 \fct{time.lag} returns the time differences between successive coordinates from \class{Move} or \class{MoveStack} objects (the\texttt{units} argument determines the units of the data output, it is minutes by default)
@@ -266,7 +270,7 @@ Note, that the function requires two further packages (\texttt{ggmap} and \textt
 > require(mapproj)
 > leroy_df <- as(leroy, "data.frame")
 > m <- get_map(bbox(extent(leroy)*1.1), source="stamen", zoom=14)
-> ggmap(m)+geom_path(data=leroy_df, aes(x=coords.x1, y=coords.x2))
+> ggmap(m)+geom_path(data=leroy_df, aes(x=location.long, y=location.lat))
 \end{Sinput}
 \end{Schunk}
 \begin{figure}
@@ -291,15 +295,15 @@ class       : Move
 nfeatures   : 25 
 extent      : -73.90426, -73.90235, 42.84125, 42.84189  (xmin, xmax, ymin, ymax)
 coord. ref. : +proj=longlat +ellps=WGS84 
-nvariables  : 19
-variables   : event.id, eobs.battery.voltage, eobs.fix.battery.voltage, eobs.horizontal.accuracy.estimate, eobs.key.bin.checksum, eobs.speed.accuracy.estimate, eobs.start.timestamp, eobs.temperature, eobs.used.time.to.get.fix, ground.speed, heading, height.above.ellipsoid, manually.marked.outlier, visible, individual.local.identifier, ... 
-min values  : 44528398, 3518, 3388,  4.86,   33124537,  1.64, 2010-02-09 17:00:00.000,   1,   7,  0.07,   0.66,  39.3, , true, Ricky.T, ... 
-max values  : 44528427, 3662, 3493, 39.42, 4285600836, 18.80, 2010-02-09 20:58:01.000, -12, 118, 14.71, 359.14, 128.5, , true, Ricky.T, ... 
+nvariables  : 18
+names       :  X, event.id, eobs.battery.voltage, eobs.fix.battery.voltage, eobs.horizontal.accuracy.estimate, eobs.key.bin.checksum, eobs.speed.accuracy.estimate,    eobs.start.timestamp, eobs.temperature, eobs.used.time.to.get.fix, ground.speed, heading, height.above.ellipsoid, individual.local.identifier, utm.easting, ... 
+min values  :  2, 44528398,                 3518,                     3388,                              4.86,              33124537,                         1.64, 2010-02-09 17:00:00.000,                1,                         7,         0.07,    0.66,                   39.3,                     Ricky.T,    589541.1, ... 
+max values  : 32, 44528427,                 3662,                     3493,                             39.42,            4285600836,                        18.80, 2010-02-09 20:58:01.000,              -12,                       118,        14.71,  359.14,                  128.5,                     Ricky.T,    589698.3, ... 
 timestamps  : 2010-02-09 17:01:23...2010-02-09 20:58:51 Time difference of 4 hours  (start...end, duration) 
 sensors     : gps 
-indiv. data : behavioural.classification, eobs.status, eobs.type.of.fix, sensor.type, individual.taxon.canonical.name, tag.local.identifier, study.name, utm.zone, study.timezone 
-missed fixes : 1888 
-date created: 2012-09-07 16:18:58 
+indiv. data : behavioural.classification, eobs.status, eobs.type.of.fix, manually.marked.outlier, visible, sensor.type, individual.taxon.canonical.name, tag.local.identifier, study.name, utm.zone, study.timezone 
+indiv. value: NA A 3 NA true gps Martes pennanti 1016 Urban fisher GPS tracking 18N Eastern Standard Time 
+date created: 2012-12-10 14:13:42 
 \end{Soutput}
 \begin{Sinput}
 > stack[800:1100] #see the names of both animals in second last row
@@ -309,15 +313,18 @@ class       : MoveStack
 nfeatures   : 301 
 extent      : -73.91325, -73.86532, 42.72992, 42.84189  (xmin, xmax, ymin, ymax)
 coord. ref. : +proj=longlat +ellps=WGS84 +datum=WGS84 +towgs84=0,0,0 
-nvariables  : 19
-variables   : eobs.battery.voltage, eobs.horizontal.accuracy.estimate, eobs.key.bin.checksum, eobs.speed.accuracy.estimate, eobs.start.timestamp, eobs.temperature, eobs.used.time.to.get.fix, ground.speed, heading, height.above.ellipsoid, individual.local.identifier, utm.easting, utm.northing, study.local.timestamp, sensor, ... 
-min values  : 3500,  3.07,   33124537,  0.58, 2009-03-01 11:45:01.000,   0,   4,  0.02,   0.00,    2.3, Leroy, 588917.9, 4731448, 2009-03-01 06:45:50, gps, ... 
-max values  : 3725, 67.33, 4285600836, 27.96, 2010-02-11 05:39:59.000, -12, 120, 31.71, 359.14, -127.7, Ricky.T, 592890.4, 4743839, 2010-02-11 00:40:38, gps, ... 
+nvariables  : 22
+names       :           timestamp, eobs.battery.voltage, eobs.horizontal.accuracy.estimate, eobs.key.bin.checksum, eobs.speed.accuracy.estimate,    eobs.start.timestamp, eobs.status, eobs.temperature, eobs.type.of.fix, eobs.used.time.to.get.fix, ground.speed, heading, height.above.ellipsoid, utm.easting, utm.northing, ... 
+min values  : 2009-03-01 11:45:50,                 3500,                              3.07,              33124537,                         0.58, 2009-03-01 11:45:01.000,           A,                0,                3,                         4,         0.02,    0.00,                    2.3,    588917.9,      4731448, ... 
+max values  : 2009-03-04 09:16:59,                 3725,                             67.33,            4285600836,                        27.96, 2010-02-11 05:39:59.000,           A,              -12,                3,                       120,        31.71,  359.14,                 -127.7,    592890.4,      4743839, ... 
 timestamps  : 2009-03-01 12:45:50...2010-02-11 06:40:38 Time difference of 347 days  (start...end, duration) 
 sensors     : gps 
-indiv. data : eobs.fix.battery.voltage, eobs.status, eobs.type.of.fix, manually.marked.outlier, visible, individual.taxon.canonical.name, tag.local.identifier, study.name, utm.zone, study.timezone, behavioural.classification, sensor.type 
+indiv. data : eobs.fix.battery.voltage, manually.marked.outlier, visible, sensor.type, individual.taxon.canonical.name, tag.local.identifier, individual.local.identifier, study.name, study.timezone, behavioural.classification, eobs.status, eobs.type.of.fix, utm.zone 
+min ID Data : NA NA NA NA NA NA NA NA NA NA NA NA NA 
+max ID Data : NA NA NA NA NA NA NA NA NA NA NA NA NA 
 individuals : Leroy, Ricky.T 
-date created: 2012-09-07 16:18:58 
+unused rec. : 1071 
+date created: 2012-12-10 14:13:42 
 \end{Soutput}
 \end{Schunk}
 
@@ -328,41 +335,48 @@ If it is necessary to directly interact with different data of the same object i
 > head(as(leroy, "data.frame"))
 \end{Sinput}
 \begin{Soutput}
-   eobs.battery.voltage eobs.horizontal.accuracy.estimate eobs.key.bin.checksum
-45                 3615                             14.85            2992317972
-46                 3623                              5.38            1723246055
-47                 3627                              5.38            1910450098
-48                 3632                              6.40            2286746099
-49                 3642                              7.68            3797866101
-50                 3647                              8.70            3956003832
-   eobs.speed.accuracy.estimate    eobs.start.timestamp eobs.temperature
-45                         5.65 2009-02-11 12:14:59.000               20
-46                         4.69 2009-02-11 12:30:01.000               26
-47                         4.19 2009-02-11 12:45:01.000               24
-48                         5.97 2009-02-11 13:00:02.000               24
-49                         6.34 2009-02-11 13:15:01.000               25
-50                         6.15 2009-02-11 13:30:01.000               23
-   eobs.used.time.to.get.fix ground.speed heading height.above.ellipsoid
-45                       106         2.10  125.17                   79.3
-46                        97         0.51    3.28                   94.2
-47                        47         0.16   91.10                   82.5
-48                        14         0.23  335.54                  153.7
-49                        18         0.48  359.79                   73.7
-50                        12         0.17   29.49                   71.2
-   individual.local.identifier utm.easting utm.northing study.local.timestamp
-45                       Leroy    590130.0      4732942   2009-02-11 07:16:45
-46                       Leroy    590136.3      4732940   2009-02-11 07:31:38
-47                       Leroy    590138.5      4732935   2009-02-11 07:45:48
-48                       Leroy    590144.0      4732947   2009-02-11 08:00:16
-49                       Leroy    590137.0      4732940   2009-02-11 08:15:19
-50                       Leroy    590126.0      4732936   2009-02-11 08:30:13
-   sensor coords.x1 coords.x2 sensor.1          timestamps
-45    gps -73.89880  42.74370      gps 2009-02-11 12:16:45
-46    gps -73.89872  42.74369      gps 2009-02-11 12:31:38
-47    gps -73.89869  42.74364      gps 2009-02-11 12:45:48
-48    gps -73.89862  42.74374      gps 2009-02-11 13:00:16
-49    gps -73.89871  42.74368      gps 2009-02-11 13:15:19
-50    gps -73.89885  42.74365      gps 2009-02-11 13:30:13
+            timestamp location.long location.lat eobs.battery.voltage
+1 2009-02-11 12:16:45     -73.89880     42.74370                 3615
+2 2009-02-11 12:31:38     -73.89872     42.74369                 3623
+3 2009-02-11 12:45:48     -73.89869     42.74364                 3627
+4 2009-02-11 13:00:16     -73.89862     42.74374                 3632
+5 2009-02-11 13:15:19     -73.89871     42.74368                 3642
+6 2009-02-11 13:30:13     -73.89885     42.74365                 3647
+  eobs.horizontal.accuracy.estimate eobs.key.bin.checksum
+1                             14.85            2992317972
+2                              5.38            1723246055
+3                              5.38            1910450098
+4                              6.40            2286746099
+5                              7.68            3797866101
+6                              8.70            3956003832
+  eobs.speed.accuracy.estimate    eobs.start.timestamp eobs.status
+1                         5.65 2009-02-11 12:14:59.000           A
+2                         4.69 2009-02-11 12:30:01.000           A
+3                         4.19 2009-02-11 12:45:01.000           A
+4                         5.97 2009-02-11 13:00:02.000           A
+5                         6.34 2009-02-11 13:15:01.000           A
+6                         6.15 2009-02-11 13:30:01.000           A
+  eobs.temperature eobs.type.of.fix eobs.used.time.to.get.fix ground.speed
+1               20                3                       106         2.10
+2               26                3                        97         0.51
+3               24                3                        47         0.16
+4               24                3                        14         0.23
+5               25                3                        18         0.48
+6               23                3                        12         0.17
+  heading height.above.ellipsoid utm.easting utm.northing utm.zone
+1  125.17                   79.3    590130.0      4732942      18N
+2    3.28                   94.2    590136.3      4732940      18N
+3   91.10                   82.5    590138.5      4732935      18N
+4  335.54                  153.7    590144.0      4732947      18N
+5  359.79                   73.7    590137.0      4732940      18N
+6   29.49                   71.2    590126.0      4732936      18N
+  study.local.timestamp sensor          timestamps
+1   2009-02-11 07:16:45    gps 2009-02-11 12:16:45
+2   2009-02-11 07:31:38    gps 2009-02-11 12:31:38
+3   2009-02-11 07:45:48    gps 2009-02-11 12:45:48
+4   2009-02-11 08:00:16    gps 2009-02-11 13:00:16
+5   2009-02-11 08:15:19    gps 2009-02-11 13:15:19
+6   2009-02-11 08:30:13    gps 2009-02-11 13:30:13
 \end{Soutput}
 \end{Schunk}
 
@@ -394,7 +408,7 @@ A track is bursted by supplying a vector with the length of the number of coordi
 \begin{Schunk}
 \begin{Sinput}
 > behavior <- c(rep(1:8,each=111), rep(1, 30))
-> leroy_b <- burst(x=leroy, f=behavior)
+> leroy_b <- move::burst(x=leroy, f=behavior)
 > class(leroy_b)
 \end{Sinput}
 \begin{Soutput}
@@ -414,8 +428,8 @@ The \fct{plotBursts} plots a circle for every segment right at the midpoint of t
 \begin{Sinput}
 > par(mfrow=c(2,2))
 > plot(leroy_b, type="l", lwd=2)
-> plot(midPoint(coordinates(leroy_b)[-n.locs(leroy_b), ], coordinates(leroy_b)[-1, ]), 
-+      col=leroy_b@burstId, pch=20)
+> plot(midPoint(coordinates(leroy_b)[-n.locs(leroy_b), ], 
++               coordinates(leroy_b)[-1, ]), col=leroy_b@burstId, pch=20)
 > plotBursts(leroy_b, breaks=3, add=FALSE, pch=19)
 \end{Sinput}
 \end{Schunk}
@@ -435,7 +449,8 @@ When the \fct{brownian.bridge.dyn} function issues the warning, the extent of yo
 \begin{Schunk}
 \begin{Sinput}
 > r <- spTransform(ricky[1:500,], center=T)
-> ricky_dbbmm <- brownian.bridge.dyn(r, dimSize=150, location.error=23, ext=.3, time.step=60)
+> ricky_dbbmm <- brownian.bridge.dyn(r, dimSize=150, location.error=23, 
++                                    ext=.3, time.step=60)
 \end{Sinput}
 \begin{Soutput}
 [1] "Computational size: 2.4e+06"
@@ -517,7 +532,49 @@ To plot contour lines from the raster use the \fct{contour} function and set the
 \fct{raster}              : returns the information of the stored raster\\
 \fct{outerProbability}    : calculates the probabilities of the UD at the border of the raster\\
 
-\newpage
+
+\subsection{Calculating UD area size}
+To determine the area size of the UD, we need to calculate the contour raster from the UD raster. This means, that each raster has not longer its original value but the value of the contour it belongs to. A cell with a very high value in the UD raster will have a very low value in the contour raster. We will use the \texttt{getVolumeUD()} function to calculate the contour raster and then create a new raster that includes only the cells that belong to the 95\% contour. Cells that belong to the contour will get the value 1 while the others get 0. In the last step we can just sum the values of the raster. The area is the number of cells (which we just calculated) multiplied by the actual size of the raster cells. 
+
+\begin{Schunk}
+\begin{Sinput}
+> ricky_cont <- getVolumeUD(ricky_dbbmm)
+> ricky_cont <- ricky_cont<=.95
+> area <- sum(values(ricky_cont))
+> area
+\end{Sinput}
+\begin{Soutput}
+[1] 714
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Storing and loading objects}
+If one or more objects should be stored and loaded at another timer again into R, there is an easy way to save them. The \fct{save} function saves all listed objects from the workspace (in the example below it is only ricky\_dbbmm). The file format is \texttt{RData}. More than one or the whole workspace can be stored in a \texttt{RData} file. Complicated calculations (e.g. brownian bridges), can be calculated once and then stored. \\
+\texttt{RData} files can be loaded using the \fct{load} function. It loads all objects from the file again into the workspace. In the following example we save the object \texttt{ricky\_dbbmm} as \texttt{test.RData}, remove the object (it does not appear any more in the workspace), and load it again.
+
+\begin{Schunk}
+\begin{Sinput}
+> save(x=ricky_dbbmm, file="~/Desktop/test.RData")
+> rm(ricky_dbbmm)
+> load(file="~/Desktop/test.RData")
+\end{Sinput}
+\end{Schunk}
+
+
+\subsection{Store a track as KML file}
+A \class{Move} objects can also be saved as KML (keyhole markup language) files. KML files can easily loaded into GoogleEarth and GoogleMaps. Therefore the \texttt{plotKML} package is needed. Once installed the \fct{kml} function creates a file with the ending \texttt{.kml} and the name of the object. The kml file is stored in the current working directory. \\
+The following code creates the file \texttt{leroy.kml} from the \class{Move} object named \texttt{leroy}. If GoogleEarth is installed a double click on that file opens the locations of the track in GoogleEarth.
+
+\begin{Schunk}
+\begin{Sinput}
+> #install.packages('plotKML')
+> require(plotKML)
+> kml(leroy)
+\end{Sinput}
+\end{Schunk}
+
+
+%\newpage
 
 \section{Home Range Bootstrap using Minimum Convex Polygons}
 The move package includes a method to calculate minimum convex polygons (MCP) using \fct{hrBootstrap}. A minimum convex polygon describes an area that is formed by the points of a track. It is called convex because no line that connects two points within this polygon crosses the border of the polygon. \\

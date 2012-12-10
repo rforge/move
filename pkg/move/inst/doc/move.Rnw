@@ -174,7 +174,7 @@ require(ggmap) #these packages are necessecary to work with google maps
 require(mapproj)
 leroy_df <- as(leroy, "data.frame")
 m <- get_map(bbox(extent(leroy)*1.1), source="stamen", zoom=14)
-ggmap(m)+geom_path(data=leroy_df, aes(x=coords.x1, y=coords.x2))
+ggmap(m)+geom_path(data=leroy_df, aes(x=location.long, y=location.lat))
 @
 \begin{figure}
 \begin{center}
@@ -219,7 +219,7 @@ A track is bursted by supplying a vector with the length of the number of coordi
 
 <<burstTrack>>=
 behavior <- c(rep(1:8,each=111), rep(1, 30))
-leroy_b <- burst(x=leroy, f=behavior)
+leroy_b <- move::burst(x=leroy, f=behavior)
 class(leroy_b)
 @
 
@@ -303,6 +303,16 @@ contour(ricky_dbbmm, levels=c(.5, .95), col=c(6,2), add=TRUE, lwd=2)
 \fct{outerProbability}    : calculates the probabilities of the UD at the border of the raster\\
 
 
+\subsection{Calculating UD area size}
+To determine the area size of the UD, we need to calculate the contour raster from the UD raster. This means, that each raster has not longer its original value but the value of the contour it belongs to. A cell with a very high value in the UD raster will have a very low value in the contour raster. We will use the \texttt{getVolumeUD()} function to calculate the contour raster and then create a new raster that includes only the cells that belong to the 95\% contour. Cells that belong to the contour will get the value 1 while the others get 0. In the last step we can just sum the values of the raster. The area is the number of cells (which we just calculated) multiplied by the actual size of the raster cells. 
+
+<<areaSize>>=
+ricky_cont <- getVolumeUD(ricky_dbbmm)
+ricky_cont <- ricky_cont<=.95
+area <- sum(values(ricky_cont))
+area
+@
+
 \subsection{Storing and loading objects}
 If one or more objects should be stored and loaded at another timer again into R, there is an easy way to save them. The \fct{save} function saves all listed objects from the workspace (in the example below it is only ricky\_dbbmm). The file format is \texttt{RData}. More than one or the whole workspace can be stored in a \texttt{RData} file. Complicated calculations (e.g. brownian bridges), can be calculated once and then stored. \\
 \texttt{RData} files can be loaded using the \fct{load} function. It loads all objects from the file again into the workspace. In the following example we save the object \texttt{ricky\_dbbmm} as \texttt{test.RData}, remove the object (it does not appear any more in the workspace), and load it again.
@@ -319,7 +329,7 @@ A \class{Move} objects can also be saved as KML (keyhole markup language) files.
 The following code creates the file \texttt{leroy.kml} from the \class{Move} object named \texttt{leroy}. If GoogleEarth is installed a double click on that file opens the locations of the track in GoogleEarth.
 
 <<saveKML, eval=FALSE>>=
-install.packages('plotKML')
+#install.packages('plotKML')
 require(plotKML)
 kml(leroy)
 @

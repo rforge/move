@@ -30,7 +30,7 @@
   \item{location.error}{required numeric value or vector that describes the error of the location (sender/receiver) system in map units, or a character string with the name of the column containing the location error.}
   \item{margin}{The margin used for the behavioral change point analysis.}
   \item{window.size}{The size of the moving window along the track. Larger windows provide more stable/accurate estimates of the brownian motion variance but are less well able to capture more frequent changes in behaviour.}
-  \item{ext}{numeric value >0; extension factor. Decribes the amount of extension of the bounding box of the animal track. It can be one (same extension into all four directions), two (first x, then y directional extension) or four numbers (xmin, xmax, ymin, ymax extension). Default is .25 (extends the bounding box by 25\%)}
+  \item{ext}{numeric value >0; extension factor. Decribes the amount of extension of the bounding box of the animal track. It can be one (same extension into all four directions), two (first x, then y directional extension) or four numbers (xmin, xmax, ymin, ymax extension). Default is .25 (extends the bounding box by 25\%). It is only used in combination with a numeric raster argument or the dimSize argument. }
   \item{bbox}{vector with 4 numbers defining a bounding box for the raster}
   \item{...}{for additional arguments}
 }

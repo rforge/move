@@ -23,6 +23,7 @@
 }
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 \SweaveOpts{engine=R,eps=FALSE}
 
