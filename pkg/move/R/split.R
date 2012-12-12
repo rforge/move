@@ -27,7 +27,7 @@ setMethod(f = "split",
 			  moveList[[ID]]  <- moveObj
 		  }
 		  return(moveList)
-	  }) ###when splitting a MoveStack there is a warning issued like: In min(x) : no non-missing arguments to min; returning Inf;; this is due to the data that are coerced by the show function for 'min values' and 'max values';; and this is because the original print function ahndels na.rm=T and thus there are no data anymore
+	  }) ###@bart:when splitting a MoveStack there is a warning issued like: In min(x) : no non-missing arguments to min; returning Inf;; this is due to the data that are coerced by the show function for 'min values' and 'max values';; and this is because the original print function handels na.rm=T and thus there are no data anymore
 
 setMethod(f = "split",
 	  signature = c(x="DBBMMStack", f="missing"),

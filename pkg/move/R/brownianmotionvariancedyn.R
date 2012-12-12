@@ -10,10 +10,10 @@ setMethod(f = "brownian.motion.variance.dyn",
           definition = function(object, location.error, window.size, margin) {
             time.lag <- time.lag(object, units = "mins")  #units need to correspont between BBMM method and here
 	  if(n.locs(object)!= length(location.error))
-		  stop("The location error vector is not same length as the move object")
+		  stop("The location error vector has not the same length as the move object")
 	  if(any(is.na(location.error)))
 		  stop("The location error contains NAs")
-            if(isLonLat(object)) stop("You can not use longitude latitude projection for this funciton. To transform your cooridnateas use the spTransform funciton. \n")
+            if(isLonLat(object)) stop("You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function. \n")
 #             if (grepl("aeqd", proj4string(object)) == FALSE) {
 #               stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
 #             } else {
@@ -47,7 +47,8 @@ setMethod(f = "brownian.motion.variance.dyn",
                   (alpha^2) * (loc.error.2^2)
                 l <- log((1/(2 * pi * v)) * exp(-ztz/(2 * v)))
                 if (any(is.na(l))) 
-                  stop("Something weird occured contact bart")
+                  stop("An internal error occoured. Contact maintainer.")
+                  #stop("Something weird occured contact bart")
                 return(-sum((l)))
                 # sum was using na.rm=T, but i want to know why probably has to do with not
                 # possible optimizations, now build in logical statement in line before
@@ -56,10 +57,10 @@ setMethod(f = "brownian.motion.variance.dyn",
                                 alpha = alpha, loc.error.1 = loc.error.1, loc.error.2 = loc.error.2, 
                                 ztz = ztz)  # implement checks if optimization worked
               if (any(BMvar$minimum %in% c(l, u))) 
-                stop("optimization failed maybe consider changing mapunits")
+                stop("Optimization failed! Consider changing mapunits")
               
               if ((length(x)%%2) != 1) 
-                warning("Not an even number of location in variance function")
+                warning("Not an even number of locations in variance function")
               
               return(list(BMvar = BMvar$minimum, cll = -BMvar$objective))
             }
@@ -70,7 +71,7 @@ setMethod(f = "brownian.motion.variance.dyn",
             BMvars <- data.frame(BMvar = c(), loc = c())
             
             if (length(breaks) < 2) 
-              stop("Margin to window ratio not ok")
+              stop("Margin to window ratio not appropriate")
             # What would be necessary to change?  try all possible window starts in track
             for (w in 1:(n.locs(object) - window.size + 1)) {
               # calculate all vectors for parts inside the window

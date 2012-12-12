@@ -10,7 +10,7 @@ setMethod(f = "move",
 			  stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
 
 		  if(any(dups<-duplicated( do.call('paste',c(df[duplicated(df$timestamp)|duplicated(df$timestamp, fromLast=T),names(df)!="event.id"], list(sep="__")))))){#first find atleast the ones where the timestamp (factor) is duplicated
-			  warning("Exact duplicate records removed (n=",sum(dups),") (movebank allows them but the move package cant deal with them)")
+			  warning("Exact duplicate records removed (n=",sum(dups),") (movebank allows them but the move package can't deal with them)")
 			  df <- df[!duplicated( do.call('paste',c(df[,names(df)!="event.id"], list(sep="__")))),]# cant use dups here since it that uses the optimization of only looking at timestamps first
 		  }
 
@@ -91,7 +91,7 @@ setMethod(f = ".move",
 
 		  if(length(unique(df$individual.local.identifier))>1 & any(unique(as.character(df$individual.local.identifier))==""))
 		  {# this is not so elegant from me (bart) since this function also gets used by non movebank data
-			  warning("omitting locations that have an empty local identifier (n=",sum(tmp<-as.character(df$individual.local.identifier)==""),") most likely the tag was not deployed") 
+			  warning("Omitting locations that have an empty local identifier (n=",sum(tmp<-as.character(df$individual.local.identifier)==""),"). Most likely the tag was not deployed") 
 			  df <- df[!tmp,]
 			  df$individual.local.identifier <- factor(df$individual.local.identifier)
 		  }

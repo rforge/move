@@ -5,7 +5,7 @@ setMethod(f = "moveStack",
 		  if (any((as.character(lapply(x, class)))!="Move")) 
 			  stop("One or more objects in the list are not from class Move")
 		  if(!all(unlist(lapply(x, validObject))))
-			  stop("Not all valid moveobjects")
+			  stop("One or more objects in the list are not valid Move objects")
 		  if (length(unique(as.character(lapply(x, function(y) attr(slot(y, "timestamps"), "tzone")) )))!=1)
 			  stop("One or more objects in the list have no UTC timestamps")
 

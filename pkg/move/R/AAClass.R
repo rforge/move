@@ -32,9 +32,9 @@ setClass(Class='.unUsedRecords',
 			       ),
 	 validity = function(object){
 		 if(length(object@sensorUnUsedRecords)!=nrow(object@dataUnUsedRecords))
-			 stop("Sensor and data length for unused records does not match")
+			 stop("Sensors and data length for unused records do not match")
 		 if(length(object@timestampsUnUsedRecords)!=nrow(object@dataUnUsedRecords))
-			 stop("timestamps and data length for unused records does not match")
+			 stop("Timestamps and data length for unused records do not match")
 		 return(TRUE)
 	 }
 	 )
@@ -47,7 +47,7 @@ setClass(Class='.unUsedRecordsStack',contains='.unUsedRecords',# maybe at somest
 			       ),
 	 validity = function(object){
 		 if(length(object@trackIdUnUsedRecords)!=nrow(object@dataUnUsedRecords))
-			 stop("trackId and data length for unused records does not match")
+			 stop("TrackId and data length for unused records do not match")
 		 return(TRUE)
 	 }
 	 )
@@ -80,18 +80,18 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack",'.unUsedRecords'),
 	 prototype = prototype(),
 	 validity = function(object){
 		 if(any((tmp <- time.lag(object))<0))
-			 stop("The dataset includes unsorted time stamps")
+			 stop("The dataset includes unsorted timestamps")
 		 tmp <- c(T, tmp==0)|c(tmp==0,T)#only check for those that have the same time if the sensor is different
 		 if (any(dups <- duplicated(data.frame(format(object@timestamps[tmp],"%Y %m %d %H %M %OS4"), object@sensor[tmp]))))
 			 stop("The dataset includes double timestamps first one:", object@timestamps[tmp][dups][1], ")")
 		 if(nrow(object@idData)>1)
-			 stop("There are more than 1 row stored in the idData")
+			 stop("More than 1 row are stored in the idData data.frame")
 		 timestampsUnUsedDuplicated<-object@timestampsUnUsedRecords[object@timestampsUnUsedRecords %in% object@timestamps]
 		 if(length(timestampsUnUsedDuplicated)!=0)
 		 {
 		 s<-c(object@timestamps, object@timestampsUnUsedRecords)%in% timestampsUnUsedRecords
 		 	if (any(dups <- duplicated(data.frame(format(c(object@timestamps, object@timestampsUnUsedRecords)[s],"%Y %m %d %H %M %OS4"), c(object@sensor, object@sensorUnUsedRecords)[s]))))
-				 stop("A timestamps of a unused record coincides with a normal timestamps")
+				 stop("A timestamp of an unused record coincides with a normal timestamp")
 
 		 }
 		 return(TRUE)
@@ -117,22 +117,22 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack", ".unUsedRecordsSt
 			       trackId = factor()),
 	 validity = function(object){
 		 if(length(object@trackId)!=nrow(object@coords))
-			 stop("Number of trackId does not match the number of coordinates")
+			 stop("Length of trackId does not match the number of coordinates")
 		 if(!all(unlist(tapply(object@timestamps, list(object@trackId, object@sensor),diff))>0))
 		 {
 			 tmp<-duplicated(cbind(object@timestamps, object@trackId, object@sensor))# made new test in check for higher speed but have this one still here for more clear reporting
 			 stop("The data set includes double timestamps per ID (first one:", object@trackId[tmp][1]," ",object@sensor[tmp][1]," ",object@timestamps[tmp][1], ")")
 		 }
 		 if(any(unlist(lapply(tapply(object@timestamps,object@trackId, order),diff))!=1))
-			 stop("Not ordered timestamps per individual")
+			 stop("Not ordered timestamps per individual occured")
 		 if(any(levels(object@trackId)!=raster:::.goodNames(levels(object@trackId))))
 			 stop('no good names')
 		 if(length(unique(object@trackId))!=nrow(object@idData))
-			 stop("Not same number of IDs and rows in dataframe per ID")
+			 stop("Not same number of unique IDs and rows in the idData data.frame")
 		 if(any(sort(as.character(unique(object@trackId)))!=sort(unique(rownames(object@idData))))){
 			 stop("No match between rownames in idData and ids along track")} 
 		 if(!all(unique(object@trackIdUnUsedRecords)%in%unique(object@trackId)))
-			 stop("There are records for individuals where not real records are present")
+			 stop("There are records for individuals where no real records are present")
 		 timestampsUnUsedDuplicated<-object@timestampsUnUsedRecords[object@timestampsUnUsedRecords %in% object@timestamps]
 		 if(length(timestampsUnUsedDuplicated)!=0)
 		 {
@@ -207,7 +207,7 @@ setClass(Class = ".UDStack", contains = c("RasterStack"),
 			       method = as.character()), 
 	 validity = function(object) {
 		 if (!all(apply(values(object), MARGIN = 2, FUN = function(X) isTRUE(all.equal(sum(X), 1, check.attributes=F))))) 
-			 stop("One or more of the used rasters are not a UD (sum is not equal to 1)")
+			 stop("One or more of the used rasters are not a UD, because they sum not to 1)")
 	 })
 
 
@@ -231,7 +231,7 @@ setClass(Class = "DBBMMStack", contains = c(".UDStack"),
 			       ext = as.numeric()), 
 	 validity = function(object) {
 		 if (!all(unique(object@DBMvar@trackId) == layerNames(object))) 
-			 stop("The layer names of the raster objects do not match the trackIDs of the DBMvarStack.")
+			 stop("The layer names of the raster objects do not match the trackIDs of the DBMvarStack")
 	 })
 
 
@@ -253,7 +253,7 @@ setClass(Class = ".MoveTrackSingleBurst", contains = c(".MoveTrackSingle"),
 		 if(any(levels(object@burstId)!=raster:::.goodNames(levels(object@burstId))))
 			 stop('no good names')
 		 if(length(object@burstId)!=(length(object@timestamps)-1))
-			 stop("Burst ids need to be one shorter than rest since it is a segment property")
+			 stop("Burst ids need to be one shorter than the number of coordinates since it is a segment property")
 		 return(TRUE)
 	 })
 

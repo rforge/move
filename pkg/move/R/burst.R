@@ -47,7 +47,7 @@ setMethod("[",
 setAs("MoveBurst", "Move", function(from) {
 # last id can be different since that one is not telling anything about a segment in this obj
       if (length(unique(from@burstId)) != 1) 
-        stop("Not one unique burst id method wont work")
+        stop("Does not work with one burst id only")
       new("Move", 
           as(from,".MoveGeneral"), 
           as(from,".MoveTrackSingle"))

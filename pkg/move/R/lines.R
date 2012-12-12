@@ -22,7 +22,7 @@ setMethod("lines", ".MoveTrackSingleBurst", function(x,col=NA,...){
       if (length(col)==length(unique(x@burstId))){
         col <- col[as.numeric(x@burstId)] # needs to correspond to points function
       } else {
-        stop("The number of defined colors is unequal to the number of burst IDs")
+        stop("The number of assigned colors is unequal to the number of burst IDs")
       }
     }
     if(length(levels(x@burstId))>8) warning("There are more burst IDs than colors (recycling colors).")

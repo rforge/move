@@ -7,7 +7,7 @@ setGeneric("citations<-", function(obj, value) standardGeneric("citations<-"))
 setReplaceMethod("citations", ".MoveGeneral", function(obj, value){
   if (length(value)!=1) {
     value <- as.character(value[1])
-    warning("There were more than one citation entered. Only using the first element!")
+    warning("There were more than one citation entered. Only using first element")
   }
   obj@citation <- value
   obj

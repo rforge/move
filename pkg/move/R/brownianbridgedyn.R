@@ -90,11 +90,11 @@ setMethod(f = "brownian.bridge.dyn",
           signature = c(object = "dBMvariance", raster = "RasterLayer", dimSize = "missing", location.error = "numeric"), 
           definition = function(object, raster, location.error,  ext, time.step,...) {
 	  if(n.locs(object)!= length(location.error))
-		  stop("The location error vector is not same length as the move object")
+		  stop("The location error vector has not the same length as the move object")
 	  if(any(is.na(location.error)))
 		  stop("The location error contains NAs")
             # check for aeqd projection of the coordinates
-            if(isLonLat(object)) stop("You can not use longitude latitude projection for this funciton. To transform your cooridnateas use the spTransform funciton. \n")
+            if(isLonLat(object)) stop("You can not use longitude latitude projection for this function. To transform your cooridnates use the spTransform function. \n")
 #             if (grepl("aeqd", proj4string(object)) == FALSE) 
 #               stop("The projection of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
             if(projection(raster)!=projection(object)) #check equal projection of raster and Move
@@ -139,7 +139,7 @@ setMethod(f = "brownian.bridge.dyn",
               # function of the dbbbmm object
             } else {
               if (outerProbability > 0.01) {
-                warning("outer probability: ", outerProbability, " The used extent is too small. Choose an extent which includes more of the probabilities.")
+                warning("Outer probability: ", outerProbability, " The used extent is too small. Choose an extent which includes more of the probabilities.")
               }
             }
             
