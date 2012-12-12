@@ -237,7 +237,7 @@ plot(midPoint(coordinates(leroy_b)[-n.locs(leroy_b), ],
 plotBursts(leroy_b, breaks=3, add=FALSE, pch=19)
 @
 \end{center}
-\caption{Plotting the track and adding the burst information as colored lines, poins or circles (the color corresponds to the brustID; the size of the circles represents in three steps the realtive amount of time per segment)}
+\caption{Plotting the track and adding the burst information as colored lines, points or circles (the color corresponds to the brustID; the size of the circles represents in three steps the relative amount of time per segment)}
 \label{fig:burst}
 \end{figure}
 

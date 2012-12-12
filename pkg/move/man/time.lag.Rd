@@ -20,7 +20,7 @@
   \item{...}{further arguments}
 }
 
-\details{Optionally the argument units can be passed on to ensure the time lag in a certain unit, this is especially usefull in case a move stack is bursted. For more information on the units argument see the help of difftime.}
+\details{Optionally the argument units can be passed on to ensure the time lag in a certain unit, this is especially useful in case a move stack is bursted. For more information on the units argument see the help of difftime.}
 
 \value{
   The function returns a numeric vector with the time lags.

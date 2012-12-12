@@ -7,7 +7,7 @@
 
 \title{Convert raster to contour lines}
 
-\description{The funciton converts a raster object to a SpatialLinesDataFrame. }
+\description{The function converts a raster object to a SpatialLinesDataFrame. }
 
 \usage{
   \S4method{raster2contour}{RasterLayer}(x, ...)
@@ -19,7 +19,7 @@
 }
 
 \details{
-  The raster2contour function creates a \link[=SpatialLinesDataFrame-class]{SpatialLinesDataFrame} from a given raster or \link[=DBBMM-class]{DBBMM} object. This allows to reproject the contours to different projections. 
+  The raster2contour function creates a \link[=SpatialLinesDataFrame-class]{SpatialLinesDataFrame} from a given raster or \link[=DBBMM-class]{DBBMM} object. This allows to re-project the contours to different projections. 
 }
 
 \author{Marco Smolla}

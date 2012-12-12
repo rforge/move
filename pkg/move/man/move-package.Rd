@@ -26,10 +26,10 @@ move is a package that contains functions to access movement data stored at \url
 \section{I. Creating Move objects}{
 
 Move objects can be created from files with the function:
-  \tabular{ll}{
-    \code{move} To create an object containing one animal track
-    \code{moveStack} To create am object containing multiple animals or/and multiple tracks
-    \code{getMovebankData} Creates a Move or a MoveStack object with data from the Movebank database
+  \itemize{
+    \code{move} To create an object containing one animal track \cr
+    \code{moveStack} To create an object containing multiple move objects\cr
+    \code{getMovebankData} To create a Move or a MoveStack object with data from Movebank
   }
 }
 

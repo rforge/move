@@ -44,19 +44,6 @@ setMethod("[",
             callNextMethod(x = x, i = i, j = j, ...)
           })
 
-setMethod("split", 
-          signature = c(x = ".MoveTrackSingleBurst", f = "missing"), 
-          definition = function(x, f, ...) {    
-            f <- c(0, cumsum(diff(as.numeric(factor(paste(as.character(x@burstId), is.na(x@burstId)))))!=0))
-          	f <- c(f, max(f))
-            res <- list()
-            for (i in unique(f)) 
-        	    res[[i + 1]] <- x[f == i | c(0, f[-n.locs(x)]) == i, ]
-            names(res) <- as.character(unlist(lapply(lapply(res, slot, "burstId"), "[", 1)))
-            res <- lapply(res, as, sub("Burst", "", class(x)))
-            return(res)
-          })
-
 setAs("MoveBurst", "Move", function(from) {
 # last id can be different since that one is not telling anything about a segment in this obj
       if (length(unique(from@burstId)) != 1) 

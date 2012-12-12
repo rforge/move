@@ -19,7 +19,7 @@
 }
 
 \details{
- The coordinates method extracts the coordinates of the track in a Move or MoveStack object. They are returned as a matrix.
+Returns a matrix with the coordinates of the track in a Move or MoveStack object. 
 }
 
 \examples{

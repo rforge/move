@@ -8,7 +8,7 @@
 
 \title{Creates an URL to download Data from Movebank}
 
-\description{An enhanced function to download data from Mobebank by manually building an URL}
+\description{An enhanced function to download data from Movebank by manually building an URL. This function should only be used by advanced programmers.}
 
 \usage{
   getMovebank(entity_type, login, ...)

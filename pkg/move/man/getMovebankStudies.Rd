@@ -19,11 +19,11 @@
 }
 
 \details{
-   Returns all studies available on Movebank.
+   \code{getMovebankStudies} belongs to the Movebank browsing functions and returns a data.frame of all studies available on Movebank.
 }
 
 \note{
-See the 'browesMovebank' vignette (\href{http://move.r-forge.r-project.org/moveWEB/Downloads_files/browseMovebank.pdf}{move website download section}) for more information about security and how to use Movebank from within R. 
+See the 'browseMovebank' vignette (\href{http://move.r-forge.r-project.org/moveWEB/Downloads_files/browseMovebank.pdf}{move website download section}) for more information about security and how to use Movebank from within R. 
 }
 
 

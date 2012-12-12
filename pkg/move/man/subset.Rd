@@ -13,7 +13,7 @@
 
 \title{Returns a single object from a MoveStack}
 
-\description{Returning a single Move object}
+\description{The subset function can be used to return a single Move object from a MoveStack object.}
 
 \usage{
   \S4method{[}{MoveStack,ANY,ANY}(x,i)
@@ -24,5 +24,10 @@
   \item{i}{numeric, number of position in the stack}
 }
 
+\examples{
+load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+st <- moveStack(list(leroy,ricky))
+st[1]
+}
 
-\author{Marco Smolla}
+\author{Bart Kranstauber}

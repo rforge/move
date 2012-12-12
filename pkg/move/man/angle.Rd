@@ -11,7 +11,7 @@
 
 \title{angle information from a track or track stack}
 
-\description{This function returns a summary about angle related measurments of a track or track stack}
+\description{This function returns a summary about angle related measurements of a track or track stack. These are: average azimuth, variance of azimuth, standard error of azimuth. }
 
 \usage{
   \S4method{angle}{.MoveTrackSingle}(x)
@@ -26,6 +26,10 @@
 
 \author{Marco Smolla}
 
+\value{
+Angles in degrees
+}
+
 \examples{
   load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 \dontrun{  
@@ -33,5 +37,5 @@
   angle(stack) #angles from a MoveStack object
   angleSummary(leroy) # summary of angle measures of a Move object
   angleSummary(stack) # summary of angle measures of a MoveStack object
-}# failes on cran build
+}# failed on cran build
 }

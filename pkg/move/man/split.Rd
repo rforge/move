@@ -23,8 +23,8 @@
 }
 
 \details{
-  A MoveStack is splitted into a list of \link[=Move-class]{Move} objects by the trackIds of the given MoveStack. 
-  To stack this list again \link{moveStack} can be used. 
+  A MoveStack is split into a list of \link[=Move-class]{Move} objects by the track IDs of the given MoveStack. 
+  For stacking \link{moveStack} can be used. 
 }
 
 \author{Marco Smolla}

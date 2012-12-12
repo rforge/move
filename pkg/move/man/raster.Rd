@@ -8,7 +8,7 @@
 
 \title{Extract raster from DBBMM}
 
-\description{Extrachts the RasterLayer from a DBBMM and DBBMMStack object.}
+\description{Extracts the RasterLayer from a DBBMM and DBBMMStack object.}
 
 \usage{
   \S4method{raster}{DBBMM}(x)
@@ -20,7 +20,7 @@
 }
 
 \details{
-  The raster function extraxcts the raster object from a DBBMM or DBBMMStack object.
+  The raster function extracts the raster object from a DBBMM or DBBMMStack object.
 }
 
 \value{

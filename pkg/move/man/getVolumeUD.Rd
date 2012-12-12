@@ -5,9 +5,9 @@
 
 \docType{methods}
 
-\title{getVolumeUD of a raster}
+\title{Modify a UD raster}
 
-\description{Make raster cells correlating to their contour}
+\description{Modifies the UD raster: that the cell values of the resulting raster are equal to the percentage of the smallest home range containing this cell.}
 
 \usage{
   \S4method{getVolumeUD}{Raster}(x, ...)
@@ -18,8 +18,8 @@
   \item{...}{additional Raster or DBBMM objects}
 }
 
-\details{
-The getVolumeUD returns a new Raster where the cells have the value (between 0 and 1) to its corresponding contour. }
+%\details{
+%The function \code{getVolumeUD} can be used to plot the 95\%contour of DBBMM object. Therefore, after a raster has been modified with the \code{getVolumeUD} function, all cells that are <= 0.95 are selected and plotted.  }
 
 \author{Marco Smolla}
 

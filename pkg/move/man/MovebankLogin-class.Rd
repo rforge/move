@@ -10,7 +10,7 @@
 }
 
 \description{
-  The MovebankLogin object is needed for every Movebank browsing function. Alternatively, one can also chose to enter the username and password everytime one uses one of the browsing functions. 
+  The MovebankLogin object is needed for every Movebank browsing function. Alternatively, one can also chose to enter the username and password every time one uses one of the browsing functions. 
 }
 
 \section{Slots}{

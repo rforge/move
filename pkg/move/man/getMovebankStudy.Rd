@@ -8,7 +8,8 @@
 
 \title{Returns study information}
 
-\description{This function returns information about the requested study like the authors of that study, licence type, citation and more.}
+\description{
+\code{getMovebankStudy} belongs to the Movebank browsing functions and returns information about the requested study like the authors of that study, licence type, citation and more.}
 
 \usage{
   getMovebankStudy(study, login)
@@ -20,7 +21,7 @@
 }
 
 \note{
-See the 'browesMovebank' vignette (\href{http://move.r-forge.r-project.org/moveWEB/Downloads_files/browseMovebank.pdf}{move website download section}) for more information about security and how to use Movebank from within R. 
+See the 'browseMovebank' vignette (\href{http://move.r-forge.r-project.org/moveWEB/Downloads_files/browseMovebank.pdf}{move website download section}) for more information about security and how to use Movebank from within R. 
 }
 
 

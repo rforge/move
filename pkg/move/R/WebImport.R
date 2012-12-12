@@ -168,24 +168,24 @@ setMethod(f="getMovebankSensorsAttributes",
 
 
 ###all or a certain ID
-setGeneric("getMovebankID", function(x, login) standardGeneric("getMovebankID"))
+setGeneric("getMovebankID", function(study, login) standardGeneric("getMovebankID"))
 setMethod(f="getMovebankID", 
-          signature=c(x="character", login="missing"), 
-          definition = function(x, login){
+          signature=c(study="character", login="missing"), 
+          definition = function(study, login){
             login <- movebankLogin()
-            getMovebankID(x=x, login=login)
+            getMovebankID(study=study, login=login)
           })
 
 setMethod(f="getMovebankID", 
-          signature=c(x="character", login="MovebankLogin"), 
-          definition = function(x=NA, login){
+          signature=c(study="character", login="MovebankLogin"), 
+          definition = function(study=NA, login){
           data <- getMovebank("study", login, sort="name", attributes="id%2Cname%2Ci_am_owner%2Ci_can_see_data%2Cthere_are_data_which_i_cannot_see")
-          if (is.na(x)) {
+          if (is.na(study)) {
             #cat("####### STUDY ID #######\n")
             return(data[ ,c("id","name")])
             } else {
-              studyNUM <- data[gsub(" ","", data$name)==gsub(" ","", x),c("id")] #get rid of all spaces to avoid miss matching between different spaces words
-              if (length(studyNUM)>1) stop(paste("There was more than one study with the name:",x))
+              studyNUM <- data[gsub(" ","", data$name)==gsub(" ","", study),c("id")] #get rid of all spaces to avoid miss matching between different spaces words
+              if (length(studyNUM)>1) stop(paste("There was more than one study with the name:",study))
             return(studyNUM)
             }
           })
@@ -244,10 +244,10 @@ setMethod(f="getMovebankAnimals",
 
 
 
-setGeneric("getMovebankData", function(study,animalName=NA,login, moveObject=TRUE, ...) standardGeneric("getMovebankData"))
+setGeneric("getMovebankData", function(study,animalName=NA,login, ...) standardGeneric("getMovebankData"))
 setMethod(f="getMovebankData", 
           signature=c(study="ANY",animalName="ANY", login="MovebankLogin"),
-          definition = function(study, animalName, login, moveObject=T, ...){ 
+          definition = function(study, animalName, login, ...){ 
             if (class(study)=="character") study <- getMovebankID(study, login) ##added this to make the function faster, otherwise it calls this funciton for every function that needs the study_ID
             idData <- getMovebank("individual", login=login, study_id=study)         
             ##which deployments are imporant

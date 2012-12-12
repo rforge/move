@@ -11,7 +11,7 @@
 }
 
 \description{
-  The MoveStack object is created within the brownian.bridge.dyn function from a Move object. It includes beneath others a raster object and probabilities.
+  The MoveStack object is created within the brownian.bridge.dyn function from a Move object. It includes among others a raster object and probabilities.
 }
 
 \section{Slots}{

@@ -8,7 +8,7 @@
 
 \title{Calculates the probabilities at the edges of a raster}
 
-\description{The outerProbability method calculates the summed probabilitiy of the cells at the border of a raster}
+\description{The outerProbability method calculates the summed probability of the cells at the border of a raster}
 
 \usage{
   \S4method{outerProbability}{RasterLayer}(raster,border,...)
@@ -21,8 +21,12 @@
   \item{...}{hand over information}
 }
 
+\details{
+ The function returns the summed probability at the border (e.g. the outer 10\% of the cells) of a raster. This value can be used as an indicator whether the extent of the used raster is to small for the UD calculation and therefore too much probabilities are not calculated because they are outside the raster. 
+ }
+
 \value{
-The function returns either a numeric value with the outer probability from a single raster object, or a list with the outer probabilites from a DBBMMStack.
+numeric value for a single DBBMM object, or a list of numeric values for a DBBMMStack
 }
 
 \examples{

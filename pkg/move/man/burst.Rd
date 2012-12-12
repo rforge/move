@@ -22,7 +22,7 @@
 }
 
 \details{
-The burst function bursts (divides) a track in segments that are specified by the burstIDs (e.g. behavioral annotations). 
+The burst function bursts (divides) a track in segments that are specified by the burstIDs (e.g. behavioral annotations). It allows to investigate different parts of a track according to supplied variables like day and night, movement and rest, and so on.  
 }
 
 \author{Marco Smolla}

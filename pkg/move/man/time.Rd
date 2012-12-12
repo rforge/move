@@ -8,7 +8,7 @@
 
 \title{time information from a track or track stack}
 
-\description{This function returns a summary about time related measurments of a track or track stack}
+\description{This function returns a summary about time related measurements of a Move or MoveStack object.}
 
 \usage{
   \S4method{timeSummary}{.MoveTrackSingle}(x, units="hours")

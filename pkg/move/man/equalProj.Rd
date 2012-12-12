@@ -18,7 +18,7 @@
 }
 
 \details{
-  equalProj checks for equal projections. If an object has aditional arguments (e.g. when it is centered) but the rest of its arguments are equal to the other objects the function returns TRUE with the warning that there are additional values. 
+  equalProj checks for equal projections. If an object has additional arguments (e.g. when it is centered) but the rest of its arguments are equal to the other objects the function returns TRUE with the warning that there are additional values. 
 }
 
 \author{Marco Smolla}

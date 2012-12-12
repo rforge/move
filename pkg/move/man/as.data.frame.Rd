@@ -7,7 +7,7 @@
 
 \title{Return a Data Frame}
 
-\description{Function to create a data.frame with the spatial data frame information from a Move object.}
+\description{Function to create a data.frame with the information of a spatial data frame contained in the Move object.}
 
 \usage{
   \S4method{as.data.frame}{Move}(x,...)

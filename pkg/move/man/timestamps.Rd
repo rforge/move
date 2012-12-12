@@ -10,7 +10,7 @@
 
 \title{Extract the timestamps of a Move or MoveStack object}
 
-\description{The timestmaps method returns or sets the timestamps of a track from a Move or MovesStack object.}
+\description{The timestamps method returns or sets the timestamps of a track from a Move or MovesStack object.}
 
 \usage{
 \S4method{timestamps}{.MoveTrackSingle}(this)

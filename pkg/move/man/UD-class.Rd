@@ -11,7 +11,7 @@ The UD class
 }
 
 \description{
-	This Class represents a simple abstraction of the utilization distribution, UD, where the sum of all probability needs to be one. It is mostly exported for other people to program against.
+	This Class represents a simple abstraction of the utilization distribution, UD, where all probabilities necessarily sum to one. It is exported for experienced user to program against.
 }
 
 \section{Slots}{

@@ -14,7 +14,7 @@ The Move class
 }
 
 \description{
-The Move object is created with the \code{\link{move}} function. 
+The \code{Move} object contains at least time and coordinate information of an animal. It can contain further data that are individual to the animal, e.g. the sex or age. These data are stored in the idData data.frame. If the object was created with the Movebank browsing functions it does also contain the study name, licence and citation information.  
 }
 
 \section{Slots}{
@@ -25,7 +25,7 @@ The Move object is created with the \code{\link{move}} function.
     \item{dateCreation}{Object of class \code{"numeric"}: time stamp when the file was downloaded;  }
     \item{study}{Object of class \code{"character"}: name of the study;  }
     \item{citation}{Object of class \code{"character"}: how to cite the study;  }
-    \item{license}{Object of class \code{"character"}: the license under which the data were publicated;  }
+    \item{license}{Object of class \code{"character"}: the license under which the data were published;  }
     \item{timesMissedFixes}{Object of class \code{"POSIXct"}: stores the timestamps of lines of the data set that were removed because they included NA locations }
     \item{bbox}{belongs to the SpatialPointsDataFrame}
     \item{coords}{coordinates of the track, belongs to the SpatialPointsDataFrame}

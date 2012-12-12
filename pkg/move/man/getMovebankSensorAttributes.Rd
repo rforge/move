@@ -19,11 +19,11 @@
 }
 
 \details{
-  Returns the attributes of the sensors of a study, i.e. which sensor has which id and which data stored (e.g. GPS sensors store longitute and latitude locations, and timestamps and have 673 as their ID on Movebank).
+  \code{getMovebankSensorAttributes} belongs to the Movebank browsing functions and returns the attributes of the sensors of a study, i.e. what is the sensor id and which data types are stored for this sensor (e.g. GPS sensors store longitude and latitude locations, and timestamps and have 673 as their ID on Movebank).
 }
 
 \note{
-See the 'browesMovebank' vignette (\href{http://move.r-forge.r-project.org/moveWEB/Downloads_files/browseMovebank.pdf}{move website download section}) for more information about security and how to use Movebank from within R. 
+See the 'browseMovebank' vignette (\href{http://move.r-forge.r-project.org/moveWEB/Downloads_files/browseMovebank.pdf}{move website download section}) for more information about security and how to use Movebank from within R. 
 }
 
 

@@ -20,11 +20,11 @@
 }
 
 \details{
-The function returns a \code{data.frame} that incldues the \code{animalID, animalName, id, sensor_type_id} and \code{tag_id} from the requested study. 
+\code{getMovebankAnimals} belongs to the Movebank browsing functions and returns a \code{data.frame} that includes the \code{animalID, animalName, id, sensor_type_id} and \code{tag_id} from the requested study. 
 }
 
 \note{
-See the 'browesMovebank' vignette (\href{http://move.r-forge.r-project.org/moveWEB/Downloads_files/browseMovebank.pdf}{move website download section}) for more information about security and how to use Movebank from within R. 
+See the 'browseMovebank' vignette (\href{http://move.r-forge.r-project.org/moveWEB/Downloads_files/browseMovebank.pdf}{move website download section}) for more information about security and how to use Movebank from within R. 
 }
 
 \author{Marco Smolla}

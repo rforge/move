@@ -25,8 +25,8 @@ The move method creates Move or MoveStack object from Movebank or other (compres
 }
 
 \arguments{
-\item{x}{Full path to the file location, OR column indicator for non-Movebank data for the x coordinates; e.g. \code{data$x}}
-\item{y}{column indicator for non-Movebank data for the y coordinates}
+\item{x}{Full path to the file location, OR ca vector with x coordinates if non-Movebank data are provided (e.g. \code{data$x})}
+\item{y}{vector of y coordinates if non-Movebank data are provided}
 \item{time}{column indicator for non-Movebank data for the time stamps, with POSIXct conversion, i.e. \code{as.POSIXct(data$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC")}}
 \item{data}{Optional extra data associated with the relocation, if empty it is filled with the coordinates and timestamps}
 \item{proj}{projection method for non-Movebank data; requires a valid CRS (see \code{\link{CRS-class}}) object, like CRS("+proj=longlat +ellps=WGS84"); default is NA}
@@ -43,7 +43,7 @@ Another way is to read in your data using \code{\link{read.csv}}. Then the colum
 \note{
 The imported data set is checked whether it is in a Movebank format. If this is not the case, you have to use the alternative import for non-Movebank data (see above). 
 Because the SpatialPointsDataFrame function that creates the spatial data frame (\code{sdf}) of the \code{Move} object can not process NA location values, all rows with NA locations are omitted. A list of the omitted timestamps is stored in the \code{timesMissedFixes} slot of the \code{Move} object. \cr
-If the data include double timestamps check your data for valitdity. You may want to consider a function to delete double timetamps, like: \cr \code{data <- data[which(!duplicated(data$timestamp)), ]}
+If the data include double timestamps check your data for validity. You may want to consider a function to delete double timestamps, like: \cr \code{data <- data[which(!duplicated(data$timestamp)), ]}
 
 Due to convention all names are turned into 'good names' which means, without spaces ('Ricky T' becomes 'Ricky.T').
 }

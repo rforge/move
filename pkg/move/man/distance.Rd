@@ -11,7 +11,7 @@
 
 \title{distance information from a track or track stack}
 
-\description{This function returns a summary about distance related measurments of a track or track stack}
+\description{This function returns a summary of distance related measurements of a track or track stack}
 
 \usage{
   \S4method{distance}{.MoveTrackSingle}(x)
@@ -25,7 +25,7 @@
 }
 
 \value{
-All values are returned in kilometer if the projection of the coordinates is longlat.
+All values are returned in kilometers if the projection of the coordinates is longlat. Check and set the projection of your Move or MoveStack object using the proj4string() function.
 }
 
 \author{Marco Smolla}

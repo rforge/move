@@ -11,7 +11,7 @@
 
 \title{speed information from a track or track stack}
 
-\description{This function returns a summary about speed related measurments of a track or track stack}
+\description{This function returns a summary of speed related measurements of a Move or MoveStack object.}
 
 \usage{
   \S4method{speed}{.MoveTrackSingle}(x)
@@ -27,7 +27,7 @@
 \author{Marco Smolla}
 
 \value{
-The returned value is by default meters per second.
+  For objects that are longlat projected (see ?proj4string) the returned values are in meters per second.
 }
 
 \examples{
