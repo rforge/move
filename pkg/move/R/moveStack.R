@@ -1,4 +1,4 @@
-setGeneric("moveStack", function(x) standardGeneric("moveStack"))#marco what is proj here?
+setGeneric("moveStack", function(x) standardGeneric("moveStack"))
 setMethod(f = "moveStack", 
 	  signature = c(x="list"),
 	  definition = function(x){

@@ -4,9 +4,6 @@ setMethod("timeSummary",
           definition=function(x, units){           
             date <- timestamps(x)
             TimeDiff <- time.lag(x, units=units) 
-            #             out <- boxplot(seglength(x)/(as.numeric(TimeDiff+0.0000001)), range=10, plot=F)$out ##marco there must be an easier way than this
-            #             if(length(out)!=0) x@idData$out <- out else x@idData$out <- NA
-            #             x@idData$outliners <- length(out[out > median(out)])>0   #check whether there are strong outliers in speed
             df <- data.frame(Duration=difftime(date[length(date)], date[1], units=units)) 
             df$AverDur <- mean(TimeDiff)       #mean time difference between relocations
             df$SDDur <- sd(TimeDiff)           #standard deviation of time differences between relocations

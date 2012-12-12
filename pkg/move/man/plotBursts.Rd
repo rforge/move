@@ -27,7 +27,8 @@
 }
 
 \details{
-Circle colors correspond to burstIDs. The size of the circles is defined by a function. By default this function calculates the relative duration of a segment compared to the whole duration. The function can be adjusted to use a different measure using the \code{sizeFUN} argument. 
+Circle colors correspond to burstIDs. The size of the circles is defined by a function. By default this function calculates the relative duration of a segment compared to the whole duration. The function can be adjusted to use a different measure using the \code{sizeFUN} argument. \cr
+Note, it is possible to define break points by using the \code{breaks} argument.
 }
 
 \author{Marco Smolla}
@@ -40,7 +41,7 @@ plot(coordinates(test),type="l")
 plotBursts(testb, breaks=3, add=TRUE, pch=19)
 plotBursts(testb, breaks=5, add=FALSE, pch=19)
 
-##plotBursts(leroy_b, breaks=c(-Inf,4000,6000, Inf), add=FALSE, pch=19) ##marco -> tell that is possible to difine breaks
+##plotBursts(leroy_b, breaks=c(-Inf,4000,6000, Inf), add=FALSE, pch=19) 
 
 #bursting track by realtive segment length
 plotBursts(object=testb, breaks=3, sizeFUN=function(x) sum(seglength(x)), pch=19, add=FALSE)
