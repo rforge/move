@@ -1,5 +1,4 @@
 #  		#Find below the functions to plot a "centroid" point on the line of a certain line segment
-#			##add classfication for color and size marco
 setGeneric("plotBursts", function(object, add=TRUE, sizeFUN=function(x){as.numeric(diff(range(timestamps(x))), units='mins')}, col=NA, breaks=3, ...){standardGeneric("plotBursts")})
 setMethod(f = "plotBursts", 
           signature = c(object="list"),

@@ -7,7 +7,7 @@
 
 \title{MoveBurst class}
 
-\description{The class MoveBurst}
+\description{The class MoveBurst, used for storing information about one individual with assignments of segments. Every segment between to locations has a class for example behavioural category. }
 
 \section{Slots}{
   \describe{
