@@ -29,7 +29,6 @@ setMethod(f = "brownian.bridge.dyn",
 setMethod(f = "brownian.bridge.dyn", 
           signature = c(object = "SpatialPointsDataFrame", raster = "missing", dimSize = "numeric", location.error = "ANY"), 
           function(object, raster, dimSize, location.error, ...) {
-            # print('object SPDF, dimSize numeric')
             if (!any(is.na(bbox))) {
               Range <- extent(bbox)
               Range <- c(Range@xmin, Range@xmax, Range@ymin, Range@ymax)
@@ -56,7 +55,6 @@ setMethod(f = "brownian.bridge.dyn",
 setMethod(f = "brownian.bridge.dyn", 
           signature = c(object = "SpatialPointsDataFrame", raster = "numeric", dimSize = "missing", location.error = "ANY"), 
           definition = function(object, raster, dimSize, location.error, ...) {
-            # print('object SPDF, raster numeric')
             if (!any(is.na(bbox))) {
               Range <- extent(bbox)
               Range <- c(Range@xmin, Range@xmax, Range@ymin, Range@ymax)
@@ -95,9 +93,7 @@ setMethod(f = "brownian.bridge.dyn",
 		  stop("The location error contains NAs")
             # check for aeqd projection of the coordinates
             if(isLonLat(object)) stop("You can not use longitude latitude projection for this function. To transform your cooridnates use the spTransform function. \n")
-#             if (grepl("aeqd", proj4string(object)) == FALSE) 
-#               stop("The projection of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
-            if(projection(raster)!=projection(object)) #check equal projection of raster and Move
+            if(!equalProj(list(raster,object))) #check equal projection of raster and Move
               stop(paste("The projection of the raster and the Move object are not equal. \n raster:", proj4string(raster), "\n object:", proj4string(object), "\n"))
             
             time.lag <- c(time.lag(object, units = "mins"), 0)  #units need to match between here and dBBMMvar calculations
@@ -160,7 +156,6 @@ setMethod(f = "brownian.bridge.dyn",
             for (i in names(moveUnstacked)) {
               if (nrow(moveUnstacked[[i]]@coords) > (window.size + margin)) {
                 dbbmmLST[[i]] <- brownian.bridge.dyn(moveUnstacked[[i]], raster = raster, location.error = location.error, margin = margin, window.size = window.size, ext = ext, ...)
-                # dbbmmLST[[i]] <- dbbmm
               } else {
                 omitMove <- c(omitMove, i)
               }
@@ -169,7 +164,6 @@ setMethod(f = "brownian.bridge.dyn",
             if (length(omitMove) > 0) 
               warning("Move object ", paste(omitMove, collapse = " "), " was/were omitted, because the number of coordinates is smaller than the window.size and margin you use.\n")
             
-            # rasterStack <- do.call('stack',dbbmmLST)
             rasterStack <- stack(lapply(dbbmmLST, as, "RasterLayer"))
             DBMvarLST <- lapply(dbbmmLST, slot, "DBMvar")
             objectAnimalsOmitted <- object[as.character(object@trackId) %in% names(DBMvarLST)]

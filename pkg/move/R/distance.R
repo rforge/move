@@ -8,20 +8,14 @@ setMethod("distanceSummary",
               df <- data.frame(TravDist=sum(Dists))    #travel distance in km
               df$MaxDist <- max(Dists) #largest distance
               df$MinDist <- min(Dists) #shortest distance
-              #if (grepl("longlat",proj4string(x))) {
               if(isLonLat(x)){
                 df$FarthDist <- max(spDistsN1(pts=track,pt=track[1,],longlat=T))
               } else {
                 df$FarthDist <- max(spDistsN1(pts=track,pt=track[1,],longlat=F))
               } #farthest distance from the start in km
-              #df$FarthDist <- max(spDistsN1(pts=track,pt=track[1,],longlat=grepl(proj4string(x),"longlat")))*1000 
               df$AverDist <- mean(Dists)    #mean distance between relocations in km
               df$SDDist <- sd(Dists)      #standard deviation of distances between relocations
-           #   if (!is.longrepl("longlat",proj4string(x))) {
-                df$SEDist <- max(as.numeric(spDistsN1(pts=t(as.matrix(track[n.locs(x),])),pt=track[1,],longlat=isLonLat(x))))
-           #   } else {
-           #     df$SEDist <- max(as.numeric(spDistsN1(pts=t(as.matrix(track[n.locs(x),])),pt=track[1,],longlat=F)))
-           #   } #start to end straight distance in km
+              df$SEDist <- max(as.numeric(spDistsN1(pts=t(as.matrix(track[n.locs(x),])),pt=track[1,],longlat=isLonLat(x)))) #start to end straight distance in km
               return(df)} else {NA}#{warning("Two or less locations.")}
           })
 

@@ -1,6 +1,5 @@
 setGeneric("hrBootstrap", function(x, rep=100, plot=TRUE, level=95, levelMax=100, unin='km', unout='m2',...){standardGeneric("hrBootstrap")})
 setMethod("hrBootstrap", 
-          #signature=c(x=".MoveTrackSingle"),
           signature=c(x="SpatialPoints"),
           definition=function(x, ...){
             if (any(grepl('adehabitatHR', installed.packages()))) require(adehabitatHR) else stop("You need to install the adehabitatHR package to proceed")

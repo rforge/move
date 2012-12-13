@@ -26,16 +26,16 @@ setMethod("[", signature(x=".MoveTrack"), function(x, i, j, ...) {
   callNextMethod(x=x,i=i,j=j,...)
 })
 
-setMethod("[", 
-          signature(x=".MoveTrackStack"),
-          definition=function(x,i,j,...){ #does not work
-            if(!missing(i)){
-              x@trackId=droplevels(x@trackId[i])
-              x@idData=x@idData[as.character(unique(x@trackId[i])),]}else{i<-T}
-            if(missing(j))
-              j<-T
-            callNextMethod(x=x,i=i,j=j,...)
-          })##bart this function gives an error when created: Error: package slot missing from signature for generic ‘[’ //and classes .MoveTrackStack, ANY, ANY // cannot use with duplicate class names (the package may need to be re-installed)
+# setMethod("[", 
+#           signature(x=".MoveTrackStack"),
+#           definition=function(x,i,j,...){ #does not work
+#             if(!missing(i)){
+#               x@trackId=droplevels(x@trackId[i])
+#               x@idData=x@idData[as.character(unique(x@trackId[i])),]}else{i<-T}
+#             if(missing(j))
+#               j<-T
+#             callNextMethod(x=x,i=i,j=j,...)
+#           })##bart this function gives an error when created: Error: package slot missing from signature for generic ‘[’ //and classes .MoveTrackStack, ANY, ANY // cannot use with duplicate class names (the package may need to be re-installed)
 
 setMethod("[", signature(x="dBMvarianceStack"), function(x, i, j, ...) {
   if(!missing(i)){

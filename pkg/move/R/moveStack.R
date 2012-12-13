@@ -9,14 +9,13 @@ setMethod(f = "moveStack",
 		  if (length(unique(as.character(lapply(x, function(y) attr(slot(y, "timestamps"), "tzone")) )))!=1)
 			  stop("One or more objects in the list have no UTC timestamps")
 
-		  if(!equalProj(x)) stop("All objects need to be equally projected.")#check projection
+		  if(!equalProj(x)) stop("All objects need to be equally projected.") 
 
 		  if(any(duplicated(unlist(lapply(lapply(x, slot, "idData"), rownames))))){
 			  nnames <- make.names(unlist(lapply(lapply(x, slot, "idData"), rownames)),unique=T)
 			  lapply(1:length(nnames), function(z, nnames, x) {rownames(x[[z]]@idData)<-nnames[z]
 				 return(x[[z]])}, x=x, nnames=nnames)
 			  warning("Detected duplicated names. Renamed the duplicated individuals accordingly.")
-			  #check: lapply(split(moveStack(list(data,data))), slot, 'idData')
 		  }
 		  length <- lapply(lapply(x, coordinates), nrow)
 		  coords <- do.call(rbind, lapply(x, coordinates))
@@ -58,9 +57,7 @@ setMethod(f = "moveStack",
 				     if(nrow(x)==0){
 					     x<-as.data.frame(matrix(nrow=0, ncol=length(i)))
 					     colnames(x)<-i
-				     }else{
-					     x[,i]<-NA
-				     }
+				     } else { x[,i]<-NA }
 				     return(x)
 						    }, i=cols)# fill unused columns with NA
 		  unUsed<-new(".unUsedRecordsStack",
@@ -73,7 +70,7 @@ setMethod(f = "moveStack",
 			     idData = IDDATA,
 			     spdftmp, 
 			     timestamps = do.call("c", lapply(x, timestamps)),
-			     sensor =factor(do.call('c',lapply(lapply(x, slot, 'sensor'),as.character))),# do.call("factor", (lapply(x, slot, "sensor"))), 
+			     sensor =factor(do.call('c',lapply(lapply(x, slot, 'sensor'),as.character))),
 			     trackId = as.factor(rep(id, length)),
 			     unUsed)
 		  return(res)

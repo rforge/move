@@ -63,9 +63,6 @@ setMethod(f="getMovebank",
               url <- paste(paste("http",url, sep=""), sep="&",paste("user=",login@username,"&password=",login@password, sep=""))
               data <- read.csv(url, header=T, sep=",", as.is=T)
             }
-#print(tmp)
-#print(url)            
-#print(str(data))
               if(grepl(pattern="You.may.only.download.it.if.you.agree.with.the.terms", x=names(data)[1])) stop("You need a permission to access this data set. Go to www.movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
               if (grepl(pattern="X.html..head..title.Apache.Tomcat", capture.output(data)[1])==TRUE) stop("It looks like you are not allowed to download this data set.")
               if (grepl(pattern="are.not.available.for.download", capture.output(data)[1])==TRUE) stop("You have no permission to download this data set.")
@@ -78,6 +75,8 @@ setMethod(f="getMovebank",
             d<-movebankLogin()
             getMovebank(entity_type=entity_type, login=d,...)
           })
+
+
 #names of the studies
 setGeneric("searchMovebankStudies", function(x,login) standardGeneric("searchMovebankStudies"))
 setMethod(f="searchMovebankStudies", 
@@ -184,7 +183,7 @@ setMethod(f="getMovebankID",
             #cat("####### STUDY ID #######\n")
             return(data[ ,c("id","name")])
             } else {
-              studyNUM <- data[gsub(" ","", data$name)==gsub(" ","", study),c("id")] #get rid of all spaces to avoid miss matching between different spaces words
+              studyNUM <- data[gsub(" ","", data$name)==gsub(" ","", study),c("id")] #get rid of all spaces to avoid miss matching between different spaced words
               if (length(studyNUM)>1) stop(paste("There was more than one study with the name:",study))
             return(studyNUM)
             }
@@ -248,13 +247,13 @@ setGeneric("getMovebankData", function(study,animalName=NA,login, ...) standardG
 setMethod(f="getMovebankData", 
           signature=c(study="ANY",animalName="ANY", login="MovebankLogin"),
           definition = function(study, animalName, login, ...){ 
-            if (class(study)=="character") study <- getMovebankID(study, login) ##added this to make the function faster, otherwise it calls this funciton for every function that needs the study_ID
+            if (class(study)=="character") study <- getMovebankID(study, login) 
             idData <- getMovebank("individual", login=login, study_id=study)         
             ##which deployments are imporant
             deploymentID <- getMovebank("deployment", login=login, study_id=study, attributes="individual_id%2Ctag_id%2Cid") 
             ##which track Data are important
             sensors <- getMovebankSensors(study=study, login=login)
-            names(sensors)  <- c("sensor", "sensor_type_id", "tag_id") ##sensor = sensor_id, changed it because .move works only with 'sensor' ##be sure that the col names are always this way
+            names(sensors)  <- c("sensor", "sensor_type_id", "tag_id") 
             new <- merge.data.frame(deploymentID, sensors, by.x="tag_id", by.y="tag_id") 
               new <- merge.data.frame(new, idData, by.x="individual_id", by.y="id")
             if (!all(is.na(animalName))) {
@@ -267,18 +266,10 @@ setMethod(f="getMovebankData",
             trackDF <- getMovebank("event", login=login, study_id=study, attributes = attribs , deployment_id=unique(new$id), sensor_type_id=locSen)
                      new <- new[new$id%in%unique(trackDF[,"deployment_id"]), ]
             
-            trackDF <- merge.data.frame(x=trackDF, y=new[, c(names(new)[!names(new)%in%names(trackDF)], "individual_id")], by.x="individual_id", by.y="individual_id", all=TRUE) ##as soon as I have the association between sensor_id and track I can add it to the trackDF
-            #trackDF <- trackDF[trackDF$sensor_type_id%in%locSen & trackDF$individual_id%in%new$individual_id,]
-            #clear sensor name instead of ID
+            trackDF <- merge.data.frame(x=trackDF, y=new[, c(names(new)[!names(new)%in%names(trackDF)], "individual_id")], by.x="individual_id", by.y="individual_id", all=TRUE) 
             trackDF$sensor_type_id <- as.vector(unlist(lapply(trackDF$sensor_type_id, function (y,b){b$external_id[which(b$id==y)]  },b=b))) 
-            
-            #clear name for individuals, if different(!) names for all(!) individuals are set
             if (!any(is.na(new$local_identifier)) & length(unique(new$individual_id))==length(unique(new$local_identifier))) 
-              trackDF$individual_id <- rep(unique(new$local_identifier), unlist(lapply(lapply(unique(trackDF$individual_id), "==", trackDF$individual_id), sum)))#
-            
-            #([which(idData$local_identifier%in%animalName)]))
-            #length(unique(paste(new$sensor_type_id, new$sensor_id, sep="_")))==length(unique()) ##if i get the sensor_id associated with the track, i can associate double e.g. gps sensors with the correct tag and animal!!
-            
+              trackDF$individual_id <- rep(unique(new$local_identifier), unlist(lapply(lapply(unique(trackDF$individual_id), "==", trackDF$individual_id), sum)))            
             ##multiple sensors per tag
             #                 if (length(unique(new$id))!=length(unique(new$sensor_id))){
             #                   trackDF$individual_id  <- paste(trackDF$individual_id, trackDF$deployment_id, trackDF$sensor_type_id, sep="_") ##ADD sensorID!!!

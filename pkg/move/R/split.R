@@ -15,7 +15,6 @@ setMethod(f = "split",
 				    timestamps=x@timestamps[s],
 				    sensor=x@sensor[s])
 			  unUsedSub<-as(unUsed[unUsed@trackIdUnUsedRecords==ID,T],'.unUsedRecordsStack')
-			  #sensor=rep(x@idData$sensor.type[row.names(x@idData)==ID], sum(x@trackId==ID))
 			  moveObj <- new(Class="Move", 
 					 mt,
 					 idData=x@idData[row.names(x@idData)==ID, ,drop=F],

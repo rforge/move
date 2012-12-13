@@ -1,9 +1,7 @@
 ## Making dBMvar a generic funtion if (!isGeneric('dBMvar')) {
 ## setGeneric('dBMvar', function(BMvars, BMvar, n.locs, break.list)
 ## standardGeneric('dBMvar')) } if (!isGeneric('brownian.motion.variance.dyn'))
-## {
 setGeneric("brownian.motion.variance.dyn", function(object, location.error, window.size, margin) {standardGeneric("brownian.motion.variance.dyn")})
-# }
 
 setMethod(f = "brownian.motion.variance.dyn", 
           signature = c(object = ".MoveTrackSingle", location.error = "numeric", window.size = "numeric", margin = "numeric"), 
@@ -14,10 +12,6 @@ setMethod(f = "brownian.motion.variance.dyn",
 	  if(any(is.na(location.error)))
 		  stop("The location error contains NAs")
             if(isLonLat(object)) stop("You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function. \n")
-#             if (grepl("aeqd", proj4string(object)) == FALSE) {
-#               stop("\n The projeciton of the coordinates needs to be \"aeqd\". You may want to use the spTransform funciton to change the projection. \n")
-#             } else {
-#             }
             if (any((c(margin, window.size)%%2) != 1)) 
               stop("Margin and window size need to be uneven")
             # function to calculate brownian.motion.variance for a piece of track
@@ -48,7 +42,6 @@ setMethod(f = "brownian.motion.variance.dyn",
                 l <- log((1/(2 * pi * v)) * exp(-ztz/(2 * v)))
                 if (any(is.na(l))) 
                   stop("An internal error occoured. Contact maintainer.")
-                  #stop("Something weird occured contact bart")
                 return(-sum((l)))
                 # sum was using na.rm=T, but i want to know why probably has to do with not
                 # possible optimizations, now build in logical statement in line before
@@ -118,16 +111,13 @@ setMethod(f = "brownian.motion.variance.dyn",
             if (is.null(breaks.found)) 
               breaks.found <- numeric()
             DBMvar <- new("dBMvariance", 
-                          #  as(object, ".MoveTrackSingle"),
                           object,
                           margin = margin, 
                           window.size = window.size, 
                           means = c(rep(NA, min(tmp$loc) - 1), tmp$BMvar[, "mean"], rep(NA, n.locs(object) - max(tmp$loc))), 
                           in.windows = c(rep(NA, min(tmp$loc) - 1), tmp$BMvar[, "length"], rep(NA, n.locs(object) - max(tmp$loc))), 
                           interest = c(rep(FALSE, min(tmp$loc) - 1), tmp$BMvar[, "length"] == max(tmp$BMvar[, "length"]), rep(FALSE, n.locs(object) - max(tmp$loc))), 
-                          break.list = breaks.found)#,
-            #timestamps = object@timestamps,
-            #coords = coordinates(object))
+                          break.list = breaks.found)
             return(DBMvar)
           })
 

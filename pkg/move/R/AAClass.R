@@ -262,10 +262,3 @@ setClass(Class = "MoveBurst", contains = c(".MoveTrackSingleBurst", ".MoveGenera
 	 validity = function(object) {
 		 return(TRUE)
 	 })
-
-# See if this validity check needs to go into this class why was it commented ?
-# validity = function(object){ if(is.na(outerProbability(object))){ stop('The
-# used extent is too large. Choose a smaller value for ext!')# when did this
-# occure Marco?  } else { if (outerProbability > .01){ warning('outer
-# probability: ', outerProbability,' The used extent is too small. Choose an
-# extent which includes more of the probabilities.') } } }

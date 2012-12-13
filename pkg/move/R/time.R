@@ -18,22 +18,3 @@ setMethod("timeSummary",
             lst <- lapply(split(x), timeSummary, units=units)
             return(lst)
           })
-
-
-
-# setGeneric("time")#, function(x){standardGeneric("time")})
-# setMethod("time", 
-#           signature=".MoveTrackSingle",
-#           definition=function(x){           
-#             date <- timestamps(x)
-#             time.lag(x) #time differences in minutes
-#           })
-# 
-# setMethod("time", 
-#           signature=".MoveTrackStack", 
-#           definition=function(x){
-#             lst <- lapply(split(x), time)
-#             return(lst)
-#           })
-
-

@@ -9,7 +9,6 @@ setMethod("summary",
           signature=".UDStack", 
           definition=function(object){
             lst <- lapply(split(object), summary)
-            #names(lst) <- rep(rownames(as.character(object@DBMvar$individual.local.identifier[1])), length(lst))
             return(lst)
           })
 
@@ -17,7 +16,7 @@ setMethod("summary",
           signature=".MoveTrackSingle", 
           definition=function(object){
             if (!require(circular)) 
-              stop("You need to install the circular package to proceed") #angle
+              stop("You need to install the circular package to proceed") #for angle
             if (!isLonLat(object)) {
               object <- spTransform(object, CRSobj="+proj=longlat")
               warning("The projeciton of the object was changed to longlat inside this function")

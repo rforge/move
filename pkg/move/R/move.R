@@ -85,10 +85,7 @@ setMethod(f = ".move",
 		  }
 		  df$individual.local.identifier<-factor(df$individual.local.identifier)
 		  levels(df$individual.local.identifier) <- raster:::.goodNames(levels(factor(df$individual.local.identifier))) #changing names to 'goodNames' skipping spaces
-		  #df$sensor<-df$sensor.type 
-		  #if(is.null(df$sensor.type)) df$sensor <- rep(NA, nrow(df)) else df$sensor<-df$sensor.type
-		  #df <- df[,names(df)!="sensor.type"]
-
+		
 		  if(length(unique(df$individual.local.identifier))>1 & any(unique(as.character(df$individual.local.identifier))==""))
 		  {# this is not so elegant from me (bart) since this function also gets used by non movebank data
 			  warning("Omitting locations that have an empty local identifier (n=",sum(tmp<-as.character(df$individual.local.identifier)==""),"). Most likely the tag was not deployed") 
@@ -96,7 +93,6 @@ setMethod(f = ".move",
 			  df$individual.local.identifier <- factor(df$individual.local.identifier)
 		  }
 		  ids <- as.list(as.character(unique(df$individual.local.identifier)))
-		  #this function should both work for one and multiple individuals
 		  uniquePerID <- unlist(lapply(df,  function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=factor(df$individual.local.identifier)))
 		  uniquePerID["sensor"] <- FALSE
 		  idData <- subset(df, select=names(uniquePerID[uniquePerID]), !duplicated(df$individual.local.identifier))
@@ -113,7 +109,6 @@ setMethod(f = ".move",
 		  if(length(unique(idData$citation))==1) 
 		  {citations <- as.character(unique(idData$citation))} else {citations <- character()}
 
-		  #idData <- idData[,names(idData)!="citation"]
 		  rownames(idData) <- unique(df$individual.local.identifier)
 		  data <- data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp", colnames(idData))]])
 

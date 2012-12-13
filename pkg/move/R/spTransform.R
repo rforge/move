@@ -1,4 +1,3 @@
-
 ###Redifining spTransform, because it changes the class of the object to SpatialPointsDataFrame 
 setMethod(f = "spTransform", 
           signature = c(x = ".MoveTrack", CRSobj = "missing"), 
@@ -25,19 +24,3 @@ setMethod(f = "spTransform",
             x <- new(class(x), coordsnew,x )
             return(x)
           })
-
-# if (!isGeneric("SpatialLines")) {
-# setGeneric("SpatialLines", function(LinesList) standardGeneric("SpatialLines"))
-# }
-# 
-# #transform Move's spatialpoints to spatiallines
-#  setMethod("SpatialLines", "Move", function(LinesList){
-#            xy <- (coordinates(LinesList))
-#            xyLine <- Line(xy)
-#            if (length(LinesList@animal)!=0){id <- LinesList@animal} else {id <- "noID"}
-#            #xyLines <- Lines(list(xyLine), ID=LinesList@animal)
-#            xyLines <- Lines(list(xyLine), ID="a")
-#            #return(SpatialLines(list(xyLines), proj4string=CRS("+proj=aeqd +ellps=WGS84")))
-#            return(SpatialLines(list(xyLines), proj4string=CRS(proj4string(LinesList))))
-#            }
-#            )

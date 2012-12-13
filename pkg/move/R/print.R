@@ -1,7 +1,6 @@
 ###Print function for a Move and MoveStack object
 setGeneric("print")
 setMethod("print", ".MoveTrack", function(x){
-	  #  print(as(x,"SpatialPointsDataFrame"))
 	  getMethod("print","Spatial")(x) 
 	  timeRange <- range(x@timestamps)
 	  cat("timestamps  :",paste(timeRange, collapse="..."),capture.output(round(difftime(timeRange[2],timeRange[1]))), " (start...end, duration) \n")  
