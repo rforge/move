@@ -174,7 +174,7 @@ setMethod(f = "brownian.bridge.dyn",
                                     means = unlist(lapply(DBMvarLST, slot, "means")), 
                                     margin = unique(unlist(lapply(DBMvarLST, slot, "margin"))), 
                                     window.size = unique(unlist(lapply(DBMvarLST, slot, "window.size"))))
-            # bart break lst should still be inhereted here
+            # The breaks should later be inherited here now there gone
             
             DBBMMStack <- new("DBBMMStack", DBMvar = dBMvarianceStack, rasterStack)
             return(DBBMMStack)

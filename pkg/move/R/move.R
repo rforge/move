@@ -87,7 +87,7 @@ setMethod(f = ".move",
 		  levels(df$individual.local.identifier) <- raster:::.goodNames(levels(factor(df$individual.local.identifier))) #changing names to 'goodNames' skipping spaces
 		
 		  if(length(unique(df$individual.local.identifier))>1 & any(unique(as.character(df$individual.local.identifier))==""))
-		  {# this is not so elegant from me (bart) since this function also gets used by non movebank data
+		  {
 			  warning("Omitting locations that have an empty local identifier (n=",sum(tmp<-as.character(df$individual.local.identifier)==""),"). Most likely the tag was not deployed") 
 			  df <- df[!tmp,]
 			  df$individual.local.identifier <- factor(df$individual.local.identifier)

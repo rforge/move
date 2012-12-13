@@ -9,7 +9,7 @@ setMethod("print", ".MoveTrack", function(x){
 })
 setMethod("print", "dBMvarianceTmp", function(x){
 	  cat("margin      :", x@margin,'\n')
-	  cat("window size :", x@window.size,'\n')# bart have to add means usw
+	  cat("window size :", x@window.size,'\n')# maybe add means usw here later
 })
 setMethod("print", ".MoveTrackSingle", function(x){
 	  callNextMethod()
