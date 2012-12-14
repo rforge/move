@@ -30,12 +30,10 @@
 \author{Marco Smolla}
 
 \examples{
-isaac <- move(system.file("extdata","leroy.csv.gz", package="move"))[1:300,]
-isaac2 <- move(system.file("extdata","leroy.csv.gz", package="move"))[400:600,]
-moveStack <- moveStack(list(isaac, isaac2))
+load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+movestack <- moveStack(list(leroy,ricky))
+#dbbmmstack <- brownian.bridge.dyn(spTransform(stack), location.error=23.5, dimSize=85, time.step=6000)
 
-split(moveStack) #splitting a MoveStack
-dbbmmStack <- brownian.bridge.dyn(spTransform(moveStack), location.error=23.5, dimSize=85, time.step=6000)
-
-split(dbbmmStack) #splitting a DBBMMStack
+split(movestack) #splitting a MoveStack
+split(dbbmmstack) #splitting a DBBMMStack
 }
