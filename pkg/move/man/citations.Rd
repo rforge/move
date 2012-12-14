@@ -25,6 +25,7 @@
 
 \examples{
   load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+  stack <- moveStack(list(leroy,leroy))
   
   citations(leroy) #get the citation from a Move object
   citations(stack) #get the citation from a MoveStack object

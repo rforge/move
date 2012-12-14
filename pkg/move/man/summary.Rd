@@ -31,6 +31,7 @@ Returns the projection, extent, and maximum and minimum values of the raster sto
 
 \examples{
   load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+  stack <- moveStack(list(leroy,leroy))
   
   summary(leroy) # summary of angle measures of a Move object
   summary(stack) # summary of angle measures of a MoveStack object

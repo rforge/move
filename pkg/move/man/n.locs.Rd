@@ -23,6 +23,7 @@
 
 \examples{
 load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+stack <- moveStack(list(leroy,leroy))
 
 n.locs(ricky) #number of locations of Move object
 n.locs(stack) #number of locations of MoveStack object

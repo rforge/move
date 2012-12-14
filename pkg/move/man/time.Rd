@@ -24,6 +24,8 @@
 
 \examples{
   load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+  stack <- moveStack(list(leroy,leroy))
+  
   time.lag(leroy)
   time.lag(stack)
   timeSummary(ricky) # summary of time measures of a Move object

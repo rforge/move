@@ -27,6 +27,7 @@
 
 \examples{
   load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+  stack <- moveStack(list(leroy,leroy))
   
   timestamps(leroy) #get the timestamps from a Move object
   timestamps(stack) #get the timestamps from a MoveStack object

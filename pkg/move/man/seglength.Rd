@@ -29,6 +29,8 @@
 
 \examples{
   load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+  stack <- moveStack(list(leroy,leroy))
+  
   head(seglength(leroy)) #Move object in longlat projection
   head(seglength(stack)) #MoveStack object in aeqd projection
 }

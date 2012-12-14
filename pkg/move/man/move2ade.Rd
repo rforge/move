@@ -28,6 +28,8 @@
 
 \examples{
   load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+  stack <- moveStack(list(leroy,leroy))
+  
   move2ade(ricky) #for a Move object
   move2ade(stack) #for a MoveStack object
 }

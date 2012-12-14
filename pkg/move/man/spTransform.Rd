@@ -43,6 +43,7 @@ proj4string(leroy)
 \dontshow{
 spTransform(leroy, CRSobj=CRS("+proj=moll"))
 load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+stack <- moveStack(list(leroy,leroy))
 spTransform(stack)
 }
 }

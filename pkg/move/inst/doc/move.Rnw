@@ -17,7 +17,7 @@
 \Keywords{animal track, time series, utilization density, gps}
 
 \Abstract{
-  The move package provides a series of functions to import, visualize and analyze animal movement related data in an object oriented way. The introduced classes allow to store data that are related to an individual in one object, such as coordinates and timestamps, name, species, age, sex, study site and so on. This makes working with multiple animals, or multiple seasons much easier. Furthermore, the package includes functions to calculate home ranges (Minimum Convex Polygon Bootstrap) and utilization distributions, UDs. The latter one uses the Dynamic Brownian Bridge Movement Model to calculate animal UDs.\\
+  The move package provides a series of functions to import, visualize and analyze animal movement related data in an object-oriented way. The introduced classes allow one to store data that are related to an individual in one object, such as coordinates and timestamps, name, species, age, sex, study site, etc. This makes working with multiple animals, or multiple seasons much easier. Furthermore, the package includes functions to calculate home ranges (Minimum Convex Polygon Bootstrap) and utilization distributions (UDs). The latter uses the dynamic Brownian Bridge Movement Model to calculate animal UDs.\\
 }
 
 \Address{
@@ -44,24 +44,24 @@ library("move")
 @
 
 \section*{Introduction}
-The amount of recorded animal movement data is increasing. The data offer information about land-use, distribution, interactions between the environment and much more. The enormous amount of data needs to be analyzed with mathematical algorithms. The programming language R, developed by the R Development Core Team, offers an easy to learn environment to do statistical analyzes. It even supports object oriented programming. The package we present here offers additional functions that are especially made to analyze animal movement data. \\
-Movement data that are associated with individual animals or a group of animals can be imported into R and stored as a single object. These objects can include all kind of information. The minimum requirement however are timestamps, coordinates, and an unique ID per animal. Further attributes of the objects can be sensor types, body size, sex, weight, and so on. \\
-A lot of data sets are available on a database called Movebank (\url{www.movebank.org}). If a user has the permission to see a data set, he can download it as a csv (comma separated values) file. Files from Movebank can be directly imported into R. \\
-A more recent update of the Move package added a web-interface. Now, it is possible to directly download whole data-sets from within R. The only requirement is an account on Movebank and the rights to see the data (see the "browsing Movebank" vignette for more information). \\
-Besides importing data from Movebank it is also possible to use own data-sets as long as they meet the minimum requirements of timestamps, coordinates and animal IDs. \\
-A series of functions allows to plot, summarize and analyze the movement data. Individual \class{Move} objects can be stacked to a MoveStack object which includes a series of animals and the additional data that are associated with them. This allows to operate on many animals at the same time. \\
-A new feature, called burst, allows to subset track information. This can be interesting for example if a track should be analyzed depending on specific behaviors (migratory, non-migratory, resting behavior). \\
-One of the main features of the move package is the calculation of the Utilization Distribution (UD), a measure to estimate the home range of an animal. In this version of the package we use the Dynamic Brownian Bridge Movement Model (DBBMM) to calculate the UD. The UD can be calculated for individuals or for a stack of individuals. This results in the object types \class{DBBMM} or \class{DBBMMStack}. These objects store all information that are needed to visualize the UD, like the raster it was calculated for, and the values per raster cell.\\
-The following sections introduce the different functions we implemented for the \class{Move}, \class{MoveStack}, \class{DBBMM}, and \class{DBBMMStack} objects. We demonstrate how functions can be used to import, analyze and visualize animal movement data. The aim of this vignette is to enable all users unfamiliar with the package to handle all basic functions.
+The amount of recorded animal movement data is increasing. The data offer information about land use, animal distribution, interactions between the environment and much more. The enormous amount of data needs to be analyzed with mathematical algorithms. The programming language R, developed by the R Development Core Team, offers an easy to learn environment to do statistical analyses. It even supports object-oriented programming. The package we present here offers additional functions that are specially made to analyze animal movement data. \\
+Movement data that are associated with individual animals or a group of animals can be imported into R and stored as a single object. These objects can include all kinds of information. The minimum requirement however are timestamps, coordinates, and a unique ID per animal. Further attributes of the objects can be sensor types, body size, sex, weight, etc. \\
+A lot of data sets are available on a database called Movebank (\url{www.movebank.org}). If a user has the permission to see a data set, one can download it as a .csv (comma separated values) file. Files from Movebank can be directly imported into R. \\
+A more recent update of the Move package has added a web-interface. Now it is possible to directly download whole data sets from within R. The only requirement is an account on Movebank and the rights to see the data (see the "browsing Movebank" vignette for more information). \\
+Besides importing data from Movebank, it is also possible to use personal data sets, as long as they meet the minimum requirements of timestamps, coordinates, and animal IDs. \\
+A series of functions allow one to plot, summarize, and analyze the movement data. Individual \class{Move} objects can be stacked to a MoveStack object which includes a series of animals and the additional data that are associated with them. This allows one to work with many animals at the same time. \\
+A new feature, called burst, allows one to subset track information. This can be interesting, for example, if a track should be analyzed depending on specific behaviors (migratory, non-migratory, resting behavior). \\
+One of the main features of the move package is the calculation of the utilization distribution (UD), a measure to estimate the home range of an animal. In this version of the package, we use the dynamic Brownian Bridge Movement Model (dBBMM) to calculate the UD. The UD can be calculated for individuals or for a group (stack) of individuals. This results in the object types \class{DBBMM} or \class{DBBMMStack}. These objects store all information that are needed to visualize the UD, including the raster it was calculated for, and the values per raster cell.\\
+The following sections introduce the different functions we implemented for the \class{Move}, \class{MoveStack}, \class{DBBMM}, and \class{DBBMMStack} objects. We demonstrate how functions can be used to import, analyze, and visualize animal movement data. The aim of this vignette is to enable all users unfamiliar with the package to handle all basic functions.
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Data import}
-The import of data into R can happen on two ways. Either by importing data files with a csv extension (using the \fct{move} function) or by using the web interface of the move package (using the \fct{getMovebankData} function). The web interface allows to access and download data sets from Movebank. 
+The import of data into R can happen in two ways: either by importing .csv data files (using the \fct{move} function) or by using the web interface of the move package (using the \fct{getMovebankData} function). The web interface allows one to access and download data sets from Movebank. 
 
 \subsection{Import of Movebank data}
-Files from Movebank (\url{www.movebank.org}) can be imported with \texttt{move(x="path")}, where "path" is character string which locates the file on the hard-drive. It may look like: \\ \\ \texttt{> data <- move(x="/User/Documents/test.csv")}. \\ \\
+Files from Movebank (\url{www.movebank.org}) can be imported with \texttt{move(x="path")}, where "path" is a character string that locates the file on the hard drive. It may look like: \\ \\ \texttt{> data <- move(x="/User/Documents/test.csv")}. \\ \\
 The following line imports the "leroy.csv.gz" file that is part of the move package.
 
 <<importData, results=hide>>=
@@ -69,7 +69,7 @@ leroy <- move(system.file("extdata","leroy.csv.gz",package="move"))
 @
 
 \subsection{Import of non-Movebank data}
-If data sets are not published on Movebank but stored on the hard drive they can be imported with the same \fct{move} function. Because the column names may differ from the Movebank standard, it is necessary to indicate the timestamp and coordinates columns and the projection method of the coordinates (e.g. longitude-latitude), and the data-frame that includes all the imported data. The standard \fct{move} method also allows to directly enter the used sensor type and the animal name. \\
+If data sets are not published on Movebank but stored on the hard drive they can be imported with the same \fct{move} function. Because the column names may differ from the Movebank standard, it is necessary to indicate the timestamp and coordinates columns, the projection method of the coordinates (e.g. longitude-latitude), and the data frame that includes all of the imported data. The standard \fct{move} method also allows one to directly enter the used sensor type and the animal name. \\
 Import of a non-Movebank csv file that is attached to this package:
 
 <<importNonMovebank>>=
@@ -80,12 +80,12 @@ ricky <- move(x=data$location.long, y=data$location.lat, time=as.POSIXct(data$ti
 ricky 
 @
 
-Entering the object name calls the \fct{show} function of \class{Move} objects. This function provides an overview of the object. It returns the object class (\class{Move}), the animal ID (ricky), number of coordinates (8961), the extent of the coordinates, the coordinates reference system (or projection, here longitude-latitude), the number of columns of the imported data.frame and the names of the columns of the data.frame, as well es the first and last timestamp and the duration of the observation.The \fct{show} works in a similar way for all other object types.\\
+Entering the object name calls the \fct{show} function of \class{Move} objects. This function provides an overview of the object. It returns the object class (\class{Move}), the animal ID (ricky), number of coordinates (8961), the extent of the coordinates, the coordinates reference system (or projection, here longitude-latitude), the number of columns of the imported data.frame, and the names of the columns of the data.frame, as well as the first and last timestamp and the duration of the observation. The \fct{show} works in a similar way for all other object types.\\
 
 
 \subsection{Handling multiple animals}
 If the data-set includes more than one animal, it is necessary to indicate the column with the animal IDs. The \fct{move} automatically creates a stack of Move objects called \class{MoveStack}. \\
-Sometimes it is desirable to work with stacked Move objects. The most functions of the Move package are capable to work with stacks. Stacks are either created when csv files with multiple animal IDs are imported, or when a \class(list) of \class(Move) objects is passed on to the staking function \fct{moveStack}.
+Sometimes it is desirable to work with stacked Move objects. Most functions of the Move package are capable of working with stacks. Stacks are either created when .csv files with multiple animal IDs are imported, or when a \class(list) of \class(Move) objects is passed on to the stacking function \fct{moveStack}.
 
 <<StackMoveObjects>>=
 list <- list(leroy, ricky)
@@ -102,8 +102,8 @@ unstacked <- split(stack)
 #use show(unstacked) to see all objects of unstacked
 @
 
-\subsection{Import of Movebank data-sets using the web-interface}
-The Move package includes a bunch of functions to access the Movebank database. With \fct{getMovebankData} whole data sets can be downloaded and stored as a \class{Move} or \class{MoveStack} object (we can \textbf{not} offer a \textbf{working example} in this vignette due to fact that Movebank does not allow dummy accounts). You can use the function as follows: \\ \\ \texttt{> bobby <- getMovebankData(study="BCI Ocelot", animalName="Bobby", login=abc)} \\ \\ With this command the data associated with the animal ID "Bobby" from the study "BCI Ocelot" is stored in a \class{Move} object (because it is only one animal) called \texttt{bobby}. \\ The following command will download the full study: \\ \\ \texttt{> ocelot <- getMovebankData(study="BCI Ocelot", login=abc)} \\ \\ This function will create a \class{MoveStack} object. Note, it is necessary to provide a login object to access the Movebank database. More information about the Movebank browsing functions are in the additional vignette "browsing Movebank".
+\subsection{Import of Movebank data sets using the web interface}
+The Move package includes a bunch of functions to access the Movebank database. With \fct{getMovebankData}, whole data sets can be downloaded and stored as a \class{Move} or \class{MoveStack} object (we can \textbf{not} offer a \textbf{working example} in this vignette due to fact that Movebank does not allow dummy accounts). You can use the function as follows: \\ \\ \texttt{> bobby <- getMovebankData(study="BCI Ocelot", animalName="Bobby", login=abc)} \\ \\ With this command the data associated with the animal ID "Bobby" from the study "BCI Ocelot" is stored in a \class{Move} object (because it is only one animal) called \texttt{bobby}. \\ The following command will download the full study: \\ \\ \texttt{> ocelot <- getMovebankData(study="BCI Ocelot", login=abc)} \\ \\ This function will create a \class{MoveStack} object. Note, it is necessary to provide a login object to access the Movebank database. More information about the Movebank browsing functions are in the additional vignette "browsing Movebank".
 
 
 \newpage
@@ -112,13 +112,13 @@ The Move package includes a bunch of functions to access the Movebank database. 
 In the previous chapter we presented the \fct{moveStack} and \fct{split} functions to stack and unstack \class{Move} objects. In this chapter we present further functions to work with the two object types. 
 
 \subsection{Show and summarize} 
-An important function to work with objects is the \fct{show} function. Depending on the implementation it gives an overview of the object one is working with. The function can either called by entering the name of the object directly, or by calling the function with the object:
+An important function to work with objects is the \fct{show} function. Depending on the implementation it gives an overview of the object one is working with. The function can either be called by entering the name of the object directly, or by calling the function with the object:
 
 <<showFunction>>=
 show(leroy)
 @
 
-Both ways return the same information. This is for Move objects the class name, number of coordinates, the map extent, the coordinate reference system, number of additional variables, names of the additional variables and their minimum and maximum values, the sensor type, further data that are specific to the animal, the number of recordings that were skipped and the date of file creation. \\
+Both ways return the same information. For Move objects, this is the class name, number of coordinates, the map extent, the coordinate reference system, number of additional variables, names of the additional variables and their minimum and maximum values, the sensor type, further data that are specific to the animal, the number of recordings that were skipped, and the date of file creation. \\
 The \fct{summary} can be used to summarize important information of \class{Move} or \class{MoveStack} objects. \fct{Summary} calls the function \fct{distance}, \fct{time}, \fct{speed}, and \fct{angle} and returns a summary of these values. 
 
 <<summary>>=
@@ -126,12 +126,12 @@ summary(ricky)
 #summary(stack) ##works also for stacks
 @
 
-More information of the object do the following functions return: 
+The following functions return more information of the object: 
 \fct{n.locs} returns the number of locations of an \class{Move} or \class{MoveStack} object
 <<nlocs>>=
 n.locs(ricky)
 @
-\fct{time.lag} returns the time differences between successive coordinates from \class{Move} or \class{MoveStack} objects (the\texttt{units} argument determines the units of the data output, it is minutes by default)
+\fct{time.lag} returns the time differences between successive coordinates from \class{Move} or \class{MoveStack} objects (the\texttt{units} argument determines the units of the data output; it is minutes by default)
 <<timelag>>=
 head(time.lag(leroy, units="mins"))
 @
@@ -166,11 +166,11 @@ plot(stack, col=c(6,5), lwd=2, xlab="location_long", ylab="location_lat")
 
 
 \subsection{Google plot}
-An interesting addition to plot the pure track is to plot the track on a map. The easiest way to use for example OpenStreetMap, Stamen Map, Cloudmade or Google Maps is to use the ggmap package, which is based on ggplot.\\
-Note, that the function requires two further packages (\texttt{ggmap} and \texttt{mapproj}). The \fct{get\_map} function makes a call to the online data bases and retrieves a map which is defined by the bounding box (\texttt{bbox}). The source argument allows to choose between OpenStreetMap (\texttt{'osm'}), Stamen Maps (\texttt{'stamen'}), Clodumade (\texttt{'cloudmade'}) and Google Maps (\texttt{'google'}). The \fct{ggmap} function plots the map in a new graphics device and \texttt{geom\_path()} adds the track of the \class{Move} object (see Figure \ref{fig:google}).  
+A useful addition to plot the pure track is to plot it on a map. The easiest ways to do this are with OpenStreetMap, Stamen Map, Cloudmade or Google Maps and to use the ggmap package, which is based on ggplot.\\
+Note, the function requires two further packages (\texttt{ggmap} and \texttt{mapproj}). The \fct{get\_map} function makes a call to the online databases and retrieves a map which is defined by the bounding box (\texttt{bbox}). The source argument allows one to choose between OpenStreetMap (\texttt{'osm'}), Stamen Maps (\texttt{'stamen'}), Cloudmade (\texttt{'cloudmade'}) and Google Maps (\texttt{'google'}). The \fct{ggmap} function plots the map in a new graphics device and \texttt{geom\_path()} adds the track of the \class{Move} object (see Figure \ref{fig:google}).  
 
 <<googleplot>>=
-require(ggmap) #these packages are necessecary to work with google maps
+require(ggmap) #these packages are necessary to work with google maps
 require(mapproj)
 leroy_df <- as(leroy, "data.frame")
 m <- get_map(bbox(extent(leroy)*1.1), source="stamen", zoom=14)
@@ -196,7 +196,7 @@ ricky[1:25]
 stack[800:1100] #see the names of both animals in second last row
 @
 
-If it is necessary to directly interact with different data of the same object it can be advantageous to work with a data.frame. The \fct{as} function can transform a \class{Move} or \class{MoveStack} to a data.frame:
+If it is necessary to directly interact with different data of the same object, it can be advantageous to work with a data.frame. The \fct{as} function can transform a \class{Move} or \class{MoveStack} to a data.frame:
 
 <<as>>=
 head(as(leroy, "data.frame"))
@@ -210,12 +210,12 @@ leroy_t <- spTransform(x=leroy, CRSobj="+proj=aeqd", center=TRUE)
 proj4string(leroy_t)
 @
 
-The data are now in the right projection and the coordinate system is now centered to the center of the track. 
+The data are now in the correct projection and the coordinate system is now centered to the center of the track. 
 
 
 \subsection{Bursting tracks}
-It can be interesting to compare different parts of the track with each other. For example: how do data points differ between winter and summer, or between behaviors like migrating, non-migrating, resting? To indicate which point of the data set belongs to which category a track is 'bursted'. This means, that an additional column is introduced to the data set that is associated with a category and all other track information. \\
-A track is bursted by supplying a vector with the length of the number of coordinates. The vector is than used as a factor to be associated with the \class{Move} object. The returned object belongs to the class \class{MoveBurst}. 
+It can be interesting to compare different parts of the track with each other. For example, how do data points differ between winter and summer, or between behaviors like migrating, non-migrating, resting? To indicate which point of the data set belongs to which category, a track is 'bursted'. This means, that an additional column is introduced to the data set that is associated with a category and all other track information. \\
+A track is bursted by supplying a vector with the length of the number of coordinates. The vector is then used as a factor to be associated with the \class{Move} object. The returned object belongs to the class \class{MoveBurst}. 
 
 <<burstTrack>>=
 behavior <- c(rep(1:8,each=111), rep(1, 30))
@@ -224,8 +224,8 @@ class(leroy_b)
 @
 
 Bursted tracks can be plotted with the basic \fct{plot} and the more complex \fct{plotBursts} function. Both functions use colors to indicate to which burstID a segment belongs. \\
-The \fct{plot} function simply plots the different segments as colored lines. (see in the code example also a way to plot points instead of colored line segments) \\
-The \fct{plotBursts} plots a circle for every segment right at the midpoint of the segment. The circles have a size that that is calculated with an extra size function. By default it is the relative time of the segment compared to the whole track. It is possible to calculate the size with a different function using the \texttt{sizeFun} argument of the function. (Figure \ref{fig:burst})
+The \fct{plot} function simply plots the different segments as colored lines. (see in the code example a way to plot points instead of colored line segments) \\
+The \fct{plotBursts} plots a circle for each segment right at the midpoint of the segment. The circles have a size that is calculated with an extra size function. By default, it is the relative time of the segment compared to the whole track. It is possible to calculate the size with a different function using the \texttt{sizeFun} argument of the function. (Figure \ref{fig:burst})
 
 \begin{figure}
 \begin{center}
@@ -237,7 +237,7 @@ plot(midPoint(coordinates(leroy_b)[-n.locs(leroy_b), ],
 plotBursts(leroy_b, breaks=3, add=FALSE, pch=19)
 @
 \end{center}
-\caption{Plotting the track and adding the burst information as colored lines, points or circles (the color corresponds to the brustID; the size of the circles represents in three steps the relative amount of time per segment)}
+\caption{Plotting the track and adding the burst information as colored lines, points, or circles (the color corresponds to the burstID; the size of the circles, three groups by default, represents the relative amount of time per segment)}
 \label{fig:burst}
 \end{figure}
 
@@ -245,8 +245,8 @@ plotBursts(leroy_b, breaks=3, add=FALSE, pch=19)
 \newpage
 \section{Dynamic Brownian Bridge Movement Model}
 To calculate the utilization distribution (UD) with the dynamic Brownian Bridge Movement Model use the \fct{brownian.bridge.dyn} function. You need to specify the Move object from which you want to calculate the UD, the location error of your localization method (in map units), the raster options, and the extension of the raster. \\
-You can either set the number of the raster cells along the longest dimension of your map by setting a numeric value for the \texttt{dimSize} argument, or - if you know the extent of your map - you can set the size of the raster cells with a numeric value for the \texttt{raster} argument (you can only set one of them). \\
-When the \fct{brownian.bridge.dyn} function issues the warning, the extent of your raster is too small, that is that a large part of the UD is at the borders of the raster. You can change the extent of the raster by setting the \texttt{ext} argument. If you want to extend the raster in all four directions equally choose one number. Use a vector of two numbers to extend the x and the y dimension differently, or even a vector with four numbers to extend differently in all four directions.
+You can either set the number of the raster cells along the longest dimension of your map by setting a numeric value for the \texttt{dimSize} argument, or - if you know the extent of your map - you can set the size of the raster cells with a numeric value for the \texttt{raster} argument (note, you can only set one of them). \\
+When the \fct{brownian.bridge.dyn} function issues the warning that the extent of your raster is too small, this is because a large part of the UD is at the borders of the raster. You can change the extent of the raster by setting the \texttt{ext} argument. If you want to extend the raster in all four directions equally, choose one number. You can use a vector of two numbers to extend the x and the y dimension differently, or even a vector with four numbers to extend differently in all four directions.
 
 <<dbbmm>>=
 r <- spTransform(ricky[1:500,], center=T)
@@ -263,10 +263,10 @@ raster(ricky_dbbmm)
 @
 
 The second method (\fct{raster}) returns all important information of the raster that is stored in the \class{DBBMM} object. \\
-If only certain objects of a \class{DBBMMStack} are needed, the stack can be splitted into a \class{list} of \class{DBBMM} objects using the \fct{split} function.
+If only certain objects of a \class{DBBMMStack} are needed, the stack can be split into a \class{list} of \class{DBBMM} objects using the \fct{split} function.
 
 \subsection{Plotting UDs}
-\class{DBBMM} objects can be plotted with the \fct{plot} function. It produces a fixed cell size ratio graphic from the raster (see Figure \ref{fig:two}). A second function - \fct{image} - produces a variable cell size ratio graphic (not prone to distortions after resizing the graphics window) from the raster. \\
+\class{DBBMM} objects can be plotted with the \fct{plot} function. This produces a fixed cell size ratio graphic from the raster (see Figure \ref{fig:two}). A second function - \fct{image} - produces a variable cell size ratio graphic (not prone to distortions after resizing the graphics window) from the raster. \\
 
 
 %\setkeys{Gin}{width=0.8\textwidth}
@@ -282,11 +282,11 @@ lines(spTransform(ricky[1:500,], center=TRUE), col=3, lwd=2)
 #points(spTransform(ricky[1:500, ], center=TRUE), col=8)
 @
 \end{center}
-\caption{Plotting the UD (left) and adding the track as a line (center) or as points(right)}
+\caption{Plotting the UD (left) and adding the track as a line (center) or as points (right)}
 \label{fig:two}
 \end{figure}
 
-To plot contour lines from the raster use the \fct{contour} function and set the percentage levels that you want to print. With \texttt{add=TRUE} you can add the contour to a previous plot (see Figure \ref{fig:three}). \\
+To plot contour lines from the raster, use the \fct{contour} function and set the percentage levels that you want to print. With \texttt{add=TRUE} you can add the contour to a previous plot (see Figure \ref{fig:three}). \\
 
 \begin{figure}
 \begin{center}
@@ -314,7 +314,7 @@ area
 @
 
 \subsection{Storing and loading objects}
-If one or more objects should be stored and loaded at another timer again into R, there is an easy way to save them. The \fct{save} function saves all listed objects from the workspace (in the example below it is only ricky\_dbbmm). The file format is \texttt{RData}. More than one or the whole workspace can be stored in a \texttt{RData} file. Complicated calculations (e.g. brownian bridges), can be calculated once and then stored. \\
+If one or more objects should be stored and loaded at another time into R, there is an easy way to save them. The \fct{save} function saves all listed objects from the workspace (in the example below it is only ricky\_dbbmm). The file format is \texttt{RData}. More than one variable or the whole workspace can be stored in a \texttt{RData} file. Complicated calculations (e.g. Brownian bridges), can be calculated once and then stored. \\
 \texttt{RData} files can be loaded using the \fct{load} function. It loads all objects from the file again into the workspace. In the following example we save the object \texttt{ricky\_dbbmm} as \texttt{test.RData}, remove the object (it does not appear any more in the workspace), and load it again.
 
 <<saveLoad, eval=FALSE>>=
@@ -324,9 +324,9 @@ load(file="~/Desktop/test.RData")
 @
 
 
-\subsection{Store a track as KML file}
-A \class{Move} objects can also be saved as KML (keyhole markup language) files. KML files can easily loaded into GoogleEarth and GoogleMaps. Therefore the \texttt{plotKML} package is needed. Once installed the \fct{kml} function creates a file with the ending \texttt{.kml} and the name of the object. The kml file is stored in the current working directory. \\
-The following code creates the file \texttt{leroy.kml} from the \class{Move} object named \texttt{leroy}. If GoogleEarth is installed a double click on that file opens the locations of the track in GoogleEarth.
+\subsection{Store a track as a KML file}
+\class{Move} objects can also be saved as KML (keyhole markup language) files. KML files can easily be loaded into GoogleEarth and GoogleMaps. For this the \texttt{plotKML} package is needed. Once installed the \fct{kml} function creates a file with the ending \texttt{.kml} and the name of the object. The kml file is then stored in the current working directory. \\
+The following code creates the file \texttt{leroy.kml} from the \class{Move} object named \texttt{leroy}. If GoogleEarth is installed, a double click on that file opens the locations of the track in GoogleEarth.
 
 <<saveKML, eval=FALSE>>=
 #install.packages('plotKML')
@@ -338,9 +338,9 @@ kml(leroy)
 %\newpage
 
 \section{Home Range Bootstrap using Minimum Convex Polygons}
-The move package includes a method to calculate minimum convex polygons (MCP) using \fct{hrBootstrap}. A minimum convex polygon describes an area that is formed by the points of a track. It is called convex because no line that connects two points within this polygon crosses the border of the polygon. \\
-We implemented the method to calculate MCPs from the adehabitatHR package (more information) using a bootstrap method. This means, that the area size of the MCP is calculated with an (exponential) increasing number of coordinates. Thus the MCP size is increasing as well until it reaches a plateau. \\
-Because the function takes random coordinates to calculate the MCP every calculation is repeated by default 100 times. For every number of coordinates the quantiles are calculated and plotted in a line diagram. A black horizontal line indicates the real MCP size (calculated with all coordinates).
+The move package includes a method to calculate minimum convex polygons (MCP) using \fct{hrBootstrap}. A minimum convex polygon describes an area that is formed by the points of a track. The convex is because no line that connects two points within this polygon crosses the border of the polygon. \\
+We implemented this method to calculate MCPs from the \texttt{adehabitatHR} package (more information) using a bootstrap method. This means that the area size of the MCP is calculated with an (exponentially) increasing number of coordinates. The MCP size continues to increase until it reaches a plateau. \\
+Because the function takes random coordinates to calculate the MCP, every calculation is repeated 100 times by default. For every number of coordinates the quantiles are calculated and plotted in a line diagram. A black horizontal line indicates the real MCP size (calculated with all coordinates).
 
 \begin{figure}
 \begin{center}
@@ -348,7 +348,7 @@ Because the function takes random coordinates to calculate the MCP every calcula
 hrBootstrap(x=leroy, rep=100, unin='km', unout='km2')
 @
 \end{center}
-\caption{The returned plot form the \fct{hrBootstrap} for a track with 100 repetitions.}
+\caption{The returned plot forms the \fct{hrBootstrap} for a track with 100 repetitions.}
 \label{fig:four}
 \end{figure}
 

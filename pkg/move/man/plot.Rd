@@ -40,6 +40,7 @@ Have a look on the proportion of the graphic device when printing a track or ras
 
 \examples{
 load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+stack <- moveStack(list(leroy,leroy))
 
 plot(leroy) # plot a Move object
 plot(leroy, type="o", col=3)

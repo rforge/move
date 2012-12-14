@@ -32,6 +32,7 @@ load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 plot(rickydbbmm)
 lines(spTransform(ricky), col=3) # add a track from a Move object to a plot
 \dontshow{
+stack <- moveStack(list(leroy,leroy))
 lines(stack, col=3:4, pch=4) %just test whether MoveStacks can be plotted
 }
 }
