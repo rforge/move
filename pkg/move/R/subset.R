@@ -35,7 +35,7 @@ setMethod("[",
             if(missing(j))
               j<-T
             callNextMethod(x=x,i=i,j=j,...)
-          })##bart this function gives an error when created: Error: package slot missing from signature for generic ‘[’ //and classes .MoveTrackStack, ANY, ANY // cannot use with duplicate class names (the package may need to be re-installed)
+          })
 
 setMethod("[", signature(x="dBMvarianceStack"), function(x, i, j, ...) {
   if(!missing(i)){
