@@ -57,3 +57,35 @@ setMethod("[", signature(x="dBMvariance"), function(x, i, j, ...) {
     j<-T
   callNextMethod(x=x,i=i,j=j,...)
 })
+
+setMethod("[[", 
+          signature(x=".MoveTrackStack", i='character', j='missing'),
+          definition=function(x,i,j,...){ #does not work
+	    s<-x@trackId==i
+		spdf <- SpatialPointsDataFrame(coords = matrix(x@coords[s,], ncol=2),
+		      			 data=x@data[s,],
+		      			 proj4string=x@proj4string)
+		mt <- new(Class=".MoveTrack",
+		          spdf,
+		          timestamps=x@timestamps[s],
+		          sensor=x@sensor[s, drop=T])
+		  unUsed<-as(x,".unUsedRecordsStack")
+		if(length(n.locs(unUsed))==0)
+		{
+			unUsedSub<-unUsed
+		}else{
+			  unUsedSub<-as(unUsed[unUsed@trackIdUnUsedRecords==i,T],'.unUsedRecords')
+		}
+			  x <- new(Class="Move", 
+					 mt,
+					 idData=x@idData[row.names(x@idData)==i, ,drop=F],
+					 dateCreation=x@dateCreation,
+					 study=x@study,
+					 citation=x@citation,
+					 license=x@license,
+					 unUsedSub)
+#            if(!missing(i)){
+#              x@trackId=droplevels(x@trackId[i])
+#              x@idData=x@idData[as.character(unique(x@trackId[i])),]}else{i<-T}
+	    return(x)
+          })

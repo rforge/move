@@ -3,7 +3,7 @@ setGeneric("print")
 setMethod("print", ".MoveTrack", function(x){
 	  getMethod("print","Spatial")(x) 
 	  timeRange <- range(x@timestamps)
-	  cat("timestamps  :",paste(timeRange, collapse="..."),capture.output(round(difftime(timeRange[2],timeRange[1]))), " (start...end, duration) \n")  
+	  cat("timestamps  :",paste(timeRange, collapse=" ... "),capture.output(round(difftime(timeRange[2],timeRange[1]))), " (start ... end, duration) \n")  
 	  cat("sensors     :",paste(as.character(unique(x@sensor)), collapse=", "),"\n")
 	  cat("indiv. data :", paste(collapse=", ", names(x@idData)),"\n")
 })
