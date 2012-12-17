@@ -8,6 +8,7 @@
 \alias{[,dBMvarianceStack,ANY,ANY-method}
 \alias{[,.unUsedRecordsStack,ANY,ANY-method}
 \alias{[,.unUsedRecords,ANY,ANY-method}
+\alias{[[,.MoveTrackStack,character,missing-method}
 
 \docType{methods}
 
@@ -17,6 +18,7 @@
 
 \usage{
   \S4method{[}{MoveStack,ANY,ANY}(x,i)
+  \S4method{[[}{MoveStack,character,missing}(x,i)
 }
 
 \arguments{
@@ -24,10 +26,16 @@
   \item{i}{numeric, number of position in the stack}
 }
 
+\details{
+	The double square bracket method is used for sub setting a stack to a single move object according to the individual name.
+}
+
+
 \examples{
 load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-st <- moveStack(list(leroy,ricky))
+st <- moveStack(list(leroy,ricky=ricky))
 st[1]
+st[['ricky']]
 }
 
 \author{Bart Kranstauber}

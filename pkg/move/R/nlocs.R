@@ -9,10 +9,10 @@ setMethod("n.locs", ".MoveTrackStack", function(obj){
 	  unlist(tapply(obj@trackId, obj@trackId, length))
 })
 
-setMethod("n.locs", ".unUsedRecordsStack", function(obj){
-	  unlist(tapply(obj@trackIdUnUsedRecords, obj@trackIdUnUsedRecords, length))
-})
- 
-setMethod("n.locs", ".unUsedRecords", function(obj){
-	  length( obj@timestampsIdUnUsedRecords)
-})
+#setMethod("n.locs", ".unUsedRecordsStack", function(obj){
+#	  unlist(tapply(obj@trackIdUnUsedRecords, obj@trackIdUnUsedRecords, length))
+#})
+# 
+#setMethod("n.locs", ".unUsedRecords", function(obj){
+#	  length( obj@timestampsIdUnUsedRecords)
+#})

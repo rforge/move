@@ -70,7 +70,7 @@ setMethod("[[",
 		          timestamps=x@timestamps[s],
 		          sensor=x@sensor[s, drop=T])
 		  unUsed<-as(x,".unUsedRecordsStack")
-		if(length(n.locs(unUsed))==0)
+		if(length(unUsed@sensorUnUsedRecords)==0)
 		{
 			unUsedSub<-unUsed
 		}else{
