@@ -68,7 +68,8 @@ Maintainer: Bart Kranstauber \email{kranstauber@orn.mpg.de}, Marco Smolla \email
 }
 
 \references{
-CRAN: \url{http://move.r-forge.r-project.org/}
+\href{http://computational-ecology.com/images/Move_Package/move.pdf}{Move package vignette} \cr
+\href{http://cran.r-project.org/web/packages/move/index.html}{move on CRAN}
 }
 
 \keyword{package}

@@ -4,6 +4,8 @@
 \newcommand{\class}[1]{{`\code{#1}'}}
 \SweaveOpts{engine = R, strip.white = true, keep.source = true, eps = false}
 
+%\VignetteIndexEntry{Browsing Movebank using the move package}
+
 \author{ Marco Smolla}
 \Plainauthor{Marco Smolla}
 
