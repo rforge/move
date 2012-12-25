@@ -94,6 +94,11 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack",'.unUsedRecords'),
 				 stop("A timestamp of an unused record coincides with a normal timestamp")
 
 		 }
+		 #this check cant work since coordinates columns are not present in data maybe look for solution
+		# if(any(names(object@data)!=names(object@dataUnUsedRecords)))
+		#	 stop('names of data and unused data records dont match')
+		# if(any(unlist(lapply(object@data, class))!=unlist(lapply(object@dataUnUsedRecords, class))))
+		#	 stop('classes for data and unusedrecords data dont match')
 		 return(TRUE)
 	 }
 	 )
@@ -144,6 +149,11 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack", ".unUsedRecordsSt
 				 stop("A timestamps of a unused record coincides with a normal timestamps")
 
 		 }
+		 #this check cant work since coordinates columns are not present in data
+		# if(any(names(object@data)!=names(object@dataUnUsedRecords)))
+		#	 stop('names of data and unused data records dont match')
+		# if(any(unlist(lapply(object@data, class))!=unlist(lapply(object@dataUnUsedRecords, class))))
+		#	 stop('classes for data and unusedrecords data dont match')
 		 return(TRUE)
 	 }
 	 )

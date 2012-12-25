@@ -28,10 +28,10 @@ setMethod("[", signature(x=".MoveTrack"), function(x, i, j, ...) {
 
 setMethod("[", 
           signature(x=".MoveTrackStack"),
-          definition=function(x,i,j,...){ #does not work
+          definition=function(x,i,j,...){
             if(!missing(i)){
               x@trackId=droplevels(x@trackId[i])
-              x@idData=x@idData[as.character(unique(x@trackId[i])),]}else{i<-T}
+              x@idData=x@idData[levels(x@trackId),, drop=F]}else{i<-T}
             if(missing(j))
               j<-T
             callNextMethod(x=x,i=i,j=j,...)
