@@ -7,7 +7,7 @@
 \title{Creates unused records data}
 
 \description{
-  A function that creates unused records data. It can be used by advanced programmers to program against.
+  A function that assigns locations as unused it could for example be used to remove locations test locations from a track.
 }
 
 \usage{
@@ -17,7 +17,7 @@
 
 \arguments{
   \item{obj}{a Move or MoveStack object}
-  \item{value}{according values}
+  \item{value}{A logical vector of the same length as the number of locations}
 }
 
 \author{Marco Smolla}
