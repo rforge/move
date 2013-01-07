@@ -9,6 +9,6 @@ setReplaceMethod("citations", ".MoveGeneral", function(obj, value){
     value <- as.character(value[1])
     warning("There were more than one citation entered. Only using first element")
   }
-  obj@citation <- value
+  slot(obj,'citation', check=T) <- value
   obj
 })
