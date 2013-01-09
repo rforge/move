@@ -1,7 +1,7 @@
 \name{getVolumeUD}
 
 \alias{getVolumeUD}
-\alias{getVolumeUD,Raster-method}
+\alias{getVolumeUD,.UD-method}
 
 \docType{methods}
 
@@ -10,11 +10,11 @@
 \description{Modifies the UD raster: that the cell values of the resulting raster are equal to the percentage of the smallest home range containing this cell.}
 
 \usage{
-  \S4method{getVolumeUD}{Raster}(x, ...)
+  \S4method{getVolumeUD}{.UD}(x, ...)
 }
 
 \arguments{
-  \item{x}{an object of the \link{DBBMM-class} or \link{Raster-class} }
+  \item{x}{one or several objects of the \link{DBBMM-class} class}
   \item{...}{additional Raster or DBBMM objects}
 }
 
@@ -28,4 +28,6 @@ load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 
 getVolumeUD(leroydbbmm) #for a single object
 getVolumeUD(leroydbbmm, leroydbbmm, leroydbbmm) #for several objects 
+
+plot(getVolumeUD(leroydbbmm))
 }

@@ -1,6 +1,6 @@
 setGeneric("getVolumeUD", function(x,...){standardGeneric("getVolumeUD")})
 setMethod("getVolumeUD", 
-          signature=c(x="Raster"),
+          signature=c(x=".UD"),
           definition=function(x,...){
             transf <- function(nr){
               rank <- (1:length(values(nr)))[rank(values(nr))]
