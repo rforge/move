@@ -1,0 +1,17 @@
+setGeneric("raster2contour", function(x, ...) {standardGeneric("raster2contour")})  
+setMethod(f = "raster2contour", 
+          signature = c(x = ".UD"),
+          definition = function(x, ...) {
+            vol<-getVolumeUD(x)
+            vlu<-values(vol)
+            rst<-raster(vol)
+            values(rst)<-vlu
+            rasterToContour(rst, ...)
+          })
+
+setMethod(f = "raster2contour", 
+          signature = c(x = ".UDStack"),
+          definition = function(x, ...) {
+            xx<-split(x)
+            lapply(xx, raster2contour, ...=...)
+          })
