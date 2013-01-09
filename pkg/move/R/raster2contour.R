@@ -3,10 +3,7 @@ setMethod(f = "raster2contour",
           signature = c(x = ".UD"),
           definition = function(x, ...) {
             vol<-getVolumeUD(x)
-            vlu<-values(vol)
-            rst<-raster(vol)
-            values(rst)<-vlu
-            rasterToContour(rst, ...)
+            rasterToContour(vol, ...)
           })
 
 setMethod(f = "raster2contour", 

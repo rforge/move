@@ -1,5 +1,10 @@
 setGeneric("getVolumeUD", function(x,...){standardGeneric("getVolumeUD")})
 setMethod("getVolumeUD", 
+          signature=c(x=".UDStack"),
+          definition=function(x,...){
+		  stack(lapply(split(x), getVolumeUD))
+	  })
+setMethod("getVolumeUD", 
           signature=c(x=".UD"),
           definition=function(x,...){
             transf <- function(nr){

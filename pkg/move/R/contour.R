@@ -2,10 +2,7 @@ setGeneric("contour", function(x, ...) standardGeneric("contour"))
 setMethod(f = "contour", 
           signature = c(x = ".UD"), 
           definition = function(x, ...) {  
-            newRaster <- x
-            rank <- (1:length(values(newRaster)))[rank(values(newRaster))]
-            values(newRaster) <- 1 - cumsum(sort(values(newRaster)))[rank]
-            x <- newRaster
+		  x<-getVolumeUD(x)
             callNextMethod()
           })
 
