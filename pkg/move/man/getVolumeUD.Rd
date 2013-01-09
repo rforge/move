@@ -2,6 +2,7 @@
 
 \alias{getVolumeUD}
 \alias{getVolumeUD,.UD-method}
+\alias{getVolumeUD,.UDStack-method}
 
 \docType{methods}
 
@@ -14,7 +15,7 @@
 }
 
 \arguments{
-  \item{x}{one or several objects of the \link{DBBMM-class} class}
+  \item{x}{one or several objects of the \link{DBBMM-class} or an \link{DBBMMStack-class} object}
   \item{...}{additional Raster or DBBMM objects}
 }
 
@@ -27,6 +28,7 @@
 load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 
 getVolumeUD(leroydbbmm) #for a single object
+getVolumeUD(dbbmmstack)
 getVolumeUD(leroydbbmm, leroydbbmm, leroydbbmm) #for several objects 
 
 plot(getVolumeUD(leroydbbmm))

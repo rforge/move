@@ -11,8 +11,7 @@ setMethod(f = "raster2contour",
           definition = function(x, ...) {
             xx<-split(x)
             tmp<-lapply(xx, raster2contour, ...=...)
-	    x<-mapply(spChFIDs, tmp, mapply(paste,lapply(tmp,row.names), names(tmp), SIMPLIFY=F))
-	    tmp<-do.call('rbind',mapply('[[<-',MoreArgs=list(i='individual.local.identifier'),x=x, value=names(tmp)))
-	    return(tmp)
-
+      	    x<-mapply(spChFIDs, tmp, mapply(paste,lapply(tmp,row.names), names(tmp), SIMPLIFY=F))
+      	    tmp<-do.call('rbind',mapply('[[<-',MoreArgs=list(i='individual.local.identifier'),x=x, value=names(tmp)))
+      	    return(tmp)
           })
