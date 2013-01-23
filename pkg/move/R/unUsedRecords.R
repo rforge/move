@@ -15,7 +15,7 @@ setMethod('unUsedRecords<-', c(obj='.MoveTrackSingle', value='logical'), functio
 		      sensorUnUsedRecords=factor(c(as.character(unUsed@sensorUnUsedRecords), as.character(xOld@sensor))),
 		      dataUnUsedRecords=df3
 		      ) 
-	  new(class(obj), xNew, unUsedNew)
+	  new(class(obj), unUsedNew, xNew)
 })
 setMethod('unUsedRecords<-', c(obj='.MoveTrackStack', value='logical'), function(obj, value){
 	  if(sum(n.locs(obj))!=length(value))
@@ -34,7 +34,7 @@ setMethod('unUsedRecords<-', c(obj='.MoveTrackStack', value='logical'), function
 		      trackIdUnUsedRecords=factor(c(as.character(unUsed@trackIdUnUsedRecords), as.character(xOld@trackId))),
 		      dataUnUsedRecords=df3
 		      ) 
-	  new(class(obj), xNew, unUsedNew)
+	  new(class(obj),  unUsedNew, xNew)
 })
 
 
