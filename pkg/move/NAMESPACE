@@ -2,7 +2,7 @@
 exportClasses(DBBMM, DBBMMStack, Move, MovebankLogin, MoveStack, .UD, .UDStack,.MoveTrack, 
               .MoveTrackSingle, .MoveTrackSingleBurst,.MoveGeneral, dBMvarianceTmp, MoveBurst, 
               .unUsedRecords,.unUsedRecordsStack)
-exportMethods(angle, angleSummary, brownian.bridge.dyn, burst, citations, "citations<-", contour, 
+exportMethods(angle, angleSummary, brownian.bridge.dyn, burst, citations, "citations<-", contour, corridor,
               distance, distanceSummary, equalProj, getMovebank, getMovebankAnimals, getMovebankData, 
               getMovebankID, getMovebankSensors, getMovebankSensorsAttributes, getMovebankStudies, 
               getMovebankStudy, getVolumeUD, hrBootstrap, lines, move, move2ade, movebankLogin, 

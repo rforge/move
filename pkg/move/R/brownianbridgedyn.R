@@ -148,7 +148,7 @@ setMethod(f = "brownian.bridge.dyn",
           function(object, raster, dimSize, location.error, ...) {
             # .extcalc already calculated the right raster extension for all tracks
             rm(dimSize)
-            ## is not needed anymore, because RasterLayer is already calculated
+            ## is not needed anymore, because RasterLayer is already calculated and the correct brownian.bridge.dyn is called
             moveUnstacked <- split(x = object)
             # split MoveStack into individual Move objects
             dbbmmLST <- list()
