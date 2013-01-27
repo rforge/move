@@ -1,8 +1,8 @@
 Package: move
 Type: Package
 Title: Visualizing and analyzing animal track data
-Version: 1.1.359
-Date: 2013-01-27
+Version: 1.1.360
+Date: 2013-01-28
 Author: Bart Kranstauber <bart.kranstauber@uni-konstanz.de>, Marco Smolla <msmolla@orn.mpg.de>
 Maintainer: Marco Smolla <msmolla@orn.mpg.de>
 Description: move is a package that contains functions to access movement data stored in movebank.org as well as tools to visualize and statistically analyse animal movement data. Move addresses movement ecological questions.
@@ -10,4 +10,4 @@ License: GPL (>=3)
 URL: http://computational-ecology.com/main-move.html
 LazyLoad: yes
 Depends: sp, raster, rgdal, methods, geosphere, R (>= 2.14.0)
-Suggests: RCurl, RUnit, adehabitatHR, circular, ggmap, mapproj
+Suggests: RCurl, RUnit, adehabitatHR, circular, ggmap, mapproj, maptools
