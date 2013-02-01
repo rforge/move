@@ -1,20 +1,6 @@
 ## Making dBMvar a generic funtion if (!isGeneric('dBMvar')) {
 ## setGeneric('dBMvar', function(BMvars, BMvar, n.locs, break.list)
 ## standardGeneric('dBMvar')) } if (!isGeneric('brownian.motion.variance.dyn'))
-setGeneric("brownian.motion.variance.dyn", function(object, location.error, window.size, margin) {standardGeneric("brownian.motion.variance.dyn")})
-
-setMethod(f = "brownian.motion.variance.dyn", 
-          signature = c(object = ".MoveTrackSingle", location.error = "numeric", window.size = "numeric", margin = "numeric"), 
-          definition = function(object, location.error, window.size, margin) {
-            time.lag <- time.lag(object, units = "mins")  #units need to correspont between BBMM method and here
-	  if(n.locs(object)!= length(location.error))
-		  stop("The location error vector has not the same length as the move object")
-	  if(any(is.na(location.error)))
-		  stop("The location error contains NAs")
-            if(isLonLat(object)) stop("You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function. \n")
-            if (any((c(margin, window.size)%%2) != 1)) 
-              stop("Margin and window size need to be uneven")
-            # function to calculate brownian.motion.variance for a piece of track
             brownian.motion.variance <- function(time.lag, location.error, x, y) {
               # Creating NULL vectors to store data
               n.locs <- unique(c(length(time.lag), length(location.error), length(x), length(y)))
@@ -57,6 +43,20 @@ setMethod(f = "brownian.motion.variance.dyn",
               
               return(list(BMvar = BMvar$minimum, cll = -BMvar$objective))
             }
+setGeneric("brownian.motion.variance.dyn", function(object, location.error, window.size, margin) {standardGeneric("brownian.motion.variance.dyn")})
+
+setMethod(f = "brownian.motion.variance.dyn", 
+          signature = c(object = ".MoveTrackSingle", location.error = "numeric", window.size = "numeric", margin = "numeric"), 
+          definition = function(object, location.error, window.size, margin) {
+            time.lag <- time.lag(object, units = "mins")  #units need to correspont between BBMM method and here
+	  if(n.locs(object)!= length(location.error))
+		  stop("The location error vector has not the same length as the move object")
+	  if(any(is.na(location.error)))
+		  stop("The location error contains NAs")
+            if(isLonLat(object)) stop("You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function. \n")
+            if (any((c(margin, window.size)%%2) != 1)) 
+              stop("Margin and window size need to be uneven")
+            # function to calculate brownian.motion.variance for a piece of track
             
             breaks <- margin:(window.size - margin + 1)
             uneven.breaks <- breaks[(breaks%%2) == 1]
