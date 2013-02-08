@@ -101,6 +101,8 @@ setMethod(f = "brownian.bridge.dyn",
             if (missing(time.step)) {
               time.step <- (min(time.lag[-length(time.lag)])/15)
             }
+	    if(!is.numeric(time.step))
+		    stop('time.step is not numeric')
             
             T.Total <- sum(time.lag[object@interest])
             
