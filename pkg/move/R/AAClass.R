@@ -89,7 +89,7 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack",'.unUsedRecords'),
 		 timestampsUnUsedDuplicated<-object@timestampsUnUsedRecords[object@timestampsUnUsedRecords %in% object@timestamps]
 		 if(length(timestampsUnUsedDuplicated)!=0)
 		 {
-		 s<-c(object@timestamps, object@timestampsUnUsedRecords)%in% timestampsUnUsedRecords
+		 s<-c(object@timestamps, object@timestampsUnUsedRecords)%in% timestampsUnUsedDuplicated
 		 	if (any(dups <- duplicated(data.frame(format(c(object@timestamps, object@timestampsUnUsedRecords)[s],"%Y %m %d %H %M %OS4"), c(object@sensor, object@sensorUnUsedRecords)[s]))))
 				 stop("A timestamp of an unused record coincides with a normal timestamp")
 
@@ -141,7 +141,7 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack", ".unUsedRecordsSt
 		 timestampsUnUsedDuplicated<-object@timestampsUnUsedRecords[object@timestampsUnUsedRecords %in% object@timestamps]
 		 if(length(timestampsUnUsedDuplicated)!=0)
 		 {
-		 s<-c(object@timestamps, object@timestampsUnUsedRecords)%in% timestampsUnUsedRecords
+		 s<-c(object@timestamps, object@timestampsUnUsedRecords)%in% timestampsUnUsedDuplicated
 		 	if (any(dups <- duplicated(cbind(
 							  format(c(object@timestamps, object@timestampsUnUsedRecords)[s],"%Y %m %d %H %M %OS4"), 
 							  c(object@sensor, object@sensorUnUsedRecords)[s], 
