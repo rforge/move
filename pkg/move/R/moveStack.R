@@ -60,18 +60,19 @@ setMethod(f = "moveStack",
 				     } else { x[,i]<-NA }
 				     return(x)
 						    }, i=cols)# fill unused columns with NA
+		  sensorLevels<-unique(unlist(c(lapply(lapply(x, slot, 'sensor'), levels), lapply(lapply(x, slot, 'sensorUnUsedRecords'), levels))))
 		  unUsed<-new(".unUsedRecordsStack",
 			      timestampsUnUsedRecords=do.call('c',ts) ,
 			      dataUnUsedRecords=do.call('rbind',dataUnUsed ),
-			      sensorUnUsedRecords=as.factor(unlist(lapply(unUsedList, slot, 'sensorUnUsedRecords') )),
-			      trackIdUnUsedRecords=as.factor(unlist(mapply(rep, id, unlist(lapply(ts, length)))))
+			      sensorUnUsedRecords=factor(unlist(lapply(lapply(unUsedList, slot, 'sensorUnUsedRecords') , as.character)), levels=sensorLevels),
+			      trackIdUnUsedRecords=factor(unlist(mapply(rep, id, unlist(lapply(ts, length)))), levels=id)
 			      )
 		  res <- new("MoveStack", 
 			     idData = IDDATA,
 			     spdftmp, 
 			     timestamps = do.call("c", lapply(x, timestamps)),
-			     sensor =factor(do.call('c',lapply(lapply(x, slot, 'sensor'),as.character))),
-			     trackId = as.factor(rep(id, length)),
+			     sensor =factor(do.call('c',lapply(lapply(x, slot, 'sensor'),as.character)), levels=sensorLevels),
+			     trackId = factor(rep(id, length), levels=id),
 			     unUsed)
 		  return(res)
 	  })

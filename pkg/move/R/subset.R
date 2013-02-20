@@ -1,7 +1,11 @@
 setMethod('[', signature(x=".unUsedRecords"), function(x,i,j,...){
 			 x@timestampsUnUsedRecords<- x@timestampsUnUsedRecords[i]
 			 x@sensorUnUsedRecords<- x@sensorUnUsedRecords[i]
-			 x@dataUnUsedRecords<- x@dataUnUsedRecords[i,j]
+			 if(length(j)){
+			 	x@dataUnUsedRecords<- x@dataUnUsedRecords[i,j]
+			}else{
+			 	x@dataUnUsedRecords<- x@dataUnUsedRecords[i,]
+				}
 			 return(x)
 })
 setMethod('[', signature(x=".unUsedRecordsStack"), function(x,i,j,...){
@@ -9,7 +13,7 @@ setMethod('[', signature(x=".unUsedRecordsStack"), function(x,i,j,...){
     x@trackIdUnUsedRecords <- droplevels(x@trackIdUnUsedRecords[i])
   }else{i<-T}
   if(missing(j))
-    j<-T
+    j<-rep(T, ncol(x@dataUnUsedRecords))
   callNextMethod(x=x,i=i,j=j,...)
 })
 setMethod("[", signature(x=".MoveTrack"), function(x, i, j, ...) {

@@ -14,7 +14,7 @@ setMethod(f = "split",
 				    spdf,
 				    timestamps=x@timestamps[s],
 				    sensor=x@sensor[s])
-			  unUsedSub<-as(unUsed[unUsed@trackIdUnUsedRecords==ID,T],'.unUsedRecordsStack')
+			  unUsedSub<-as(unUsed[unUsed@trackIdUnUsedRecords==ID,],'.unUsedRecords')
 			  moveObj <- new(Class="Move", 
 					 mt,
 					 idData=x@idData[row.names(x@idData)==ID, ,drop=F],

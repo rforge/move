@@ -86,6 +86,8 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack",'.unUsedRecords'),
 			 stop("The dataset includes double timestamps first one:", object@timestamps[tmp][dups][1], ")")
 		 if(nrow(object@idData)>1)
 			 stop("More than 1 row are stored in the idData data.frame")
+		 if(any(levels(object@sensorUnUsedRecords)!=levels(object@sensor)))
+			 stop('Levels of unused records dont match with sensor')
 		 timestampsUnUsedDuplicated<-object@timestampsUnUsedRecords[object@timestampsUnUsedRecords %in% object@timestamps]
 		 if(length(timestampsUnUsedDuplicated)!=0)
 		 {
@@ -139,6 +141,10 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack", ".unUsedRecordsSt
 			 stop("No match between rownames in idData and ids along track")} 
 		 if(!all(unique(object@trackIdUnUsedRecords)%in%unique(object@trackId)))
 			 stop("There are records for individuals where no real records are present")
+		 if(any(levels(object@sensorUnUsedRecords)!=levels(object@sensor)))
+			 stop('Levels of unused records dont match with sensor')
+		 if(any(levels(object@trackIdUnUsedRecords)!=levels(object@trackId)))
+			 stop('Levels of unused records dont match with sensor')
 		 timestampsUnUsedDuplicated<-object@timestampsUnUsedRecords[object@timestampsUnUsedRecords %in% object@timestamps]
 		 if(length(timestampsUnUsedDuplicated)!=0)
 		 {

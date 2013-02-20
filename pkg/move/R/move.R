@@ -28,7 +28,7 @@ setMethod(f = "move",
 			  v<-df$visible=='false'
 		  }else{
 			  v<-F
-	  }
+	  	  }
 		  unUsed<-is.na(df$location.long)|is.na(df$location.lat)|v| is.na(df$individual.local.identifier)| df$individual.local.identifier==''
 		  sensor<-df$sensor.type
 		  timestamps<-df$timestamp
@@ -44,6 +44,7 @@ setMethod(f = "move",
 		  proj4string(df)<-CRS("+proj=longlat +ellps=WGS84 +datum=WGS84")
 
 		  track<-new('.MoveTrack', df, timestamps=timestamps[!unUsed], sensor=sensor[!unUsed], idData=idData)
+
 		  unUsedRecords<-new('.unUsedRecords', dataUnUsedRecords=unUsedDf, timestampsUnUsedRecords=timestamps[unUsed], sensorUnUsedRecords=sensor[unUsed])
 		  if(nrow(idData)!=1){
 			  unUsedRecords<-new('.unUsedRecordsStack', unUsedRecords, trackIdUnUsedRecords=individual.local.identifier[unUsed])
@@ -120,22 +121,27 @@ setMethod(f = ".move",
 						data = data, 
 						proj4string = proj,
 						match.ID = TRUE)
+		  df$sensor<-factor(df$sensor)
 
 		  if (length(ids)==1){
 			  res <- new("Move", 
 				     timestamps = df$timestamp, 
-				     sensor = factor(df$sensor),
+				     sensor = df$sensor,
+				     sensorUnUsedRecords=factor(levels=levels(df$sensor)),
 				     tmp, 
 				     citation = citations,
 				     idData = idData
 				     )
 		  } else {
+trackId<-factor(df$individual.local.identifier)
 			  res <- new("MoveStack", 
 				     tmp, 
 				     idData = idData,
-				     sensor = factor(df$sensor),
+				     sensor = df$sensor,
+				     sensorUnUsedRecords=factor(levels=levels(df$sensor)),
 				     timestamps = df$timestamp, 
 				     citation = citations,
-				     trackId = factor(df$individual.local.identifier))}
+				     trackId = trackId,
+				     trackIdUnUsedRecords=factor(levels=levels(trackId)))}
 		  return(res)
 	  })
