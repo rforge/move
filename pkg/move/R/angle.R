@@ -30,10 +30,8 @@ setMethod("angle",
             if(nrow(coordinates(x))>=3){
               if(!require(geosphere))
                 stop("You need to install the geosphere package to proceed")
-              if (!require(circular)) 
-                stop("You need to install the circular package to proceed") #var.circular
-              if (!grepl("longlat",proj4string(x))) x <- spTransform(x, CRSobj="+proj=longlat")
-              tAzimuth <- bearing(coordinates(x)[-n.locs(x), ], coordinates(x)[-1, ])
+              if (!isLonLat(x)) x <- spTransform(x, CRSobj="+proj=longlat")
+              tAzimuth <- geosphere::bearing(coordinates(x)[-n.locs(x), ], coordinates(x)[-1, ])
               return(tAzimuth)} else {NA}
           })
 
