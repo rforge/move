@@ -13,7 +13,7 @@ setMethod("lines", ".MoveTrackStack", function(x,col=NA,...){
 				 y0=coords[-nrow(coords),2], 
 				 x1=coords[-1,1], 
 				 y1=coords[-1,2], 
-				 col=col[x@trackId==Id], ...)}, ...)
+				 col=col[x@trackId==Id], ...)},x=x, ...)
 })
 
 setMethod("lines", ".MoveTrackSingleBurst", function(x,col=NA,...){

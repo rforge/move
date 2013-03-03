@@ -37,4 +37,11 @@ setMethod('unUsedRecords<-', c(obj='.MoveTrackStack', value='logical'), function
 	  new(class(obj),  unUsedNew, xNew)
 })
 
+setGeneric('unUsedRecords', function(obj,...){standardGeneric('unUsedRecords')})
+setMethod('unUsedRecords', c(obj='.unUsedRecordsStack'), function(obj, ...){
+	  as(obj, '.unUsedRecordsStack')
+})
+setMethod('unUsedRecords', c(obj='.unUsedRecords'), function(obj, ...){
+	  as(obj, '.unUsedRecords')
+})
 

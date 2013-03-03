@@ -4,6 +4,7 @@
 \alias{show,Move-method}
 \alias{show,MoveStack-method}
 \alias{show,MoveBurst-method}
+\alias{show,.unUsedRecords-method}
 \alias{show,dBMvariance-method}
 \alias{show,dBMvarianceTmp-method}
 \alias{show,.MoveTrack-method}

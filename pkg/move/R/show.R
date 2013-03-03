@@ -2,3 +2,6 @@
 setMethod("show", ".MoveTrack", function(object){
 	   print(object) 
 	 })
+setMethod("show", ".unUsedRecords", function(object){
+	   print(object) 
+	 })
