@@ -11,5 +11,7 @@ test.moveStack<-function()
 	bb@idData<-b@idData
 	#need to make sure the results are more equal
 	checkEquals(b, bb)
+	checkEquals(s[['j']], split(s)[['j']]) 
+	
 
 }
