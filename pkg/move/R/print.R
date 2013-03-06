@@ -45,7 +45,7 @@ setMethod("print", "MoveStack", function(x){
 })
 setMethod("print",".MoveTrackSingleBurst", function(x){
 	  callNextMethod()
-	  cat("bursts      :",paste(as.character(unique(x@burstId)), collapse=", "),"\n")
+	  cat("bursts      :", paste(levels(x@burstId),': ',unlist(lapply(lapply(levels(x@burstId), '==', x@burstId), sum)), sep='', collapse=', '),"\n")
 })
 setMethod("print",".MoveGeneral", function(x){
 	  if(length(x@license)!=0)
