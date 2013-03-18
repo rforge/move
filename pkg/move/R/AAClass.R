@@ -144,7 +144,7 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack", ".unUsedRecordsSt
 		 if(any(levels(object@sensorUnUsedRecords)!=levels(object@sensor)))
 			 stop('Levels of unused records dont match with sensor')
 		 if(any(levels(object@trackIdUnUsedRecords)!=levels(object@trackId)))
-			 stop('Levels of unused records dont match with sensor')
+			 stop('Levels of unused records dont match with trackId')
 		 timestampsUnUsedDuplicated<-object@timestampsUnUsedRecords[object@timestampsUnUsedRecords %in% object@timestamps]
 		 if(length(timestampsUnUsedDuplicated)!=0)
 		 {

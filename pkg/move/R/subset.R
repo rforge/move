@@ -35,10 +35,15 @@ setMethod("[",
           definition=function(x,i,j,...){
             if(!missing(i)){
               x@trackId=droplevels(x@trackId[i])
-              x@idData=x@idData[levels(x@trackId),, drop=F]}else{i<-T}
+              x@idData=x@idData[levels(x@trackId),, drop=F]
+	    }else{i<-T}
             if(missing(j))
               j<-T
-            callNextMethod(x=x,i=i,j=j,...)
+            x<-callNextMethod(x=x,i=i,j=j,...)
+	      u<-unUsedRecords(x)
+	      u<-u[u@trackIdUnUsedRecords%in% levels(x@trackId),]
+	      u@trackIdUnUsedRecords<-factor(as.character(u@trackIdUnUsedRecords), levels=levels(x@trackId))
+	      new(class(x),u,x)
           })
 
 setMethod("[", signature(x="dBMvarianceStack"), function(x, i, j, ...) {
