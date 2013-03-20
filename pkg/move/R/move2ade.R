@@ -20,9 +20,13 @@ if(!isClass("ltraj"))
 
 
 setAs("Move", "ltraj", function(from){
+      if(isLonLat(from))
+	      warning('Converting a long lat projected object while the ltraj does not deal with long lat projected data')
       adehabitatLT::as.ltraj(as.data.frame(coordinates(from)),date=timestamps(from), id=rownames(from@idData), typeII=T, infolocs=data.frame(sensor=from@sensor,from@data))
 })
 setAs("MoveStack", "ltraj", function(from){
+      if(isLonLat(from))
+	      warning('Converting a long lat projected object while the ltraj does not deal with long lat projected data')
       adehabitatLT::as.ltraj(as.data.frame(coordinates(from)),date=timestamps(from), id=from@trackId, typeII=T, infolocs=data.frame(sensor=from@sensor,from@data))
 })
 
