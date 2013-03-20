@@ -5,7 +5,7 @@
 \alias{unUsedRecords<-,.MoveTrackSingle,logical-method}
 \alias{unUsedRecords<-,.MoveTrackStack,logical-method}
 \alias{unUsedRecords,.unUsedRecords-method}
-\alias{unUsedRecords,.unUsedRunUsedRecordsStack-method}
+\alias{unUsedRecords,.unUsedRecordsStack-method}
 
 \title{Creates unused records data}
 
@@ -16,13 +16,14 @@
 \usage{
   \S4method{unUsedRecords}{.MoveTrackSingle,logical}(obj) <- value
   \S4method{unUsedRecords}{.MoveTrackStack,logical}(obj) <- value
-  \S4method{unUsedRecords}{.MoveTrackSingle}(obj)
-  \S4method{unUsedRecords}{.MoveTrackStack}(obj)
+  \S4method{unUsedRecords}{.unUsedRecords}(obj,...)
+  \S4method{unUsedRecords}{.unUsedRecordsStack}(obj,...)
 }
 
 \arguments{
   \item{obj}{a Move or MoveStack object}
   \item{value}{A logical vector of the same length as the number of locations}
+  \item{...}{Not used at the moment}
 }
 \examples{
 data <- move(system.file("extdata","leroy.csv.gz",package="move"))

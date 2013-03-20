@@ -13,3 +13,42 @@ setMethod("move2ade",
                                    data=data.frame(rep(rownames(x@idData), apply(data.frame(rownames(x@idData)), MARGIN=1, function(z) sum(z==as.character(x@trackId)))) )) 
             })
 
+
+# define ltrajs when neede
+if(!isClass("ltraj"))
+    setClass("ltraj")
+
+
+setAs("Move", "ltraj", function(from){
+      adehabitatLT::as.ltraj(as.data.frame(coordinates(from)),date=timestamps(from), id=rownames(from@idData), typeII=T, infolocs=data.frame(sensor=from@sensor,from@data))
+})
+setAs("MoveStack", "ltraj", function(from){
+      adehabitatLT::as.ltraj(as.data.frame(coordinates(from)),date=timestamps(from), id=from@trackId, typeII=T, infolocs=data.frame(sensor=from@sensor,from@data))
+})
+
+setAs("ltraj", "Move", function(from) {
+    if (!inherits(from, "ltraj"))
+        stop("from should be of class \"ltraj\"")
+    if(length(from)!=1)
+	    stop("Can only convert one individual to a move object")
+    if(!attr(from,"typeII"))
+	    stop('Can only work on typeII objects')
+    spdf<-adehabitat::ltraj2spdf(from)
+    new("Move",data=(attr(from[[1]],'infolocs')), spdf, sensor=rep(factor("unknown"), nrow(spdf)), timestamps=spdf$date, idData=data.frame(row.names=paste0(attr(from[[1]], 'id'),'_', attr(from[[1]],'id')),burst=attr(from[[1]],'burst'), id=attr(from[[1]],'id')))
+
+
+})
+
+setAs("ltraj", "MoveStack", function(from) {
+    if (!inherits(from, "ltraj"))
+        stop("from should be of class \"ltraj\"")
+    res<-list()
+    for(i in 1:length(from))
+    {
+	    res[[i]]<-as(from[i], 'Move')
+    }
+    moveStack(res)
+
+
+})
+

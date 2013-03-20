@@ -12,11 +12,12 @@
 
 \usage{
   \S4method{time.lag}{.MoveTrackSingle}(x,...)
-  \S4method{time.lag}{.MoveTrackStack}(x,...)
+  \S4method{time.lag}{.MoveTrackStack}(x,units, ...)
 }
 
 \arguments{
   \item{x}{a Move or MoveStack object}
+  \item{units}{The units used for the conversion, they need to be specified for a stack to ensure similair units between individuals}
   \item{...}{further arguments}
 }
 

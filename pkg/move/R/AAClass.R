@@ -86,6 +86,8 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack",'.unUsedRecords'),
 			 stop("The dataset includes double timestamps first one:", object@timestamps[tmp][dups][1], ")")
 		 if(nrow(object@idData)>1)
 			 stop("More than 1 row are stored in the idData data.frame")
+		 if(nrow(object@idData)<1)
+			 stop("Less than 1 row are stored in the idData data.frame")
 		 if(any(levels(object@sensorUnUsedRecords)!=levels(object@sensor)))
 			 stop('Levels of unused records dont match with sensor')
 		 timestampsUnUsedDuplicated<-object@timestampsUnUsedRecords[object@timestampsUnUsedRecords %in% object@timestamps]

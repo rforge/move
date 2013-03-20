@@ -1,7 +1,7 @@
 Package: move
 Type: Package
 Title: Visualizing and analyzing animal track data
-Version: 1.1.360
+Version: 1.1.376
 Date: 2013-01-28
 Author: Bart Kranstauber <bart.kranstauber@uni-konstanz.de>, Marco Smolla <msmolla@orn.mpg.de>
 Maintainer: Marco Smolla <msmolla@orn.mpg.de>
@@ -10,4 +10,4 @@ License: GPL (>=3)
 URL: http://computational-ecology.com/main-move.html
 LazyLoad: yes
 Depends: sp, raster, rgdal, methods, geosphere, R (>= 2.14.0)
-Suggests: RCurl, RUnit, adehabitatHR, circular, ggmap, mapproj, maptools
+Suggests: RCurl, RUnit, adehabitatHR, adehabitatLT, circular, ggmap, mapproj, maptools
