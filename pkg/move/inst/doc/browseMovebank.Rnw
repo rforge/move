@@ -69,7 +69,7 @@ You may rather use the search term without the first letter 'oose' instead of 'G
 All of the here presented studies can work with the study ID or the study name to find information within the database. If you rather want to work with the short study ID instead of the longer study name use \fct{getMovebankID}.
 
 <<getMovebankID, results=hide>>=
-#getMovebankID(x="BCI Ocelot",login=curl)
+#getMovebankID("BCI Ocelot",login=curl)
 #> 123413
 @
 
@@ -83,13 +83,13 @@ You found a study you are interested in, let's say 'BCI Ocelot'. To get more inf
 If you want to know, which sensor types were used in this study you can use:
 
 <<getMovebankSensors, results=hide>>=
-#getMovebankSensors(x="BCI Ocelot",login=curl)
+#getMovebankSensors("BCI Ocelot",login=curl)
 @
 
 To see all available sensor types on Movebank use the same function without specifying x (\texttt{getMovebankSensors(,login=curl)}). Which attributes are available for the particular sensor you get listed if you use:
 
 <<getMovebankSensorsAttributes, results=hide>>=
-#getMovebankSensorsAttributes(x="BCI Ocelot",login=curl)
+#getMovebankSensorsAttributes("BCI Ocelot",login=curl)
 @
 
 A list of the animals, their tags and IDs within this study is returned with this command:

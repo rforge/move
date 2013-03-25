@@ -46,8 +46,15 @@ setClass(Class='.unUsedRecordsStack',contains='.unUsedRecords',# maybe at somest
 			       trackIdUnUsedRecords=factor()
 			       ),
 	 validity = function(object){
+
 		 if(length(object@trackIdUnUsedRecords)!=nrow(object@dataUnUsedRecords))
 			 stop("TrackId and data length for unused records do not match")
+		 if(length(object@timestampsUnUsedRecords)>0)
+		 if(!all(unlist(tapply(object@timestampsUnUsedRecords, list(object@trackIdUnUsedRecords, object@sensorUnUsedRecords),diff))>0))
+		 {
+			 tmp<-duplicated(cbind(object@timestampsUnUsedRecords, object@trackIdUnUsedRecords, object@sensorUnUsedRecords))# made new test in check for higher speed but have this one still here for more clear reporting
+			 stop("The data set includes double timestamps per ID in the unused records (first one:", object@trackIdUnUsedRecords[tmp][1]," ",object@sensorUnUsedRecords[tmp][1]," ",object@timestampsUnUsedRecords[tmp][1], ")")
+		 }
 		 return(TRUE)
 	 }
 	 )
@@ -151,7 +158,7 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack", ".unUsedRecordsSt
 		 if(length(timestampsUnUsedDuplicated)!=0)
 		 {
 		 s<-c(object@timestamps, object@timestampsUnUsedRecords)%in% timestampsUnUsedDuplicated
-		 	if (any(dups <- duplicated(cbind(
+		 	if (any(dups <- duplicated(t<-cbind(
 							  format(c(object@timestamps, object@timestampsUnUsedRecords)[s],"%Y %m %d %H %M %OS4"), 
 							  c(as.character(object@sensor), as.character(object@sensorUnUsedRecords))[s], 
 							  c(as.character(object@trackId),as.character( object@trackIdUnUsedRecords))[s]))))

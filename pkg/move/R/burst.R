@@ -52,3 +52,12 @@ setAs("MoveBurst", "Move", function(from) {
           as(from,".MoveGeneral"), 
           as(from,".MoveTrackSingle"))
     }) 
+setAs("MoveStack", "Move", function(from) {
+# last id can be different since that one is not telling anything about a segment in this obj
+      if (length(unique(from@trackId)) != 1) 
+        stop("Does only work with one id")
+      new("Move", 
+          as(from,".MoveGeneral"), 
+          as(from,".MoveTrack"),timestamps=timestamps(from), as(unUsedRecords(from),'.unUsedRecords')
+	  )
+    }) 
