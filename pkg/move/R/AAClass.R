@@ -74,8 +74,12 @@ setClass(Class = ".MoveTrack",contains=c("SpatialPointsDataFrame"),
 	 validity = function(object){
 		 if(length(object@timestamps)!=nrow(object@coords))
 			 stop("Number of timestamps does not match the number of coordinates")
+		 if(any(is.na(object@timestamps)))
+			 stop("There are NA timestamps records")
 		 if(length(object@sensor)!=nrow(object@coords))
 			 stop("Number of sensors observations does not match the number of coordinates")
+		 if(any(is.na(object@sensor)))
+			 stop("There are NA sensor records")
 		 return(TRUE)
 	 }
 	 )
@@ -143,9 +147,11 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack", ".unUsedRecordsSt
 		 if(any(unlist(lapply(tapply(object@timestamps,object@trackId, order),diff))!=1))
 			 stop("Not ordered timestamps per individual occured")
 		 if(any(levels(object@trackId)!=raster:::.goodNames(levels(object@trackId))))
-			 stop('no good names')
+			 stop('No good names for trackId levels')
 		 if(length(unique(object@trackId))!=nrow(object@idData))
 			 stop("Not same number of unique IDs and rows in the idData data.frame")
+		 if(any(is.na(object@trackId)))
+			 stop("There are NA trackId records")
 		 if(any(sort(as.character(unique(object@trackId)))!=sort(unique(rownames(object@idData))))){
 			 stop("No match between rownames in idData and ids along track")} 
 		 if(!all(unique(object@trackIdUnUsedRecords)%in%unique(object@trackId)))
