@@ -27,7 +27,7 @@
 \author{Marco Smolla}
 
 \value{
-  For objects that are longlat projected (see ?proj4string) the returned values are in meters per second.
+	 The function returns the speed in m/s if the track is longlat else map units per second. In most cases the map units will also be meters. 
 }
 
 \examples{

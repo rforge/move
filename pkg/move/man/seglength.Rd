@@ -22,7 +22,7 @@
 }
 
 \value{
-  If the SptialPointsDataFrame is projected in longitude latitude coordinates, the returned values are in kilometer. If not, the distances are calculated with the Pythagoras' theorem and the distances are Euclidean distances in map units.
+  If the SpatialPointsDataFrame is projected in longitude latitude coordinates, the returned values are in meters. If not, the distances are calculated with the Pythagoras' theorem and the distances are Euclidean distances in map units.
 }
 
 \author{Marco Smolla}

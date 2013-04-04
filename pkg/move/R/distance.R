@@ -31,10 +31,9 @@ setMethod("distanceSummary",
 setMethod("distance", 
           signature=".MoveTrackSingle",
           definition=function(x){ 
-            track <- coordinates(x)
-            if(nrow(track)>2){
+ #           if(n.locs(track)>2){
               Dists <- seglength(x) #vector of all distances in km IF PROJECTION IS LONLAT!!!
-              } else {Dists <- NA}#{warning("Two or less locations.")}
+#              } else {Dists <- NA}#{warning("Two or less locations.")}
             return(Dists)
           })
 
