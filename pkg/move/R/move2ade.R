@@ -37,7 +37,7 @@ setAs("ltraj", "Move", function(from) {
 	    stop("Can only convert one individual to a move object")
     if(!attr(from,"typeII"))
 	    stop('Can only work on typeII objects')
-    spdf<-adehabitat::ltraj2spdf(from)
+    spdf<-adehabitatLT::ltraj2spdf(from)
     new("Move",data=(attr(from[[1]],'infolocs')), spdf, sensor=rep(factor("unknown"), nrow(spdf)), timestamps=spdf$date, idData=data.frame(row.names=paste0(attr(from[[1]], 'id'),'_', attr(from[[1]],'id')),burst=attr(from[[1]],'burst'), id=attr(from[[1]],'id')))
 
 

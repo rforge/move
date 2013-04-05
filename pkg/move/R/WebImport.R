@@ -275,7 +275,7 @@ setMethod(f="getMovebankData",
 		  spdf<-SpatialPointsDataFrame(trackDF[!outliers,c('location_long','location_lat')], data=trackDF[!outliers,], proj4string=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"), match.ID=T)
 		  if(any(duplicated(new$local_identifier)))
 			  new$local_identifier<-paste0(new$local_identifier,'_', new$id)
-		  rownames(new)<-new$local_identifier
+		  rownames(new)<-raster:::.goodNames(new$local_identifier)
 		  id<-paste(format(trackDF$timestamp,"%Y %m %d %H %M %OS4"),trackDF$deployment_id, trackDF$sensor_type_id)
 		  if(any(s<-id[outliers]%in%id[!outliers]))
 		  {
@@ -289,7 +289,7 @@ setMethod(f="getMovebankData",
 		  }
 		  name<-b$name
 		  names(name)<-b$id
-		  local_identifier<-new$local_identifier
+		  local_identifier<-factor(rownames(new))
 		  names(local_identifier)<-new$id
 
 		  res<-new("MoveStack", spdf, timestamps=spdf$timestamp, 
