@@ -1,5 +1,5 @@
 
-test.moveStack<-function()
+test.subSet<-function()
 {
 	a<-move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat'))
 	b<-move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat'),animal='b') 
@@ -10,6 +10,7 @@ test.moveStack<-function()
 	rownames(bb@data)<-(1:10)
 	bb@idData<-b@idData
 	#need to make sure the results are more equal
+	attr(b@timestamps,"tzone")<-NULL
 	checkEquals(b, bb)
 	checkEquals(s[['j']], split(s)[['j']]) 
 	

@@ -1,10 +1,14 @@
 test.moveStack<-function()
 {
-	a<-move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat'))
-	b<-move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat'), 
+	at<-as.POSIXct(1:10, origin='1970-1-1',tz="GMT")
+	bt<-as.POSIXct(5+1:10, origin='1970-1-1',tz="GMT")       
+	attr(bt,'tzone')<-NULL
+	attr(at,'tzone')<-NULL
+	a<-move(x=1:10,y=1:10,time=at,proj=CRS('+proj=longlat'))
+	b<-move(x=1:10,y=1:10,time=bt,proj=CRS('+proj=longlat'), 
 		animal="a")
 	checkIdentical(coordinates(a), coordinates(b))
-#	DEACTIVATED("Need to look what we want here")
+	#	DEACTIVATED("Need to look what we want here")
 	bb<-split(d<-moveStack(list(a,b)))
 	aa<-list(unnamed=a,a=b)
 	row.names(aa[[2]])<-1:10
@@ -13,16 +17,16 @@ test.moveStack<-function()
 	checkEquals(bb,aa)# one problem seems to be moveStack does not deal with missed fixes, the other the rownames of the data frame
 	row.names(d@idData)<-sub('a','A A', row.names(d@idData))
 	checkException(new('MoveStack', d , trackId=factor(sub('a','A A', as.character(d@trackId))), idData=d@idData))# track ids are no good names
-  checkException(validObject(d))#validity check needs to fail because of changed rownames
-  
-	a<-move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat'),animal="AAA")
-	a2<-move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat'),animal="AAA")  
+	checkException(validObject(d))#validity check needs to fail because of changed rownames
+
+	a<-move(x=1:10,y=1:10,time=at,proj=CRS('+proj=longlat'),animal="AAA")
+	a2<-move(x=1:10,y=1:10,time=at,proj=CRS('+proj=longlat'),animal="AAA")  
 	tmp<-options(warn=2)$warn
 	checkException(moveStack(list(a,a2)))# warn about duplicate ids
 	options(warn=tmp)
-  
-  projection(a2) <- CRS(NA)
-  checkException(moveStack(list(a,a2,a2)))
+
+	projection(a2) <- CRS(NA)
+	checkException(moveStack(list(a,a2,a2)))
 	checkException(moveStack(list(a,a,a2)))
 	checkException(moveStack(list(a2,a2,a)))
 	checkException(moveStack(list(a,a2,a)))
