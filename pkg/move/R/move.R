@@ -4,7 +4,7 @@ setMethod(f = "move",
 	  definition = function(x){
 		  if(!file.exists(x))
 			  stop("x should be a file on disk but it cant be found")
-		  df <- read.csv(x, header=TRUE, sep=",", dec=".")
+		  df <- read.csv(x, header=TRUE, sep=",", dec=".", stringsAsFactors=T)
 
 		  if (!all(c("timestamp", "location.long",  "location.lat", "study.timezone", "study.local.timestamp", "sensor.type", "individual.local.identifier", "individual.taxon.canonical.name")%in%colnames(df)))
 			  stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
