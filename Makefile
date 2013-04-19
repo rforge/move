@@ -1,5 +1,5 @@
 build:
-	R CMD build --compact-vignettes pkg/move
+	GS_QUALITY=ebook R_GSCMD=gs R CMD build --compact-vignettes="both" pkg/move
 	
 clean:
 	move*.tar.gz
