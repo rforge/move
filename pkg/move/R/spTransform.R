@@ -20,7 +20,7 @@ setMethod(f = "spTransform",
               CRSobj <- CRS(paste(CRSobj@projargs," +lon_0=",mid.range.lon," +lat_0=", mid.range.lat, sep=""))
             } 
             
-            coordsnew <- spTransform.SpatialPointsDataFrame(x=x, CRSobj=CRSobj)
+            coordsnew <- spTransform(x=as(x,'SpatialPointsDataFrame'), CRSobj=CRSobj)
             x <- new(class(x), coordsnew,x )
             return(x)
           })
