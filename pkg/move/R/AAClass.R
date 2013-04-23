@@ -250,7 +250,7 @@ setClass(Class = ".UD", contains = c("RasterLayer"),
 			       method = as.character()), 
 	 validity = function(object) {
 		 if (!isTRUE(all.equal(tmp<-sum(values((object))), 1))) 
-			 stop("The used raster is not a UD (sum unequal to 1), sum is: ", sprintf("%.15f",tmp))
+			 stop("The used raster is not a UD (sum unequal to 1), sum is: ", sprintf("%.15f",tmp)," One possible cause is loss of accuracy due to writing raster to disk with dataType FLT4S this can be solved preventing disk usage or changing data type")
 		 return(TRUE)
 	 })
 
