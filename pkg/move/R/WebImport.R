@@ -64,8 +64,9 @@ setMethod(f="getMovebank",
 			  data <- read.csv(url, header=T, sep=",", as.is=T)
 		  }
 		  if(grepl(pattern="You.may.only.download.it.if.you.agree.with.the.terms", x=names(data)[1])) stop("You need a permission to access this data set. Go to www.movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
-		  if (grepl(pattern="X.html..head..title.Apache.Tomcat", capture.output(data)[1])==TRUE) stop("It looks like you are not allowed to download this data set.")
-		  if (grepl(pattern="are.not.available.for.download", capture.output(data)[1])==TRUE) stop("You have no permission to download this data set.")
+		  if (grepl(pattern="X.html..head..title.Apache.Tomcat", capture.output(data)[1])) stop("It looks like you are not allowed to download this data set.")
+		  if (grepl(pattern="are.not.available.for.download", capture.output(data)[1])) stop("You have no permission to download this data set.")
+		  if (any(grepl(pattern="503 Service Temporarily Unavailable", unlist(head(data))))) stop("Movebank is (temporarily) unavailable")
 		  return(data)
 	  })
 
