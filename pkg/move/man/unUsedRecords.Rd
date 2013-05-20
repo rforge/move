@@ -1,4 +1,4 @@
-\name{'unUsedRecords<-'}
+\name{unUsedRecords<-}
 
 \alias{unUsedRecords<-}
 \alias{unUsedRecords}

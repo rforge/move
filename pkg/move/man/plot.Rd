@@ -12,15 +12,16 @@
 \description{Function for plotting a recorded track from a Move object or the probability values from a DBBMM object}
 
 \usage{
-  \S4method{plot}{.MoveTrackSingle,missing}(x, y,...)
-  \S4method{plot}{.MoveTrackStack,missing}(x, y, type="p", ...)
-  \S4method{plot}{.MoveTrackSingleBurst,missing}(x, y, type="p", ...)
+  \S4method{plot}{.MoveTrackSingle,missing}(x, y,asp=1, ...)
+  \S4method{plot}{.MoveTrackStack,missing}(x, y, type="p",asp=1,  ...)
+  \S4method{plot}{.MoveTrackSingleBurst,missing}(x, y, type="p",asp=1,  ...)
 }
 
 \arguments{
   \item{x}{Move, MoveStack, MoveBurst or DBBMM object}
   \item{y}{unused variable (listed for compatibility reasons)}
   \item{type}{defines the type of the plot (e.g. 'l', 'p', 'b', 'o')}
+  \item{asp}{defines the aspect ratio of the plot generally 1 makes most / only sense since then x and y dimenstions are the same}
   %\item{col}{specifies color. For Movestacks default is NA (R colors are used). It can also be a vector wich is as long as the number of tracks or coordinates}
   \item{...}{arguments to be passed to methods, such as graphical parameters, and the logical add argument (see \code{\link{par}})}
 }
