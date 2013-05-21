@@ -3,7 +3,7 @@ setAs(".MoveTrack","data.frame", function(from){
       return(data.frame(
 			data.frame(from), sensor=from@sensor, timestamps=from@timestamps))
 })
-setAs('.MoveTrackSinge','data.frame', function(from){
+setAs('.MoveTrackSingle','data.frame', function(from){
       return(data.frame(as(as(from,'.MoveTrack'), 'data.frame'), from@idData))
 })
 setAs(".MoveTrackSingleBurst","data.frame", function(from){t<-from@burstId

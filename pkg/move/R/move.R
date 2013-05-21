@@ -6,8 +6,16 @@ setMethod(f = "move",
 			  stop("x should be a file on disk but it cant be found")
 		  df <- read.csv(x, header=TRUE, sep=",", dec=".", stringsAsFactors=T)
 
-		  if (!all(c("timestamp", "location.long",  "location.lat", "study.timezone", "study.local.timestamp", "sensor.type", "individual.local.identifier", "individual.taxon.canonical.name")%in%colnames(df)))
+		  if (!all(c("timestamp", 
+			     "location.long",  
+			     "location.lat", 
+			     "study.timezone", 
+			     "study.local.timestamp", 
+			     "sensor.type", 
+			     "individual.local.identifier", 
+			     "individual.taxon.canonical.name")%in%colnames(df))){
 			  stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
+		  }
 
 		  if(any(dups<-duplicated( do.call('paste',c(df[duplicated(df$timestamp)|duplicated(df$timestamp, fromLast=T),names(df)!="event.id"], list(sep="__")))))){#first find atleast the ones where the timestamp (factor) is duplicated
 			  warning("Exact duplicate records removed (n=",sum(dups),") (movebank allows them but the move package can't deal with them)")
@@ -28,7 +36,7 @@ setMethod(f = "move",
 			  v<-df$visible=='false'
 		  }else{
 			  v<-F
-	  	  }
+		  }
 		  unUsed<-is.na(df$location.long)|is.na(df$location.lat)|v| is.na(df$individual.local.identifier)| df$individual.local.identifier==''
 		  sensor<-df$sensor.type
 		  timestamps<-df$timestamp
@@ -38,17 +46,26 @@ setMethod(f = "move",
 		  rownames(idData)<-idData$individual.local.identifier
 		  df<-df[,!(names(df)%in%unique(c('sensor.type','timestamps', colnames(idData))))]
 		  unUsedDf<-df[unUsed,]
+		  unUsedRecords<-new('.unUsedRecords', dataUnUsedRecords=unUsedDf, timestampsUnUsedRecords=timestamps[unUsed], sensorUnUsedRecords=sensor[unUsed])
+		  if(stk<-nrow(idData)!=1){
+			  unUsedRecords<-new('.unUsedRecordsStack', unUsedRecords, trackIdUnUsedRecords=individual.local.identifier[unUsed])
+		  }
+		  if(any(s<-!(rownames(idData) %in% as.character(unique(individual.local.identifier[!unUsed])))))
+		  {
+			  warning('omiting ',sum(s),' individual(s) because they do not have observation data')
+			  unUsedRecords<-unUsedRecords[(as.character(unUsedRecords@trackIdUnUsedRecords) %in% rownames(idData)[!s]),]
+			  unUsedRecords@trackIdUnUsedRecords<-factor(unUsedRecords@trackIdUnUsedRecords)
+			  idData<-idData[!s,]
+		  }
+
 		  df<-df[!unUsed,]
 		  coordinates(df)<- ~location.long+location.lat
-
 		  proj4string(df)<-CRS("+proj=longlat +ellps=WGS84 +datum=WGS84")
 
 		  track<-new('.MoveTrack', df, timestamps=timestamps[!unUsed], sensor=sensor[!unUsed], idData=idData)
 
-		  unUsedRecords<-new('.unUsedRecords', dataUnUsedRecords=unUsedDf, timestampsUnUsedRecords=timestamps[unUsed], sensorUnUsedRecords=sensor[unUsed])
-		  if(nrow(idData)!=1){
-			  unUsedRecords<-new('.unUsedRecordsStack', unUsedRecords, trackIdUnUsedRecords=individual.local.identifier[unUsed])
-			  return(new('MoveStack', track, unUsedRecords, trackId=individual.local.identifier[!unUsed]))
+		  if(stk){
+			  return(new('MoveStack', track, unUsedRecords, trackId=factor(individual.local.identifier[!unUsed])))
 		  }else{
 			  return(new('Move',track, unUsedRecords))
 		  }
@@ -86,7 +103,7 @@ setMethod(f = ".move",
 		  }
 		  df$individual.local.identifier<-factor(df$individual.local.identifier)
 		  levels(df$individual.local.identifier) <- raster:::.goodNames(levels(factor(df$individual.local.identifier))) #changing names to 'goodNames' skipping spaces
-		
+
 		  if(length(unique(df$individual.local.identifier))>1 & any(unique(as.character(df$individual.local.identifier))==""))
 		  {
 			  warning("Omitting locations that have an empty local identifier (n=",sum(tmp<-as.character(df$individual.local.identifier)==""),"). Most likely the tag was not deployed") 
@@ -133,7 +150,7 @@ setMethod(f = ".move",
 				     idData = idData
 				     )
 		  } else {
-trackId<-factor(df$individual.local.identifier)
+			  trackId<-factor(df$individual.local.identifier)
 			  res <- new("MoveStack", 
 				     tmp, 
 				     idData = idData,
