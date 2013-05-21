@@ -8,12 +8,21 @@ setMethod("lines", ".MoveTrackStack", function(x,col=NA,...){
 		  col <- 1:length(unique(x@trackId))
 	  if(all(length(col)!=length(x@trackId)-1))
 		  col <- col[as.numeric(x@trackId)] # needs to correspond to points function
-	  res <- lapply(levels(x@trackId), function(Id, x, ...) {coords <- coordinates(x)[x@trackId==Id,] 
+	  s<-summary(x@trackId)
+	  if(any(s==1))
+	  {
+		  warning('There are/is ',sum(s==1),' individual(s) with only one location for those no line is ploted')
+		  s<-s[s!=1]
+
+	  }
+	  res <- lapply(names(s), function(Id, x, ...) {
+			coords <- coordinates(x)[x@trackId==Id,] 
 			segments(x0=coords[-nrow(coords),1], 
 				 y0=coords[-nrow(coords),2], 
 				 x1=coords[-1,1], 
 				 y1=coords[-1,2], 
-				 col=col[x@trackId==Id], ...)},x=x, ...)
+				 col=col[x@trackId==Id], ...)
+},x=x, ...)
 })
 
 setMethod("lines", ".MoveTrackSingleBurst", function(x,col=NA,...){
