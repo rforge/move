@@ -95,9 +95,9 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack",'.unUsedRecords'),
 		 tmp <- c(T, tmp==0)|c(tmp==0,T)#only check for those that have the same time if the sensor is different
 		 if (any(dups <- duplicated(data.frame(format(object@timestamps[tmp],"%Y %m %d %H %M %OS4"), object@sensor[tmp]))))
 			 stop("The dataset includes double timestamps first one:", object@timestamps[tmp][dups][1], ")")
-		 if(nrow(object@idData)>1)
+		 if(nrow(idData(object, drop=F))>1)
 			 stop("More than 1 row are stored in the idData data.frame")
-		 if(nrow(object@idData)<1)
+		 if(nrow(idData(object, drop=F))<1)
 			 stop("Less than 1 row are stored in the idData data.frame")
 		 if(any(levels(object@sensorUnUsedRecords)!=levels(object@sensor)))
 			 stop('Levels of unused records dont match with sensor')
@@ -171,6 +171,10 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack", ".unUsedRecordsSt
 				 stop("A timestamps of a unused record coincides with a normal timestamps")
 
 		 }
+		 if(sum(diff(as.numeric(object@trackId))!=0)!=(nrow(idData(object, drop=F))-1))
+			 stop('The data in the MoveStack object are not grouped per individual')
+		 if(any(as.character(unique(object@trackId))!= rownames(idData(object, drop=F))))
+			 stop('Order of objects in the idData is not the same as in the trackId')
 		 #this check cant work since coordinates columns are not present in data
 		# if(any(names(object@data)!=names(object@dataUnUsedRecords)))
 		#	 stop('names of data and unused data records dont match')

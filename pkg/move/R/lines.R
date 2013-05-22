@@ -6,8 +6,12 @@ setMethod("lines", ".MoveTrackSingle", function(x,...){
 setMethod("lines", ".MoveTrackStack", function(x,col=NA,...){
 	  if(any(is.na(col)))
 		  col <- 1:length(unique(x@trackId))
-	  if(all(length(col)!=length(x@trackId)-1))
-		  col <- col[as.numeric(x@trackId)] # needs to correspond to points function
+	  if(all(length(col)==length(unique(x@trackId))))
+		  col <- col[cumsum(c(1,diff(as.numeric(x@trackId))!=0))] # needs to correspond to points function
+	  if(length(col)==1)
+		  col<-rep(col, sum(n.locs(x)))
+	  if(sum(n.locs(x))!=(length(col)-1) &sum(n.locs(x))!=length(col) )
+		  stop('Number of colours does not match either the number of locations/ individuals or is one color')
 	  s<-summary(x@trackId)
 	  if(any(s==1))
 	  {
