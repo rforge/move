@@ -35,7 +35,7 @@ setMethod("[",
           definition=function(x,i,j,...){
             if(!missing(i)){
               x@trackId=droplevels(x@trackId[i])
-              x@idData=x@idData[levels(x@trackId),, drop=F]
+              x@idData=x@idData[as.character(unique(x@trackId)),, drop=F]
 	    }else{i<-T}
             if(missing(j))
               j<-T
