@@ -64,7 +64,7 @@ setMethod(f="getMovebank",
 			  data <- read.csv(url, header=T, sep=",", as.is=T)
 		  }
 		  if(grepl(pattern="You.may.only.download.it.if.you.agree.with.the.terms", x=names(data)[1])) stop("You need a permission to access this data set. Go to www.movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
-		  if (grepl(pattern="X.html..head..title.Apache.Tomcat", capture.output(data)[1])) stop("It looks like you are not allowed to download this data set.")
+		  if (grepl(pattern="X.html..head..title.Apache.Tomcat", capture.output(data)[1])) stop("It looks like you are not allowed to download this data set. Or there is a sensor for which no attributes are available.")
 		  if (grepl(pattern="are.not.available.for.download", capture.output(data)[1])) stop("You have no permission to download this data set.")
 		  if (any(grepl(pattern="503 Service Temporarily Unavailable", unlist(head(data))))) stop("Movebank is (temporarily) unavailable")
 		  return(data)
@@ -153,7 +153,8 @@ setMethod(f="getMovebankSensorsAttributes",
 	  definition = function(study,login){
 		  data <- getMovebank("sensor", login, tag_study_id=study)
 		  studySensors <- unique(data$sensor_type_id)
-		  data2 <- lapply(studySensors, function(y, login, study) getMovebank("study_attribute", login, study_id=study, sensor_type_id=y) ,login=login, study=study)
+		  data2 <- lapply(studySensors, function(y, login, study) {try(getMovebank("study_attribute", login, study_id=study, sensor_type_id=y), silent=T)} ,login=login, study=study)
+		  data2<-data2[(lapply(data2, class))!='try-error']
 		  #data2 <- getMovebank("study_attribute", login, study_id=study, sensor_type_id=studySensors[1])
 		  #            if(length(studySensors)>1){
 		  #             for (i in 2:length(studySensors)){ 
@@ -255,8 +256,8 @@ setMethod(f="getMovebankData",
 		  ##which track Data are important
 		  sensors <- getMovebankSensors(study=study, login=login)
 		  names(sensors)  <- c("sensor", "sensor_type_id", "tag_id") 
-		  new <- merge.data.frame(deploymentID, sensors, by.x="tag_id", by.y="tag_id") 
-		  new <- merge.data.frame(new, idData, by.x="individual_id", by.y="id")
+		  #		  new <- merge.data.frame(deploymentID, sensors, by.x="tag_id", by.y="tag_id") 
+		  new <- merge.data.frame(deploymentID, idData, by.x="individual_id", by.y="id")
 		  if (!all(is.na(animalName))) {
 			  new <- new[new$local_identifier%in%animalName, ]
 			  if(length(animalName)!=length(unique(new$individual_id))) stop("One or more animal names are spelled incorrectly.")
@@ -293,12 +294,20 @@ setMethod(f="getMovebankData",
 		  local_identifier<-factor(rownames(new))
 		  names(local_identifier)<-new$id
 
+		  new<-new[new$id %in% unique(spdf$deployment_id),]
+		  unUsed<-	  new('.unUsedRecordsStack', dataUnUsedRecords=trackDF[outliers,],timestampsUnUsedRecords=trackDF$timestamp[outliers], 
+					sensorUnUsedRecords= name[as.character(trackDF[outliers,'sensor_type_id'])],#, b, by.x='sensor_type_id', by.y='id')$name, 
+					trackIdUnUsedRecords=droplevels(local_identifier[as.character(trackDF[outliers,'deployment_id'])]))#, new, by.x='deployment_id', by.y='id')$local_identifier, 
+		  if(any(!(s<-unUsed@trackIdUnUsedRecords %in% local_identifier[unique(as.character(spdf$deployment_id))])))
+		  {
+			  warning('Omiting individual(s) (n=',length(unique(unUsed@trackIdUnUsedRecords[!s])), ') that have only unUsedRecords')
+			  unUsed<-unUsed[s,]
+			  unUsed@trackIdUnUsedRecords<-droplevels(unUsed@trackIdUnUsedRecords)
+		  }
 		  res<-new("MoveStack", spdf, timestamps=spdf$timestamp, 
-			   sensor=name[as.character(spdf$sensor_type_id)],#merge(data.frame(spdf[,'sensor_type_id',drop=F]), b, by.x='sensor_type_id', by.y='id')$name, 
-			   trackId=local_identifier[as.character(spdf$deployment_id)],#merge(data.frame(spdf[,'deployment_id',drop=F]), new, by.x='deployment_id', by.y='id')$local_identifier, 
-			   dataUnUsedRecords=trackDF[outliers,],timestampsUnUsedRecords=trackDF$timestamp[outliers], 
-			   sensorUnUsedRecords= name[as.character(trackDF[outliers,'sensor_type_id'])],#, b, by.x='sensor_type_id', by.y='id')$name, 
-			   trackIdUnUsedRecords=local_identifier[as.character(trackDF[outliers,'deployment_id'])],#, new, by.x='deployment_id', by.y='id')$local_identifier, 
+			   sensor=name[as.character(spdf$sensor_type_id)],
+			   trackId=droplevels(local_identifier[as.character(spdf$deployment_id)]),
+			   unUsed,
 			   idData=new)
 		  if(length(unique(res@trackId))==1)
 			  res<-as(res, 'Move')

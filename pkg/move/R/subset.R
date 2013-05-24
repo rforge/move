@@ -1,6 +1,6 @@
 setMethod('[', signature(x=".unUsedRecords"), function(x,i,j,...){
 			 x@timestampsUnUsedRecords<- x@timestampsUnUsedRecords[i]
-			 x@sensorUnUsedRecords<- x@sensorUnUsedRecords[i]
+			 x@sensorUnUsedRecords<- droplevels(x@sensorUnUsedRecords[i])
 			 if(length(j)){
 			 	x@dataUnUsedRecords<- x@dataUnUsedRecords[i,j]
 			}else{
