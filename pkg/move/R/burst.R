@@ -26,23 +26,12 @@ setMethod("burst",
             }
           })
 
-setMethod("[", 
-          signature(x = ".MoveTrackSingleBurst"), 
-          definition=function(x, i, j, ...) {
-            if (!missing(i)) {
-              tmp<- x@burstId[i]
-              x@burstId <-tmp[-length(tmp)]
-            } else {
-              i <- T
-            }
-            if (missing(j)) 
-              j <- T
-            if (class(i) == "character") 
-              stop("Not sure if these methods work for class character")
-            if (class(j) == "character") 
-              stop("Not sure if these methods work for class character")
-            callNextMethod(x = x, i = i, j = j, ...)
-          })
+setMethod('burst',
+	  signature=c(x='.MoveTrackSingleBurst', 'missing'),
+	  definition=function(x,f,...){
+		  return(slot(x,'burstId'))
+	  })
+
 
 setAs("MoveBurst", "Move", function(from) {
 # last id can be different since that one is not telling anything about a segment in this obj

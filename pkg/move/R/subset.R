@@ -64,6 +64,23 @@ setMethod("[", signature(x="dBMvariance"), function(x, i, j, ...) {
     j<-T
   callNextMethod(x=x,i=i,j=j,...)
 })
+setMethod("[", 
+          signature(x = ".MoveTrackSingleBurst"), 
+          definition=function(x, i, j, ...) {
+            if (!missing(i)) {
+              tmp<- x@burstId[i]
+              x@burstId <-tmp[-length(tmp)]
+            } else {
+              i <- T
+            }
+            if (missing(j)) 
+              j <- T
+            if (class(i) == "character") 
+              stop("Not sure if these methods work for class character")
+            if (class(j) == "character") 
+              stop("Not sure if these methods work for class character")
+            callNextMethod(x = x, i = i, j = j, ...)
+          })
 
 setMethod("[[", 
           signature(x=".MoveTrackStack", i='character', j='missing'),
