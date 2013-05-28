@@ -50,7 +50,7 @@ setClass(Class='.unUsedRecordsStack',contains='.unUsedRecords',# maybe at somest
 		 if(length(object@trackIdUnUsedRecords)!=nrow(object@dataUnUsedRecords))
 			 stop("TrackId and data length for unused records do not match")
 		 if(length(object@timestampsUnUsedRecords)>0)
-		 if(!all(unlist(tapply(object@timestampsUnUsedRecords, list(object@trackIdUnUsedRecords, object@sensorUnUsedRecords),diff))>0))
+		 if(!all(unlist(tapply(object@timestampsUnUsedRecords, list(object@trackIdUnUsedRecords, droplevels(object@sensorUnUsedRecords)),diff))>0))
 		 {
 			 tmp<-duplicated(cbind(object@timestampsUnUsedRecords, object@trackIdUnUsedRecords, object@sensorUnUsedRecords))# made new test in check for higher speed but have this one still here for more clear reporting
 			 stop("The data set includes double timestamps per ID in the unused records (first one:", object@trackIdUnUsedRecords[tmp][1]," ",object@sensorUnUsedRecords[tmp][1]," ",object@timestampsUnUsedRecords[tmp][1], ")")
@@ -99,7 +99,7 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack",'.unUsedRecords'),
 			 stop("More than 1 row are stored in the idData data.frame")
 		 if(nrow(idData(object, drop=F))<1)
 			 stop("Less than 1 row are stored in the idData data.frame")
-		 if(any(levels(object@sensorUnUsedRecords)!=levels(object@sensor)))
+		 if(!identical(levels(object@sensorUnUsedRecords),levels(object@sensor)))
 			 stop('Levels of unused records dont match with sensor')
 		 timestampsUnUsedDuplicated<-object@timestampsUnUsedRecords[object@timestampsUnUsedRecords %in% object@timestamps]
 		 if(length(timestampsUnUsedDuplicated)!=0)
@@ -156,9 +156,9 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack", ".unUsedRecordsSt
 			 stop("No match between rownames in idData and ids along track")} 
 		 if(!all(unique(object@trackIdUnUsedRecords)%in%unique(object@trackId)))
 			 stop("There are records for individuals where no real records are present")
-		 if(any(levels(object@sensorUnUsedRecords)!=levels(object@sensor)))
+		 if(!identical(levels(object@sensorUnUsedRecords),levels(object@sensor)))
 			 stop('Levels of unused records dont match with sensor')
-		 if(any(levels(object@trackIdUnUsedRecords)!=levels(object@trackId)))
+		 if(!identical(levels(object@trackIdUnUsedRecords),levels(object@trackId)))
 			 stop('Levels of unused records dont match with trackId')
 		 timestampsUnUsedDuplicated<-object@timestampsUnUsedRecords[object@timestampsUnUsedRecords %in% object@timestamps]
 		 if(length(timestampsUnUsedDuplicated)!=0)

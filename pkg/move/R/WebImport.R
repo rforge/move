@@ -260,7 +260,7 @@ setMethod(f="getMovebankData",
 		  new <- merge.data.frame(deploymentID, idData, by.x="individual_id", by.y="id")
 		  if (!all(is.na(animalName))) {
 			  new <- new[new$local_identifier%in%animalName, ]
-			  if(length(animalName)!=length(unique(new$individual_id))) stop("One or more animal names are spelled incorrectly.")
+			  if(length(animalName)!=length(unique(new$individual_id))) stop("One or more animal names are spelled incorrectly. Or the animal does not have a deployment.")
 		  }
 		  b <- getMovebank("tag_type", login=login)
 		  locSen <- b[as.logical(b$is_location_sensor),"id"] #reduce track to location only sensors & only the correct animals
@@ -274,6 +274,9 @@ setMethod(f="getMovebankData",
 			  outliers[trackDF$manually_marked_outlier=="true"]<-T
 			  outliers[trackDF$manually_marked_outlier=="false"]<-F
 		  }
+		  if(all(outliers))
+			  stop("There not observed records for this study/individual")
+
 		  spdf<-SpatialPointsDataFrame(trackDF[!outliers,c('location_long','location_lat')], data=trackDF[!outliers,], proj4string=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"), match.ID=T)
 		  if(any(duplicated(new$local_identifier)))
 			  new$local_identifier<-paste0(new$local_identifier,'_', new$id)

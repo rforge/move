@@ -1,6 +1,6 @@
 setMethod('[', signature(x=".unUsedRecords"), function(x,i,j,...){
 			 x@timestampsUnUsedRecords<- x@timestampsUnUsedRecords[i]
-			 x@sensorUnUsedRecords<- droplevels(x@sensorUnUsedRecords[i])
+			 x@sensorUnUsedRecords<- x@sensorUnUsedRecords[i]
 			 if(length(j)){
 			 	x@dataUnUsedRecords<- x@dataUnUsedRecords[i,j]
 			}else{
@@ -103,10 +103,7 @@ setMethod("[[",
 			  x <- new(Class="Move", 
 					 mt,
 					 idData=x@idData[row.names(x@idData)==i, ,drop=F],
-					 dateCreation=x@dateCreation,
-					 study=x@study,
-					 citation=x@citation,
-					 license=x@license,
+					 as(x,'.MoveGeneral'),
 					 unUsedSub)
 #            if(!missing(i)){
 #              x@trackId=droplevels(x@trackId[i])
