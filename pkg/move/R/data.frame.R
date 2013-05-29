@@ -4,8 +4,8 @@ setAs(".MoveTrack","data.frame", function(from){
 			data.frame(from), sensor=from@sensor, timestamps=from@timestamps))
 })
 setAs('.MoveTrackSingle','data.frame', function(from){
-      return(data.frame(as(as(from,'.MoveTrack'), 'data.frame'), from@idData))
-})
+      return(data.frame(as(as(from,'.MoveTrack'), 'data.frame'), from@idData[rep(1,n.locs(from)),]))
+})# rep the idDate because it causes trouble with a difftime object
 setAs(".MoveTrackSingleBurst","data.frame", function(from){t<-from@burstId
       t[n.locs(from)]<-NA
       return(data.frame(as(as(from,'.MoveTrack'),'data.frame'), burstId=t))

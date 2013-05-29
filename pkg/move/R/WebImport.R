@@ -41,12 +41,12 @@ setMethod(f="getMovebank",
 	  definition = function(entity_type, login, ...){
 		  tmp <- list(...)
 		  url <- paste("://www.movebank.org/movebank/service/direct-read?entity_type=",entity_type  ,sep="")
-		  try(if(any(names(tmp)=="id")&class(unlist(tmp['id']))=="character") 
-		      tmp['id'] <- getMovebankID(unlist(tmp['id']), login) ,silent=T)
-		  try(if(any(names(tmp)=="study_id")&class(unlist(tmp['study_id']))=="character") 
-		      tmp['study_id'] <- getMovebankID(unlist(tmp['study_id']), login) ,silent=T)
-		  try(if(any(names(tmp)=="tag_study_id")&class(unlist(tmp['tag_study_id']))=="character") 
-		      tmp['tag_study_id'] <- getMovebankID(unlist(tmp['tag_study_id']), login) ,silent=T)
+#		  try(if(any(names(tmp)=="id")&class(unlist(tmp['id']))=="character") 
+#		      tmp['id'] <- getMovebankID(unlist(tmp['id']), login) ,silent=T)
+	#	  try(if(any(names(tmp)=="study_id")&class(unlist(tmp['study_id']))=="character") 
+	#	      tmp['study_id'] <- getMovebankID(unlist(tmp['study_id']), login) ,silent=T)
+	#	  try(if(any(names(tmp)=="tag_study_id")&class(unlist(tmp['tag_study_id']))=="character") 
+	#	      tmp['tag_study_id'] <- getMovebankID(unlist(tmp['tag_study_id']), login) ,silent=T)
 		  if(length(tmp)!=0){
 			  tmp <- lapply(tmp, paste, collapse='%2C')
 			  url <- paste(url, sep="&",paste(names(tmp),tmp, collapse="&", sep="="))
@@ -134,12 +134,17 @@ setMethod(f="getMovebankSensors",
 	  signature=c(study="missing",login="MovebankLogin"), 
 	  definition = function(study,login){
 		  data <- getMovebank("tag_type", login)
-		  #cat("##### LIST OF ALL SENSOR TYPES IN MOVEBANK #####\n")
 		  return(data)
 	  })
 
 setMethod(f="getMovebankSensors", 
-	  signature=c(study="ANY",login="MovebankLogin"), 
+	  signature=c(study="character",login="MovebankLogin"), 
+	  definition = function(study,login){      
+		  study <- getMovebankID(study, login)
+		  callGeneric()
+	  })
+setMethod(f="getMovebankSensors", 
+	  signature=c(study="numeric",login="MovebankLogin"), 
 	  definition = function(study,login){      
 		  data <- getMovebank("sensor", login, tag_study_id=study)
 		  return(data)
@@ -149,7 +154,13 @@ setMethod(f="getMovebankSensors",
 
 setGeneric("getMovebankSensorsAttributes", function(study, login) standardGeneric("getMovebankSensorsAttributes"))
 setMethod(f="getMovebankSensorsAttributes", 
-	  signature=c(study="ANY",login="MovebankLogin"), 
+	  signature=c(study="character",login="MovebankLogin"), 
+	  definition = function(study,login){
+		  study<-getMovebankID(study, login )
+		  callGeneric()
+	  })
+setMethod(f="getMovebankSensorsAttributes", 
+	  signature=c(study="numeric",login="MovebankLogin"), 
 	  definition = function(study,login){
 		  data <- getMovebank("sensor", login, tag_study_id=study)
 		  studySensors <- unique(data$sensor_type_id)
@@ -188,10 +199,16 @@ setMethod(f="getMovebankID",
 ###retrieving information of a certain study
 setGeneric("getMovebankStudy", function(study, login) standardGeneric("getMovebankStudy"))
 setMethod(f="getMovebankStudy", 
-	  signature=c(study="ANY", login="MovebankLogin"),
+	  signature=c(study="numeric", login="MovebankLogin"),
 	  definition = function(study, login){
 		  data <- getMovebank("study", login, id=study)
 		  return(data)
+	  })
+setMethod(f="getMovebankStudy", 
+	  signature=c(study="character", login="MovebankLogin"),
+	  definition = function(study, login){
+		  study<- getMovebankID(study, login)
+		  callGeneric()
 	  })
 
 setMethod(f="getMovebankStudy", 
@@ -205,9 +222,14 @@ setMethod(f="getMovebankStudy",
 ##get all animals with their IDs
 setGeneric("getMovebankAnimals", function(study, login) standardGeneric("getMovebankAnimals"))
 setMethod(f="getMovebankAnimals",
-	  c(study="ANY", login="MovebankLogin"),
+	  c(study="character", login="MovebankLogin"),
 	  definition = function(study, login){  
-		  if(class(study)=="character") study  <- getMovebankID(study,login)
+		   study  <- getMovebankID(study,login)
+	  callGeneric()
+	  })
+setMethod(f="getMovebankAnimals",
+	  c(study="numeric", login="MovebankLogin"),
+	  definition = function(study, login){  
 		  tags <- getMovebank(entity_type="sensor", login, tag_study_id=study)
 		  animalID <- getMovebank("individual", login, study_id=study, attributes="id%2Clocal_identifier")
 		  deploymentID <- getMovebank("deployment", login=login, study_id=study, attributes="individual_id%2Ctag_id%2Cid")
