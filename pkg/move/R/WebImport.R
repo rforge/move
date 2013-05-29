@@ -155,14 +155,6 @@ setMethod(f="getMovebankSensorsAttributes",
 		  studySensors <- unique(data$sensor_type_id)
 		  data2 <- lapply(studySensors, function(y, login, study) {try(getMovebank("study_attribute", login, study_id=study, sensor_type_id=y), silent=T)} ,login=login, study=study)
 		  data2<-data2[(lapply(data2, class))!='try-error']
-		  #data2 <- getMovebank("study_attribute", login, study_id=study, sensor_type_id=studySensors[1])
-		  #            if(length(studySensors)>1){
-		  #             for (i in 2:length(studySensors)){ 
-		  #               dataNew <- getMovebank("study_attribute", login, study_id=study, sensor_type_id=studySensors[i])
-		  #               data2<-merge(data2,dataNew)
-		  #             }
-		  #            }         
-		  #cat("##### ATTRIBUTES OF THE SENSORS IN STUDY ID: ",study," \n")
 		  return(as.data.frame(do.call(rbind, data2)))
 	  })
 
@@ -199,7 +191,6 @@ setMethod(f="getMovebankStudy",
 	  signature=c(study="ANY", login="MovebankLogin"),
 	  definition = function(study, login){
 		  data <- getMovebank("study", login, id=study)
-		  #cat("**** SUMMARY OF THE REQUESTED STUDY: ",levels(data$name)," ****\n")
 		  return(data)
 	  })
 
@@ -244,28 +235,54 @@ setMethod(f="getMovebankAnimals",
 	  })
 
 
+setGeneric("getMovebankData", function(study,animalName,login, ...) standardGeneric("getMovebankData"))
 
-setGeneric("getMovebankData", function(study,animalName=NA,login, ...) standardGeneric("getMovebankData"))
 setMethod(f="getMovebankData", 
-	  signature=c(study="ANY",animalName="ANY", login="MovebankLogin"),
+	  signature=c(study="ANY",animalName="ANY", login="missing"),
+	  definition = function(study, animalName, login=login, ...){ 
+		  login <- movebankLogin()
+		  callGeneric()
+	  })
+
+setMethod(f="getMovebankData", 
+	  signature=c(study="character",animalName="ANY", login="MovebankLogin"),
 	  definition = function(study, animalName, login, ...){ 
-		  if (class(study)=="character") study <- getMovebankID(study, login) 
-		  idData <- getMovebank("individual", login=login, study_id=study)         
+		  study <- getMovebankID(study, login) 
+		  callGeneric()
+	  })
+
+setMethod(f="getMovebankData", 
+	  signature=c(study="numeric",animalName="missing", login="MovebankLogin"),
+	  definition = function(study, animalName, login, ...){ 
+		  d<- getMovebank("individual", login=login, study_id=study, attributes=c('id'))$id
+		  getMovebankData(study=study, login=login, ..., animalName=d)
+	  })
+setMethod(f="getMovebankData", 
+	  signature=c(study="numeric",animalName="character", login="MovebankLogin"),
+	  definition = function(study, animalName, login, ...){ 
+		  d<- getMovebank("individual", login=login, study_id=study, attributes=c('id','local_identifier'))
+		  animalName<-d[as.character(d$local_identifier)%in%animalName,'id']
+		  callGeneric()
+	  })
+setMethod(f="getMovebankData", 
+	  signature=c(study="numeric",animalName="numeric", login="MovebankLogin"),
+	  definition = function(study, animalName, login, ...){ 
+		  idData <- getMovebank("individual", login=login, study_id=study, id=animalName)         
 		  ##which deployments are imporant
-		  deploymentID <- getMovebank("deployment", login=login, study_id=study, attributes="individual_id%2Ctag_id%2Cid") 
+		  deploymentID <- getMovebank("deployment", login=login, study_id=study, attributes=c("individual_id","tag_id","id"), individual_id=animalName)
 		  ##which track Data are important
-		  sensors <- getMovebankSensors(study=study, login=login)
-		  names(sensors)  <- c("sensor", "sensor_type_id", "tag_id") 
-		  #		  new <- merge.data.frame(deploymentID, sensors, by.x="tag_id", by.y="tag_id") 
 		  new <- merge.data.frame(deploymentID, idData, by.x="individual_id", by.y="id")
-		  if (!all(is.na(animalName))) {
-			  new <- new[new$local_identifier%in%animalName, ]
-			  if(length(animalName)!=length(unique(new$individual_id))) stop("One or more animal names are spelled incorrectly. Or the animal does not have a deployment.")
-		  }
-		  b <- getMovebank("tag_type", login=login)
-		  locSen <- b[as.logical(b$is_location_sensor),"id"] #reduce track to location only sensors & only the correct animals
+
+		  sensorTypes <- getMovebank("tag_type", login=login)
+		  rownames(sensorTypes)<-sensorTypes$id
+		  locSen <- sensorTypes[as.logical(sensorTypes$is_location_sensor),"id"] #reduce track to location only sensors & only the correct animals
+
 		  attribs <- c(as.character(getMovebankSensorsAttributes(study, login)$short_name),"sensor_type_id","deployment_id")
-		  trackDF <- getMovebank("event", login=login, study_id=study, attributes = attribs , deployment_id=unique(new$id), sensor_type_id=locSen)
+
+		  trackDF <- getMovebank("event", login=login, study_id=study, attributes = attribs , deployment_id=new$id, sensor_type_id=locSen)
+		  if(nrow(trackDF)==0){
+			  stop('No records found for this individual/study combination')
+		  }
 		  trackDF$timestamp<-as.POSIXct(strptime(as.character(trackDF$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")
 		  outliers<- is.na(trackDF$location_long)
 		  if('algorithm_marked_outlier'%in%names(trackDF))
@@ -292,48 +309,24 @@ setMethod(f="getMovebankData",
 			  warning("There are ",sum(s), " duplicated timestamps in the unused that those will be removed")
 			  outliers[outliers][s]<-F
 		  }
-		  name<-b$name
-		  names(name)<-b$id
-		  local_identifier<-factor(rownames(new))
-		  names(local_identifier)<-new$id
 
 		  new<-new[new$id %in% unique(spdf$deployment_id),]
-		  unUsed<-	  new('.unUsedRecordsStack', dataUnUsedRecords=trackDF[outliers,],timestampsUnUsedRecords=trackDF$timestamp[outliers], 
-					sensorUnUsedRecords= name[as.character(trackDF[outliers,'sensor_type_id'])],#, b, by.x='sensor_type_id', by.y='id')$name, 
-					trackIdUnUsedRecords=droplevels(local_identifier[as.character(trackDF[outliers,'deployment_id'])]))#, new, by.x='deployment_id', by.y='id')$local_identifier, 
-		  if(any(!(s<-unUsed@trackIdUnUsedRecords %in% local_identifier[unique(as.character(spdf$deployment_id))])))
+		  trackId<-droplevels(factor(spdf$deployment_id, labels=rownames(new), levels=new$id))
+		  unUsed<-new('.unUsedRecordsStack', dataUnUsedRecords=trackDF[outliers,],timestampsUnUsedRecords=trackDF$timestamp[outliers], 
+			      sensorUnUsedRecords= sensorTypes[as.character(trackDF[outliers,'sensor_type_id']),'name'],
+			      trackIdUnUsedRecords=factor(trackDF[outliers,'deployment_id'], labels=rownames(new), levels=new$id))
+
+		  if(any(!(s<-(as.character(unUsed@trackIdUnUsedRecords) %in% levels(trackId)))))
 		  {
 			  warning('Omiting individual(s) (n=',length(unique(unUsed@trackIdUnUsedRecords[!s])), ') that have only unUsedRecords')
 			  unUsed<-unUsed[s,]
-			  unUsed@trackIdUnUsedRecords<-droplevels(unUsed@trackIdUnUsedRecords)
 		  }
+		  unUsed@trackIdUnUsedRecords<-factor(unUsed@trackIdUnUsedRecords, levels=levels(trackId))
 		  res<-new("MoveStack", spdf, timestamps=spdf$timestamp, 
-			   sensor=name[as.character(spdf$sensor_type_id)],
-			   trackId=droplevels(local_identifier[as.character(spdf$deployment_id)]),
-			   unUsed,
+			   sensor=sensorTypes[as.character(spdf$sensor_type_id),'name'],
+			   unUsed,trackId=trackId,
 			   idData=new)
-		  if(length(unique(res@trackId))==1)
+		  if(length(n.locs(res))==1)
 			  res<-as(res, 'Move')
 		  return(res)
-		  #       new <- new[new$id%in%unique(trackDF[,"deployment_id"]), ]
-		  #       
-		  #       trackDF <- merge.data.frame(x=trackDF, y=new[, c(names(new)[!names(new)%in%names(trackDF)], "individual_id")], by.x="individual_id", by.y="individual_id", all=TRUE) 
-		  #       trackDF$sensor_type_id <- as.vector(unlist(lapply(trackDF$sensor_type_id, function (y,b){b$external_id[which(b$id==y)]  },b=b))) 
-		  #       if (!any(is.na(new$local_identifier)) & length(unique(new$individual_id))==length(unique(new$local_identifier))) 
-		  #         trackDF$individual_id <- rep(unique(new$local_identifier), unlist(lapply(lapply(unique(trackDF$individual_id), "==", trackDF$individual_id), sum)))            
-		  #       ##multiple sensors per tag
-		  #       #                 if (length(unique(new$id))!=length(unique(new$sensor_id))){
-		  #       #                   trackDF$individual_id  <- paste(trackDF$individual_id, trackDF$deployment_id, trackDF$sensor_type_id, sep="_") ##ADD sensorID!!!
-		  #       #                 } else {
-		  #       ##individuals with multiple deployments?
-		  #       if (length(paste(new$id, new$individual_id, sep="_"))!=length(unique(new$id)))
-		  #         trackDF$individual_id <- paste(trackDF$individual_id, trackDF$deployment_id, trackDF$tag_id, sep="_")
-		  #       studyDF <- getMovebankStudy(study, login)
-		  #       trackDF$study.name <- rep(as.character(studyDF$name),times=nrow(trackDF))
-		  #       trackDF$citation <- rep(as.character(studyDF$citation),times=nrow(trackDF))
-		  #       trackDF$timestamp <- as.POSIXct(strptime(as.character(trackDF$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")
-		  #       names(trackDF) <- gsub('_', '.', names(trackDF))
-		  #       names(trackDF) <- gsub('local.identifier','individual.local.identifier',names(trackDF))
-		  #       trackDF$study.name <- gsub(' +', " ", trackDF$study.name)
-		  #       .move(df=trackDF, proj=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"))
 	  })

@@ -139,7 +139,7 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack", ".unUsedRecordsSt
 	 validity = function(object){
 		 if(length(object@trackId)!=nrow(object@coords))
 			 stop("Length of trackId does not match the number of coordinates")
-		 if(!all(unlist(tapply(object@timestamps, list(object@trackId, object@sensor),diff))>0))
+		 if(!all(unlist(tapply(object@timestamps, list(object@trackId, droplevels(object@sensor)),diff))>0))
 		 {
 			 tmp<-duplicated(cbind(object@timestamps, object@trackId, object@sensor))# made new test in check for higher speed but have this one still here for more clear reporting
 			 stop("The data set includes double timestamps per ID (first one:", object@trackId[tmp][1]," ",object@sensor[tmp][1]," ",object@timestamps[tmp][1], ")")
