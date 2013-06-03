@@ -4,6 +4,8 @@
 \alias{getMovebankSensors,ANY,missing-method}
 \alias{getMovebankSensors,ANY,MovebankLogin-method}
 \alias{getMovebankSensors,missing,MovebankLogin-method}
+\alias{getMovebankSensors,numeric,MovebankLogin-method}
+\alias{getMovebankSensors,character,MovebankLogin-method}
 \alias{getMovebankSensors,missing,missing-method}
 
 \docType{methods}

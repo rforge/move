@@ -3,6 +3,7 @@
 \alias{split}
 \alias{split,MoveStack,missing-method}
 \alias{split,.MoveTrackSingleBurst,missing-method}
+\alias{split,.MoveTrackStack,missing-method}
 \alias{split,DBBMMStack,missing-method}
 
 \docType{methods}

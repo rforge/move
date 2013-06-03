@@ -2,6 +2,11 @@
 
 \alias{getMovebankData}
 \alias{getMovebankData,ANY,ANY,MovebankLogin-method}
+\alias{getMovebankData,ANY,ANY,missing-method}
+\alias{getMovebankData,character,ANY,MovebankLogin-method}
+\alias{getMovebankData,numeric,character,MovebankLogin-method}
+\alias{getMovebankData,numeric,missing,MovebankLogin-method}
+\alias{getMovebankData,numeric,numeric,MovebankLogin-method}
 
 \docType{methods}
 

@@ -3,6 +3,12 @@ setGeneric("split")
 setMethod(f = "split",
 	  signature = c(x="MoveStack", f="missing"),
 	  definition = function(x, f, ...){
+		 s<-split(as(x,'.MoveTrackStack'))
+	  return(lapply(s, new, Class='Move', as(x, '.MoveGeneral')))
+	  })
+setMethod(f = "split",
+	  signature = c(x=".MoveTrackStack", f="missing"),
+	  definition = function(x, f, ...){
 		  moveList <- list()
 		  unUsed<-as(x,".unUsedRecordsStack")
 		  for (ID in unique(x@trackId)) {
@@ -15,13 +21,13 @@ setMethod(f = "split",
 				    timestamps=x@timestamps[s],
 				    sensor=x@sensor[s])
 			  unUsedSub<-as(unUsed[unUsed@trackIdUnUsedRecords==ID,],'.unUsedRecords')
-			  moveObj <- new(Class="Move", 
+			  moveObj <- new(Class=".MoveTrackSingle", 
 					 mt,
 					 idData=x@idData[row.names(x@idData)==ID, ,drop=F],
-					 dateCreation=x@dateCreation,
-					 study=x@study,
-					 citation=x@citation,
-					 license=x@license,
+	#				 dateCreation=x@dateCreation,
+	#				 study=x@study,
+	#				 citation=x@citation,
+	#				 license=x@license,
 					 unUsedSub)
 			  moveList[[ID]]  <- moveObj
 		  }
@@ -32,24 +38,17 @@ setMethod(f = "split",
 	  signature = c(x="DBBMMStack", f="missing"),
 	  definition = function(x, f, ...){
 		  DBBMMList <- list()
+		  moveTrackStack<-split(as(x@DBMvar,'.MoveTrackStack'))
 		  for (Id in as.character(unique(x@DBMvar@trackId))) { 
 			  UD <- new(Class=".UD", 
 				    method=x@method,
 				    x[[Id]])
-			  dbmv <- new(Class="dBMvariance",
-				      timestamps=x@DBMvar@timestamps[x@DBMvar@trackId==Id],
-				      coords.nrs=x@DBMvar@coords.nrs,
-				      coords=x@DBMvar@coords[x@DBMvar@trackId==Id, ],
-				      bbox=x@DBMvar@bbox,
-				      data=x@DBMvar@data[x@DBMvar@trackId==Id, ],
-				      proj4string=x@DBMvar@proj4string,
-				      sensor=x@DBMvar@sensor[x@DBMvar@trackId==Id],
+			  dbmv<-new('dBMvariance',moveTrackStack[[Id]],
 				      window.size=x@DBMvar@window.size,
 				      break.list=x@DBMvar@break.list,
 				      interest=as.logical(x@DBMvar@interest[x@DBMvar@trackId==Id]),
 				      means=x@DBMvar@means[x@DBMvar@trackId==Id],
 				      in.windows=x@DBMvar@in.windows[x@DBMvar@trackId==Id],
-				      idData=x@DBMvar@idData[Id,],
 				      margin=x@DBMvar@margin)
 			  DBBMMObj <- new(Class="DBBMM",
 					  UD,
