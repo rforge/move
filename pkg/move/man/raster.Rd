@@ -32,8 +32,8 @@
 \examples{
 load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 
-raster(rickydbbmm) #returns the raster of a DBBMM object
+raster(leroydbbmm) #returns the raster of a DBBMM object
 raster(dbbmmstack) # returns the raster of a DBBMMStack object
 
-plot(raster2contour(rickydbbmm, levels=c(.5,.9)), col=c(5,4)) # plot the raster lines of a DBBMM
+plot(raster2contour(leroydbbmm, levels=c(.5,.9)), col=c(5,4)) # plot the raster lines of a DBBMM
 }

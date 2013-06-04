@@ -4,6 +4,7 @@
 \alias{burst,Move,character-method}
 \alias{burst,Move,factor-method}
 \alias{burst,Move,numeric-method}
+\alias{burst,.MoveTrackSingleBurst,missing-method}
 
 \docType{methods}
 

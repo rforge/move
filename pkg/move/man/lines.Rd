@@ -29,7 +29,7 @@
 \examples{
 load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 
-plot(rickydbbmm)
+plot(leroydbbmm)
 lines(spTransform(ricky), col=3) # add a track from a Move object to a plot
 \dontshow{
 stack <- moveStack(list(leroy,leroy))

@@ -107,7 +107,7 @@ setMethod(f = "brownian.bridge.dyn",
             T.Total <- sum(time.lag[object@interest])
             
             compsize <- ncell(raster) * (sum(time.lag[object@interest])/time.step)
-            print(paste("Computational size:", sprintf("%.1e", compsize)))
+            message(paste("Computational size:", sprintf("%.1e", compsize)))
             
             interest <- (c(object@interest, 0) + c(0, object@interest))[1:length(object@interest)] != 0
             # Fortran agguments n.locs gridSize timeDiff total time x track y track
