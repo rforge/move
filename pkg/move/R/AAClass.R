@@ -217,6 +217,8 @@ setClass(Class = "dBMvarianceTmp",
 			 stop("Margin length not 1")
 		 if (length(object@window.size) != 1) 
 			 stop("Window size length not 1")
+		 if( any(is.na(object@means[object@interest])))
+			 stop('There are not variance estimates for segments of interest')
 		 return(TRUE)
 	 })
 
