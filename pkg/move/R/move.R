@@ -111,7 +111,7 @@ setMethod(f = ".move",
 			  df$individual.local.identifier <- factor(df$individual.local.identifier)
 		  }
 		  ids <- as.list(as.character(unique(df$individual.local.identifier)))
-		  uniquePerID <- unlist(lapply(df,  function(x,y){all(tapply(x,y,function(x){length(unique(x))})==1)}, y=factor(df$individual.local.identifier)))
+		  uniquePerID <- unlist(lapply(df,  function(x,y){all(duplicated(x)[y])}, y=duplicated(df$individual.local.identifier)))
 		  uniquePerID["sensor"] <- FALSE
 		  idData <- subset(df, select=names(uniquePerID[uniquePerID]), !duplicated(df$individual.local.identifier))
 
