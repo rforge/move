@@ -17,7 +17,7 @@
 
 \arguments{
   \item{x}{a DBBMM or DBBMMStack object, that includesa raster object}
-  \item{...}{additional arguments that are passed on from other functions}
+  \item{...}{additional arguments that are passed on from other functions, most important being level which determines the contour level}
 }
 
 \details{
@@ -30,4 +30,5 @@
   load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
   raster2contour(leroydbbmm)
   raster2contour(dbbmmstack)
+  raster2contour(dbbmmstack, level=c(.5,.95))
 }
