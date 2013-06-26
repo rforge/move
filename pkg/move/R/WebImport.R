@@ -299,13 +299,16 @@ setMethod(f="getMovebankData",
 		  rownames(sensorTypes)<-sensorTypes$id
 		  locSen <- sensorTypes[as.logical(sensorTypes$is_location_sensor),"id"] #reduce track to location only sensors & only the correct animals
 
-		  attribs <- c(as.character(getMovebankSensorsAttributes(study, login)$short_name),"sensor_type_id","deployment_id")
+		  attribs <- unique(c(as.character(getMovebankSensorsAttributes(study, login)$short_name),"sensor_type_id","deployment_id",'event_id'))
 
 		  trackDF <- getMovebank("event", login=login, study_id=study, attributes = attribs , deployment_id=new$id, sensor_type_id=locSen)
 		  if(nrow(trackDF)==0){
 			  stop('No records found for this individual/study combination')
 		  }
 		  trackDF$timestamp<-as.POSIXct(strptime(as.character(trackDF$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC")
+		  if(any(tapply(trackDF$sensor_type_id, trackDF$deployment_id, length)!=1)){# data comes in ordered by sensor but needs to be ordered by timestamp
+			  trackDF <- trackDF[ with(trackDF, order(trackDF$deployment_id, timestamp)) , ]  
+		  }
 		  outliers<- is.na(trackDF$location_long)
 		  if('algorithm_marked_outlier'%in%names(trackDF))
 			  outliers[trackDF$algorithm_marked_outlier=="true"]<-T

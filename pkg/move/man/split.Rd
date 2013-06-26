@@ -17,7 +17,7 @@
 }
 
 \arguments{
-  \item{x}{MoveStack object}
+  \item{x}{MoveStack or MoveBurst object}
   \item{f}{not needed}
   \item{drop}{not needed}
   \item{...}{not needed}
@@ -25,7 +25,7 @@
 
 \details{
   A MoveStack is split into a list of \link[=Move-class]{Move} objects by the track IDs of the given MoveStack. 
-  For stacking \link{moveStack} can be used. 
+  For stacking \link{moveStack} can be used. Also a \link[=MoveBurst-class]{MoveBurst} object can be split this will lead to seperate list elements for every burst, every location where the burst is switched will then be recycled.
 }
 
 \author{Marco Smolla}

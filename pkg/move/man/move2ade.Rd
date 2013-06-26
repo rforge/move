@@ -2,7 +2,7 @@
 
 \alias{move2ade}
 \alias{move2ade,.MoveTrackSingle-method}
-\alias{move2ade,.MoveTrack-method}
+\alias{move2ade,.MoveTrackStack-method}
 
 \docType{methods}
 
@@ -13,7 +13,7 @@
 
 \usage{
   \S4method{move2ade}{.MoveTrackSingle}(x)
-  \S4method{move2ade}{.MoveTrack}(x)
+  \S4method{move2ade}{.MoveTrackStack}(x)
 }
 
 \arguments{
