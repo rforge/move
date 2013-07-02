@@ -84,7 +84,7 @@ setMethod(f="searchMovebankStudies",
 	  signature=c(x="character",login="MovebankLogin"), 
 	  definition = function(x,login){  
 		  data <- getMovebank("study", login, sort="name", attributes="id%2Cname%2Ci_am_owner%2Ci_can_see_data%2Cthere_are_data_which_i_cannot_see")
-		  res <- c(data$name[grepl(x,data$name,useBytes=TRUE)])
+		  res <- as.character(data$name)[grepl(x,data$name,useBytes=TRUE)]
 		  #    names(res) <- paste("##### Results for ",x,"#####")
 		  if(length(res)>0){return(res)}else{"No study matches your search criteria"}
 	  })

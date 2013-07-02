@@ -23,6 +23,9 @@
 The search function searches explicitly for the entered phrase. If you for example type 'Goose' it will not show you studies including 'goose'. So rather search for 'oose' to find both. 
 }
 
+\value{The function returns a character vector of study names.
+}
+
 \note{
 See the 'browseMovebank' vignette (\href{http://move.r-forge.r-project.org/moveWEB/Downloads_files/browseMovebank.pdf}{move website download section}) for more information about security and how to use Movebank from within R. 
 }
