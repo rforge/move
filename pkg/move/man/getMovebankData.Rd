@@ -32,6 +32,8 @@
 
 \note{
 See the 'browseMovebank' vignette (\href{http://computational-ecology.com/images/Move_Package/browseMovebank.pdf}{move website download section}) for more information about security and how to use Movebank from within R. 
+
+It his possible to add the argument removeDuplictedTimestamps and set it to true which allows you delete the duplicated timestamps, it is strongly advised not to use this option because there is no control over which records are removed. Its better to edit the records in movebank.
 }
 
 

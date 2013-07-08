@@ -4,6 +4,7 @@
 %\alias{move,character,ANY,ANY,ANY,ANY,ANY-method}
 %\alias{move,character,ANY,ANY,ANY,ANY-method}
 \alias{move,character,missing,missing,missing,missing-method}
+\alias{move,connection,missing,missing,missing,missing-method}
 \alias{move,numeric,numeric,POSIXct,data.frame,ANY-method}
 \alias{move,numeric,numeric,POSIXct,missing,ANY-method}
 %\alias{move,character-method}
@@ -16,7 +17,7 @@ Create a Move object
 }
 
 \description{
-The move method creates Move or MoveStack object from Movebank or other (compressed) csv files. If you use your own data you need to set the projection method with the 'proj' argument and specify in which column of your data the function finds locations and timestamps. 
+The move method creates Move or MoveStack object from Movebank or other (compressed) csv files, also zip files from the environmental annotation tool can be loaded. If you use your own data you need to set the projection method with the 'proj' argument and specify in which column of your data the function finds locations and timestamps. 
 }
 
 \usage{
@@ -46,6 +47,8 @@ Because the SpatialPointsDataFrame function that creates the spatial data frame 
 If the data include double timestamps check your data for validity. You may want to consider a function to delete double timestamps, like: \cr \code{data <- data[which(!duplicated(data$timestamp)), ]}
 
 Due to convention all names are turned into 'good names' which means, without spaces ('Ricky T' becomes 'Ricky.T').
+
+It his possible to add the argument removeDuplictedTimestamps and set it to true which allows you delete the duplicated timestamps, it is strongly advised not to use this option because there is no control over which records are removed. Its better to edit the records in movebank.
 }
 
 
