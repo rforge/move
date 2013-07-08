@@ -24,8 +24,12 @@
 }
 
 \details{
-  The corridor function uses the attributes of a movement step to identify movement steps that exhibit corridor use behavior. \cr
-  For each segment, the speed and the azimuth are calculated and assigned to the segment midpoint. A circular buffer is created around the midpoint of each segment whose radius is equal to half the segment length. The segment azimuth (180 >= azimuth > -180) is then converted into a new unit (the 'pseudo-azimuth' 0 <= 360). Subsequent, the circular variance of the pseudo-azimuths of all segment midpoints that fall within the circular buffer are calculated. This identifies segments that are near parallel segments.  Next, it is determined whether a segment's speed is higher than \code{speedProp} (by default the upper 25\% speeds) and its circular variance is lower than \code{circProp} (by default the lower 25\% of all variances).  Segment midpoints that meet both of these requirements are considered as a 'corridor' point, all others are considered 'non-corridor' points. Finally, a corridor point is determined to be within a true corridor if within its buffer there are more 'corridor' points than 'non-corridor' points.  \cr
+  The corridor function uses the attributes of a movement step to identify movement steps that exhibit corridor use behavior. 
+  For each segment, the speed and the azimuth are calculated and assigned to the segment midpoint. A circular buffer is created around the midpoint of each segment whose radius is equal to half the segment length. The segment azimuth (180 >= azimuth > -180) is then converted into a new unit (the 'pseudo-azimuth' 0 <= 360). 
+  Subsequent, the circular variance of the pseudo-azimuths of all segment midpoints that fall within the circular buffer are calculated. 
+  This identifies segments that are near parallel segments.  Next, it is determined whether a segment's speed is higher than \code{speedProp} (by default the upper 25\% speeds) and its circular variance is lower than \code{circProp} (by default the lower 25\% of all variances).  
+  Segment midpoints that meet both of these requirements are considered as a 'corridor' point, all others are considered 'non-corridor' points. Finally, a corridor point is determined to be within a true corridor if within its buffer there are more 'corridor' points than 'non-corridor' points.
+}
 \note{The default values for the \code{speedProp} and \code{circProp} can be changed as per the users discretion using the according argument.
   If the result of the function is assigned to a variable a MoveBurst object is returned (see Value).
 }
