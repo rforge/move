@@ -1,9 +1,27 @@
 setGeneric("move", function(x, y, time, data, proj=NA, ...) standardGeneric("move"))
 setMethod(f = "move", 
 	  signature = c(x="character",y='missing',time='missing', data='missing', proj='missing'), 
-	  definition = function(x){
+	  definition = function(x, ...){
 		  if(!file.exists(x))
 			  stop("x should be a file on disk but it cant be found")
+		  if(grepl(".zip", x))
+		  {
+			  
+			  files<-as.character(unzip(x,list=T)$Name)
+		  	if(1!=sum(rd<-(files=='readme.txt'))| length(files)!=2)
+				stop('zip file not as expected')
+			m<-move(unz(x, files[!rd]),...)
+			m@license<-paste(m@license,readLines(con<-unz(x , files[rd])), collapse='\n')
+			close(con)
+			return(m)
+		  }else{
+			  return(move(file(x),...))
+		  }
+
+	  })
+setMethod(f = "move", 
+	  signature = c(x="connection",y='missing',time='missing', data='missing', proj='missing'), 
+	  definition = function(x, removeDuplicatedTimestamps=F){
 		  df <- read.csv(x, header=TRUE, sep=",", dec=".", stringsAsFactors=T)
 
 		  if (!all(c("timestamp", 
@@ -63,9 +81,20 @@ setMethod(f = "move",
 		  proj4string(df)<-CRS("+proj=longlat +ellps=WGS84 +datum=WGS84")
 
 		  track<-new('.MoveTrack', df, timestamps=timestamps[!unUsed], sensor=sensor[!unUsed], idData=idData)
+		individual.local.identifier<-factor(individual.local.identifier[!unUsed])
+		  if(removeDuplicatedTimestamps){
+			message("removeDupilcatedTimestamps was set to true we strongly suggest against it and that the problem is solved before because there is no systematic to which locations are removed. This can for example be done by marking them outlier in movebank.")
+			dupsDf<-(data.frame(format(track@timestamps,"%Y %m %d %H %M %OS4"), track@sensor))
+			if(stk)
+				dupsDf<-data.frame(id=individual.local.identifier, dupsDf)
+			dups<-duplicated(dupsDf)
+			track<-track[!dups,]
+			individual.local.identifier<-individual.local.identifier[!dups]
+			warning(sum(dups)," location(s) is/are removed by removeDuplicatedTimestamps")
+		  }
 
 		  if(stk){
-			  return(new('MoveStack', track, unUsedRecords, trackId=factor(individual.local.identifier[!unUsed])))
+			  return(new('MoveStack', track, unUsedRecords, trackId=individual.local.identifier))
 		  }else{
 			  return(new('Move',track, unUsedRecords))
 		  }

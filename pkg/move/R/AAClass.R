@@ -1,4 +1,5 @@
 setClassUnion(".OptionalPOSIXct", c("POSIXct","NULL"))
+lapply(lapply(c('url','file','gzfile','unz','pipe','fifo'),c,'connection'), setOldClass,   where = environment())
 
 setClass(Class = ".MoveGeneral",
 	 representation = representation(

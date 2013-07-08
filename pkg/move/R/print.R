@@ -49,7 +49,11 @@ setMethod("print",".MoveTrackSingleBurst", function(x){
 })
 setMethod("print",".MoveGeneral", function(x){
 	  if(length(x@license)!=0)
-		  cat("license      :",x@license,"\n")
+		  if(nchar(x@license)>(getOption('width')-18)){
+		  cat("license     :",substr(x@license,1, getOption('width')-18),"...\n")
+		  }else{
+		  cat("license     :",x@license,"\n")
+	  }
 	  if(length(x@citation)!=0)
 		  cat("citation     :",x@citation,"\n")
 	  if(length(x@study)!=0)

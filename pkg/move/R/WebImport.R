@@ -41,12 +41,6 @@ setMethod(f="getMovebank",
 	  definition = function(entity_type, login, ...){
 		  tmp <- list(...)
 		  url <- paste("://www.movebank.org/movebank/service/direct-read?entity_type=",entity_type  ,sep="")
-#		  try(if(any(names(tmp)=="id")&class(unlist(tmp['id']))=="character") 
-#		      tmp['id'] <- getMovebankID(unlist(tmp['id']), login) ,silent=T)
-	#	  try(if(any(names(tmp)=="study_id")&class(unlist(tmp['study_id']))=="character") 
-	#	      tmp['study_id'] <- getMovebankID(unlist(tmp['study_id']), login) ,silent=T)
-	#	  try(if(any(names(tmp)=="tag_study_id")&class(unlist(tmp['tag_study_id']))=="character") 
-	#	      tmp['tag_study_id'] <- getMovebankID(unlist(tmp['tag_study_id']), login) ,silent=T)
 		  if(length(tmp)!=0){
 			  tmp <- lapply(tmp, paste, collapse='%2C')
 			  url <- paste(url, sep="&",paste(names(tmp),tmp, collapse="&", sep="="))
@@ -169,8 +163,6 @@ setMethod(f="getMovebankSensorsAttributes",
 		  return(as.data.frame(do.call(rbind, data2)))
 	  })
 
-
-
 ###all or a certain ID
 setGeneric("getMovebankID", function(study, login) standardGeneric("getMovebankID"))
 setMethod(f="getMovebankID", 
@@ -185,7 +177,6 @@ setMethod(f="getMovebankID",
 	  definition = function(study=NA, login){
 		  data <- getMovebank("study", login, sort="name", attributes="id%2Cname%2Ci_am_owner%2Ci_can_see_data%2Cthere_are_data_which_i_cannot_see")
 		  if (is.na(study)) {
-			  #cat("####### STUDY ID #######\n")
 			  return(data[ ,c("id","name")])
 		  } else {
 			  studyNUM <- data[gsub(" ","", data$name)==gsub(" ","", study),c("id")] #get rid of all spaces to avoid miss matching between different spaced words
@@ -256,7 +247,6 @@ setMethod(f="getMovebankAnimals",
 		  getMovebankAnimals(study=study,login=login)
 	  })
 
-
 setGeneric("getMovebankData", function(study,animalName,login, ...) standardGeneric("getMovebankData"))
 
 setMethod(f="getMovebankData", 
@@ -288,7 +278,7 @@ setMethod(f="getMovebankData",
 	  })
 setMethod(f="getMovebankData", 
 	  signature=c(study="numeric",animalName="numeric", login="MovebankLogin"),
-	  definition = function(study, animalName, login, ...){ 
+	  definition = function(study, animalName, login, removeDuplicatedTimestamps=F,...){ 
 		  idData <- getMovebank("individual", login=login, study_id=study, id=animalName)         
 		  ##which deployments are imporant
 		  deploymentID <- getMovebank("deployment", login=login, study_id=study, attributes=c("individual_id","tag_id","id"), individual_id=animalName)
@@ -347,10 +337,20 @@ setMethod(f="getMovebankData",
 			  unUsed<-unUsed[s,]
 		  }
 		  unUsed@trackIdUnUsedRecords<-factor(unUsed@trackIdUnUsedRecords, levels=levels(trackId))
+
+		  if(removeDuplicatedTimestamps){
+			message("removeDupilcatedTimestamps was set to true we strongly suggest against it and that the problem is solved before because there is no systematic to which locations are removed. This can for example be done by marking them outlier in movebank.")
+			dupsDf<-(data.frame(format(spdf$timestamp,"%Y %m %d %H %M %OS4"), spdf$sensor_type_id, trackId))
+			dups<-duplicated(dupsDf)
+			spdf<-spdf[!dups,]
+			trackId<-trackId[!dups]
+			warning(sum(dups)," location(s) is/are removed by removeDuplicatedTimestamps")
+		  }
+
 		  res<-new("MoveStack", spdf, timestamps=spdf$timestamp, 
 			   sensor=sensorTypes[as.character(spdf$sensor_type_id),'name'],
 			   unUsed,trackId=trackId,
-			   idData=new)
+			   idData=new[as.character(unique(trackId)),])
 		  if(length(n.locs(res))==1)
 			  res<-as(res, 'Move')
 		  return(res)
