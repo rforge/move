@@ -21,7 +21,7 @@ The move method creates Move or MoveStack object from Movebank or other (compres
 }
 
 \usage{
-\S4method{move}{character,missing,missing,missing,missing}(x)
+\S4method{move}{connection,missing,missing,missing,missing}(x, removeDuplicatedTimestamps=F, ...)
 \S4method{move}{numeric,numeric,POSIXct,data.frame,ANY}(x, y, time, data, proj, sensor='unknown',animal='unnamed',...)
 }
 
@@ -33,6 +33,7 @@ The move method creates Move or MoveStack object from Movebank or other (compres
 \item{proj}{projection method for non-Movebank data; requires a valid CRS (see \code{\link{CRS-class}}) object, like CRS("+proj=longlat +ellps=WGS84"); default is NA}
 \item{sensor}{sensor name, either single character or a vector with length of the number of coordinates}
 \item{animal}{animal ID or name, either single character or a vector with length of the number of coordinates}
+\item{removeDuplicatedTimestamps}{It his possible to add the argument removeDuplicatedTimestamps and set it to true which allows you delete the duplicated timestamps, it is strongly advised not to use this option because there is no control over which records are removed. Its better to edit the records in movebank.}
 \item{...}{Additional arguments}  
 }
 
@@ -48,7 +49,6 @@ If the data include double timestamps check your data for validity. You may want
 
 Due to convention all names are turned into 'good names' which means, without spaces ('Ricky T' becomes 'Ricky.T').
 
-It his possible to add the argument removeDuplictedTimestamps and set it to true which allows you delete the duplicated timestamps, it is strongly advised not to use this option because there is no control over which records are removed. Its better to edit the records in movebank.
 }
 
 

@@ -21,7 +21,7 @@ setMethod(f = "move",
 	  })
 setMethod(f = "move", 
 	  signature = c(x="connection",y='missing',time='missing', data='missing', proj='missing'), 
-	  definition = function(x, removeDuplicatedTimestamps=F){
+	  definition = function(x, removeDuplicatedTimestamps=F,...){
 		  df <- read.csv(x, header=TRUE, sep=",", dec=".", stringsAsFactors=T)
 
 		  if (!all(c("timestamp", 
