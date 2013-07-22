@@ -171,13 +171,27 @@ plot(stack, col=c(6,5), lwd=2, xlab="location_long", ylab="location_lat")
 A useful addition to plot the pure track is to plot it on a map. The easiest ways to do this are with OpenStreetMap, Stamen Map, Cloudmade or Google Maps and to use the ggmap package, which is based on ggplot.\\
 Note, the function requires two further packages (\texttt{ggmap} and \texttt{mapproj}). The \fct{get\_map} function makes a call to the online databases and retrieves a map which is defined by the bounding box (\texttt{bbox}). The source argument allows one to choose between OpenStreetMap (\texttt{'osm'}), Stamen Maps (\texttt{'stamen'}), Cloudmade (\texttt{'cloudmade'}) and Google Maps (\texttt{'google'}). The \fct{ggmap} function plots the map in a new graphics device and \texttt{geom\_path()} adds the track of the \class{Move} object (see Figure \ref{fig:google}).  
 
-<<googleplot>>=
+<<googleplotPrep, results=hide, echo=FALSE, include=FALSE>>=
 require(ggmap) #these packages are necessary to work with google maps
 require(mapproj)
 leroy_df <- as(leroy, "data.frame")
-m <- get_map(bbox(extent(leroy)*1.1), source="stamen", zoom=14)
+@
+<<tmp, eval=F, results=hide, echo=FALSE, include=FALSE>>=
+m <- get_map(bbox(extent(leroy)*1.1), source="stamen", zoom=12)
+@
+<<tmp2, include=F, echo=F>>=
+load(system.file("doc","a.Rdata",package="move"))
+@
+
+<<googleplot, results=hide, echo=F, include=FALSE>>=
 ggmap(m)+geom_path(data=leroy_df, aes(x=location.long, y=location.lat))
 @
+<<tmp3i, eval=F>>=
+<<googleplotPrep>>
+<<tmp>>
+<<googleplot>>
+@
+
 \begin{figure}
 \begin{center}
 <<label=figGoogle, fig=TRUE, results=hide, echo=FALSE, height=4>>=
