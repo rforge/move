@@ -70,12 +70,14 @@ data <- move(system.file("extdata","leroy.csv.gz",package="move"))
 data2 <- spTransform(data, CRSobj="+proj=aeqd", center=TRUE)
 
 ## create a DBBMM object
-dbbmm <- brownian.bridge.dyn(object=data2[1:100,], location.error=12, dimSize=45, ext=.3, time.step=600)
+dbbmm <- brownian.bridge.dyn(object=data2[1:100,], location.error=12, dimSize=45, ext=.3, 
+			     time.step=600)
 \dontshow{
   load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
   leroy <- leroy[1:50]
   ricky <- ricky[1:50]
   stack <- moveStack(list(leroy,ricky))
-  t <- brownian.bridge.dyn(spTransform(stack), location.error=23.5, dimSize=25, time.step=6000, ext=1.2)
+  t <- brownian.bridge.dyn(spTransform(stack), location.error=23.5, dimSize=25, 
+			   time.step=6000, ext=1.2)
 }
 }

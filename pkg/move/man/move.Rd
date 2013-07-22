@@ -59,8 +59,12 @@ Due to convention all names are turned into 'good names' which means, without sp
 data <- move(system.file("extdata","leroy.csv.gz",package="move"))
 
 ## create a move object from non-Movebank data
-file <- read.table(system.file("extdata","leroy.csv.gz",package="move"), header=TRUE, sep=",", dec=".")
-data <- move(x=file$location.long, y=file$location.lat, time=as.POSIXct(file$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC"), data=file, proj=CRS("+proj=longlat"), animal="Leroy")
+file <- read.table(system.file("extdata","leroy.csv.gz",package="move"), 
+		   header=TRUE, sep=",", dec=".")
+data <- move(x=file$location.long, y=file$location.lat, 
+	     time=as.POSIXct(file$timestamp, 
+			     format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC"), 
+	     data=file, proj=CRS("+proj=longlat"), animal="Leroy")
 \dontshow{
 move(x=file$location.long, y=file$location.lat, time=as.POSIXct(file$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC"), data=file, proj=CRS("+proj=longlat"))
 move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat'))

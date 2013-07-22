@@ -33,7 +33,6 @@
 \examples{
 load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 movestack <- moveStack(list(leroy,ricky))
-#dbbmmstack <- brownian.bridge.dyn(spTransform(stack), location.error=23.5, dimSize=85, time.step=6000)
 
 split(movestack) #splitting a MoveStack
 split(dbbmmstack) #splitting a DBBMMStack

@@ -38,6 +38,7 @@
 \examples{
 data <- move(system.file("extdata","leroy.csv.gz",package="move"))[1:80,]
 data2 <- spTransform(data, CRSobj="+proj=aeqd", center=TRUE)
-dBMvar <- brownian.motion.variance.dyn(object=data2, location.error=rep(23.5,n.locs(data2)), margin=13, window.size=31)
+dBMvar <- brownian.motion.variance.dyn(object=data2, location.error=rep(23.5,n.locs(data2)), 
+				       margin=13, window.size=31)
 dBMvar
 }

@@ -41,8 +41,11 @@ It his possible to add the argument removeDuplictedTimestamps and set it to true
 
 \examples{
 \dontrun{
-getMovebankData(study="BCI Ocelot", login=login) #returns a MoveStack object from the specified study
-getMovebankData(study="BCI Agouti", login=login) #returns a Move object (there is only one individual in this study)
-getMovebankData(study=123413, animalName=c("Mancha","Yara"), login=login) #returns a MoveStack with two individuals
+getMovebankData(study="BCI Ocelot", login=login) 
+#returns a MoveStack object from the specified study
+getMovebankData(study="BCI Agouti", login=login) 
+#returns a Move object (there is only one individual in this study)
+getMovebankData(study=123413, animalName=c("Mancha","Yara"), login=login) 
+#returns a MoveStack with two individuals
 }
 }

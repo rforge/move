@@ -180,7 +180,8 @@ leroy_df <- as(leroy, "data.frame")
 m <- get_map(bbox(extent(leroy)*1.1), source="stamen", zoom=12)
 @
 <<tmp2, include=F, echo=F>>=
-load(system.file("doc","a.Rdata",package="move"))
+load("a.Rdata")
+#load(system.file("doc","a.Rdata",package="move"))
 @
 
 <<googleplot, results=hide, echo=F, include=FALSE>>=
