@@ -9,6 +9,9 @@ clean:
 check:
 	R CMD check --as-cran move*.tar.gz
 
+checkRdevel:
+	/home/bart/bmisc/small_projects/rDevel/svn/R/bin/R CMD check --as-cran move*.tar.gz
+
 cl:
 	svn2cl -r head:380 --stdout --group-by-day pkg/move/ --strip-prefix='move/' | grep -v '* $$' > pkg/move/ChangeLog
 
@@ -17,6 +20,7 @@ release:
 	make cl
 	make build
 	make check
+	make checkRdevel
 
 man:
 	make clean

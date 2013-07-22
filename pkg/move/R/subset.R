@@ -92,7 +92,7 @@ setMethod("[[",
 		mt <- new(Class=".MoveTrack",
 		          spdf,
 		          timestamps=x@timestamps[s],
-		          sensor=x@sensor[s, drop=T])
+		          sensor=x@sensor[s])
 		  unUsed<-as(x,".unUsedRecordsStack")
 		if(length(unUsed@sensorUnUsedRecords)==0)
 		{
