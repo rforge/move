@@ -15,6 +15,7 @@ test.move<-function()
 	checkException( data3<-move(file(file), removeDuplicatedTimestamps=T))
 	options(warn=tmp)
 fileR<-system.file("extdata","ricky.csv.gz",package="move")
+if(class(try(move(pipe(paste0('zcat ',fileR, " | sed ''")))))=='Move'),character(0))){
 	dataR<-move(pipe(paste0('zcat ',fileR)))
 	checkException(move(pipe(paste0('zcat ',fileR,"| sed 'p;'"))))
 	tmp<-options(warn=2)$warn
@@ -38,4 +39,5 @@ fileR<-system.file("extdata","ricky.csv.gz",package="move")
 	rownames(dataR@dataUnUsedRecords)<- as.character(rownames(dataR3@dataUnUsedRecords))
 	rownames(dataR3@dataUnUsedRecords)<- as.character(rownames(dataR3@dataUnUsedRecords))
 	checkEquals(dataR, dataR3)
+}
 }
