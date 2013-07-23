@@ -56,6 +56,6 @@
   tmp <- corridor(leroy, plot=TRUE)
   head(tmp) #if assigned to a variable, the coordinates are exported
   
-  stack <- moveStack(list(leroy, ricky[1:1000,]))
+  stack <- moveStack(list(leroy[1:400,], ricky[1:500,]))
   stacktmp <- corridor(stack) #working with a stack
 }
