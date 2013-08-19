@@ -24,6 +24,10 @@
 
 \author{Marco Smolla}
 
+\seealso{
+\code{\link{raster2contour}}
+}
+
 \examples{
 load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 

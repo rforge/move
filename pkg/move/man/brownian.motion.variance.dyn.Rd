@@ -10,14 +10,14 @@
 }
 
 \usage{
-  \S4method{brownian.motion.variance.dyn}{.MoveTrackSingle,numeric,numeric,numeric}(object, location.error, window.size, margin)
+\S4method{brownian.motion.variance.dyn}{.MoveTrackSingle,numeric,numeric,numeric}(object, location.error, window.size, margin)
 }
-  
+
 \arguments{
-  \item{object}{An object of the \link{Move-class}, that can be used for variance calculation. It needs to be in a flat coordinate system.}
-  \item{location.error}{A numeric vector with the location error.}
-  \item{window.size}{The window size used for the variance calculation. }
-  \item{margin}{The margin size used for variance calculation.}
+	\item{object}{An object of the \link{Move-class}, that can be used for variance calculation. It needs to be in a flat coordinate system.}
+	\item{location.error}{A numeric vector with the location error.}
+	\item{window.size}{The window size used for the variance calculation. }
+	\item{margin}{The margin size used for variance calculation.}
 }
 
 \value{
@@ -32,7 +32,7 @@
 
 
 \seealso{
-\code{\link{brownian.bridge.dyn}}
+	\code{\link{brownian.bridge.dyn}}
 }
 
 \examples{

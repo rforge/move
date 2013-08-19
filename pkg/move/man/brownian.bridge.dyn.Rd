@@ -77,7 +77,7 @@ dbbmm <- brownian.bridge.dyn(object=data2[1:100,], location.error=12, dimSize=45
   leroy <- leroy[1:50]
   ricky <- ricky[1:50]
   stack <- moveStack(list(leroy,ricky))
-  t <- brownian.bridge.dyn(spTransform(stack), location.error=23.5, dimSize=25, 
+  t <- brownian.bridge.dyn(spTransform(stack, center=TRUE), location.error=23.5, dimSize=25, 
 			   time.step=6000, ext=1.2)
 }
 }
