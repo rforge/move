@@ -39,11 +39,11 @@ setMethod(f = "moveStack",
 		  id <- raster:::.goodNames(rownames(IDDATA))
 		  rownames(IDDATA)<-id
 
-		  spdftmp <- SpatialPointsDataFrame(
-						    coords = coords,
-						    data = DATA, 
-						    proj4string = CRS(proj4string(x[[1]])), #projection tested above
-						    match.ID = TRUE)
+#		  spdftmp <- SpatialPointsDataFrame(coords = coords,
+#						    data = DATA, 
+#						    proj4string = CRS(proj4string(x[[1]])), #projection tested above
+#						    match.ID = TRUE)
+		  spdftmp<-SpatialPointsDataFrame(do.call(rbind, lapply(x, as,'SpatialPoints')), data=DATA)
 
 		  # unused records
 		  unUsedList<-lapply(x, as, ".unUsedRecords")

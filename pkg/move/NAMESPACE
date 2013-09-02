@@ -7,7 +7,7 @@ exportMethods(angle, angleSummary, brownian.bridge.dyn, burst, citations, "citat
               getMovebankID, getMovebankSensors, getMovebankSensorsAttributes, getMovebankStudies, 
               getMovebankStudy, getVolumeUD, hrBootstrap, lines, move, move2ade, movebankLogin, 
               moveStack,n.locs, outerProbability,  plot, plotBursts, points, raster2contour, seglength, 
-              show, speed, speedSummary, split, summary, searchMovebankStudies, timeSummary, time.lag, 
+              show, speed, speedSummary, split, summary, searchMovebankStudies, timeSummary, time.lag, trackId,
               brownian.motion.variance.dyn, timestamps, "timestamps<-", burst, split, "unUsedRecords<-", unUsedRecords, idData,'idData<-')
 useDynLib(move)
 

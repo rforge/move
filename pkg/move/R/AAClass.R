@@ -176,6 +176,8 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack", ".unUsedRecordsSt
 			 stop('The data in the MoveStack object are not grouped per individual')
 		 if(any(as.character(unique(object@trackId))!= rownames(idData(object, drop=F))))
 			 stop('Order of objects in the idData is not the same as in the trackId')
+		 if(!identical(as.character(unique(object@trackId)), levels(object@trackId)))
+			 stop('Order of levels in the trackId should be same as order of individuals') 
 		 #this check cant work since coordinates columns are not present in data
 		# if(any(names(object@data)!=names(object@dataUnUsedRecords)))
 		#	 stop('names of data and unused data records dont match')

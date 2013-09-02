@@ -10,12 +10,14 @@
 \alias{[,.unUsedRecords,ANY,ANY-method}
 \alias{[[,MoveStack,character,missing-method}
 \alias{[[,.MoveTrackStack,character,missing-method}
+\alias{[[,.MoveTrackStack,logical,missing-method}
+\alias{[[,.MoveTrackStack,numeric,missing-method}
 
 \docType{methods}
 
 \title{Returns a single object from a MoveStack}
 
-\description{The subset function can be used to return a single Move object from a MoveStack object.}
+\description{The subset function can be used to return a subset of a Move(Stack) object.}
 
 \usage{
   \S4method{[}{MoveStack,ANY,ANY}(x,i)
@@ -24,11 +26,11 @@
 
 \arguments{
   \item{x}{MoveStack object}
-  \item{i}{numeric, number of position in the stack}
+  \item{i}{numeric, character or logical vector for individuals in a stack or a set of locations}
 }
 
 \details{
-	The double square bracket method is used for sub setting a stack to a single move object according to the individual name.
+	The double square bracket method is used for sub setting a stack to a single move object according to the individual name or return a stack of multiple individuals. 
 }
 
 
@@ -37,6 +39,8 @@ load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 st <- moveStack(list(leroy,ricky=ricky))
 st[1]
 st[['ricky']]
+st[[2]]
+st[[c(TRUE,FALSE)]]
 }
 
 \author{Bart Kranstauber}

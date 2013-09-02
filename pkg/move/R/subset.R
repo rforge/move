@@ -83,28 +83,52 @@ setMethod("[",
           })
 
 setMethod("[[", 
+          signature(x=".MoveTrackStack", i='logical', j='missing'),
+          definition=function(x,i,j,...){
+		  i<-rownames(idData(x,i, drop=F))
+		  callGeneric(x=x, i=i,...)
+
+	  })
+setMethod("[[", 
+          signature(x=".MoveTrackStack", i='numeric', j='missing'),
+          definition=function(x,i,j,...){
+		  i<-rownames(idData(x,i, drop=F))
+		  callGeneric(x=x, i=i,...)
+
+	  })
+setMethod("[[", 
           signature(x=".MoveTrackStack", i='character', j='missing'),
           definition=function(x,i,j,...){ #does not work
-	    s<-x@trackId==i
-		spdf <- SpatialPointsDataFrame(coords = matrix(x@coords[s,], ncol=2),
-		      			 data=x@data[s,],
-		      			 proj4string=x@proj4string)
-		mt <- new(Class=".MoveTrack",
-		          spdf,
-		          timestamps=x@timestamps[s],
-		          sensor=x@sensor[s])
+	    s<-x@trackId%in%i
+#		spdf <- SpatialPointsDataFrame(coords = matrix(x@coords[s,], ncol=2),
+#		      			 data=x@data[s,],
+#		      			 proj4string=x@proj4string)
+#		mt <- new(Class=".MoveTrack",
+#		          spdf,
+#		          timestamps=x@timestamps[s],
+#		          sensor=x@sensor[s])
+	  mt<-x[s,]
 		  unUsed<-as(x,".unUsedRecordsStack")
 		if(length(unUsed@sensorUnUsedRecords)==0)
 		{
 			unUsedSub<-unUsed
+			unUsedSub@trackIdUnUsedRecords<-factor(unUsedSub@trackIdUnUsedRecords, levels=i)
 		}else{
-			  unUsedSub<-as(unUsed[unUsed@trackIdUnUsedRecords==i,T],'.unUsedRecords')
+			  unUsedSub<-unUsed[unUsed@trackIdUnUsedRecords%in%i,T]
+			unUsedSub@trackIdUnUsedRecords<-droplevels(unUsedSub@trackIdUnUsedRecords)
 		}
-			  x <- new(Class="Move", 
+		if(length(i)==1){
+			  x <- new(Class="Move", as(mt,'.MoveTrack'),
+					 idData=idData(x,i,drop=F),#@idData[row.names(idData(x, drop=F))%in%i, ,drop=F],
+					 as(x,'.MoveGeneral'), as(unUsedSub,'.unUsedRecords'))
+		}else{
+			  x <- new(Class="MoveStack", 
 					 mt,
-					 idData=x@idData[row.names(x@idData)==i, ,drop=F],
+					 idData=idData(x,i,drop=F),#@idData[row.names(idData(x, drop=F))%in%i, ,drop=F],
+					 trackId=droplevels(x@trackId[s]),
 					 as(x,'.MoveGeneral'),
 					 unUsedSub)
+		}
 #            if(!missing(i)){
 #              x@trackId=droplevels(x@trackId[i])
 #              x@idData=x@idData[as.character(unique(x@trackId[i])),]}else{i<-T}
