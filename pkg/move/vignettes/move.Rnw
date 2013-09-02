@@ -77,7 +77,7 @@ Import of a non-Movebank csv file that is attached to this package:
 <<importNonMovebank>>=
 data <- read.csv(system.file("extdata","ricky.csv.gz",package="move"))
 ricky <- move(x=data$location.long, y=data$location.lat, time=as.POSIXct(data$timestamp, 
-            format="%Y-%m-%d %H:%M:%OS", tz="UTC"), proj=CRS("+proj=longlat"), 
+            format="%Y-%m-%d %H:%M:%OS", tz="UTC"), proj=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"), 
             data=data, animal=data$individual.local.identifier, sensor=data$sensor)
 ricky 
 @

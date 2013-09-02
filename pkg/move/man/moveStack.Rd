@@ -38,7 +38,7 @@ moveStack(l)
 
 \dontshow{
 data <- read.csv(system.file("extdata","ricky.csv.gz",package="move"))
-ricky2 <- move(x=data$location.long, y=data$location.lat, time=as.POSIXct(data$timestamp,format="\%Y-\%m-\%d \%H:\%M:\%OS", tz="UTC"), proj=CRS("+proj=longlat"), data=data, animal=data$individual.local.identifier, sensor=data$sensor)
+ricky2 <- move(x=data$location.long, y=data$location.lat, time=as.POSIXct(data$timestamp,format="\%Y-\%m-\%d \%H:\%M:\%OS", tz="UTC"), proj=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"), data=data, animal=data$individual.local.identifier, sensor=data$sensor)
 list <- list(leroy, ricky2)
 stack <- moveStack(list)
 }
