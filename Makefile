@@ -2,7 +2,7 @@ build:
 	GS_QUALITY=ebook R_GSCMD=gs R CMD build --compact-vignettes="both" pkg/move
 	
 clean:
-	rm -rf move*.tar.gz move.Rcheck .Rd2pdf*
+	rm -rf move*.tar.gz move.Rcheck .Rd2pdf* pkg/move.Rcheck
 	svn status --no-ignore | grep '^[I?]' | cut -c 9- | xargs -d"\n" -I{} rm {}
 
 
