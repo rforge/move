@@ -18,7 +18,7 @@
 }
 
 \details{
-  equalProj checks for equal projections using the function of identicalCRS from the package sp. 
+  equalProj checks for equal projections using the function of identicalCRS from the package sp. It returns true if none of the objects have a proj4 string.
 }
 
 \author{Bart Kranstauber}

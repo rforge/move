@@ -2,10 +2,14 @@ setGeneric("equalProj", function(x){standardGeneric("equalProj")})
 setMethod("equalProj", 
           signature=c(x="list"),
           definition=function(x){
+		  if(all(is.na(unlist(lapply(x, proj4string)))))
+		  {
+			  return(T)
+		  }else{
 		  if(length(x)==1){
 			  return(T)}else{
 				  return(all(unlist(lapply(x[-1], identicalCRS, x[[1]]))))
-		  }
+		  }}
 #             if(!isClass(Class="Raster",x)) stop("The list contains objects that are not Rasters.")
  #           tmp <- unlist(strsplit(gsub(pattern="+", replacement="", unlist(strsplit(as.vector(unlist(lapply(x, projection))), " ")), fixed=T), "="))
  #           if(!all(tmp=="NA")){
