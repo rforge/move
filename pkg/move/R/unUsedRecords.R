@@ -12,7 +12,7 @@ setMethod('unUsedRecords<-', c(obj='.MoveTrackSingle', value='logical'), functio
 	  df3 <- rbind(df1,df2) 
 	  unUsedNew<-new('.unUsedRecords', 
 		      timestampsUnUsedRecords=ifelse(is.null(unUsed@timestampsUnUsedRecords), list(xOld@timestamps),list(c(unUsed@timestampsUnUsedRecords, xOld@timestamps)))[[1]],   
-		      sensorUnUsedRecords=factor(c(as.character(unUsed@sensorUnUsedRecords), as.character(xOld@sensor))),
+		      sensorUnUsedRecords=factor(c(as.character(unUsed@sensorUnUsedRecords), as.character(xOld@sensor)), levels=levels(obj@sensor)),
 		      dataUnUsedRecords=df3
 		      ) 
 	  new(class(obj), unUsedNew, xNew)
