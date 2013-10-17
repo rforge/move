@@ -27,7 +27,8 @@ setMethod(f = "moveStack",
 		  DATA <- do.call("rbind", lapply(allData, FUN = function(entry) {
 						  missingColumns <- allColumns[which(!allColumns %in% names(entry))]
 						  entry[, missingColumns] <- NA
-						  entry})) #thanks to: Karl Ove Hufthammer
+						  entry[,allColumns]})
+				  ) #thanks to: Karl Ove Hufthammer
 
 		  ###idData
 		  allidData <- lapply(x, function(y) slot(y, "idData"))
@@ -35,14 +36,10 @@ setMethod(f = "moveStack",
 		  IDDATA <- do.call("rbind", lapply(allidData, FUN = function(entry) {
 						    missingColumns <- allidColumns[which(!allidColumns %in% names(entry))]
 						    entry[, missingColumns] <- NA
-						    entry}))
+						    entry[,allidColumns]}))
 		  id<-raster:::.goodNames(rownames(IDDATA))
 		  rownames(IDDATA)<-id 
 
-		  #		  spdftmp <- SpatialPointsDataFrame(coords = coords,
-		  #						    data = DATA, 
-		  #						    proj4string = CRS(proj4string(x[[1]])), #projection tested above
-		  #						    match.ID = TRUE)
 		  spdftmp<-SpatialPointsDataFrame(do.call(rbind, lapply(x, as,'SpatialPoints')), data=DATA)
 
 		  # unused records
@@ -67,7 +64,7 @@ setMethod(f = "moveStack",
 		  sensorLevels<-unique(unlist(c(lapply(lapply(x, slot, 'sensor'), levels), lapply(lapply(x, slot, 'sensorUnUsedRecords'), levels))))
 		  unUsed<-new(".unUsedRecordsStack",
 			      timestampsUnUsedRecords=do.call('c',ts) ,
-			      dataUnUsedRecords=do.call('rbind',dataUnUsed ),
+			      dataUnUsedRecords=do.call('rbind',dataUnUsed),
 			      sensorUnUsedRecords=factor(unlist(lapply(lapply(unUsedList, slot, 'sensorUnUsedRecords') , as.character)), levels=sensorLevels),
 			      trackIdUnUsedRecords=factor(unlist(mapply(rep, id, unlist(lapply(ts, length)))), levels=id)
 			      )

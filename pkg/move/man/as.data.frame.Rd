@@ -27,10 +27,11 @@
 data <- move(system.file("extdata","leroy.csv.gz",package="move"))
 
 ## returns a data.frame with all information stored in the spatial data frame of the move object
-df <- as.data.frame(data)
+head(df <- as.data.frame(data))
 \dontshow{
-b <- moveStack(list(move(system.file("extdata","leroy.csv.gz",package="move")),move(system.file("extdata","leroy.csv.gz",package="move"))))
-data.frame(b)
+rt<- move(system.file("extdata","ricky.csv.gz",package="move"))
+b <- moveStack(list(data,data,rt))
+head(data.frame(b))
 }
 }
 

@@ -35,7 +35,7 @@
 
 
 \examples{
-load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+load(system.file("extdata", "move.RData", package="move"))
 st <- moveStack(list(leroy,ricky=ricky))
 st[1]
 st[['ricky']]
