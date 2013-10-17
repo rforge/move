@@ -47,7 +47,7 @@ setMethod(f = "moveStack",
 
 		  # unused records
 		  unUsedList<-lapply(x, as, ".unUsedRecords")
-		  unUsedList<-mapply('[', unUsedList,i=lapply(lapply(unUsedList, slot,'timestampsUnUsedRecords'), order), MoreArgs=list(j=T), SIMPLIFY=F)
+		  unUsedList<-mapply(function(x,i,j){if(length(i)!=0){x[i,j]}else{x}}, unUsedList,i=lapply(lapply(unUsedList, slot,'timestampsUnUsedRecords'), order), MoreArgs=list(j=T), SIMPLIFY=F)
 		  tz<-unique(unlist(lapply(ts<-lapply(unUsedList,slot,"timestampsUnUsedRecords"), attr, "tzone")))
 		  if(!(length(tz)==1|is.null(tz )))
 			  stop("Concatinating multiple time zone for unusedrecords")
