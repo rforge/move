@@ -2,15 +2,16 @@ setGeneric("move2ade", function(x){standardGeneric("move2ade")})
 setMethod("move2ade", 
           signature=".MoveTrackSingle", 
           definition=function(x){ 
-            SpatialPointsDataFrame(coords=coordinates(x),
-                                   data=data.frame(rep(rownames(x@idData), n.locs(x)))) 
+            SpatialPointsDataFrame(as(x,'SpatialPoints'),
+                                   data=data.frame(id=rep(rownames(idData(x, drop=F)), n.locs(x)))) 
             })
 
 setMethod("move2ade", 
           signature=".MoveTrackStack", 
           definition=function(x){ 
-            SpatialPointsDataFrame(coords=coordinates(x), 
-                                   data=data.frame(rep(rownames(x@idData), apply(data.frame(rownames(x@idData)), MARGIN=1, function(z) sum(z==as.character(x@trackId)))) )) 
+#            SpatialPointsDataFrame(coords=coordinates(x), 
+ #                                  data=data.frame(id=as.character(trackId(x)))) 
+	  SpatialPointsDataFrame(as(x, 'SpatialPoints'), data=data.frame(id=as.character(trackId(x))))
             })
 
 
