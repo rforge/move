@@ -326,6 +326,7 @@ setMethod(f="getMovebankData",
 		  }
 
 		  new<-new[new$id %in% unique(spdf$deployment_id),]
+		  new<-new[order(new$id),]
 		  trackId<-droplevels(factor(spdf$deployment_id, labels=rownames(new), levels=new$id))
 		  unUsed<-new('.unUsedRecordsStack', dataUnUsedRecords=trackDF[outliers,],timestampsUnUsedRecords=trackDF$timestamp[outliers], 
 			      sensorUnUsedRecords= sensorTypes[as.character(trackDF[outliers,'sensor_type_id']),'name'],

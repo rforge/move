@@ -17,9 +17,9 @@ setMethod(f = "moveStack",
 				 return(x[[z]])}, x=x, nnames=nnames)
 			  warning("Detected duplicated names. Renamed the duplicated individuals accordingly.")
 		  }
-		  length <- lapply(lapply(x, coordinates), nrow)
-		  coords <- do.call(rbind, lapply(x, coordinates))
-		  colnames(coords) <- c("location.long", "location.lat")
+		  #		  length <- lapply(lapply(x, coordinates), nrow)
+		  #	  coords <- do.call(rbind, lapply(x, coordinates))
+		  #	  colnames(coords) <- c("location.long", "location.lat")
 		  allData <- lapply(x, function(y) slot(y, "data"))
 		  allColumns <- unique(unlist(sapply(allData, names)))
 
@@ -36,18 +36,21 @@ setMethod(f = "moveStack",
 						    missingColumns <- allidColumns[which(!allidColumns %in% names(entry))]
 						    entry[, missingColumns] <- NA
 						    entry}))
-		  id <- raster:::.goodNames(rownames(IDDATA))
-		  rownames(IDDATA)<-id
+		  id<-raster:::.goodNames(rownames(IDDATA))
+		  rownames(IDDATA)<-id 
 
-#		  spdftmp <- SpatialPointsDataFrame(coords = coords,
-#						    data = DATA, 
-#						    proj4string = CRS(proj4string(x[[1]])), #projection tested above
-#						    match.ID = TRUE)
+		  #		  spdftmp <- SpatialPointsDataFrame(coords = coords,
+		  #						    data = DATA, 
+		  #						    proj4string = CRS(proj4string(x[[1]])), #projection tested above
+		  #						    match.ID = TRUE)
 		  spdftmp<-SpatialPointsDataFrame(do.call(rbind, lapply(x, as,'SpatialPoints')), data=DATA)
 
 		  # unused records
 		  unUsedList<-lapply(x, as, ".unUsedRecords")
-		  unUsedList<-mapply(function(x,i,j){if(length(i)!=0){x[i,j]}else{x}}, unUsedList,i=lapply(lapply(unUsedList, slot,'timestampsUnUsedRecords'), order), MoreArgs=list(j=T), SIMPLIFY=F)
+		  unUsedList<-mapply(function(x,i,j){if(length(i)!=0){x[i,j]}else{x}}, 
+				     unUsedList,
+				     i=lapply(lapply(unUsedList, slot,'timestampsUnUsedRecords'), function(x){if(is.null(x)){return(NULL)}else{return(order(x))}}), 
+				     MoreArgs=list(j=T), SIMPLIFY=F)
 		  tz<-unique(unlist(lapply(ts<-lapply(unUsedList,slot,"timestampsUnUsedRecords"), attr, "tzone")))
 		  if(!(length(tz)==1|is.null(tz )))
 			  stop("Concatinating multiple time zone for unusedrecords")
@@ -60,7 +63,7 @@ setMethod(f = "moveStack",
 					     colnames(x)<-i
 				     } else { x[,i]<-NA }
 				     return(x)
-						    }, i=cols)# fill unused columns with NA
+				 }, i=cols)# fill unused columns with NA
 		  sensorLevels<-unique(unlist(c(lapply(lapply(x, slot, 'sensor'), levels), lapply(lapply(x, slot, 'sensorUnUsedRecords'), levels))))
 		  unUsed<-new(".unUsedRecordsStack",
 			      timestampsUnUsedRecords=do.call('c',ts) ,
@@ -68,6 +71,7 @@ setMethod(f = "moveStack",
 			      sensorUnUsedRecords=factor(unlist(lapply(lapply(unUsedList, slot, 'sensorUnUsedRecords') , as.character)), levels=sensorLevels),
 			      trackIdUnUsedRecords=factor(unlist(mapply(rep, id, unlist(lapply(ts, length)))), levels=id)
 			      )
+		  length<-lapply(x, n.locs)
 		  res <- new("MoveStack", 
 			     idData = IDDATA,
 			     spdftmp, 
