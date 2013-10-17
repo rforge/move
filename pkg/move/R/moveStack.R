@@ -21,13 +21,13 @@ setMethod(f = "moveStack",
 		  #	  coords <- do.call(rbind, lapply(x, coordinates))
 		  #	  colnames(coords) <- c("location.long", "location.lat")
 		  allData <- lapply(x, function(y) slot(y, "data"))
-		  allColumns <- unique(unlist(sapply(allData, names)))
+		  allColumns <- unique(c(unlist(sapply(allData, names))))
 
 		  ###DATA
 		  DATA <- do.call("rbind", lapply(allData, FUN = function(entry) {
 						  missingColumns <- allColumns[which(!allColumns %in% names(entry))]
 						  entry[, missingColumns] <- NA
-						  entry[,allColumns]})
+						  entry[,allColumns, drop=F]})
 				  ) #thanks to: Karl Ove Hufthammer
 
 		  ###idData
@@ -36,7 +36,7 @@ setMethod(f = "moveStack",
 		  IDDATA <- do.call("rbind", lapply(allidData, FUN = function(entry) {
 						    missingColumns <- allidColumns[which(!allidColumns %in% names(entry))]
 						    entry[, missingColumns] <- NA
-						    entry[,allidColumns]}))
+						    entry[,allidColumns, drop=F]}))
 		  id<-raster:::.goodNames(rownames(IDDATA))
 		  rownames(IDDATA)<-id 
 
