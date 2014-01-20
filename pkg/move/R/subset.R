@@ -64,6 +64,16 @@ setMethod("[", signature(x="dBMvariance"), function(x, i, j, ...) {
     j<-T
   callNextMethod(x=x,i=i,j=j,...)
 })
+setMethod("[", signature(x="dBMvarianceBurst"), function(x, i, j, ...) {
+  if(!missing(i)){
+    x@means<- x@means[i]
+    x@interest<- x@interest[i]
+    x@in.windows<- x@in.windows[i]
+  }else{i<-T}
+  if(missing(j))
+    j<-T
+  callNextMethod(x=x,i=i,j=j,...)
+})
 setMethod("[", 
           signature(x = ".MoveTrackSingleBurst"), 
           definition=function(x, i, j, ...) {

@@ -50,3 +50,8 @@ setAs("MoveStack", "Move", function(from) {
           as(from,".MoveTrack"),timestamps=timestamps(from), as(unUsedRecords(from),'.unUsedRecords')
 	  )
     }) 
+setAs("dBMvarianceBurst", "dBMvariance", function(from) {
+      if (length(unique(from@burstId)) != 1) 
+	      stop("Not one unique burst id method wont work")
+      new("dBMvariance", as(from, "dBMvarianceTmp"), as(from, ".MoveTrackSingle"))
+	 }) 
