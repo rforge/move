@@ -58,6 +58,9 @@ setMethod("[", signature(x="dBMvariance"), function(x, i, j, ...) {
   if(!missing(i)){
     x@means<- x@means[i]
     x@interest<- x@interest[i]
+    if(!all(diff(ifelse(is.logical(i),which(i),i))==1))
+	    warning('Omitting intermediate segments of a dBMvar object probably renders variance estimates invalid')
+    x@interest[length(x@interest)]<-F
     x@in.windows<- x@in.windows[i]
   }else{i<-T}
   if(missing(j))
@@ -68,6 +71,9 @@ setMethod("[", signature(x="dBMvarianceBurst"), function(x, i, j, ...) {
   if(!missing(i)){
     x@means<- x@means[i]
     x@interest<- x@interest[i]
+    if(!all(diff(ifelse(is.logical(i),which(i),i))==1))
+	    warning('Omitting intermediate segments of a dBMvar object probably renders variance estimates invalid')
+    x@interest[length(x@interest)]<-F
     x@in.windows<- x@in.windows[i]
   }else{i<-T}
   if(missing(j))

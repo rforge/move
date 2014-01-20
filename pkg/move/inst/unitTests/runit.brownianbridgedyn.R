@@ -6,4 +6,8 @@ test.brownian.bridge.dyn<-function(){
   checkException(brownian.bridge.dyn(spTransform(data, center=T), raster=r, location.error=20))# equal projection
   checkException(brownian.bridge.dyn(data, raster=r, location.error='2345'))# character loc
   checkException(brownian.bridge.dyn(data, raster=r, location.error=1:5))# multiple loc error not same length
+  dataP<-spTransform(data[1:120,], center=T)
+  dataPB<-burst(dataP, round((1:(n.locs(dataP)-1)/50)))
+  udS<-brownian.bridge.dyn(dataPB, dimSize=150, location.error=23, ext=.3, time.step=4)
+  ud<-brownian.bridge.dyn(dataP, dimSize=150, location.error=23, ext=.3, time.step=4)
 }

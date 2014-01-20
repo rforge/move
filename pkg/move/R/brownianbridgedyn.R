@@ -186,7 +186,7 @@ setMethod(f = "brownian.bridge.dyn",
 
 setMethod(f = "brownian.bridge.dyn", signature = c(object = "dBMvarianceBurst", raster = "RasterLayer", 
 						   dimSize = "missing", location.error = "numeric"), definition = function(object, 
-						   raster, location.error, ext, time.step, burstType,uri, ...) {
+						   raster, location.error, ext, time.step, burstType, ...) {
 	burstVarList <- split(object)
 	if (!missing(burstType)) {
 		burstVarList <- burstVarList[names(burstVarList) %in% burstType]
@@ -200,28 +200,24 @@ setMethod(f = "brownian.bridge.dyn", signature = c(object = "dBMvarianceBurst", 
 	if (missing(time.step)) {
 		time.step <- min(unlist(lapply(varList, time.lag, units = "mins")))/15
 	}
-	t<-lapply(varList, function(x,...){brownian.bridge.dyn(x,...)}, 
-		  ext = ext, 
+	locErrSplit<-lapply(mapply('%in%', MoreArgs=list(row.names(object)), table=lapply(varList, row.names),SIMPLIFY=F),function(x,i)x[i], x=location.error)
+	t<-mapply(brownian.bridge.dyn,varList,
+		  location.error = locErrSplit, 
+		  MoreArgs=list(ext = ext, 
 		  raster = raster, 
-		  location.error = location.error, 
-		  time.step = time.step, ...)
+		  time.step = time.step, ...), SIMPLIFY=F)
 	for(i in 1:length(t))
 		names(t[[i]])<-paste0(names(t[i]),'_',i)
 
-	t<-lapply(t, function(x,uri){
-		  writeRaster(x, 
-			      filename=paste0(uri,'_', names(x), '.grd'), 
-			      overwrite=T)
-		  }, uri=paste0(uri,'_', varList[[1]]@idData$individual.local.identifier))#nodep
 	res <- stack(t)
 	rm(t)
-	res<-setZ(res, unlist(lapply(varList, function(x){
+	t<-( as.difftime(unlist(lapply(varList, function(x){
 				     interest <- (c(x@interest, 0) + c(0, x@interest))[1:length(x@interest)] != 0
-				     return(as.numeric(diff(range(timestamps(x)[interest])),units='days'))})))
+				     return(as.numeric(diff(range(timestamps(x)[interest])),units='days'))})), units='days'))
+	res<-stack(res*(as.numeric(t, units='days')/sum(as.numeric(t,units='days'))))
 
-	gc()
-	res <- new("DBBMMBurstStack", DBMvar = object, res, ext = ext)
-	gc()
+res<-setZ(res, t)
+	res <- new("DBBMMBurstStack", DBMvar = object, (res), ext = ext)
 	return(res)
 	 })
 

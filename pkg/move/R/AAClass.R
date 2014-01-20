@@ -240,6 +240,8 @@ setClass(Class = "dBMvarianceTmp",
 			 stop("Window size length not 1")
 		 if( any(is.na(object@means[object@interest])))
 			 stop('There are not variance estimates for segments of interest')
+		 if( tail(object@interest,1))
+			 stop('The last value of interest cant be true since interest has the same length as the number of locations in the object and the last value thus does not refer to a segment')
 		 return(TRUE)
 	 })
 
@@ -279,6 +281,22 @@ setClass(Class = ".UDStack", contains = c("RasterStack"),
 			 stop("One or more of the used rasters are not a UD, because they sum not to 1)")
 	 })
 
+setClass(Class = ".UDBurstStack", contains = c("RasterStack"), 
+	 representation = representation(method = "character"), 
+	 prototype = prototype(
+			       method = as.character()), 
+	 validity = function(object) {
+		 #if (!all(apply(values(object), MARGIN = 2, FUN = function(X) isTRUE(all.equal(sum(X), 1, check.attributes=F))))) 
+		 if(!all.equal(1,sum(s<-cellStats(object,'sum')), check.attributes=F)) 
+			 stop("All values in a burst stack need to sum up to one")
+		 if(class(z<-getZ(object))!='difftime')
+			 stop('The Z vector needs to represent the time contribution in the for of a difftime vector')
+		 if(!
+		    all.equal( s , as.numeric(z, units='mins')/sum(as.numeric(z, units='mins')), check.attributes=F)
+		    )
+			 stop('The Z vector need to correspond to the sum of the layers')
+		 return(TRUE)
+	 })
 
 setClass(Class = ".UD", contains = c("RasterLayer"), 
 	 representation = representation(method = "character"), 
@@ -311,7 +329,7 @@ setClass(Class = "DBBMM", contains = c(".UD"),
 	 prototype = prototype(
 			       ext = as.numeric())
 	 )
-setClass("DBBMMBurstStack", contains = ".UDStack", representation = representation(DBMvar = "dBMvarianceBurst", 
+setClass("DBBMMBurstStack", contains = ".UDBurstStack", representation = representation(DBMvar = "dBMvarianceBurst", 
 										   ext = "numeric"), prototype = prototype(ext = as.numeric()), 
 	 validity = function(object) {
 		 validObject(object@DBMvar)
