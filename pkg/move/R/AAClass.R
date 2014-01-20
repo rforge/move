@@ -196,6 +196,24 @@ setClass(Class = "MoveStack", contains = c(".MoveTrackStack",".MoveGeneral"),
 		 return(TRUE)
 	 }
 	 )
+setClass(Class = ".MoveTrackSingleBurst", contains = c(".MoveTrackSingle"), 
+	 representation = representation(
+					 burstId = "factor"), 
+	 prototype = prototype(
+			       burstId = factor()), 
+	 validity = function(object) {
+		 if(any(levels(object@burstId)!=raster:::.goodNames(levels(object@burstId))))
+			 stop('no good names')
+		 if(length(object@burstId)!=(length(object@timestamps)-1))
+			 stop("Burst ids need to be one shorter than the number of coordinates since it is a segment property")
+		 return(TRUE)
+	 })
+
+
+setClass(Class = "MoveBurst", contains = c(".MoveTrackSingleBurst", ".MoveGeneral"), 
+	 validity = function(object) {
+		 return(TRUE)
+	 })
 
 
 setClass(Class = "dBMvarianceTmp", 
@@ -233,6 +251,12 @@ setClass(Class = "dBMvariance", contains = c(".MoveTrackSingle", "dBMvarianceTmp
 		 return(TRUE)
 	 })
 
+setClass(Class = "dBMvarianceBurst", contains = c(".MoveTrackSingleBurst", "dBMvarianceTmp"), 
+	 validity = function(object) {
+		 if (length(object@means) != nrow(object@coords)) 
+			 stop("Number of coordinates does not match the number of means")
+		 return(TRUE)
+	 })
 
 setClass(Class = "dBMvarianceStack", contains = c(".MoveTrackStack", "dBMvarianceTmp"), 
 	 validity = function(object) {
@@ -240,6 +264,9 @@ setClass(Class = "dBMvarianceStack", contains = c(".MoveTrackStack", "dBMvarianc
 			 stop("Number of coordinates does not match the number of means")
 		 return(TRUE)
 	 })
+########################
+########## UD ##########
+########################
 
 
 setClass(Class = ".UDStack", contains = c("RasterStack"), 
@@ -284,23 +311,11 @@ setClass(Class = "DBBMM", contains = c(".UD"),
 	 prototype = prototype(
 			       ext = as.numeric())
 	 )
-
-
-setClass(Class = ".MoveTrackSingleBurst", contains = c(".MoveTrackSingle"), 
-	 representation = representation(
-					 burstId = "factor"), 
-	 prototype = prototype(
-			       burstId = factor()), 
+setClass("DBBMMBurstStack", contains = ".UDStack", representation = representation(DBMvar = "dBMvarianceBurst", 
+										   ext = "numeric"), prototype = prototype(ext = as.numeric()), 
 	 validity = function(object) {
-		 if(any(levels(object@burstId)!=raster:::.goodNames(levels(object@burstId))))
-			 stop('no good names')
-		 if(length(object@burstId)!=(length(object@timestamps)-1))
-			 stop("Burst ids need to be one shorter than the number of coordinates since it is a segment property")
-		 return(TRUE)
+		 validObject(object@DBMvar)
+		 return(T)
 	 })
 
 
-setClass(Class = "MoveBurst", contains = c(".MoveTrackSingleBurst", ".MoveGeneral"), 
-	 validity = function(object) {
-		 return(TRUE)
-	 })

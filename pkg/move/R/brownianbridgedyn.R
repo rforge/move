@@ -183,3 +183,45 @@ setMethod(f = "brownian.bridge.dyn",
             DBBMMStack <- new("DBBMMStack", DBMvar = dBMvarianceStack, rasterStack)
             return(DBBMMStack)
           })
+
+setMethod(f = "brownian.bridge.dyn", signature = c(object = "dBMvarianceBurst", raster = "RasterLayer", 
+						   dimSize = "missing", location.error = "numeric"), definition = function(object, 
+						   raster, location.error, ext, time.step, burstType,uri, ...) {
+	burstVarList <- split(object)
+	if (!missing(burstType)) {
+		burstVarList <- burstVarList[names(burstVarList) %in% burstType]
+	}
+	varList <- lapply(burstVarList, as, "dBMvariance")
+
+	if(!all(sel<-unlist( lapply(lapply(lapply(lapply(varList, slot,"interest"),rev), '[',-1), any))))
+	{warning("Some burst are omitted for variance calculation since there are not segements of interest")
+	varList<-varList[sel]
+	}
+	if (missing(time.step)) {
+		time.step <- min(unlist(lapply(varList, time.lag, units = "mins")))/15
+	}
+	t<-lapply(varList, function(x,...){brownian.bridge.dyn(x,...)}, 
+		  ext = ext, 
+		  raster = raster, 
+		  location.error = location.error, 
+		  time.step = time.step, ...)
+	for(i in 1:length(t))
+		names(t[[i]])<-paste0(names(t[i]),'_',i)
+
+	t<-lapply(t, function(x,uri){
+		  writeRaster(x, 
+			      filename=paste0(uri,'_', names(x), '.grd'), 
+			      overwrite=T)
+		  }, uri=paste0(uri,'_', varList[[1]]@idData$individual.local.identifier))#nodep
+	res <- stack(t)
+	rm(t)
+	res<-setZ(res, unlist(lapply(varList, function(x){
+				     interest <- (c(x@interest, 0) + c(0, x@interest))[1:length(x@interest)] != 0
+				     return(as.numeric(diff(range(timestamps(x)[interest])),units='days'))})))
+
+	gc()
+	res <- new("DBBMMBurstStack", DBMvar = object, res, ext = ext)
+	gc()
+	return(res)
+	 })
+
