@@ -9,6 +9,7 @@
 %\alias{brownian.bridge.dyn,Move,numeric,missing,numeric-method}
 %\alias{brownian.bridge.dyn,Move,missing,numeric,numeric-method}
 \alias{brownian.bridge.dyn,dBMvariance,RasterLayer,missing,numeric-method}
+\alias{brownian.bridge.dyn,dBMvarianceBurst,RasterLayer,missing,numeric-method}
 \alias{brownian.bridge.dyn,.MoveTrackSingle,RasterLayer,missing,character-method}
 
 \docType{methods}
