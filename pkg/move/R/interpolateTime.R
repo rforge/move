@@ -1,23 +1,23 @@
 #require(move)
-setGeneric("interpolateTime", function(x, time,...){standardGeneric("interpolateTime")})
+setGeneric("interpolateTime", function(x, time,spaceMethod=c('euclidean','greatcircle','rhumbline'),...){standardGeneric("interpolateTime")})
 setOldClass("difftime") 
 setMethod("interpolateTime", 
           signature=c(".MoveTrackSingle",'numeric'), 
-          definition=function(x,time, spaceMethod=c('euclidean','greatcircle','rhumbline')){
+          definition=function(x,time, ...){
 		  stopifnot(length(time)==1)
 		time<-seq(min(timestamps(x)), max(timestamps(x)),length.out=time)
 		callGeneric()
 	  })
 setMethod("interpolateTime", 
           signature=c(".MoveTrackSingle",'difftime'), 
-          definition=function(x,time, spaceMethod=c('euclidean','greatcircle','rhumbline')){
+          definition=function(x,time, ...){
 		  stopifnot(length(time)==1)
 		time<-seq(min(timestamps(x)), max(timestamps(x)),by=time)
 		callGeneric()
 	  })
 setMethod("interpolateTime", 
           signature=c(".MoveTrackSingle",'POSIXct'), 
-          definition=function(x,time, spaceMethod=c('euclidean','greatcircle','rhumbline')){
+          definition=function(x,time, spaceMethod=c('euclidean','greatcircle','rhumbline'),...){
 		  stopifnot(max(time)<=max(timestamps(x)))
 		  stopifnot(min(time)>=min(timestamps(x)))
 		  spaceMethod<-match.arg(spaceMethod)
@@ -46,12 +46,3 @@ setMethod("interpolateTime",
 		  return(m)
           })
 
-#x <- move(system.file("extdata","leroy.csv.gz",package="move"))
-#time<-seq(min(timestamps(x)), max(timestamps(x)),length.out=30)
-#spaceMethod<-'euclidean'
-#spaceMethod<-'rhumbline'
-#ii<-interpolateTime(x,seq(min(timestamps(x)), max(timestamps(x)),length.out=300), 'gr')
-#i<-interpolateTime(x,300, 'gr')
-#iii<-interpolateTime(x,as.difftime(100,units='mins'), 'gr')
-#duplicated(diff(timestamps(i)))
-#all.equal(i,ii)

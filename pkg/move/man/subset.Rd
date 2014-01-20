@@ -6,6 +6,7 @@
 \alias{[,.MoveTrackStack,ANY,ANY-method}
 \alias{[,dBMvariance,ANY,ANY-method}
 \alias{[,dBMvarianceStack,ANY,ANY-method}
+\alias{[,dBMvarianceBurst,ANY,ANY-method}
 \alias{[,.unUsedRecordsStack,ANY,ANY-method}
 \alias{[,.unUsedRecords,ANY,ANY-method}
 \alias{[[,MoveStack,character,missing-method}

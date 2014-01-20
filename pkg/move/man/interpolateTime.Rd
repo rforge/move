@@ -14,9 +14,10 @@
   \item{x}{an object of the \link{Move-class}}
   \item{time}{either timestamps, or a number of locations or time interval that is used to generate a sequence of timestamps using the \code{seq} function}
   \item{spaceMethod}{a character that indicates the interpolation function to be used}
+  \item{...}{other arguments currently not used}
 }
 \author{Bart Kranstauber}
 \examples{
   load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-	plot(interpolateTime(ricky[1:200,], 700,'gc'))
+	plot(interpolateTime(ricky[1:200,], 700,'gr'))
 }

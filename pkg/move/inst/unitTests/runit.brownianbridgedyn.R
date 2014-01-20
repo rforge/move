@@ -8,6 +8,13 @@ test.brownian.bridge.dyn<-function(){
   checkException(brownian.bridge.dyn(data, raster=r, location.error=1:5))# multiple loc error not same length
   dataP<-spTransform(data[1:120,], center=T)
   dataPB<-burst(dataP, round((1:(n.locs(dataP)-1)/50)))
-  udS<-brownian.bridge.dyn(dataPB, dimSize=150, location.error=23, ext=.3, time.step=4)
+  checkEquals(class(udS<-brownian.bridge.dyn(dataPB, dimSize=150, location.error=23, ext=.3, time.step=4)),"DBBMMBurstStack", check.attributes=F)
   ud<-brownian.bridge.dyn(dataP, dimSize=150, location.error=23, ext=.3, time.step=4)
+  checkEquals(udS@DBMvar@means, ud@DBMvar@means)
+  p<-seq(0, 2*pi, length.out=49)
+  tmp<-move(sin(p), cos(p), as.POSIXct(1:length(p), origin='1970-1-1'), proj='+proj=aeqd')
+  t<-.05
+  u<-brownian.bridge.dyn(tmp, dimSize=200, location.error=.1, time.step=t)
+  us<-brownian.bridge.dyn(burst(tmp, round(1:length(p[-1])/30)), dimSize=200, location.error=.1, time.step=t)
+  checkEquals(values(u), c(values(u)))
 }

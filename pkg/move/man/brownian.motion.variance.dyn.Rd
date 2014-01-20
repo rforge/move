@@ -2,6 +2,7 @@
 
 \alias{brownian.motion.variance.dyn}
 \alias{brownian.motion.variance.dyn,.MoveTrackSingle,numeric,numeric,numeric-method}
+\alias{brownian.motion.variance.dyn,.MoveTrackSingleBurst,numeric,numeric,numeric-method}
 
 \title{Calculates the dynamic brownian motion variance}
 
