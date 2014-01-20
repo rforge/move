@@ -47,7 +47,7 @@ setMethod(f = "move",
 			  df <- df[with(df, order(df$individual.local.identifier, timestamp)), ]  
 		  }
 		  df$individual.local.identifier<-as.factor( df$individual.local.identifier)
-		  levels(df$individual.local.identifier) <- raster:::.goodNames(levels(factor(df$individual.local.identifier))) #changing names to 'goodNames' skipping spaces
+		  levels(df$individual.local.identifier) <- validNames(levels(factor(df$individual.local.identifier))) #changing names to 'goodNames' skipping spaces
 
 		  if("visible" %in% colnames(df))
 		  {
@@ -131,7 +131,7 @@ setMethod(f = ".move",
 			  df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
 		  }
 		  df$individual.local.identifier<-factor(df$individual.local.identifier)
-		  levels(df$individual.local.identifier) <- raster:::.goodNames(levels(factor(df$individual.local.identifier))) #changing names to 'goodNames' skipping spaces
+		  levels(df$individual.local.identifier) <- validNames(levels(factor(df$individual.local.identifier))) #changing names to 'goodNames' skipping spaces
 
 		  if(length(unique(df$individual.local.identifier))>1 & any(unique(as.character(df$individual.local.identifier))==""))
 		  {

@@ -2,7 +2,7 @@ setGeneric("burst", function(x, f, ...) {standardGeneric("burst")})
 setMethod("burst", 
           signature=c(x = "Move", f = "factor"), 
           definition = function(x, f, ...) {
-            levels(f)<-raster:::.goodNames(levels(f))
+            levels(f)<-validNames(levels(f))
           new("MoveBurst", 
               as(x, ".MoveTrackSingle"), 
               as(x, ".MoveGeneral"), 

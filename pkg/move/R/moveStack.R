@@ -37,8 +37,7 @@ setMethod(f = "moveStack",
 						    missingColumns <- allidColumns[which(!allidColumns %in% names(entry))]
 						    entry[, missingColumns] <- NA
 						    entry[,allidColumns, drop=F]}))
-		  id<-raster:::.goodNames(rownames(IDDATA))
-		  rownames(IDDATA)<-id 
+		  rownames(IDDATA)<-validNames(rownames(IDDATA))
 
 		  spdftmp<-SpatialPointsDataFrame(do.call(rbind, lapply(x, as,'SpatialPoints')), data=DATA)
 

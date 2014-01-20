@@ -147,7 +147,7 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack", ".unUsedRecordsSt
 		 }
 		 if(any(unlist(lapply(tapply(object@timestamps,object@trackId, order),diff))!=1))
 			 stop("Not ordered timestamps per individual occured")
-		 if(any(levels(object@trackId)!=raster:::.goodNames(levels(object@trackId))))
+		 if(any(levels(object@trackId)!=validNames(levels(object@trackId))))
 			 stop('No good names for trackId levels')
 		 if(length(unique(object@trackId))!=nrow(object@idData))
 			 stop("Not same number of unique IDs and rows in the idData data.frame")
@@ -202,7 +202,7 @@ setClass(Class = ".MoveTrackSingleBurst", contains = c(".MoveTrackSingle"),
 	 prototype = prototype(
 			       burstId = factor()), 
 	 validity = function(object) {
-		 if(any(levels(object@burstId)!=raster:::.goodNames(levels(object@burstId))))
+		 if(any(levels(object@burstId)!=validNames(levels(object@burstId))))
 			 stop('no good names')
 		 if(length(object@burstId)!=(length(object@timestamps)-1))
 			 stop("Burst ids need to be one shorter than the number of coordinates since it is a segment property")
