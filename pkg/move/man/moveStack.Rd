@@ -33,11 +33,11 @@ All animal names are converted into 'good names' which means, that spaces are re
 \examples{
 load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 
-l <- list(ricky, leroy)
+l <- list(ricky[200:270,], leroy[200:270,])
 moveStack(l)
 
 \dontshow{
-data <- read.csv(system.file("extdata","ricky.csv.gz",package="move"))
+data <- read.csv(system.file("extdata","ricky.csv.gz",package="move"))[100:199,]
 ricky2 <- move(x=data$location.long, y=data$location.lat, time=as.POSIXct(data$timestamp,format="\%Y-\%m-\%d \%H:\%M:\%OS", tz="UTC"), proj=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"), data=data, animal=data$individual.local.identifier, sensor=data$sensor)
 list <- list(leroy, ricky2)
 stack <- moveStack(list)

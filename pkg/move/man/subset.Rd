@@ -37,7 +37,7 @@
 
 \examples{
 load(system.file("extdata", "move.RData", package="move"))
-st <- moveStack(list(leroy,ricky=ricky))
+st <- moveStack(list(leroy[50:100,],ricky=ricky[90:170,]))
 st[1]
 st[['ricky']]
 st[[2]]

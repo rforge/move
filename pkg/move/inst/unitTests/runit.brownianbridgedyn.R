@@ -17,4 +17,15 @@ test.brownian.bridge.dyn<-function(){
   u<-brownian.bridge.dyn(tmp, dimSize=200, location.error=.1, time.step=t)
   us<-brownian.bridge.dyn(burst(tmp, round(1:length(p[-1])/30)), dimSize=200, location.error=.1, time.step=t)
   checkEquals(values(u), c(values(u)))
+  p<-seq(0, 2*pi, length.out=199)
+  set.seed(3245)
+  tmp<-move(sin(p)+rnorm(length(p))*round(sin(p))*.03, cos(p), as.POSIXct(1:length(p), origin='1970-1-1'), proj='+proj=aeqd')
+
+  t<-.125
+  u<-brownian.bridge.dyn(tmp, dimSize=500, location.error=.01, time.step=t, ext=.2)
+  us<-brownian.bridge.dyn(burst(tmp, round(1:length(p[-1])/30)), dimSize=500, location.error=.01, time.step=t, ext=.2)
+#  o<-raster(us)
+#  values(o)<-values(us)
+  checkTrue(all(abs(values(sum(us))-values(u))< .Machine$double.eps)  )
+
 }

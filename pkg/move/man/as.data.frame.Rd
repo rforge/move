@@ -24,7 +24,7 @@
 
 \examples{
 ## create a move object
-data <- move(system.file("extdata","leroy.csv.gz",package="move"))
+data <- move(system.file("extdata","leroy.csv.gz",package="move"))[99:150,]
 
 ## returns a data.frame with all information stored in the spatial data frame of the move object
 head(df <- as.data.frame(data))
