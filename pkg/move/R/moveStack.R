@@ -65,7 +65,7 @@ setMethod(f = "moveStack",
 			      timestampsUnUsedRecords=do.call('c',ts) ,
 			      dataUnUsedRecords=do.call('rbind',dataUnUsed),
 			      sensorUnUsedRecords=factor(unlist(lapply(lapply(unUsedList, slot, 'sensorUnUsedRecords') , as.character)), levels=sensorLevels),
-			      trackIdUnUsedRecords=factor(unlist(mapply(rep, id, unlist(lapply(ts, length)))), levels=id)
+			      trackIdUnUsedRecords=factor(unlist(mapply(rep, rownames(IDDATA), unlist(lapply(ts, length)))), levels=rownames(IDDATA))
 			      )
 		  length<-lapply(x, n.locs)
 		  res <- new("MoveStack", 
@@ -73,7 +73,7 @@ setMethod(f = "moveStack",
 			     spdftmp, 
 			     timestamps = do.call("c", lapply(x, timestamps)),
 			     sensor =factor(do.call('c',lapply(lapply(x, slot, 'sensor'),as.character)), levels=sensorLevels),
-			     trackId = factor(rep(id, length), levels=id),
+			     trackId = factor(rep(rownames(IDDATA), length), levels=rownames(IDDATA)),
 			     unUsed)
 		  return(res)
 	  })
