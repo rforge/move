@@ -34,7 +34,7 @@ setMethod("interpolateTime",
 		  fun<-switch(spaceMethod,
 			      euclidean=function(x,y,p){(x)*(1-p)+(y)*p},
 			      greatcircle=function(x,y,p){destPoint(x,ifelse(is.na(bearing(x, y)),0,bearing(x,y)),distHaversine(x, y)*p)},
-			      rhumbline=function(x,y,p){destPointRhumb(x,bearingRhumb(x, y),distRhumb(x, y)*p)}
+			      rhumbline=function(x,y,p){ destPointRhumb(x,ifelse(is.na(bearingRhumb(x, y)),0,bearingRhumb(x,y)),distRhumb(x, y)*p) }
 			      )
 	#	  crds<-do.call('rbind',mapply(function(x,y,p,f,m){if(is.nan(p)){return(coordinates(m[x,]))}else{f(m[x,],m[y,],p)}},x=prevLoc, y=nextLoc,p=p,MoreArgs=list(m=x,f=fun), SIMPLIFY=FALSE))
 
