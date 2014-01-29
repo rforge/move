@@ -15,5 +15,12 @@ test.interpolateTime<-function(){
 	tt<-move(0:1,0:1, as.POSIXct(c(0,10), origin='1970-1-1'))
 	checkEqualsNumeric(coordinates(interpolateTime(t, as.POSIXct(.1,origin='1970-1-1'))), cbind(.1,.1))
 	checkEquals(coordinates(interpolateTime(t, as.POSIXct(.16,origin='1970-1-1'))), coordinates(interpolateTime(tt, as.POSIXct(1.6,origin='1970-1-1'))))
+	# prevent lineMidpoint from failing
+	d<-data[1:40,]
+	crd<-do.call(rbind,lapply(lapply(split(burst(d, 1:39)),move:::lineMidpoint), coordinates))
+	crd2<-coordinates(interpolateTime(d, timestamps(d)[-40]+ (timestamps(d)[-1]-timestamps(d)[-40])/2, spaceMethod='g'))
+	
+	checkEquals(c(crd), c(crd2))
+
 
 }

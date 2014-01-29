@@ -27,7 +27,7 @@ setMethod(f = "lineMidpoint",
                     #####ADDING CALCULATION ALONG GREAT CIRCLE USING DESTPOINT FROM GEOSPHERE
                     mid <- destPoint(p=coordinates(track)[min,], 
                                      b=bearing(coordinates(track)[min,], coordinates(track)[min+1,]), 
-                                     d=prop*dists[min]*1000) #seglength returns km,for lonlat=T,destPoint uses m
+                                     d=prop*dists[min]) #seglength returns km,for lonlat=T,destPoint uses m
                   }
                 }
               }
