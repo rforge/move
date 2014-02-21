@@ -158,7 +158,7 @@ setMethod(f = "brownian.bridge.dyn",
             dbbmmLST <- list()
             omitMove <- c()
             for (i in names(moveUnstacked)) {
-              if (nrow(moveUnstacked[[i]]@coords) > (window.size + margin)) {
+              if (n.locs(moveUnstacked[[i]]) > (window.size + margin)) {
                 dbbmmLST[[i]] <- brownian.bridge.dyn(moveUnstacked[[i]], raster = raster, location.error = location.error, margin = margin, window.size = window.size, ext = ext, ...)
               } else {
                 omitMove <- c(omitMove, i)
