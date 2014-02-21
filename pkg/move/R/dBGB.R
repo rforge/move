@@ -394,7 +394,7 @@ setMethod("dynBGB",
 		  t <- as.numeric(move@timestamps)/60
 		  if(missing(timeStep))
 			  timeStep<-min(diff(t))/20.1
-		  dyn.load("bbmm.so")
+		  #dyn.load("bbmm.so")
 		  values(raster) <- .Call("bgb", 
 					  coordinates(move)[pointsInterest, 1], 
 					  coordinates(move)[pointsInterest, 2], 
