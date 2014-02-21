@@ -26,7 +26,7 @@ The move method creates Move or MoveStack object from Movebank or other (compres
 }
 
 \arguments{
-\item{x}{Full path to the file location, OR ca vector with x coordinates if non-Movebank data are provided (e.g. \code{data$x})}
+\item{x}{Full path to the file location, OR a vector with x coordinates if non-Movebank data are provided (e.g. \code{data$x})}
 \item{y}{vector of y coordinates if non-Movebank data are provided}
 \item{time}{column indicator for non-Movebank data for the time stamps, with POSIXct conversion, i.e. \code{as.POSIXct(data$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC")}}
 \item{data}{Optional extra data associated with the relocation, if empty it is filled with the coordinates and timestamps}
@@ -56,10 +56,11 @@ Due to convention all names are turned into 'good names' which means, without sp
 
 \examples{
 ## create a move object from a Movebank csv file
-data <- move(system.file("extdata","leroy.csv.gz",package="move"))
+filePath<-system.file("extdata","leroy.csv.gz",package="move")
+data <- move(filePath)
 
 ## create a move object from non-Movebank data
-file <- read.table(system.file("extdata","leroy.csv.gz",package="move"), 
+file <- read.table(filePath, 
 		   header=TRUE, sep=",", dec=".")
 data <- move(x=file$location.long, y=file$location.lat, 
 	     time=as.POSIXct(file$timestamp, 

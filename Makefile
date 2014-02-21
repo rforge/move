@@ -7,6 +7,7 @@ clean:
 
 
 check:
+	make build
 	R CMD check --as-cran move*.tar.gz
 
 checkRdevel:
