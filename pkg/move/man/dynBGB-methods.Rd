@@ -1,16 +1,15 @@
 \docType{methods}
 \name{dynBGB}
 \alias{dynBGB}
-\title{Calculation of the dynamic bivariate gausian bridge}
+\title{Calculation of the dynamic Bivariate Gausian Bridge}
 \arguments{
   \item{move}{the move object or variance object used for
   calculating the ud if a \code{.MoveTrackSingle} object is
   supplied this is converted into a \code{dBGBvariance}
   object using the \code{dynBGBvariance} function}
 
-  \item{raster}{either the raster used for variance
-  calculation or the number of sells the raster need to
-  consist of}
+  \item{raster}{either the raster used for UD
+  calculation the resolution of the raster used for UD calculation}
 
   \item{locErr}{the location errors used for the
   calculation}

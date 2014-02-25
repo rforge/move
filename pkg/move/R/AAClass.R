@@ -335,5 +335,32 @@ setClass("DBBMMBurstStack", contains = ".UDBurstStack", representation = represe
 		 validObject(object@DBMvar)
 		 return(T)
 	 })
+## dynBGB classes ##
+setClass(Class = "dBGBvarianceTmp", 
+	 representation = representation(windowSize = "numeric", 
+					 margin = "numeric", paraSd = "numeric", orthSd = "numeric", nEstim = "numeric", 
+					 segInterest = "logical"), prototype = prototype(windowSize = numeric(), margin = numeric(), 
+					 paraSd = numeric(), orthSd = numeric(), nEstim = numeric(), segInterest = logical()), 
+	 validity = function(object) {
+		 if (length(unique(c(length(object@paraSd), length(object@orthSd), length(object@nEstim), 
+				     length(object@segInterest)))) != 1) 
+			 stop("Length does not match")
+		 if (length(object@margin) != 1) 
+			 stop("Margin length not 1")
+		 if (length(object@windowSize) != 1) 
+			 stop("Window size length not 1")
+		 if (2 != sum(uneq <- rev(object@segInterest) != object@segInterest)) 
+			 stop("something wrong with segInterest")
+		 if (any(uneq != rev(uneq))) 
+			 stop("something wrong with segInterest")
+		 return(TRUE)
+	 })
 
+setClass(Class = "dBGBvariance", contains = c(".MoveTrackSingle", "dBGBvarianceTmp"), 
+	 validity = function(object) {
+		 if (length(object@segInterest) != nrow(object@coords)) 
+			 stop("Number of coordinates does not match the number of means")
+		 return(TRUE)
+	 })
+setClass("dynBGB", contains=c(".UD"), representation(var="dBGBvariance"))
 

@@ -2,6 +2,9 @@
 \alias{dynBGB}
 \title{this class stores the resulting ud}
 \description{
-  this class stores the resulting ud
+  This class stores the utilization density calculated using dynamic Bivariate Gausian Briges. It is an extention of the .UD class.
 }
+\author{Bart Kranstauber}
+\keyword{classes}
+\seealso{.UD}
 
