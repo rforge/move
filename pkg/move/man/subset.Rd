@@ -1,5 +1,6 @@
 \name{subset-method}
 
+\alias{[,dBGBvariance,ANY,ANY-method}
 \alias{[,MoveStack,ANY,ANY-method}
 \alias{[,.MoveTrack,ANY,ANY-method}
 \alias{[,.MoveTrackSingleBurst,ANY,ANY-method}

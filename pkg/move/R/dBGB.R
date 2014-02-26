@@ -227,6 +227,8 @@ setMethod("BGBvarbreak",
 		  rownames(res) <- NULL
 		  return(as.data.frame(res))
 	  })
+
+
 setMethod("BGBvarbreak", 
 	  signature(move = ".MoveTrackSingle", locErr = "numeric", 
 		    margin = "numeric", paraBreaks = "missing", orthBreaks = "missing"), function(move, 
@@ -342,6 +344,7 @@ setMethod("dynBGB", signature(move = ".MoveTrackSingle", raster = "RasterLayer",
 		  move <- dynBGBvariance(move = move, locErr = locErr, margin=margin, windowSize=windowSize,...)
 		  callGeneric(move = move, raster = raster, locErr = locErr, maxInt=maxInt,...)
 	  })
+
 setMethod("dynBGB", signature(move = ".MoveTrackSingle", raster = "numeric", locErr = "ANY", 
 			      maxInt = "numeric"), function(move, raster, 
 			      locErr, maxInt,ext,...) {
@@ -360,6 +363,8 @@ setMethod("dynBGB", signature(move = ".MoveTrackSingle", raster = "numeric", loc
             raster <- raster(ncols = ncol, nrows = nrow, crs = proj4string(move), ex)
 	callGeneric()
 	  })
+
+
 setMethod("dynBGB", 
 	  signature(move = "dBGBvariance", raster = "RasterLayer", 
 		    locErr = "numeric",  maxInt = "numeric"), 

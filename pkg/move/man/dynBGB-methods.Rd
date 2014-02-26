@@ -1,6 +1,10 @@
 \docType{methods}
 \name{dynBGB}
 \alias{dynBGB}
+\alias{dynBGB,.MoveTrackSingle,RasterLayer,numeric,numeric-method}
+\alias{dynBGB,.MoveTrackSingle,numeric,ANY,numeric-method}
+\alias{dynBGB,dBGBvariance,RasterLayer,numeric,numeric-method}
+
 \title{Calculation of the dynamic Bivariate Gausian Bridge}
 \arguments{
   \item{move}{the move object or variance object used for
