@@ -19,8 +19,6 @@ The \code{Move} object contains at least time and coordinate information of an a
 
 \section{Slots}{
   \describe{
-    %\item{animal}{Object of class \code{"character"}: animal ID or name;  }
-    %\item{species}{Object of class \code{"character"}: species name;  }
     \item{idData}{Object of class \code{"data.frame"}: additional (one row) data;  }
     \item{dateCreation}{Object of class \code{"numeric"}: time stamp when the file was downloaded;  }
     \item{study}{Object of class \code{"character"}: name of the study;  }

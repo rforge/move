@@ -71,8 +71,8 @@ data <- move(system.file("extdata","leroy.csv.gz",package="move"))
 data2 <- spTransform(data, CRSobj="+proj=aeqd", center=TRUE)
 
 ## create a DBBMM object
-dbbmm <- brownian.bridge.dyn(object=data2[1:100,], location.error=12, dimSize=45, ext=.3, 
-			     time.step=600)
+dbbmm <- brownian.bridge.dyn(object=data2[1:90,], location.error=12, dimSize=45, ext=.3, 
+			     time.step=600, margin=15)
 \dontshow{
   load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
   leroy <- leroy[1:50]

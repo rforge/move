@@ -1,9 +1,9 @@
-\docType{methods}
 \name{dynBGB}
 \alias{dynBGB}
 \alias{dynBGB,.MoveTrackSingle,RasterLayer,numeric,numeric-method}
 \alias{dynBGB,.MoveTrackSingle,numeric,ANY,numeric-method}
 \alias{dynBGB,dBGBvariance,RasterLayer,numeric,numeric-method}
+\docType{methods}
 
 \title{Calculation of the dynamic Bivariate Gausian Bridge}
 \arguments{

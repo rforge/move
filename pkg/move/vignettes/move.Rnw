@@ -268,7 +268,7 @@ When the \fct{brownian.bridge.dyn} function issues the warning that the extent o
 <<dbbmm>>=
 r <- spTransform(ricky[1:500,], center=T)
 ricky_dbbmm <- brownian.bridge.dyn(r, dimSize=150, location.error=23, 
-                                   ext=.3, time.step=60)
+                                   ext=.3, time.step=60, margin=13)
 @
 
 Running the \fct{brownian.bridge.dyn} creates an object of the \class{DBBMM} class, which among others stores the raster of the map with the values from the UD. You can also run the function with a \class{MoveStack}. The returned object will then be a \class{DBBMMStack}.\\
@@ -362,10 +362,10 @@ Because the function takes random coordinates to calculate the MCP, every calcul
 \begin{figure}
 \begin{center}
 <<hrBootstrap, fig=TRUE, echo=TRUE, results=hide, height=4>>=
-hrBootstrap(x=leroy, rep=100, unin='km', unout='km2')
+hrBootstrap(x=leroy, rep=25, unin='km', unout='km2')
 @
 \end{center}
-\caption{The returned plot forms the \fct{hrBootstrap} for a track with 100 repetitions.}
+\caption{The returned plot forms the \fct{hrBootstrap} for a track with 25 repetitions.}
 \label{fig:four}
 \end{figure}
 
