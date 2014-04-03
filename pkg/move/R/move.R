@@ -1,4 +1,4 @@
-setGeneric("move", function(x, y, time, data, proj=NA, ...) standardGeneric("move"))
+setGeneric("move", function(x, y, time, data, proj=as.character(NA), ...) standardGeneric("move"))
 setMethod(f = "move", 
 	  signature = c(x="character",y='missing',time='missing', data='missing', proj='missing'), 
 	  definition = function(x, ...){

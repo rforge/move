@@ -8,7 +8,7 @@ clean:
 
 check:
 	make build
-	R CMD check --as-cran move*.tar.gz
+	time R CMD check --as-cran move*.tar.gz
 
 checkRdevel:
 	/home/bart/bmisc/small_projects/rDevel/svn/R/bin/R CMD check --as-cran move*.tar.gz
