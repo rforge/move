@@ -6,7 +6,7 @@
 
 SEXP dbbmm2(SEXP x, SEXP y, SEXP s, SEXP t, SEXP locEr,SEXP xGrid, SEXP yGrid,SEXP tStep, SEXP ext2)
 {
-	double *rans, xRes, yRes, x0, y0,ZTZ,  ext, *xx, *xy,*xs,tmp, *xxGrid, *xyGrid, alpha, dT,sigma, ti, *xt, mux, muy, *xlocEr;  
+	double *rans, xRes, yRes, x0, y0,ZTZ,  ext, *xx, *xy,*xs, *xxGrid, *xyGrid, alpha, dT,sigma, ti, *xt, mux, muy, *xlocEr;  
 	int xEnd, xStart, yEnd, yStart;
 	R_len_t i,j,k,nLoc=length(x), nXGrid=length(xGrid), nYGrid=length(yGrid);
 	PROTECT(ext2 = coerceVector(ext2, REALSXP));
@@ -96,7 +96,7 @@ SEXP dbbmm2(SEXP x, SEXP y, SEXP s, SEXP t, SEXP locEr,SEXP xGrid, SEXP yGrid,SE
 }
 SEXP bgb(SEXP x, SEXP y, SEXP sPara,SEXP sOrth, SEXP t, SEXP locEr,SEXP xGrid, SEXP yGrid, SEXP dTT, SEXP maxInt, SEXP ext2)
 {
-	double *rans, xRes, yRes, x0, y0,ZTZ,  ext, *xx, *xy,*xsPara, *xsOrth,tmp, *xxGrid, *xyGrid, alpha, sigmaOrth, sigmaPara, ti, *xt, mux, muy, *xlocEr, deltaPara,deltaOrth,A,B,C, dT, maxT;  
+	double *rans, xRes, yRes, x0, y0,  ext, *xx, *xy,*xsPara, *xsOrth,tmp, *xxGrid, *xyGrid, alpha, sigmaOrth, sigmaPara, ti, *xt, mux, muy, *xlocEr, deltaPara,deltaOrth,A,B,C, dT, maxT;  
 	int xEnd, xStart, yEnd, yStart;
 	PROTECT(ext2 = coerceVector(ext2, REALSXP));
 	ext=REAL(ext2)[0];
