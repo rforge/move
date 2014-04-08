@@ -31,4 +31,8 @@ test.moveStack<-function()
 	checkException(moveStack(list(a2,a2,a)))
 	checkException(moveStack(list(a,a2,a)))
 	checkException(moveStack(list(a2,a,a2)))
+
+
+	m<-lapply(1:5, function(x){m<-move(rnorm(5), rnorm(5), Sys.time()+1:5);idData(m)<-data.frame(groupID=sample(letters,1), groupDay=round(rnorm(1))); m})
+	checkIdentical(names(idData(moveStack(m))),c('groupID','groupDay'))
 }

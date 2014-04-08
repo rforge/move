@@ -32,7 +32,7 @@ setMethod(f = "moveStack",
 
 		  ###idData
 		  allidData <- lapply(x, function(y) slot(y, "idData"))
-		  allidColumns <- unique(unlist(sapply(allidData, names)))
+		  allidColumns <- unique(unlist(lapply(allidData, names)))
 		  IDDATA <- do.call("rbind", lapply(allidData, FUN = function(entry) {
 						    missingColumns <- allidColumns[which(!allidColumns %in% names(entry))]
 						    entry[, missingColumns] <- NA
