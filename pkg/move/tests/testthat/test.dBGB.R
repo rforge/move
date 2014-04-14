@@ -16,7 +16,7 @@ test_that("dbgb vs dbbmm",{
 	 r<-raster(extent(m)+c(-22,1.5))
 	 res(r)<-.025
 	 tss<-.00110523/60
-	 bgb<-dynBGB(m,r ,locErr=l, windowSize=23, margin=9, maxInt=123,  timeStep=(tss<-.00110523/60) ) 
+	 bgb<-dynBGB(m,r ,locErr=l, windowSize=23, margin=9,  timeStep=(tss<-.00110523/60) ) 
 	 bbmm<-brownian.bridge.dyn(m,raster=bgb ,location.error=l, window.size=23, margin=9 , time.step=tss)
 #	 par(mfrow=c(2:1));plot(bgb); lines(m); points(m);plot(bbmm); lines(m); points(m)
 #	 plot(bgb-bbmm); lines(m)
@@ -37,11 +37,44 @@ test_that("dyn bgb basics",{
 	  data <- move(system.file("extdata","leroy.csv.gz",package="move"))
 	  dataC<-spTransform(data, center=T)
 	  resUd<-5.3
-	  ud<-dynBGB(dataC[1:45,], windowSize=31, margin=15, locErr=4, raster=resUd, maxInt=12342342, ext=3)
-	  ud2<-dynBGB(dynBGBvariance(dataC[1:45,], windowSize=31, margin=15, locErr=l<-rep(4, n.locs(dataC))), raster=resUd, maxInt=12342342, ext=3, locErr=l)
+	  ud<-dynBGB(dataC[1:45,], windowSize=31, margin=15, locErr=4, raster=resUd, ext=3)
+	  ud2<-dynBGB(dynBGBvariance(dataC[1:45,], windowSize=31, margin=15, locErr=l<-rep(4, n.locs(dataC))), raster=resUd, ext=3, locErr=l)
 	  expect_is(ud, 'dynBGB')
 	  expect_is(ud, '.UD')
 	  expect_equal(res(ud), resUd[c(1,1)])
 	  expect_equal(proj4string(ud), proj4string(dataC))
 	  expect_equal(ud2, ud)
+})
+test_that('work with time step with varying loc err',{
+	  l<-dynBGB(m<-new('dBGBvariance',move(0:1,0:1, Sys.time()+0:1), margin=1, windowSize=1, segInterest=c(T,F), paraSd=1:0/2, orthSd=1:0/2, nEstim=2:3), raster=.004, ext=2, locErr=(le<-c(.01,.03)), timeStep=.4/60)
+	  expect_equal(sum(values(p<-crop(l,e<-extent(.5,.5,.5,.5)+.5))) ,1/3, tolerance=1.4e-7)
+	  a<-.5
+	  s<-sqrt((1/60)*a*(1-a)*m@paraSd[1]* m@orthSd[1]+a^2*le[2]^2+(1-a)^2*le[1]^2)
+	  pp<-calc(rasterFromXYZ(rasterToPoints(p)[,c(1,2,1,2)]), function(x){prod(dnorm(x, .5, sd=s))})
+	  expect_equal(values(p), values(pp)* prod(res(pp))*1/3, tolerance=1.4e-6)
+	  expect_true(sum(values(abs(p-pp*prod(res(pp))/3)))<5e-7)
+	  expect_equal(sum(values(p<-crop(l,e<-extent(.1,.1,.1,.1)+.4))) ,1/3, tolerance=1e-7)
+	  a<-.1
+	  s<-sqrt((1/60)*a*(1-a)*m@paraSd[1]* m@orthSd[1]+a^2*le[2]^2+(1-a)^2*le[1]^2)
+	  pp<-calc(rasterFromXYZ(rasterToPoints(p)[,c(1,2,1,2)]), function(x){prod(dnorm(x, .1, sd=s))})
+	  expect_equal(values(p), values(pp)* prod(res(pp))*1/3, tolerance=6e-6)
+	  expect_true(sum(values(abs(p-pp*prod(res(pp))/3)))<2e-6)
+})
+test_that('work with time step var orth para',{
+	  r<-raster(extent(c(-.5,1.54,-1.123,1)))
+	  res(r)<-.0053
+	  l<-dynBGB(m<-new('dBGBvariance',move(0:2/2,c(0,0,0), Sys.time()+0:2), margin=1, windowSize=1, segInterest=c(T,T,F), paraSd=2:0/2, orthSd=1:3/3, nEstim=rep(2,3)), raster=r, ext=2, locErr=le<-.01, timeStep=1.6/60)
+	  expect_equal(sum(values(p<-crop(l,e<-extent(.1,.1,0,0)+.6))) ,1/2, tolerance=2e-8)
+	  a<-.2
+	  s<-sqrt((1/60)*a*(1-a)*c(m@paraSd[1], m@orthSd[1])^2+a^2*le^2+(1-a)^2*le^2)
+	  pp<-calc(rasterFromXYZ(rasterToPoints(p)[,c(1,2,1,2)]), function(x){prod(dnorm(x, c(.1,0), sd=s))})
+	  expect_equal(values(p), values(pp)* prod(res(pp))*1/2, tolerance=7e-7)
+	  expect_true(sum(values(abs(p-pp*prod(res(pp))/2)))<7e-7)
+
+	  expect_equal(sum(values(p<-crop(l,e<-extent(.9,.9,0,0)+.6))) ,1/2, tolerance=2e-8)
+	  a<-.8
+	  s<-sqrt((1/60)*a*(1-a)*c(m@paraSd[2], m@orthSd[2])^2+a^2*le^2+(1-a)^2*le^2)
+	  pp<-calc(rasterFromXYZ(rasterToPoints(p)[,c(1,2,1,2)]), function(x){prod(dnorm(x, c(.9,0), sd=s))})
+	  expect_equal(values(p), values(pp)* prod(res(pp))*1/2, tolerance=3e-6)
+	  expect_true(sum(values(abs(p-pp*prod(res(pp))/2)))<15e-7)
 })

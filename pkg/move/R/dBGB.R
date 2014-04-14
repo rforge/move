@@ -335,40 +335,32 @@ setMethod("dynBGBvariance", signature(move = ".MoveTrackSingle", locErr = "numer
 	    segInterest = !(tmp$nEstim != max(tmp$nEstim, na.rm = T) | is.na(tmp$nEstim)))
 	 })
 setGeneric("dynBGB", 
-	   function(move, raster, locErr, maxInt, ...) {
+	   function(move, raster, locErr, ...) {
 		   standardGeneric("dynBGB")
 	   })
 setMethod("dynBGB", signature(move = ".MoveTrackSingle", raster = "RasterLayer", 
-			      locErr = "numeric",  maxInt = "numeric"), 
-	  function(move, raster, locErr, margin, windowSize, maxInt, ...) {
+			      locErr = "numeric"), 
+	  function(move, raster, locErr, margin, windowSize, ...) {
 		  move <- dynBGBvariance(move = move, locErr = locErr, margin=margin, windowSize=windowSize,...)
-		  callGeneric(move = move, raster = raster, locErr = locErr, maxInt=maxInt,...)
+		  callGeneric(move = move, raster = raster, locErr = locErr,...)
 	  })
 
-setMethod("dynBGB", signature(move = ".MoveTrackSingle", raster = "numeric", locErr = "ANY", 
-			      maxInt = "numeric"), function(move, raster, 
-			      locErr, maxInt,ext,...) {
-              Range <- move:::.extcalc(obj = move, ext = ext)
-            yRange <- diff(Range[3:4])
-            xRange <- diff(Range[1:2])
-            # calculation of the coordinates to fit squared raster cells
-            ymin <- Range[3] - (ceiling(yRange/raster) * raster - yRange)/2
-            ymax <- Range[4] + (ceiling(yRange/raster) * raster - yRange)/2
-            xmin <- Range[1] - (ceiling(xRange/raster) * raster - xRange)/2
-            xmax <- Range[2] + (ceiling(xRange/raster) * raster - xRange)/2
-            # Calculate the raster; the raster variable replaces here the cell size
-           nrow <- ((ymax - ymin)/raster)
-            ncol <- ((xmax - xmin)/raster)
-            ex <- extent(c(xmin, xmax, ymin, ymax))
-            raster <- raster(ncols = ncol, nrows = nrow, crs = proj4string(move), ex)
+setMethod("dynBGB", signature(move = ".MoveTrackSingle", raster = "numeric", locErr = "ANY" 
+			      ), function(move, raster, 
+			      locErr, ext,...) {
+	e<-extent(move)*ext
+	r<-raster(e)
+	res(r)<-raster
+	raster<-r
+	proj4string(raster)<- proj4string(move)
 	callGeneric()
 	  })
 
 
 setMethod("dynBGB", 
 	  signature(move = "dBGBvariance", raster = "RasterLayer", 
-		    locErr = "numeric",  maxInt = "numeric"), 
-	  function(move, raster, locErr, maxInt, timeStep, ...) {
+		    locErr = "numeric"), 
+	  function(move, raster, locErr, timeStep, ...) {
 		  pointsInterest <- move@segInterest | rev(move@segInterest)
 		  t <- as.numeric(move@timestamps)/60
 		  if(missing(timeStep))
@@ -384,7 +376,6 @@ setMethod("dynBGB",
 					  unique(coordinates(raster)[, 1]), 
 					  sort(unique(coordinates(raster)[, 2])), 
 					  timeStep, 
-					  maxInt,
 					  5# number of sd intergration distance
 					  )
 		  raster<-raster/cellStats(raster, sum)

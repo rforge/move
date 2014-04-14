@@ -94,16 +94,16 @@ SEXP dbbmm2(SEXP x, SEXP y, SEXP s, SEXP t, SEXP locEr,SEXP xGrid, SEXP yGrid,SE
 	UNPROTECT(10);
 	return(ans);
 }
-SEXP bgb(SEXP x, SEXP y, SEXP sPara,SEXP sOrth, SEXP t, SEXP locEr,SEXP xGrid, SEXP yGrid, SEXP dTT, SEXP maxInt, SEXP ext2)
+SEXP bgb(SEXP x, SEXP y, SEXP sPara,SEXP sOrth, SEXP t, SEXP locEr,SEXP xGrid, SEXP yGrid, SEXP dTT, SEXP ext2)
 {
-	double *rans, xRes, yRes, x0, y0,  ext, *xx, *xy,*xsPara, *xsOrth,tmp, *xxGrid, *xyGrid, alpha, sigmaOrth, sigmaPara, ti, *xt, mux, muy, *xlocEr, deltaPara,deltaOrth,A,B,C, dT, maxT;  
+	double *rans, xRes, yRes, x0, y0,  ext, *xx, *xy,*xsPara, *xsOrth,tmp, *xxGrid, *xyGrid, alpha, sigmaOrth, sigmaPara, ti, *xt, mux, muy, *xlocEr, deltaPara,deltaOrth,A,B,C, dT;  
 	int xEnd, xStart, yEnd, yStart;
 	PROTECT(ext2 = coerceVector(ext2, REALSXP));
 	ext=REAL(ext2)[0];
 	PROTECT(dTT=coerceVector(dTT, REALSXP));
 	dT=REAL(dTT)[0];
-	PROTECT(maxInt=coerceVector(maxInt, REALSXP));
-	maxT=REAL(maxInt)[0];
+//	PROTECT(maxInt=coerceVector(maxInt, REALSXP));
+//	maxT=REAL(maxInt)[0];
 	R_len_t i,j,k,nLoc=length(x), nXGrid=length(xGrid), nYGrid=length(yGrid);
 	PROTECT(xGrid = coerceVector(xGrid, REALSXP));
 	PROTECT(yGrid = coerceVector(yGrid, REALSXP));
@@ -126,8 +126,6 @@ SEXP bgb(SEXP x, SEXP y, SEXP sPara,SEXP sOrth, SEXP t, SEXP locEr,SEXP xGrid, S
 	yRes = xyGrid[1]-xyGrid[0];
 	xsPara=REAL(sPara);
 	xsOrth=REAL(sOrth);
-	
-//	warning("%f", ti);
 	SEXP ans;
 	PROTECT(ans=allocMatrix(REALSXP, nYGrid, nXGrid));
 	rans = REAL(ans);
@@ -147,48 +145,36 @@ SEXP bgb(SEXP x, SEXP y, SEXP sPara,SEXP sOrth, SEXP t, SEXP locEr,SEXP xGrid, S
 		{
 			k++;
 		}
-		if((xt[k+1]-xt[k])<maxT){
+//		if((xt[k+1]-xt[k])<maxT){
 		R_CheckUserInterrupt();
 		alpha=(ti-xt[k])/(xt[k+1]-xt[k]);
 		mux=xx[k]+(xx[k+1]-xx[k])*alpha;
 		muy=xy[k]+(xy[k+1]-xy[k])*alpha;
 		sigmaPara=sqrt((xt[k+1]-xt[k])*alpha*(1-alpha)*pow(xsPara[k],2)+pow(1-alpha,2)*pow(xlocEr[k],2)+pow(alpha,2)*pow(xlocEr[k+1],2));
 		sigmaOrth=sqrt((xt[k+1]-xt[k])*alpha*(1-alpha)*pow(xsOrth[k],2)+pow(1-alpha,2)*pow(xlocEr[k],2)+pow(alpha,2)*pow(xlocEr[k+1],2));
-//warning("%f",fmax2(sigmaPara,sigmaOrth));
-//warning("%f",(sigmaOrth));
-//warning("%f",(sigmaPara));
-//warning("%f",(alpha));
+
+		/* calculate over which part of the grid to calculate */
 		xStart=(int)floor(((mux-x0)/xRes)-(((fmax2(sigmaPara, sigmaOrth))*ext)/xRes));
 		xEnd=(int)ceil(((mux-x0)/xRes)+(((fmax2(sigmaPara, sigmaOrth))*ext)/xRes));
 		yEnd=(int)nYGrid-floor(((muy-y0)/yRes)-(((fmax2(sigmaPara, sigmaOrth))*ext)/yRes));
 		yStart=(int)nYGrid-ceil(((muy-y0)/yRes)+(((fmax2(sigmaPara, sigmaOrth))*ext)/yRes));
-//		warning("my %f %f %f %f", muy, xyGrid[nYGrid-yStart-1], xyGrid[nYGrid-yEnd-1], fmax2(sigmaPara, sigmaOrth));
+		/* check if the grid is large enough */
 		if(xStart<0){
-			error("Lower x grid not large enough %i %.16f spara=%f sorth=%f dt=%f a=%f k=%i l %f %f t %f %f, mux=%f, X0=%f, xRes=%f, ext=%f, var=%f %f", xStart, ti, sigmaPara, sigmaOrth,  xt[k+1]-xt[k], alpha, k, xlocEr[k], xlocEr[k+1], xt[k], xt[k+1], mux, x0, xRes, ext, xsPara[k], xsOrth[k]);
+//			error("Lower x grid not large enough %i %.16f spara=%f sorth=%f dt=%f a=%f k=%i l %f %f t %f %f, mux=%f, X0=%f, xRes=%f, ext=%f, var=%f %f", xStart, ti, sigmaPara, sigmaOrth,  xt[k+1]-xt[k], alpha, k, xlocEr[k], xlocEr[k+1], xt[k], xt[k+1], mux, x0, xRes, ext, xsPara[k], xsOrth[k]);
+			error("The raster does not extent far enough in the X dimension towards the left side");
 		}
 		if(xEnd>nXGrid){
-			error("Higher x grid not large enough");
+			error("The raster does not extent far enough in the X dimension towards the right side");
 		}
 		if(yEnd>nYGrid){
-			error("Lower y grid not large enough");
+			error("The raster does not extent far enough in the Y dimension towards the lower side");
 		}
 		if(yStart<0){
-			error("Higher y grid not large enough");
+			error("The raster does not extent far enough in the Y dimension towards the upper side");
 		}
-
-//		tmp=0;
-//		for(i = xStart ; i<xEnd; i++){
-//			for(j = yStart ; j<yEnd; j++){
-//				ZTZ=pow(xxGrid[i]-mux,2)+pow(xyGrid[nYGrid-j-1]-muy,2);//check nYGrid for 0/1 starting errors
-//				tmp=tmp+((1/(2*3.14*sigma))*exp(-ZTZ/(2*sigma)));
-//			}}
-//		warning("%f",tmp*xRes*yRes);
-//		warning("%f",xRes);
-//		warning("%f",tmp);
-//		warning("%f",ti,"timestep");
+//		/* loop over grid */
 		for(i = xStart ; i<=xEnd; i++){
 			for(j = yStart ; j<=yEnd; j++){
-//				ZTZ=pow(xxGrid[i]-mux,2)+pow(xyGrid[nYGrid-j-1]-muy,2);//check nYGrid for 0/1 starting errors
 				C=sqrt(pow(mux-xx[k+1],2)+pow(muy-xy[k+1],2));
 				B=sqrt(pow(xxGrid[i]-xx[k+1],2)+pow(xyGrid[nYGrid-j-1]-xy[k+1],2));
 				A=sqrt(pow(mux-xxGrid[i],2)+pow(muy-xyGrid[nYGrid-j-1],2));
@@ -208,8 +194,8 @@ SEXP bgb(SEXP x, SEXP y, SEXP sPara,SEXP sOrth, SEXP t, SEXP locEr,SEXP xGrid, S
 					deltaPara=0;
 					deltaOrth=0;
 				}
-	//			warning("a %.20f b %f c %f dp %f do %f", A, B,C, deltaPara,deltaOrth);
-		//		warning("a %.20f b %f c %f dp %f do %f", A, B,C, deltaPara,deltaOrth);
+//				warning("a %.20f b %f c %f dp %f do %f", A, B,C, deltaPara,deltaOrth);
+//				warning("a %.20f b %f c %f dp %f do %f", A, B,C, deltaPara,deltaOrth);
 //				warning("%f",cos(acos((B*B-A*A-C*C)/(2*A*C))));
 //				warning("%f",(acos((B*B-A*A-C*C)/(2*A*C))));
 //				warning("%f",(((B*B-A*A-C*C)/(2*A*C))));
@@ -220,7 +206,7 @@ SEXP bgb(SEXP x, SEXP y, SEXP sPara,SEXP sOrth, SEXP t, SEXP locEr,SEXP xGrid, S
 //				warning("%f", rans[i*nYGrid+j]);
 //				warning("a %f",((1/(2*3.14*(sigmaPara)*(sigmaOrth)))*exp(-0.5*((pow(deltaOrth,2)/pow(sigmaOrth,2))+(pow(deltaPara,2)/pow(sigmaPara,2))))*xRes*yRes));
 //				rans[i*nYGrid+j]
-	}}}}
-	UNPROTECT(12);
+	}}}
+	UNPROTECT(11);
 	return(ans);
 }

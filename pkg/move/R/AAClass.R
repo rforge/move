@@ -344,7 +344,7 @@ setClass(Class = "dBGBvarianceTmp",
 	 validity = function(object) {
 		 if (length(unique(c(length(object@paraSd), length(object@orthSd), length(object@nEstim), 
 				     length(object@segInterest)))) != 1) 
-			 stop("Length does not match")
+			 stop("Length is not the same between segInterest, orthSd, paraSt, nEstim")
 		 if (length(object@margin) != 1) 
 			 stop("Margin length not 1")
 		 if (length(object@windowSize) != 1) 
