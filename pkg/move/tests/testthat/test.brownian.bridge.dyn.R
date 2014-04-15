@@ -28,7 +28,7 @@ test_that('brownian bridge dyn for bursted',{
 	dataP<-spTransform(data[1:100,], center=T)
 	dataPB<-move::burst(dataP, round((1:(n.locs(dataP)-1)/50)))
 	udS<-brownian.bridge.dyn(dataPB, dimSize=150, location.error=23, ext=.3, time.step=4, window.size=29)
-	expect_equal(class(udS),"DBBMMBurstStack", check.attributes=F)
+	expect_is(udS,"DBBMMBurstStack")
 	ud<-brownian.bridge.dyn(dataP, dimSize=150, location.error=23, ext=.3, time.step=4, window.size=29)
 	expect_equal(udS@DBMvar@means, ud@DBMvar@means)
 	b<-as.numeric(getZ(udS))

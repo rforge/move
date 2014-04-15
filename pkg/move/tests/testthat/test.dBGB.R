@@ -11,7 +11,7 @@ test_that('dbgb error handling in relation to projections',{
 	data <- move(system.file("extdata","leroy.csv.gz",package="move"))
 	expect_error(
 		     dynBGB(data[1:40,], locErr=.0005, raster=.00150, ext=17.3, margin=15, windowSize=31)
-		     , 'You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function.'
+		     ,'You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function'
 		     )
 	r <- raster(nrows=100, ncols=100, xmn=0, xmx=10)
 	expect_error(
@@ -48,8 +48,8 @@ test_that("dyn bgb basics",{
 	  data <- move(system.file("extdata","leroy.csv.gz",package="move"))
 	  dataC<-spTransform(data, center=T)
 	  resUd<-5.3
-	  ud<-dynBGB(dataC[1:45,], windowSize=31, margin=15, locErr=4, raster=resUd, ext=3)
-	  ud2<-dynBGB(dynBGBvariance(dataC[1:45,], windowSize=31, margin=15, locErr=l<-rep(4, n.locs(dataC))), raster=resUd, ext=3, locErr=l)
+	  ud<-dynBGB(dataC[1:45,], windowSize=31, margin=15, locErr=4, raster=resUd, ext=9)
+	  ud2<-dynBGB(dynBGBvariance(dataC[1:45,], windowSize=31, margin=15, locErr=l<-rep(4, n.locs(dataC))), raster=resUd, ext=9, locErr=l)
 	  expect_is(ud, 'dynBGB')
 	  expect_is(ud, '.UD')
 	  expect_equal(res(ud), resUd[c(1,1)])
@@ -63,13 +63,13 @@ test_that('work with time step with varying loc err',{
 	  s<-sqrt((1/60)*a*(1-a)*m@paraSd[1]* m@orthSd[1]+a^2*le[2]^2+(1-a)^2*le[1]^2)
 	  pp<-calc(rasterFromXYZ(rasterToPoints(p)[,c(1,2,1,2)]), function(x){prod(dnorm(x, .5, sd=s))})
 	  expect_equal(values(p), values(pp)* prod(res(pp))*1/3, tolerance=1.4e-6)
-	  expect_true(sum(values(abs(p-pp*prod(res(pp))/3)))<5e-7)
+	  expect_less_than(sum(values(abs(p-pp*prod(res(pp))/3))),5e-7)
 	  expect_equal(sum(values(p<-crop(l,e<-extent(.1,.1,.1,.1)+.4))) ,1/3, tolerance=1e-7)
 	  a<-.1
 	  s<-sqrt((1/60)*a*(1-a)*m@paraSd[1]* m@orthSd[1]+a^2*le[2]^2+(1-a)^2*le[1]^2)
 	  pp<-calc(rasterFromXYZ(rasterToPoints(p)[,c(1,2,1,2)]), function(x){prod(dnorm(x, .1, sd=s))})
 	  expect_equal(values(p), values(pp)* prod(res(pp))*1/3, tolerance=6e-6)
-	  expect_true(sum(values(abs(p-pp*prod(res(pp))/3)))<2e-6)
+	  expect_less_than(sum(values(abs(p-pp*prod(res(pp))/3))),2e-6)
 })
 test_that('work with time step var orth para',{
 	  r<-raster(extent(c(-.5,1.54,-1.123,1)))
@@ -80,12 +80,12 @@ test_that('work with time step var orth para',{
 	  s<-sqrt((1/60)*a*(1-a)*c(m@paraSd[1], m@orthSd[1])^2+a^2*le^2+(1-a)^2*le^2)
 	  pp<-calc(rasterFromXYZ(rasterToPoints(p)[,c(1,2,1,2)]), function(x){prod(dnorm(x, c(.1,0), sd=s))})
 	  expect_equal(values(p), values(pp)* prod(res(pp))*1/2, tolerance=7e-7)
-	  expect_true(sum(values(abs(p-pp*prod(res(pp))/2)))<7e-7)
+	  expect_less_than(sum(values(abs(p-pp*prod(res(pp))/2))),7e-7)
 
 	  expect_equal(sum(values(p<-crop(l,e<-extent(.9,.9,0,0)+.6))) ,1/2, tolerance=2e-8)
 	  a<-.8
 	  s<-sqrt((1/60)*a*(1-a)*c(m@paraSd[2], m@orthSd[2])^2+a^2*le^2+(1-a)^2*le^2)
 	  pp<-calc(rasterFromXYZ(rasterToPoints(p)[,c(1,2,1,2)]), function(x){prod(dnorm(x, c(.9,0), sd=s))})
 	  expect_equal(values(p), values(pp)* prod(res(pp))*1/2, tolerance=3e-6)
-	  expect_true(sum(values(abs(p-pp*prod(res(pp))/2)))<15e-7)
+	  expect_less_than(sum(values(abs(p-pp*prod(res(pp))/2))),15e-7)
 })
