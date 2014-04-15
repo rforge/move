@@ -1,8 +1,8 @@
 \name{dynBGB}
 \alias{dynBGB}
-\alias{dynBGB,.MoveTrackSingle,RasterLayer,numeric}
-\alias{dynBGB,.MoveTrackSingle,numeric,ANY}
-\alias{dynBGB,dBGBvariance,RasterLayer,numeric}
+\alias{dynBGB,.MoveTrackSingle,RasterLayer,numeric-method}
+\alias{dynBGB,.MoveTrackSingle,numeric,ANY-method}
+\alias{dynBGB,dBGBvariance,RasterLayer,numeric-method}
 \docType{methods}
 
 \title{Calculation of the dynamic Bivariate Gausian Bridge}
