@@ -1,11 +1,27 @@
 context('Brownian bridge dyn')
 test_that('dbbmm error handling',{
 	data <- move(system.file("extdata","leroy.csv.gz",package="move"))
-	expect_error(brownian.bridge.dyn(object=leroy, location.error=23.5, dimSize=150, ext=.3, time.step=600))
+	expect_error(
+		     brownian.bridge.dyn(object=leroy, location.error=23.5, dimSize=150, ext=.3, time.step=600), "Error: object 'leroy' not found"
+		     )
+	data2<-spTransform(data[1:50,], center=T)
+	expect_error(
+		     brownian.bridge.dyn(data2, dimSize=150 ,location.error='2346'), 'column indicated for location error probably does not exist'
+		     )# character loc
+	expect_error(
+		     brownian.bridge.dyn(data2,  location.error=1:5),'The location error vector has not the same length as the move object'
+		     )
+})
+test_that('dbbmm error handling in relation to projections',{
+	data <- move(system.file("extdata","leroy.csv.gz",package="move"))
+	expect_error(
+		     brownian.bridge.dyn(object=data, location.error=23.5, dimSize=150, ext=.3, time.step=600)
+		     , 'You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function.'
+		     )
 	r <- raster(nrows=100, ncols=100, xmn=0, xmx=10)
-	expect_error(brownian.bridge.dyn(spTransform(data[1:50,], center=T), raster=r, location.error=20))# equal projection
-	expect_error(brownian.bridge.dyn(data, raster=r, location.error='2346'))# character loc
-	expect_error(brownian.bridge.dyn(data, raster=r, location.error=1:5))# multiple loc error not same length
+	expect_error(
+		     brownian.bridge.dyn(data2<-spTransform(data[1:50,], center=T), raster=r, location.error=20), 'The projection of the raster and the Move object are not equal'
+		     )# equal projection
 })
 test_that('brownian bridge dyn for bursted',{
 	data <- move(system.file("extdata","leroy.csv.gz",package="move"))

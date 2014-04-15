@@ -361,6 +361,9 @@ setMethod("dynBGB",
 	  signature(move = "dBGBvariance", raster = "RasterLayer", 
 		    locErr = "numeric"), 
 	  function(move, raster, locErr, timeStep, ...) {
+            if(isLonLat(move)) stop("You can not use longitude latitude projection for this function. To transform your cooridnates use the spTransform function. \n")
+            if(!equalProj(list(raster,move))) #check equal projection of raster and Move
+              stop(paste("The projection of the raster and the Move object are not equal. \n raster:", proj4string(raster), "\n object:", proj4string(object), "\n"))
 		  pointsInterest <- move@segInterest | rev(move@segInterest)
 		  t <- as.numeric(move@timestamps)/60
 		  if(missing(timeStep))

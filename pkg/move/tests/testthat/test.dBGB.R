@@ -7,6 +7,17 @@ test_that("dbgb vs dbbmm variance",{
 	 expect_equal(unlist(vBBMM$cll), unlist(vBGB[3]), check.names=F, tolerance=1e-7)
 	 expect_equal(vBBMM$BMvar, prod(vBGB[1:2]), tolerance=2e-5)
 })
+test_that('dbgb error handling in relation to projections',{
+	data <- move(system.file("extdata","leroy.csv.gz",package="move"))
+	expect_error(
+		     dynBGB(data[1:40,], locErr=.0005, raster=.00150, ext=17.3, margin=15, windowSize=31)
+		     , 'You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function.'
+		     )
+	r <- raster(nrows=100, ncols=100, xmn=0, xmx=10)
+	expect_error(
+		     dynBGB(spTransform(data[1:40,], center=T), locErr=.0005, raster=r, ext=17.3, margin=15, windowSize=31),'The projection of the raster and the Move object are not equal'
+		     )# equal projection
+})
 test_that("dbgb vs dbbmm",{
 	 x<-12:42
 	 xx<-floor(x/2)+(y<-((x/2)%%1)/6)
