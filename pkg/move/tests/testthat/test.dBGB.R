@@ -58,18 +58,18 @@ test_that("dyn bgb basics",{
 })
 test_that('work with time step with varying loc err',{
 	  l<-dynBGB(m<-new('dBGBvariance',move(0:1,0:1, Sys.time()+0:1), margin=1, windowSize=1, segInterest=c(T,F), paraSd=1:0/2, orthSd=1:0/2, nEstim=2:3), raster=.004, ext=2, locErr=(le<-c(.01,.03)), timeStep=.4/60)
-	  expect_equal(sum(values(p<-crop(l,e<-extent(.5,.5,.5,.5)+.5))) ,1/3, tolerance=1.4e-7)
+	  expect_equal(sum(values(p<-crop(l,e<-extent(.5,.5,.5,.5)+.45))) ,1/3, tolerance=1.4e-7)
 	  a<-.5
 	  s<-sqrt((1/60)*a*(1-a)*m@paraSd[1]* m@orthSd[1]+a^2*le[2]^2+(1-a)^2*le[1]^2)
-	  pp<-calc(rasterFromXYZ(rasterToPoints(p)[,c(1,2,1,2)]), function(x){prod(dnorm(x, .5, sd=s))})
-	  expect_equal(values(p), values(pp)* prod(res(pp))*1/3, tolerance=1.4e-6)
-	  expect_less_than(sum(values(abs(p-pp*prod(res(pp))/3))),5e-7)
+	  pp<-calc(rasterFromXYZ(rasterToPoints(p)[,c(1,2,1,2)]), function(x){prod(dnorm(x, .5, sd=s))* prod(res(p))/3})
+	  expect_equal(values(p), values(pp), tolerance=1e-5)
+	  expect_less_than(sum(values(abs(p-pp))),2e-6)
 	  expect_equal(sum(values(p<-crop(l,e<-extent(.1,.1,.1,.1)+.4))) ,1/3, tolerance=1e-7)
 	  a<-.1
 	  s<-sqrt((1/60)*a*(1-a)*m@paraSd[1]* m@orthSd[1]+a^2*le[2]^2+(1-a)^2*le[1]^2)
-	  pp<-calc(rasterFromXYZ(rasterToPoints(p)[,c(1,2,1,2)]), function(x){prod(dnorm(x, .1, sd=s))})
-	  expect_equal(values(p), values(pp)* prod(res(pp))*1/3, tolerance=6e-6)
-	  expect_less_than(sum(values(abs(p-pp*prod(res(pp))/3))),2e-6)
+	  pp<-calc(rasterFromXYZ(rasterToPoints(p)[,c(1,2,1,2)]), function(x){prod(dnorm(x, .1, sd=s))* prod(res(p))/3})
+	  expect_equal(values(p), values(pp), tolerance=1e-5)
+	  expect_less_than(sum(values(abs(p-pp))),2.2e-6)
 })
 test_that('work with time step var orth para',{
 	  r<-raster(extent(c(-.5,1.54,-1.123,1)))
