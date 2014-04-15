@@ -26,7 +26,7 @@
 	Kranstauber, B., Safi, K., Bartumeus, F.. (2014), Bivariate Gaussian bridges: directional factorization of diffusion in Brownian bridge models. Movement Ecology 2:5. doi:10.1186/2051-3933-2-5.
 }
 \examples{
-data <- move(system.file("extdata","leroy.csv.gz",package="move")) [210:280,]
+data <- move(system.file("extdata","leroy.csv.gz",package="move")) [230:280,]
 
 ## change projection method to aeqd and center the coordinate system to the track
 dataAeqd <- spTransform(data, CRSobj="+proj=aeqd", center=TRUE)
