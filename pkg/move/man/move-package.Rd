@@ -64,7 +64,7 @@ The track or the utilization distribution can be plotted with the following func
 
 \author{
 Bart Kranstauber, Marco Smolla \cr \cr
-Maintainer: Bart Kranstauber \email{kranstauber@orn.mpg.de}, Marco Smolla \email{msmolla@orn.mpg.de}
+Maintainer: Bart Kranstauber \email{bart.kranstauber@uni-konstanz.de}, Marco Smolla \email{ marco.smolla@postgrad.manchester.ac.uk}
 }
 
 \references{

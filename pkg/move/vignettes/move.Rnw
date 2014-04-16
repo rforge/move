@@ -25,11 +25,11 @@
 \Address{
   Marco Smolla\\
   Max-Planck-Institute for Ornithology, Radolfzell, Germany\\
-  E-mail: \email{msmolla@orn.mpg.de}\\
+  E-mail: \email{ marco.smolla@postgrad.manchester.ac.uk}\\
 
   Bart Kranstauber\\
   Max-Planck-Institute for Ornithology, Radolfzell, Germany\\
-  E-mail: \email{kranstauber@orn.mpg.de}\\
+  E-mail: \email{bart.kranstauber@uni-konstanz.de}\\
 }
 
 \begin{document}
