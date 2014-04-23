@@ -348,7 +348,7 @@ setMethod("dynBGB", signature(move = ".MoveTrackSingle", raster = "RasterLayer",
 setMethod("dynBGB", signature(move = ".MoveTrackSingle", raster = "ANY", 
 			      locErr = "character"), 
 	  function(move, raster, locErr, ...) {
-		  locErr <- do.call("$", list(object, locErr))
+		  locErr <- do.call("$", list(move, locErr))
 		  if(is.null(locErr))
 			  stop('column indicated for locErr probably does not exist')
 		  callGeneric(move = move, raster = raster, locErr = locErr,...)

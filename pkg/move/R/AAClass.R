@@ -329,8 +329,11 @@ setClass(Class = "DBBMM", contains = c(".UD"),
 	 prototype = prototype(
 			       ext = as.numeric())
 	 )
-setClass("DBBMMBurstStack", contains = ".UDBurstStack", representation = representation(DBMvar = "dBMvarianceBurst", 
-										   ext = "numeric"), prototype = prototype(ext = as.numeric()), 
+setClass(Class = "DBBMMBurstStack", contains = ".UDBurstStack", 
+	 representation = representation(
+						 DBMvar = "dBMvarianceBurst", 
+						 ext = "numeric"), 
+	 prototype = prototype(ext = as.numeric()), 
 	 validity = function(object) {
 		 validObject(object@DBMvar)
 		 return(T)

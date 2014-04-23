@@ -3,6 +3,9 @@
 \alias{dynBGB,.MoveTrackSingle,RasterLayer,numeric-method}
 \alias{dynBGB,.MoveTrackSingle,numeric,ANY-method}
 \alias{dynBGB,dBGBvariance,RasterLayer,numeric-method}
+\alias{dynBGB,.MoveTrackSingle,ANY,character-method}
+\alias{dynBGB,.MoveTrackSingle,missing,ANY-method}
+
 \docType{methods}
 
 \title{Calculation of the dynamic Bivariate Gausian Bridge}
