@@ -7,7 +7,7 @@ setMethod("windowApply", signature(x = ".MoveTrackSingle", FUN = "function",
 		   segmentWise = T, cluster = NULL, ...) {
 		  # windowSize is the number of segments a window is long+1
 		  RUNFUN <- function(x, windowSize, obj, WINFUN, segmentWise, ...) {
-	#		  message(x)# progress statement for debuging
+			  #		  message(x)# progress statement for debuging
 			  res <- cbind(s = x:(x + windowSize - 1), WINFUN(obj[x:(x + windowSize - 1), 
 									  ], ...))
 	if (segmentWise) 
@@ -309,13 +309,13 @@ setMethod("[", "dBGBvariance", function(x, i, j, ..., drop = TRUE) {
 	  x@nEstim <- x@nEstim[i]
 	  x@segInterest <- x@segInterest[i]
 	  callNextMethod()
-	 })
+	  })
 
 
 setGeneric("dynBGBvariance", 
 	   function(move, locErr, margin, windowSize, ...) {
-	standardGeneric("dynBGBvariance")
-	 })
+		   standardGeneric("dynBGBvariance")
+	   })
 setMethod("dynBGBvariance", signature(move = ".MoveTrackSingle", locErr = "numeric", 
 				      margin = "numeric", windowSize = "numeric"), function(move, locErr, margin, windowSize, 
 				      ...) {
@@ -333,7 +333,7 @@ setMethod("dynBGBvariance", signature(move = ".MoveTrackSingle", locErr = "numer
 	    orthSd = tmp$orth, 
 	    nEstim = tmp$nEstim, 
 	    segInterest = !(tmp$nEstim != max(tmp$nEstim, na.rm = T) | is.na(tmp$nEstim)))
-	 })
+	   })
 setGeneric("dynBGB", 
 	   function(move, raster, locErr, ...) {
 		   standardGeneric("dynBGB")
@@ -345,25 +345,41 @@ setMethod("dynBGB", signature(move = ".MoveTrackSingle", raster = "RasterLayer",
 		  callGeneric(move = move, raster = raster, locErr = locErr,...)
 	  })
 
+setMethod("dynBGB", signature(move = ".MoveTrackSingle", raster = "ANY", 
+			      locErr = "character"), 
+	  function(move, raster, locErr, ...) {
+		  locErr <- do.call("$", list(object, locErr))
+		  if(is.null(locErr))
+			  stop('column indicated for locErr probably does not exist')
+		  callGeneric(move = move, raster = raster, locErr = locErr,...)
+	  })
+
 setMethod("dynBGB", signature(move = ".MoveTrackSingle", raster = "numeric", locErr = "ANY" 
 			      ), function(move, raster, 
 			      locErr, ext,...) {
-	e<-extent(move)*ext
-	r<-raster(e)
-	res(r)<-raster
-	raster<-r
+	r<-raster
+	raster <- raster(extent(.extcalc(obj = move, ext = ext)))
+	res(raster)<-r
 	proj4string(raster)<- proj4string(move)
-	callGeneric()
+	callGeneric(move = move, raster = raster, locErr = locErr,...)
 	  })
 
+setMethod("dynBGB", signature(move = ".MoveTrackSingle", raster = "missing", locErr = "ANY" 
+			      ), function(move, raster, 
+			      locErr, dimSize,ext,...) {
+	raster <- raster::raster(extent(.extcalc(obj = move, ext = ext)))
+	res(raster)<-max(diff(t(bbox(raster))))/dimSize
+	proj4string(raster)<- proj4string(move)
+	callGeneric(move = move, raster = raster, locErr = locErr,...)
+	  })
 
 setMethod("dynBGB", 
 	  signature(move = "dBGBvariance", raster = "RasterLayer", 
 		    locErr = "numeric"), 
 	  function(move, raster, locErr, timeStep, ...) {
-            if(isLonLat(move)) stop("You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function. \n")
-            if(!equalProj(list(raster,move))) #check equal projection of raster and Move
-              stop(paste("The projection of the raster and the Move object are not equal. \n raster:", proj4string(raster), "\n object:", proj4string(move), "\n"))
+		  if(isLonLat(move)) stop("You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function. \n")
+		  if(!equalProj(list(raster,move))) #check equal projection of raster and Move
+			  stop(paste("The projection of the raster and the Move object are not equal. \n raster:", proj4string(raster), "\n object:", proj4string(move), "\n"))
 		  pointsInterest <- move@segInterest | rev(move@segInterest)
 		  t <- as.numeric(move@timestamps)/60
 		  if(missing(timeStep))

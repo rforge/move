@@ -26,7 +26,7 @@
 
 \arguments{
   \item{object}{an object of the \link{Move-class}}
-  \item{raster}{a RasterLayer object or numeric value. A numeric value for \code{raster} is interpreted as the edge size of the square raster cells (in map units); the according raster will be calculated internally. If a RasterLayer is provided the \code{brownian.bridge.dyn} starts to calculate the UD based on that raster.}
+  \item{raster}{a RasterLayer object or numeric value. A numeric value for \code{raster} is interpreted as the resolution of the square raster cells (in map units); the according raster will be calculated internally. If a RasterLayer is provided the \code{brownian.bridge.dyn} starts to calculate the UD based on that raster.}
   \item{dimSize}{numeric. dimSize is only used if \code{raster} is not set. \code{dimSize} is interpreted as the number of cells along the largest dimension of the track. The according raster will be calculated internally. Default is 10}
   \item{location.error}{single numeric value or vector of the length of coordinates that describes the error of the location (sender/receiver) system in map units, or a character string with the name of the column containing the location error.}
   \item{margin}{The margin used for the behavioral change point analysis.}
