@@ -7,7 +7,6 @@ import(rgdal)
 exportClasses(
 	DBBMM,
 	DBBMMStack,
-	getMotionVariance,
 	Move,
 	MovebankLogin,
 	MoveStack,
@@ -49,6 +48,7 @@ exportMethods(
 	getMovebankSensorsAttributes,
 	getMovebankStudies,
 	getMovebankStudy,
+	getMotionVariance,
 	getVolumeUD,
 	hrBootstrap,
 	lines,
