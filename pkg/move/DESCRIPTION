@@ -1,7 +1,7 @@
 Package: move
 Type: Package
 Title: Visualizing and analyzing animal track data
-Version: 1.1.448
+Version: 1.2.475
 Date: 2013-07-23
 Author: Bart Kranstauber <bart.kranstauber@uni-konstanz.de>, Marco Smolla <marco.smolla@postgrad.manchester.ac.uk>
 Maintainer: Bart Kranstauber <bart.kranstauber@uni-konstanz.de>

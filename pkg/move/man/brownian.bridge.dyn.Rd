@@ -20,7 +20,7 @@
 
 \usage{
   brownian.bridge.dyn(object, raster, dimSize, location.error,
-                 margin=11, window.size=31, ext=.3, bbox=NA,...)
+                 margin=11, window.size=31, ext=.3, bbox=NA,burstType,...)
 }
 
 
@@ -33,6 +33,7 @@
   \item{window.size}{The size of the moving window along the track. Larger windows provide more stable/accurate estimates of the brownian motion variance but are less well able to capture more frequent changes in behavior.}
   \item{ext}{Describes the amount of extension of the bounding box around the animal track. It can be numeric (same extension into all four directions), vector of two (first x, then y directional extension) or vector of four  (xmin, xmax, ymin, ymax extension). Default is .25 (extends the bounding box by 25\%). Only considered in combination with a numeric raster argument or the dimSize argument. }
   \item{bbox}{vector with 4 numbers defining a bounding box for the raster}
+  \item{burstType}{A character vector with the name of burst type for which the UD needs to be calculates}
   \item{...}{for additional arguments to program against}
 }
 
