@@ -20,7 +20,7 @@
 
 \usage{
   brownian.bridge.dyn(object, raster, dimSize, location.error,
-                 margin=11, window.size=31, ext=.3, bbox=NA,burstType,...)
+                 margin=11, window.size=31, ext=.3, bbox=NA,...)
 }
 
 

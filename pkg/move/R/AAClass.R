@@ -233,7 +233,7 @@ setClass(Class = "dBMvarianceTmp",
 			       break.list = numeric()), 
 	 validity = function(object) {
 		 if (length(unique(lengths<-c(length(object@means), length(object@in.windows), length(object@interest)))) != 1) 
-			 stop("Length does not match ", paste(lengths, collapse=', '))
+			 stop("Length does not match between means, in.windows and interest (", paste(lengths, collapse=', '),')')
 		 if (length(object@margin) != 1) 
 			 stop("Margin length not 1")
 		 if (length(object@window.size) != 1) 
