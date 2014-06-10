@@ -51,6 +51,8 @@ setMethod(f = "brownian.motion.variance.dyn",
             time.lag <- time.lag(object, units = "mins")  #units need to correspont between BBMM method and here
 	  if(n.locs(object)!= length(location.error))
 		  stop("The location error vector has not the same length as the move object")
+	  if(n.locs(object)<window.size)
+		  stop("window.size can't be larger than the number of locations in the move object")
 	  if(any(is.na(location.error)))
 		  stop("The location error contains NAs")
             if(isLonLat(object)) stop("You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function. \n")

@@ -5,6 +5,8 @@ setMethod("windowApply", signature(x = ".MoveTrackSingle", FUN = "function",
 				   SUMFUN = "function", windowSize = "numeric"), 
 	  function(x, FUN, SUMFUN, windowSize, 
 		   segmentWise = T, cluster = NULL, ...) {
+		  if(n.locs(x)<windowSize)
+			  stop("The window size can't be larger then the number of locations in move object")
 		  # windowSize is the number of segments a window is long+1
 		  RUNFUN <- function(x, windowSize, obj, WINFUN, segmentWise, ...) {
 			  #		  message(x)# progress statement for debuging
