@@ -59,6 +59,13 @@ setMethod(f = "split",
 		  return(DBBMMList)
 	  })
 
+setMethod(f = "split"
+	  signature = c(x=".UDStack", f="missing"),
+	  definition = function(x, f, ...){
+		  xx<-unstack(x)
+		  names(xx)<-names(x)
+		  return(xx)
+	  })
 
 setMethod("split", 
           signature = c(x = ".MoveTrackSingleBurst", f = "missing"), 
