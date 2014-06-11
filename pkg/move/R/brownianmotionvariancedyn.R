@@ -57,7 +57,7 @@ setMethod(f = "brownian.motion.variance.dyn",
 		  stop("The location error contains NAs")
             if(isLonLat(object)) stop("You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function. \n")
             if (any((c(margin, window.size)%%2) != 1)) 
-              stop("Margin and window size need to be uneven")
+              stop("Margin and window size need to be odd")
             # function to calculate brownian.motion.variance for a piece of track
             
             breaks <- margin:(window.size - margin + 1)

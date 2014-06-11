@@ -59,7 +59,7 @@ setMethod(f = "split",
 		  return(DBBMMList)
 	  })
 
-setMethod(f = "split"
+setMethod(f = "split",
 	  signature = c(x=".UDStack", f="missing"),
 	  definition = function(x, f, ...){
 		  xx<-unstack(x)
