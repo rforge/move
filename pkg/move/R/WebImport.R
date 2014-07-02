@@ -52,7 +52,8 @@ setMethod(f="getMovebank",
 			  url <- paste("https", url, sep="")  
 			  web <- getURL(url, curl=curl, verbose=F, .encoding="UTF-8")
 			  if(grepl(pattern="The requested download may contain copyrighted material", x=web)) stop("You need a permission to access this data set. Go to www.movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
-			  data <- read.csv(textConnection(web))
+			  if(entity_type=='event'){cols<-c(location_long='numeric', location_lat='numeric')}else{cols<-NA}
+			  data <- read.csv(textConnection(web), colClasses=cols)
 		  } else {
 			  url <- paste(paste("http",url, sep=""), sep="&",paste("user=",login@username,"&password=",login@password, sep=""))
 			  data <- read.csv(url, header=T, sep=",", as.is=T)
