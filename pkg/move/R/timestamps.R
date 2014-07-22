@@ -4,6 +4,12 @@ setMethod("timestamps", ".MoveTrack",
             this@timestamps
           })
 
+
+setMethod("timestamps", ".unUsedRecords",
+          function(this) {
+            this@timestampsUnUsedRecords
+          })
+
 setMethod("timestamps", ".MoveTrackSingle",
           function(this) {
             this@timestamps

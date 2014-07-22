@@ -5,6 +5,7 @@
 \alias{split,.MoveTrackSingleBurst,missing-method}
 \alias{split,.MoveTrackStack,missing-method}
 \alias{split,DBBMMStack,missing-method}
+\alias{split,.UDStack,missing-method}
 
 \docType{methods}
 
