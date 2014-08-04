@@ -4,3 +4,8 @@ setMethod("trackId",
           definition=function(x){  
 		  return(slot(x,'trackId'))
 	  })
+setMethod("trackId", 
+          signature=".unUsedRecordsStack",
+          definition=function(x){  
+		  return(slot(x,'trackIdUnUsedRecords'))
+	  })
