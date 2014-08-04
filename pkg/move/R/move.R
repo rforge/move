@@ -6,8 +6,7 @@ setMethod(f = "move",
 			  stop("x should be a file on disk but it cant be found")
 		  if(grepl(".zip", x))
 		  {
-			  
-			  files<-as.character(unzip(x,list=T)$Name)
+			files<-as.character(unzip(x,list=T)$Name)
 		  	if(1!=sum(rd<-(files=='readme.txt'))| length(files)!=2)
 				stop('zip file not as expected')
 			m<-move(unz(x, files[!rd]),...)
@@ -35,9 +34,11 @@ setMethod(f = "move",
 			  stop("The entered file does not seem to be from Movebank. Please use the alternative import function.")
 		  }
 
-		  if(any(dups<-duplicated( do.call('paste',c(df[duplicated(df$timestamp)|duplicated(df$timestamp, fromLast=T),names(df)!="event.id"], list(sep="__")))))){#first find atleast the ones where the timestamp (factor) is duplicated
+		  if(any(dups<-duplicated( do.call('paste',c(df[duplicated(df$timestamp)|duplicated(df$timestamp, fromLast=T),names(df)!="event.id"], list(sep="__")))))){
+			  #first find atleast the ones where the timestamp (factor) is duplicated
 			  warning("Exact duplicate records removed (n=",sum(dups),") (movebank allows them but the move package can't deal with them)")
-			  df <- df[!duplicated( do.call('paste',c(df[,names(df)!="event.id"], list(sep="__")))),]# cant use dups here since it that uses the optimization of only looking at timestamps first
+			  df <- df[!duplicated( do.call('paste',c(df[,names(df)!="event.id"], list(sep="__")))),]
+			  # cant use dups here since it that uses the optimization of only looking at timestamps first
 		  }
 
 		  df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") # need to make character out of it to ensure milli seconds are considerd
@@ -81,16 +82,22 @@ setMethod(f = "move",
 		  proj4string(df)<-CRS("+proj=longlat +ellps=WGS84 +datum=WGS84")
 
 		  track<-new('.MoveTrack', df, timestamps=timestamps[!unUsed], sensor=sensor[!unUsed], idData=idData)
-		individual.local.identifier<-factor(individual.local.identifier[!unUsed])
+	          individual.local.identifier<-factor(individual.local.identifier[!unUsed])
 		  if(removeDuplicatedTimestamps){
 			message("removeDupilcatedTimestamps was set to true we strongly suggest against it and that the problem is solved before because there is no systematic to which locations are removed. This can for example be done by marking them outlier in movebank.")
-			dupsDf<-(data.frame(format(track@timestamps,"%Y %m %d %H %M %OS4"), track@sensor))
-			if(stk)
+			dupsDf<-(data.frame(format(timestamps(track),"%Y %m %d %H %M %OS4"), track@sensor))
+			dupsDfUn<-(data.frame(format(timestamps(unUsedRecords),"%Y %m %d %H %M %OS4"), unUsedRecords@sensorUnUsedRecords))
+			
+			if(stk){
 				dupsDf<-data.frame(id=individual.local.identifier, dupsDf)
+				dupsDfUn<-data.frame(id=unUsedRecords@trackIdUnUsedRecords, dupsDfUn)
+			}
 			dups<-duplicated(dupsDf)
 			track<-track[!dups,]
 			individual.local.identifier<-individual.local.identifier[!dups]
 			warning(sum(dups)," location(s) is/are removed by removeDuplicatedTimestamps")
+			unUsedRecords<-unUsedRecords[inNormRe<-!(apply(dupsDfUn, 1, paste, collapse='_')%in%apply(dupsDf, 1, paste, collapse='_')),T]
+      warning(sum(!inNormRe), " location(s) is/are removed by removeDuplicatedTimestamps from the un used records")
 		  }
 
 		  if(stk){
