@@ -10,6 +10,9 @@ check:
 	make build
 	time R CMD check --as-cran move*.tar.gz
 
+checkSrc:
+	time R CMD check --as-cran pkg/move
+
 checkRdevel:
 	/home/bart/bmisc/small_projects/rDevel/svn/R/bin/R CMD check --as-cran move*.tar.gz
 

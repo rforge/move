@@ -64,6 +64,7 @@ exportMethods(
 	raster2contour,
 	seglength,
 	show,
+	sensor,
 	speed,
 	speedSummary,
 	split,

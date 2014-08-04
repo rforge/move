@@ -2,6 +2,7 @@
 
 \alias{trackId}
 \alias{trackId,.MoveTrackStack-method}
+\alias{trackId,.unUsedRecordsStack-method}
 \alias{trackId,MoveStack-method}
 
 \docType{methods}

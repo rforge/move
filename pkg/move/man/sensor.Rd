@@ -10,12 +10,13 @@
 \description{The sensor method returns or sets the sensor of a track from a Move or MovesStack object.}
 
 \usage{
-\S4method{sensor}{.MoveTrack}(this)
-\S4method{sensor}{.unUsedRecords}(this)
+\S4method{sensor}{.MoveTrack}(this,...)
+\S4method{sensor}{.unUsedRecords}(this,...)
 }
 
 \arguments{
   \item{this}{Move or MoveStack object}
+  \item{...}{Curently not used}
 }
 
 \author{Bart Kranstauber}

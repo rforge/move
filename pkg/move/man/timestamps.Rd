@@ -3,6 +3,7 @@
 \alias{timestamps}
 \alias{timestamps<-}
 \alias{timestamps,.MoveTrack-method}
+\alias{timestamps,.unUsedRecords-method}
 \alias{timestamps,.MoveTrackSingle-method}
 \alias{timestamps<-,.MoveTrack-method}
 
