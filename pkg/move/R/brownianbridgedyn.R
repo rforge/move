@@ -133,7 +133,7 @@ setMethod(f = "brownian.bridge.dyn",
             
             if (is.na(outerProbability)) {
 #              stop("The used extent is too large. Choose a smaller value for ext!")
-	    stop('outerProbability returned an NA value consider different values for ext')
+	    stop('outerProbability returned an NA value consider different values for ext, this error can also occure if the raster only consist of 1 or few cells (e.g. dimSize=1 or dimSize=2)')
               # when did this occure Marco? # should we move these checks to the validity 
               # function of the dbbbmm object
 	    #one occurence i found is with a every small raster of 1 by 2 cells

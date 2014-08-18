@@ -61,6 +61,9 @@ setMethod(f = "brownian.motion.variance.dyn",
             # function to calculate brownian.motion.variance for a piece of track
             
             breaks <- margin:(window.size - margin + 1)
+	        if(is.unsorted(breaks)){
+			      stop("The proposed breaks are unsorted, is the window.size smaller than 2*margin?")
+	        }
             uneven.breaks <- breaks[(breaks%%2) == 1]
             breaks.found <- c()
             BMvars <- data.frame(BMvar = c(), loc = c())
