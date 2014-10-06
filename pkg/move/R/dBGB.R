@@ -72,7 +72,7 @@ setGeneric("BGBvar", function(move, sdPara, sdOrth, locErr) {
 setMethod("BGBvar", signature(move = ".MoveTrackSingle", sdPara = "numeric", 
 			      sdOrth = "numeric", locErr = "numeric"), function(move, sdPara, sdOrth, locErr) {
 	if ((n.locs(move)%%2) != 1) 
-		stop("not an uneven number of locations to BGBvar")
+		stop("not an odd number of locations to BGBvar")
 	g <- expand.grid(sdPara = sdPara, sdOrth = sdOrth)
 	g$res <- NA
 	t <- as.numeric(move@timestamps)/60#timestamps function
