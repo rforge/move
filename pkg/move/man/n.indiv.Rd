@@ -1,7 +1,7 @@
 \name{n.indiv}
 
 \alias{n.indiv}
-\alias{n.indiv,SpatialPointsDataFrame-method}
+\alias{n.indiv,Move-method}
 \alias{n.indiv,.MoveTrackStack-method}
 
 \docType{methods}
