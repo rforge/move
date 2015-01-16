@@ -7,7 +7,7 @@ setMethod("hrBootstrap",
             j <- round(exp(log(10)*seq(log10(5),log10(nlocs),by=0.1)))
             print(j)
             locs <- lapply(j, function(js,coords) {replicate(n=rep,SpatialPoints(coords[sample(1:nlocs,size=js,replace=T),]) )}, coords=coordinates(x))
-            mcps <- lapply(locs, lapply, mcp.area, percent=level, plotit=F,unin=unin,unout=unout)
+            mcps <- lapply(locs, lapply, adehabitatHR::mcp.area, percent=level, plotit=F,unin=unin,unout=unout)
             quant <- lapply(lapply(mcps, unlist), quantile, probs=seq(0,1,.25))
             quantLines <- as.data.frame(do.call("rbind", quant))
             rownames(quantLines) <- j
@@ -17,8 +17,8 @@ setMethod("hrBootstrap",
             b <- list(qll,a,col)
             
             if (class(x)=="SpatialPoints"){
-              hline <- as.numeric(mcp.area(x, percent=levelMax, plotit=F, unin=unin, unout=unout),lty=7)} else {
-              hline <- as.numeric(mcp.area(move2ade(x), percent=levelMax, plotit=F, unin=unin, unout=unout),lty=7)
+              hline <- as.numeric(adehabitatHR::mcp.area(x, percent=levelMax, plotit=F, unin=unin, unout=unout),lty=7)} else {
+              hline <- as.numeric(adehabitatHR::mcp.area(move2ade(x), percent=levelMax, plotit=F, unin=unin, unout=unout),lty=7)
               }         
             if (plot){
               plot(x=j, quantLines[,ncol(quantLines)], xlab="number of coordinates for mcp", ylab=paste("habitat area (",unout,")"), type="n", ylim=range(c(quantLines,hline)), ...)

@@ -47,10 +47,10 @@ setMethod(f="getMovebank",
 		  }
 		  if (login@rcurl){
 			  require(RCurl)
-			  curl  <- getCurlHandle()
-			  curlSetOpt( .opts = list(httpheader = c(user = login@username, password = login@password),verbose=FALSE), curl=curl)
+			  curl  <- RCurl::getCurlHandle()
+			  RCurl::curlSetOpt( .opts = list(httpheader = c(user = login@username, password = login@password),verbose=FALSE), curl=curl)
 			  url <- paste("https", url, sep="")  
-			  web <- getURL(url, curl=curl, verbose=F, .encoding="UTF-8")
+			  web <- RCurl::getURL(url, curl=curl, verbose=F, .encoding="UTF-8")
 			  if(grepl(pattern="The requested download may contain copyrighted material", x=web)) stop("You need a permission to access this data set. Go to www.movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
 			  if(entity_type=='event'){cols<-c(location_long='numeric', location_lat='numeric')}else{cols<-NA}
 			  data <- read.csv(textConnection(web), colClasses=cols)

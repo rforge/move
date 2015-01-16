@@ -17,13 +17,13 @@ setMethod(f = "corridor",
 		  ##Marco that is right, but how can you hand over the coordinates once cut at the end and once at the beginning
 		  segRadius <- segLength/2
 
-		  tAzimuth <- trackAzimuth(coordinates(x))
+		  tAzimuth <- maptools::trackAzimuth(coordinates(x))
 		  pAzimuth <- ((180+tAzimuth)*2)%%360
 
 		  inCircle <- lapply(1:(n.locs(x)-1),  function(i,segRadius, segMid){ which(spDistsN1(pts=as.matrix(segMid), pt=segMid[i,], longlat=T)<=segRadius[i])}, segMid=segMid, segRadius=segRadius) 
 
 		  inpAzimuth <- lapply(inCircle, function(i, pAzimuth) pAzimuth[i], pAzimuth=pAzimuth)
-		  circVar <- lapply(lapply(inpAzimuth, circular, units="degrees"), var.circular)
+		  circVar <- lapply(lapply(inpAzimuth, circular::circular, units="degrees"), circular::var.circular)
 
 		  if (length(unique(circVar))==1) {
 			  stop('There were less than the required 2 midpoints within the buffer along the whole track to calculate a variance.')
