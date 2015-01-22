@@ -87,7 +87,7 @@ test_that('Brownian bridge, running with character and vector input to location 
 
 test_that('Brownian bridge, running with character and vector input to location error for stacks',{
 		  load(system.file("extdata", "move.RData", package="move"))
-		  data<-spTransform(moveStack(list(leroy[1:75,], ricky[1:75,])), center=T)
+		  data<-spTransform(moveStack(list(leroy[1:75,], ricky[1:73,])), center=T)
 		  data2<-data
 		  lc<-6.54
 		  data2$asdf<-lc
