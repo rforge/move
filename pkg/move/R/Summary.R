@@ -15,7 +15,7 @@ setMethod("summary",
 setMethod("summary", 
           signature=".MoveTrackSingle", 
           definition=function(object){
-            if (!require(circular)) 
+            if (!requireNamespace('circular')) 
               stop("You need to install the circular package to proceed") #for angle
             if (!isLonLat(object)) {
               object <- spTransform(object, CRSobj="+proj=longlat")

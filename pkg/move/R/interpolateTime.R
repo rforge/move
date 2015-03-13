@@ -39,8 +39,8 @@ setMethod("interpolateTime",
 	#	  crds<-do.call('rbind',mapply(function(x,y,p,f,m){if(is.nan(p)){return(coordinates(m[x,]))}else{f(m[x,],m[y,],p)}},x=prevLoc, y=nextLoc,p=p,MoreArgs=list(m=x,f=fun), SIMPLIFY=FALSE))
 
 		  crds<-matrix(fun(coordinates(x)[prevLoc,], coordinates(x)[nextLoc,], ifelse(is.nan(p),0, p)),ncol=2)# matrix incase only one location
-		  attr(crds,'dimnames')<-attr(coordinates(x),'dimnames')# the geosphere functions replace column names
-		  sensor<-factor(ifelse(is.nan(p),as.character(x@sensor[prevLoc]),'interpolateTime'), levels=c(levels(x@sensor),'interpolateTime'))
+	colnames(crds)<-colnames(coordinates(x))
+  sensor<-factor(ifelse(is.nan(p),as.character(x@sensor[prevLoc]),'interpolateTime'), levels=c(levels(x@sensor),'interpolateTime'))
 		  m<-new('Move', x[prevLoc,],coords=crds, timestamps=time, sensor=sensor, sensorUnUsedRecords=factor(x@sensorUnUsedRecords, levels=c(levels(x@sensorUnUsedRecords),'interpolateTime')) )
 		  m[!is.nan(p),]<-NA
 		  return(m)

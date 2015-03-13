@@ -7,7 +7,7 @@ setMethod(f = "moveStack",
 		  if(!all(unlist(lapply(x, validObject))))
 			  stop("One or more objects in the list are not valid Move objects")
 		  if (length(unique(as.character(lapply(x, function(y) attr(slot(y, "timestamps"), "tzone")) )))!=1)
-			  stop("One or more objects in the list have no UTC timestamps")
+			  stop("Not all move object in the list have the same timezone in the timestamp")
 
 		  if(!equalProj(x)) stop("All objects need to be equally projected.") 
 

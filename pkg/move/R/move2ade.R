@@ -17,7 +17,7 @@ setMethod("move2ade",
 
 # define ltrajs when neede
 if(!isClass("ltraj"))
-    setClass("ltraj")
+    setOldClass("ltraj")
 
 
 setAs("Move", "ltraj", function(from){

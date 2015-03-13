@@ -7,7 +7,8 @@ test.interpolateTime<-function(){
 	checkEquals(dataP, interpolateTime(dataP, timestamps(dataP), spaceMethod='eu'))
 	sl<-c(levels(data@sensor),'interpolateTime')
 	dataS<-new('Move', data,sensor=factor(data@sensor, levels=sl), sensorUnUsedRecords=factor(data@sensorUnUsedRecords, levels=sl))
-	checkEquals(dataS[c(1,n.locs(data)),], interpolateTime(data, 30, spaceMethod='gr')[c(1,30),])
+	rownames(dataS@coords)<-NULL
+  checkEquals(dataS[c(1,n.locs(data)),], interpolateTime(data, 30, spaceMethod='gr')[c(1,30),])
 	checkEquals(dataS[c(1,n.locs(data)),], interpolateTime(data, 30, spaceMethod='rh')[c(1,30),])
 	checkEquals(spTransform(dataS[c(1,n.locs(data)),], proj4string(dataP)), interpolateTime(dataP, 30, spaceMethod='eu')[c(1,30),])
 	checkEquals(40, n.locs(interpolateTime(data, 40, spaceMethod='g')))

@@ -91,6 +91,8 @@ setMethod(f = "brownian.bridge.dyn",
 			  stop("The location error vector has not the same length as the move object")
 		  if(any(is.na(location.error)))
 			  stop("The location error contains NAs")
+      if(any(location.error<=0))
+        stop("The location error needs to be a postive number")
 		  # check for aeqd projection of the coordinates
 		  if(isLonLat(object)) stop("You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function. \n")
 		  if(!equalProj(list(raster,object))) #check equal projection of raster and Move

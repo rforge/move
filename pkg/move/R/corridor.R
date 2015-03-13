@@ -2,8 +2,6 @@ setGeneric("corridor", function(x,speedProp=.75, circProp=.25, plot=FALSE, ...){
 setMethod(f = "corridor",
 	  signature=c(x=".MoveTrackSingle"),
 	  definition=function(x, speedProp, circProp, plot, ...){
-		  if (any(grepl('maptools', installed.packages()))) require(maptools) else stop("You need to install the maptools package to proceed")
-		  if (any(grepl('circular', installed.packages()))) require(circular) else stop("You need to install the circular package to proceed")
 		  if (!isLonLat(x)) stop("Convert your dataset to longlat projection (use spTransform).")
 		  if (n.locs(x)>2){
 			  segLength <- apply(cbind(coordinates(x)[-n.locs(x),],coordinates(x)[-1,]), 1, function(y) spDistsN1(as.matrix(t(y[1:2])), as.matrix(t(y[3:4])), longlat=T)) ##kilometer
@@ -17,13 +15,15 @@ setMethod(f = "corridor",
 		  ##Marco that is right, but how can you hand over the coordinates once cut at the end and once at the beginning
 		  segRadius <- segLength/2
 
-		  tAzimuth <- maptools::trackAzimuth(coordinates(x))
-		  pAzimuth <- ((180+tAzimuth)*2)%%360
+		  if ( requireNamespace("maptools", quietly = TRUE) & requireNamespace("circular", quietly = TRUE)) {
+			  tAzimuth <- maptools::trackAzimuth(coordinates(x))
+			  pAzimuth <- ((180+tAzimuth)*2)%%360
 
-		  inCircle <- lapply(1:(n.locs(x)-1),  function(i,segRadius, segMid){ which(spDistsN1(pts=as.matrix(segMid), pt=segMid[i,], longlat=T)<=segRadius[i])}, segMid=segMid, segRadius=segRadius) 
+			  inCircle <- lapply(1:(n.locs(x)-1),  function(i,segRadius, segMid){ which(spDistsN1(pts=as.matrix(segMid), pt=segMid[i,], longlat=T)<=segRadius[i])}, segMid=segMid, segRadius=segRadius) 
 
-		  inpAzimuth <- lapply(inCircle, function(i, pAzimuth) pAzimuth[i], pAzimuth=pAzimuth)
-		  circVar <- lapply(lapply(inpAzimuth, circular::circular, units="degrees"), circular::var.circular)
+			  inpAzimuth <- lapply(inCircle, function(i, pAzimuth) pAzimuth[i], pAzimuth=pAzimuth)
+			  circVar <- lapply(lapply(inpAzimuth, circular::circular, units="degrees"), circular::var.circular)
+		  } else {stop("Both the packages maptools and circular need to be installed")}
 
 		  if (length(unique(circVar))==1) {
 			  stop('There were less than the required 2 midpoints within the buffer along the whole track to calculate a variance.')

@@ -46,11 +46,12 @@ setMethod(f="getMovebank",
 			  url <- paste(url, sep="&",paste(names(tmp),tmp, collapse="&", sep="="))
 		  }
 		  if (login@rcurl){
-			  require(RCurl)
-			  curl  <- RCurl::getCurlHandle()
-			  RCurl::curlSetOpt( .opts = list(httpheader = c(user = login@username, password = login@password),verbose=FALSE), curl=curl)
-			  url <- paste("https", url, sep="")  
-			  web <- RCurl::getURL(url, curl=curl, verbose=F, .encoding="UTF-8")
+			  if (requireNamespace("RCurl", quietly = TRUE)) {
+				  curl  <- RCurl::getCurlHandle()
+				  RCurl::curlSetOpt( .opts = list(httpheader = c(user = login@username, password = login@password),verbose=FALSE), curl=curl)
+				  url <- paste("https", url, sep="")  
+				  web <- RCurl::getURL(url, curl=curl, verbose=F, .encoding="UTF-8")
+			  } else { stop("The package RCurl can't be loaded, probably it needs to be installed") }
 			  if(grepl(pattern="The requested download may contain copyrighted material", x=web)) stop("You need a permission to access this data set. Go to www.movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
 			  if(entity_type=='event'){cols<-c(location_long='numeric', location_lat='numeric')}else{cols<-NA}
 			  data <- read.csv(textConnection(web), colClasses=cols)
@@ -216,8 +217,8 @@ setGeneric("getMovebankAnimals", function(study, login) standardGeneric("getMove
 setMethod(f="getMovebankAnimals",
 	  c(study="character", login="MovebankLogin"),
 	  definition = function(study, login){  
-		   study  <- getMovebankID(study,login)
-	  callGeneric()
+		  study  <- getMovebankID(study,login)
+		  callGeneric()
 	  })
 setMethod(f="getMovebankAnimals",
 	  c(study="numeric", login="MovebankLogin"),
@@ -341,12 +342,12 @@ setMethod(f="getMovebankData",
 		  unUsed@trackIdUnUsedRecords<-factor(unUsed@trackIdUnUsedRecords, levels=levels(trackId))
 
 		  if(removeDuplicatedTimestamps){
-			message("removeDupilcatedTimestamps was set to true we strongly suggest against it and that the problem is solved before because there is no systematic to which locations are removed. This can for example be done by marking them outlier in movebank.")
-			dupsDf<-(data.frame(format(spdf$timestamp,"%Y %m %d %H %M %OS4"), spdf$sensor_type_id, trackId))
-			dups<-duplicated(dupsDf)
-			spdf<-spdf[!dups,]
-			trackId<-trackId[!dups]
-			warning(sum(dups)," location(s) is/are removed by removeDuplicatedTimestamps")
+			  message("removeDupilcatedTimestamps was set to true we strongly suggest against it and that the problem is solved before because there is no systematic to which locations are removed. This can for example be done by marking them outlier in movebank.")
+			  dupsDf<-(data.frame(format(spdf$timestamp,"%Y %m %d %H %M %OS4"), spdf$sensor_type_id, trackId))
+			  dups<-duplicated(dupsDf)
+			  spdf<-spdf[!dups,]
+			  trackId<-trackId[!dups]
+			  warning(sum(dups)," location(s) is/are removed by removeDuplicatedTimestamps")
 		  }
 
 		  res<-new("MoveStack", spdf, timestamps=spdf$timestamp, 

@@ -26,8 +26,8 @@ setMethod(f = "move",
 		  if (!all(c("timestamp", 
 			     "location.long",  
 			     "location.lat", 
-			     "study.timezone", 
-			     "study.local.timestamp", 
+#			     "study.timezone", 
+#			     "study.local.timestamp", 
 			     "sensor.type", 
 			     "individual.local.identifier", 
 			     "individual.taxon.canonical.name")%in%colnames(df))){
@@ -42,7 +42,9 @@ setMethod(f = "move",
 		  }
 
 		  df$timestamp <- as.POSIXct(strptime(as.character(df$timestamp), format = "%Y-%m-%d %H:%M:%OS",tz="UTC"), tz="UTC") # need to make character out of it to ensure milli seconds are considerd
-		  df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))
+		  if("study.local.timestamp"%in% names(df)){
+		   df$study.local.timestamp <- as.POSIXct(strptime(df$study.local.timestamp, format="%Y-%m-%d %H:%M:%OS"))
+		  }
 
 		  if(any(tapply(df$sensor.type, df$individual.local.identifier, length)!=1)){
 			  df <- df[with(df, order(df$individual.local.identifier, timestamp)), ]  

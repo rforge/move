@@ -27,6 +27,7 @@ if(class(try(move(pipe(paste0('zcat ',fileR, " | sed ''")))))=='Move'){
 	rownames(dataR2@data)<- as.character(rownames(dataR2@data))
 	rownames(dataR@dataUnUsedRecords)<- as.character(rownames(dataR2@dataUnUsedRecords))
 	rownames(dataR2@dataUnUsedRecords)<- as.character(rownames(dataR2@dataUnUsedRecords))
+	rownames(dataR2@coords)<- rownames(dataR@coords)
 	checkEquals(dataR, dataR2)
 	checkException(dataR3<-(move(pipe(paste0('zcat ',fileR,"| sed '3p; 3s/Martes/Maggg/'")))))
 	checkException(move(pipe(paste0('zcat ',fileR,"| sed '3p; 3s/\"A\"/\"B\"/'")), removeDuplicatedTimestamps=F))
@@ -38,6 +39,7 @@ if(class(try(move(pipe(paste0('zcat ',fileR, " | sed ''")))))=='Move'){
 	rownames(dataR3@data)<- as.character(rownames(dataR3@data))
 	rownames(dataR@dataUnUsedRecords)<- as.character(rownames(dataR3@dataUnUsedRecords))
 	rownames(dataR3@dataUnUsedRecords)<- as.character(rownames(dataR3@dataUnUsedRecords))
+  rownames(dataR3@coords)<- rownames(dataR@coords)
 	checkEquals(dataR, dataR3)
 }
 }
