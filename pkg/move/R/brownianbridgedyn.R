@@ -98,7 +98,7 @@ setMethod(f = "brownian.bridge.dyn",
 		  if(!equalProj(list(raster,object))) #check equal projection of raster and Move
 			  stop(paste("The projection of the raster and the Move object are not equal. \n raster:", proj4string(raster), "\n object:", proj4string(object), "\n"))
 
-		  time.lag <- c(time.lag(object, units = "mins"), 0)  #units need to match between here and dBBMMvar calculations
+		  time.lag <- c(timeLag(object, units = "mins"), 0)  #units need to match between here and dBBMMvar calculations
 
 		  if (missing(time.step)) {
 			  time.step <- (min(time.lag[-length(time.lag)])/15)

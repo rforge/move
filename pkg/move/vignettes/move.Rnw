@@ -133,9 +133,9 @@ The following functions return more information of the object:
 <<nlocs>>=
 n.locs(ricky)
 @
-\fct{time.lag} returns the time differences between successive coordinates from \class{Move} or \class{MoveStack} objects (the\texttt{units} argument determines the units of the data output; it is minutes by default)
+\fct{timeLag} returns the time differences between successive coordinates from \class{Move} or \class{MoveStack} objects (the\texttt{units} argument determines the units of the data output; it is minutes by default)
 <<timelag>>=
-head(time.lag(leroy, units="mins"))
+head(timeLag(leroy, units="mins"))
 @
 \fct{timestamps} returns all time-stamps of an \class{Move} or \class{MoveStack} object
 <<timestamps>>=

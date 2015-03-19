@@ -47,7 +47,7 @@ With the function below the dynamic Brownian Bridge Movement Model calculates th
     \code{coordinates}\tab Track-coordinates of the Move Object\cr
     \code{as.data.frame}\tab A data.frame with the important data of the Move Object\cr
     \code{n.locs}\tab The number of locations\cr
-    \code{time.lag}\tab The time lags between the locations\cr
+    \code{timeLag}\tab The time lags between the locations\cr
     \code{projection}\tab The projection method of the track/raster\cr
     }
 }

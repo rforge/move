@@ -265,7 +265,7 @@ setMethod("BGB",
 setMethod("BGB", 
 	  signature(move = ".MoveTrackSingle", raster = "RasterLayer", locErr = "numeric"), 
 	  function(move, raster, locErr) {
-		  time.step <- min(time.lag(move, units="mins"))/15.123
+		  time.step <- min(timeLag(move, units="mins"))/15.123
 		  x <- coordinates(move)[, 1]
 		  y <- coordinates(move)[, 2]
 		  location.error <- rep(locErr, length(x))

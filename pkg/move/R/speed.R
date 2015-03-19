@@ -24,7 +24,7 @@ setMethod("speed",
 	  signature=".MoveTrackSingle",
 	  definition=function(x){
 		  #if(length(seglength(x)>0)){
-		  Speed <- (distance(x))/time.lag(x, units="secs") #meter per sec
+		  Speed <- (distance(x))/timeLag(x, units="secs") #meter per sec
 		  return(Speed)#} else {return(NA)}
 	  })
 

@@ -3,7 +3,7 @@ setMethod("timeSummary",
           signature=".MoveTrackSingle",
           definition=function(x, units){           
             date <- timestamps(x)
-            TimeDiff <- time.lag(x, units=units) 
+            TimeDiff <- timeLag(x, units=units) 
             df <- data.frame(Duration=difftime(date[length(date)], date[1], units=units)) 
             df$AverDur <- mean(TimeDiff)       #mean time difference between relocations
             df$SDDur <- sd(TimeDiff)           #standard deviation of time differences between relocations

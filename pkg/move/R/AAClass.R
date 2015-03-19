@@ -91,7 +91,7 @@ setClass(Class = ".MoveTrackSingle",contains=c(".MoveTrack",'.unUsedRecords'),
 	 representation = representation(),
 	 prototype = prototype(),
 	 validity = function(object){
-		 if(any((tmp <- time.lag(object))<0))
+		 if(any((tmp <- timeLag(object))<0))
 			 stop("The dataset includes unsorted timestamps")
 		 tmp <- c(T, tmp==0)|c(tmp==0,T)#only check for those that have the same time if the sensor is different
 		 if (any(dups <- duplicated(data.frame(format(object@timestamps[tmp],"%Y %m %d %H %M %OS4"), object@sensor[tmp]))))

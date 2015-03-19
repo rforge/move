@@ -73,6 +73,7 @@ exportMethods(
 	searchMovebankStudies,
 	timeSummary,
 	time.lag,
+	timeLag,
 	trackId,
 	brownian.motion.variance.dyn,
 	timestamps,
