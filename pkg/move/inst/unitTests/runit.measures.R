@@ -15,7 +15,7 @@ test.measures<-function()
 	checkEquals(distance(xx),list(unnamed=d,unnamed1=d))
 	checkEquals(timeLag(xx),list(unnamed=t,unnamed1=t))
 	checkEquals(speed(xx),list(unnamed=d/t,unnamed1=d/t))
-	proj4string(x)<-'+proj=longlat'
+	proj4string(x)<-'+proj=longlat +ellps=WGS84'
 	checkEquals(distance(x),(dd<-distHaversine( cbind(dx,dx)[-n.locs(x),], cbind(dx,dx)[-1,])))
 	checkEquals(speed(x),dd/t)
 

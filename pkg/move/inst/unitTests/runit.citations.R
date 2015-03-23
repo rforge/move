@@ -1,6 +1,6 @@
 
 test.citations<-function(){
-	a<-move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat'))
+	a<-move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'))
 	checkEquals(citations(a), character())
 	citations(a)<-"bla"
 	checkEquals(citations(a),"bla")

@@ -36,12 +36,12 @@ leroy <- move(system.file("extdata","leroy.csv.gz",package="move"))
 spTransform(leroy, center=TRUE)
 
 ## transform the Move object into another projection method, like mollweide
-spTransform(leroy, CRSobj="+proj=moll")
+spTransform(leroy, CRSobj="+proj=moll +ellps=WGS84")
 
 ##check projection method
 proj4string(leroy)
 \dontshow{
-spTransform(leroy, CRSobj=CRS("+proj=moll"))
+spTransform(leroy, CRSobj=CRS("+proj=moll +ellps=WGS84"))
 load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 stack <- moveStack(list(leroy,ricky))
 spTransform(stack, center=TRUE)

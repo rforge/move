@@ -4,7 +4,7 @@ setMethod(f = "spTransform",
 	  function(x, center=FALSE, ...){
 		  if(!center)
 			  stop('spTransform without center or proj string does not make much sense')
-		  spTransform(x=x, center=center, CRSobj="+proj=aeqd")
+		  spTransform(x=x, center=center, CRSobj="+proj=aeqd +ellps=WGS84")
 	  })
 
 setMethod(f = "spTransform", 

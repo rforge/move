@@ -4,8 +4,8 @@ test.moveStack<-function()
 	bt<-as.POSIXct(5+1:10, origin='1970-1-1',tz="GMT")       
 	attr(bt,'tzone')<-NULL
 	attr(at,'tzone')<-NULL
-	a<-move(x=1:10,y=1:10,time=at,proj=CRS('+proj=longlat'))
-	b<-move(x=1:10,y=1:10,time=bt,proj=CRS('+proj=longlat'), 
+	a<-move(x=1:10,y=1:10,time=at,proj=CRS('+proj=longlat +ellps=WGS84'))
+	b<-move(x=1:10,y=1:10,time=bt,proj=CRS('+proj=longlat +ellps=WGS84'), 
 		animal="a")
 	checkIdentical(coordinates(a), coordinates(b))
 	#	DEACTIVATED("Need to look what we want here")
@@ -19,8 +19,8 @@ test.moveStack<-function()
 	checkException(new('MoveStack', d , trackId=factor(sub('a','A A', as.character(d@trackId))), idData=d@idData))# track ids are no good names
 	checkException(validObject(d))#validity check needs to fail because of changed rownames
 
-	a<-move(x=1:10,y=1:10,time=at,proj=CRS('+proj=longlat'),animal="AAA")
-	a2<-move(x=1:10,y=1:10,time=at,proj=CRS('+proj=longlat'),animal="AAA")  
+	a<-move(x=1:10,y=1:10,time=at,proj=CRS('+proj=longlat +ellps=WGS84'),animal="AAA")
+	a2<-move(x=1:10,y=1:10,time=at,proj=CRS('+proj=longlat +ellps=WGS84'),animal="AAA")  
 	tmp<-options(warn=2)$warn
 	checkException(moveStack(list(a,a2)))# warn about duplicate ids
 	options(warn=tmp)

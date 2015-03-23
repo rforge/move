@@ -38,7 +38,7 @@ test_that('brownian bridge dyn for bursted',{
 })
 test_that('brownian bridge dyn value comparison bursted',{
 		  p<-seq(0, 2*pi, length.out=49)
-		  tmp<-move(sin(p), cos(p), as.POSIXct(1:length(p), origin='1970-1-1'), proj='+proj=aeqd')
+		  tmp<-move(sin(p), cos(p), as.POSIXct(1:length(p), origin='1970-1-1'), proj='+proj=aeqd +ellps=WGS84')
 		  t<-.05
 		  u<-brownian.bridge.dyn(tmp, dimSize=200, location.error=.1, time.step=t)
 		  us<-brownian.bridge.dyn(move::burst(tmp, round(1:length(p[-1])/30)), dimSize=200, location.error=.1, time.step=t)
@@ -50,7 +50,7 @@ test_that('brownian bridge dyn value comparison bursted',{
 			    cos(p), 
 			    as.POSIXct(1:length(p), 
 				       origin='1970-1-1'), 
-			    proj='+proj=aeqd')
+			    proj='+proj=aeqd +ellps=WGS84')
 		  t<-.25
 		  u<-brownian.bridge.dyn(tmp, dimSize=500, 
 					 location.error=.01, time.step=t, 

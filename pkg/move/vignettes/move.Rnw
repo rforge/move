@@ -223,7 +223,7 @@ For technical reasons the coordinates of the Move object must be in \texttt{aeqd
 
 <<transformData>>=
 proj4string(leroy)
-leroy_t <- spTransform(x=leroy, CRSobj="+proj=aeqd", center=TRUE)  
+leroy_t <- spTransform(x=leroy, CRSobj="+proj=aeqd +ellps=WGS84", center=TRUE)  
 proj4string(leroy_t)
 @
 

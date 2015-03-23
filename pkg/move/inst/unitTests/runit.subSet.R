@@ -1,8 +1,8 @@
 
 test.subSet<-function()
 {
-	a<-move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat'))
-	b<-move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat'),animal='b') 
+	a<-move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat +ellps=WGS84'))
+	b<-move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat +ellps=WGS84'),animal='b') 
 	s<-moveStack(list(a,j=b))
 	sl<-moveStack(list(l=a,j=b, k=a,p=b ))
 	bb<-s[['j']]

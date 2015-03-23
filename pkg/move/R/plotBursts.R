@@ -22,7 +22,7 @@ setMethod(f = "plotBursts",
             sizes  <- as.numeric(cut(sizesdf, breaks=breaks))/max(as.numeric(cut(sizesdf, breaks=breaks)),na.rm=T)*2
             df <- cbind(col, sizes, data.frame(do.call(rbind, midLST)))
             colnames(df) <- c("color", "size","x","y")
-            spdf <- SpatialPointsDataFrame(coords=do.call(rbind, midLST), data=df[,1:2], proj4string=CRS("+proj=longlat"))           
+            spdf <- SpatialPointsDataFrame(coords=do.call(rbind, midLST), data=df[,1:2], proj4string=CRS(proj4string(object)))           
             
             if (add) {
               points(x=df[1,3], y=df[1,4], cex=as.numeric(df[1,2]), col=df[1,1],...)

@@ -32,5 +32,5 @@ setMethod(f = "lineMidpoint",
                 }
               }
             }
-            midSP <- SpatialPoints(coords=as.data.frame(x=mid, row.names=NULL), proj4string=CRS("+proj=longlat"))
+            midSP <- SpatialPoints(coords=as.data.frame(x=mid, row.names=NULL), proj4string=CRS(proj4string(object)))
           })

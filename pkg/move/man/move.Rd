@@ -65,9 +65,9 @@ file <- read.table(filePath,
 data <- move(x=file$location.long, y=file$location.lat, 
 	     time=as.POSIXct(file$timestamp, 
 			     format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC"), 
-	     data=file, proj=CRS("+proj=longlat"), animal="Leroy")
+	     data=file, proj=CRS("+proj=longlat +ellps=WGS84"), animal="Leroy")
 \dontshow{
-move(x=file$location.long, y=file$location.lat, time=as.POSIXct(file$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC"), data=file, proj=CRS("+proj=longlat"))
-move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat'))
-move(x=1:10,y=1:10,time=as.POSIXct(c(1:5,1:5), origin='1970-1-1'),proj=CRS('+proj=longlat'), animal=c(rep('a',5),rep('b',5)))}
+move(x=file$location.long, y=file$location.lat, time=as.POSIXct(file$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC"), data=file, proj=CRS("+proj=longlat +ellps=WGS84"))
+move(x=1:10,y=1:10,time=as.POSIXct(1:10, origin='1970-1-1'),proj=CRS('+proj=longlat +ellps=WGS84'))
+move(x=1:10,y=1:10,time=as.POSIXct(c(1:5,1:5), origin='1970-1-1'),proj=CRS('+proj=longlat +ellps=WGS84'), animal=c(rep('a',5),rep('b',5)))}
 }
