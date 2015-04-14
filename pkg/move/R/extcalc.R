@@ -10,6 +10,8 @@ setMethod(f = ".extcalc", signature = c(obj = "SpatialPointsDataFrame", ext = "n
                 ext[4]))
               xRange <- c(Range[1] - abs(diff(Range[1:2]) * ext[1]), Range[2] + abs(diff(Range[1:2]) * 
                 ext[2]))
-            } else {stop("The ext argument must be a vector of 1, 2 or 4 numbers")}
+            } else {
+              stop("The ext argument must be a vector of 1, 2 or 4 numbers")
+            }
             return(c(xRange, yRange))
           })

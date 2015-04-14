@@ -1,7 +1,8 @@
 context('Brownian bridge dyn')
 test_that('dbbmm error handling',{
 		  data <- move(system.file("extdata","leroy.csv.gz",package="move"))
-		  expect_error(
+		 
+      expect_error(
 			       brownian.bridge.dyn(object=leroy, location.error=23.5, dimSize=150, ext=.3, time.step=600), "Error: object 'leroy' not found"
 			       )
 		  data2<-spTransform(data[1:50,], center=T)
