@@ -19,10 +19,17 @@ test_that('move',
 fileR<-system.file("extdata","ricky.csv.gz",package="move")
 if(class(try(move(pipe(paste0('zcat ',fileR, " | sed ''")))))=='Move'){
 	dataR<-move(pipe(paste0('zcat ',fileR)))
-	p<-pipe(paste0('zcat ',fileR," | head | sed 'p;' "))
-	expect_error(move(p))
-	expect_warning(move(pipe(paste0('zcat ',fileR,"| sed '1!p;'"))),'Exact duplicate records removed')
-	dataR2<-suppressWarnings(move(pipe(paste0('zcat ',fileR,"| sed '1!p;'"))))
+	f<-c( "\"\",\"event.id\",\"timestamp\",\"location.long\",\"location.lat\",\"behavioural.classification\",\"eobs.battery.voltage\",\"eobs.fix.battery.voltage\",\"eobs.horizontal.accuracy.estimate\",\"eobs.key.bin.checksum\",\"eobs.speed.accuracy.estimate\",\"eobs.start.timestamp\",\"eobs.status\",\"eobs.temperature\",\"eobs.type.of.fix\",\"eobs.used.time.to.get.fix\",\"ground.speed\",\"heading\",\"height.above.ellipsoid\",\"manually.marked.outlier\",\"visible\",\"sensor.type\",\"individual.taxon.canonical.name\",\"tag.local.identifier\",\"individual.local.identifier\",\"study.name\",\"utm.easting\",\"utm.northing\",\"utm.zone\",\"study.timezone\",\"study.local.timestamp\"",
+	 "\"\",\"event.id\",\"timestamp\",\"location.long\",\"location.lat\",\"behavioural.classification\",\"eobs.battery.voltage\",\"eobs.fix.battery.voltage\",\"eobs.horizontal.accuracy.estimate\",\"eobs.key.bin.checksum\",\"eobs.speed.accuracy.estimate\",\"eobs.start.timestamp\",\"eobs.status\",\"eobs.temperature\",\"eobs.type.of.fix\",\"eobs.used.time.to.get.fix\",\"ground.speed\",\"heading\",\"height.above.ellipsoid\",\"manually.marked.outlier\",\"visible\",\"sensor.type\",\"individual.taxon.canonical.name\",\"tag.local.identifier\",\"individual.local.identifier\",\"study.name\",\"utm.easting\",\"utm.northing\",\"utm.zone\",\"study.timezone\",\"study.local.timestamp\"",
+	 "\"1\",44528397,\"2010-02-09 16:07:21.000\",NA,NA,NA,3686,3468,NA,2210166656,NA,\"2010-02-09 16:05:21.000\",\"D\",27,0,120,NA,NA,NA,\"\",\"true\",\"gps\",\"Martes pennanti\",1016,\"Ricky T\",\"Urban fisher GPS tracking\",NA,NA,\"\",\"Eastern Standard Time\",\"2010-02-09 11:07:21.000\"",                                                                                                                                                                                                                                                                                                                                                                                                    
+	 "\"1\",44528397,\"2010-02-09 16:07:21.000\",NA,NA,NA,3686,3468,NA,2210166656,NA,\"2010-02-09 16:05:21.000\",\"D\",27,0,120,NA,NA,NA,\"\",\"true\",\"gps\",\"Martes pennanti\",1016,\"Ricky T\",\"Urban fisher GPS tracking\",NA,NA,\"\",\"Eastern Standard Time\",\"2010-02-09 11:07:21.000\"",                                                                                                                                                                                                                                                                                                                                                                                                    
+	 "\"2\",44528398,\"2010-02-09 17:01:23.000\",-73.9042594,42.8418856,NA,3662,3457,13.57,2236237607,1.64,\"2010-02-09 17:00:00.000\",\"A\",3,3,83,0.12,292.95,80.3,\"\",\"true\",\"gps\",\"Martes pennanti\",1016,\"Ricky T\",\"Urban fisher GPS tracking\",589541.097246732,4743838.94122749,\"18N\",\"Eastern Standard Time\",\"2010-02-09 12:01:23.000\"",                                                                                                                                                                                                                                                                                                                                         
+	 "\"2\",44528398,\"2010-02-09 17:01:23.000\",-73.9042594,42.8418856,NA,3662,3457,13.57,2236237607,1.64,\"2010-02-09 17:00:00.000\",\"A\",3,3,83,0.12,292.95,80.3,\"\",\"true\",\"gps\",\"Martes pennanti\",1016,\"Ricky T\",\"Urban fisher GPS tracking\",589541.097246732,4743838.94122749,\"18N\",\"Eastern Standard Time\",\"2010-02-09 12:01:23.000\"")
+  ff<-textConnection(f)
+	class(ff)<-'connection'
+  expect_error(move(ff),'scan.. expected \'a real\', got \'"location.long')
+	expect_warning(move(pipe(paste0('zcat ',fileR,"|  sed '1!p;'"))),'Exact duplicate records removed')
+	dataR2<-suppressWarnings(move(pipe(paste0('zcat ',fileR,"|  sed '1!p;'"))))
 	dataR@dateCreation<- dataR2@dateCreation
 	rownames(dataR@data)<- as.character(rownames(dataR2@data))
 	rownames(dataR2@data)<- as.character(rownames(dataR2@data))
@@ -44,5 +51,11 @@ if(class(try(move(pipe(paste0('zcat ',fileR, " | sed ''")))))=='Move'){
   rownames(dataR3@coords)<- rownames(dataR@coords)
 	expect_equal(dataR, dataR3)
 }
+expect_is(move(1:2,1:2, Sys.time()+1:2,animal=c('b','a')),'MoveStack')
+expect_is(move(1:2,1:2, Sys.time()+1:2,animal=c(2:1)),'MoveStack')
+tt<-Sys.time()+1:2
+expect_equal(  move(1:2,1:2,tt ,proj="+proj=longlat +ellps=WGS84") , move(1:2,1:2, tt,proj=CRS("+proj=longlat +ellps=WGS84"))  )
+expect_equal(  move(1:2,1:2,tt ,data=data.frame(3:4),proj="+proj=longlat +ellps=WGS84") , move(1:2,1:2, tt,data=data.frame(3:4),proj=CRS("+proj=longlat +ellps=WGS84"))  )
+
 }
 )

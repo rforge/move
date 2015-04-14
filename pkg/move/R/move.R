@@ -117,88 +117,86 @@ setMethod(f="move",
 		  data<-data.frame(x,y,time)
 		  move(x=x,y=y,time=time,proj=proj,data=data,...)
 	  }
-	  )
+)
+
 setMethod(f="move",
-	  signature=c(x="numeric", y="numeric", time="POSIXct", data="data.frame", proj="ANY"),
+          signature=c(x="numeric", y="numeric", time="POSIXct", data="data.frame", proj="character"),
+          definition = function(x,y,time,data,proj, ...){
+            move(x=x,y=y,time=time,proj=CRS(proj),data=data,...)
+          }
+)
+
+setMethod(f="move",
+	  signature=c(x="numeric", y="numeric", time="POSIXct", data="data.frame", proj="CRS"),
 	  definition = function(x,y,time,data,proj,sensor='unknown',animal='unnamed', ...){
 		  data$location.long <- x
 		  data$location.lat <- y
 		  data$timestamp <- time
 		  data$individual.local.identifier <- animal
-		  data$sensor <- sensor 
-		  .move(df=data, proj=proj)
+		  data$sensor <- factor(sensor)
+      
+		  if(any(is.na(data$location.long)|is.na(data$location.lat))){ 
+		    warning("There were NA locations detected and omitted. Currently they are not stored in unusedrecords")
+		    data <- data[!(is.na(data$location.long)|is.na(data$location.lat)), ]
+		  }
+		  data$individual.local.identifier<-factor(data$individual.local.identifier, levels = unique(data$individual.local.identifier))
+		  levels(data$individual.local.identifier) <- validNames(levels(factor(data$individual.local.identifier))) #changing names to 'goodNames' skipping spaces
+		  
+		  if(length(unique(data$individual.local.identifier))>1 & any(unique(as.character(data$individual.local.identifier))==""))
+		  {
+		    warning("Omitting locations that have an empty local identifier (n=",sum(tmp<-as.character(data$individual.local.identifier)==""),"). Most likely the tag was not deployed") 
+		    data <- data[!tmp,]
+		    data$individual.local.identifier <- factor(data$individual.local.identifier)
+		  }
+		  ids <- as.list(as.character(unique(data$individual.local.identifier)))
+		  uniquePerID<-unlist(lapply(colnames(data),  function(x,y,data){nrow(unique(data[,c(x,'individual.local.identifier')]))},data=data))==sum(!duplicated(data$individual.local.identifier))
+		  names(uniquePerID)<-colnames(data)
+		  uniquePerID["sensor"] <- FALSE
+		  idData <- subset(data, select=names(uniquePerID[uniquePerID]), !duplicated(data$individual.local.identifier))
+		  
+		  if(length(names(idData))!=1)# dont shorten it because we need something
+		    idData<-subset(idData, select=names(idData)!="individual.local.identifier")
+		  
+		  if(length(unique(idData$citation))>0) 
+		  {
+		    if(length(unique(idData$citation))>1) 
+		      warning("There were more than one citation for this study found! Only using the first.")
+        citations <- as.character(unique(idData$citation))[1]
+		  } else {
+        citations <- character()
+		  }
+		  
+		  rownames(idData) <- unique(data$individual.local.identifier)
+		  auxData <- data.frame(data[names(data)[!names(data)%in%c("location.lat", "location.long","timestamp", colnames(idData))]])
+		  
+		  if (ncol(auxData)==0) auxData <- data.frame(auxData, empty=NA)
+	  
+		  spdf <- SpatialPointsDataFrame(
+		    coords = cbind(data$location.long,data$location.lat),
+		    data = auxData, 
+		    proj4string = proj,
+		    match.ID = TRUE)
+			  
+		  if (length(ids)==1){
+		    return(new("Move", 
+		               timestamps = data$timestamp, 
+		               sensor = data$sensor,
+		               sensorUnUsedRecords=factor(levels=levels(data$sensor)),
+		               spdf, 
+		               citation = citations,
+		               idData = idData
+		    ))
+		  } else {
+		    trackId<-factor(data$individual.local.identifier)
+		    return(new("MoveStack", 
+		               spdf, 
+		               idData = idData,
+		               sensor = data$sensor,
+		               sensorUnUsedRecords=factor(levels=levels(data$sensor)),
+		               timestamps = data$timestamp, 
+		               citation = citations,
+		               trackId = trackId,
+		               trackIdUnUsedRecords=factor(levels=levels(trackId))))
+		  }
 	  }
 	  )
-
-setGeneric(".move", function(df, proj) standardGeneric(".move"))
-setMethod(f = ".move", 
-	  signature = c(df="data.frame", proj="ANY"), 
-	  definition = function(df, proj){
-
-		  if(any(is.na(df$location.long))){ 
-			  warning("There were NA locations detected and omitted. Currently they are not stored in unusedrecords")
-			  df <- df[!(is.na(df$location.long)|is.na(df$location.lat)), ]
-		  }
-		  df$individual.local.identifier<-factor(df$individual.local.identifier)
-		  levels(df$individual.local.identifier) <- validNames(levels(factor(df$individual.local.identifier))) #changing names to 'goodNames' skipping spaces
-
-		  if(length(unique(df$individual.local.identifier))>1 & any(unique(as.character(df$individual.local.identifier))==""))
-		  {
-			  warning("Omitting locations that have an empty local identifier (n=",sum(tmp<-as.character(df$individual.local.identifier)==""),"). Most likely the tag was not deployed") 
-			  df <- df[!tmp,]
-			  df$individual.local.identifier <- factor(df$individual.local.identifier)
-		  }
-		  ids <- as.list(as.character(unique(df$individual.local.identifier)))
-#		  uniquePerID <- unlist(lapply(df,  function(x,y){all(duplicated(x)[y])}, y=duplicated(df$individual.local.identifier)))
-		  uniquePerID<-unlist(lapply(colnames(df),  function(x,y,df){nrow(unique(df[,c(x,'individual.local.identifier')]))},df=df))==sum(!duplicated(df$individual.local.identifier))
-		  names(uniquePerID)<-colnames(df)
-		  uniquePerID["sensor"] <- FALSE
-		  idData <- subset(df, select=names(uniquePerID[uniquePerID]), !duplicated(df$individual.local.identifier))
-
-		  if(length(names(idData))!=1)# dont shorten it because we need something
-			  idData<-subset(idData, select=names(idData)!="individual.local.identifier")
-
-		  if(length(unique(idData$citation))>1) 
-		  {
-			  warning("There were more than one citation for this study found! Only using the first.")
-			  citations <- as.character(unique(idData$citation))[1]
-		  }
-
-		  if(length(unique(idData$citation))==1) 
-		  {citations <- as.character(unique(idData$citation))} else {citations <- character()}
-
-		  rownames(idData) <- unique(df$individual.local.identifier)
-		  data <- data.frame(df[names(df)[!names(df)%in%c("location.lat", "location.long","timestamp", colnames(idData))]])
-
-		  if (ncol(data)==0) data <- data.frame(data, empty=NA)
-
-		  if(!is(proj,"CRS")) proj <- CRS(proj)
-		  tmp <- SpatialPointsDataFrame(
-						coords = cbind(df$location.long,df$location.lat),
-						data = data, 
-						proj4string = proj,
-						match.ID = TRUE)
-		  df$sensor<-factor(df$sensor)
-
-		  if (length(ids)==1){
-			  res <- new("Move", 
-				     timestamps = df$timestamp, 
-				     sensor = df$sensor,
-				     sensorUnUsedRecords=factor(levels=levels(df$sensor)),
-				     tmp, 
-				     citation = citations,
-				     idData = idData
-				     )
-		  } else {
-			  trackId<-factor(df$individual.local.identifier)
-			  res <- new("MoveStack", 
-				     tmp, 
-				     idData = idData,
-				     sensor = df$sensor,
-				     sensorUnUsedRecords=factor(levels=levels(df$sensor)),
-				     timestamps = df$timestamp, 
-				     citation = citations,
-				     trackId = trackId,
-				     trackIdUnUsedRecords=factor(levels=levels(trackId)))}
-		  return(res)
-	  })

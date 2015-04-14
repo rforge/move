@@ -5,7 +5,8 @@
 %\alias{move,character,ANY,ANY,ANY,ANY-method}
 \alias{move,character,missing,missing,missing,missing-method}
 \alias{move,connection,missing,missing,missing,missing-method}
-\alias{move,numeric,numeric,POSIXct,data.frame,ANY-method}
+\alias{move,numeric,numeric,POSIXct,data.frame,character-method}
+\alias{move,numeric,numeric,POSIXct,data.frame,CRS-method}
 \alias{move,numeric,numeric,POSIXct,missing,ANY-method}
 %\alias{move,character-method}
 %\alias{move,numeric,numeric,POSIXct,data.frame,CRS-method}
@@ -22,7 +23,7 @@ The move method creates Move or MoveStack object from Movebank or other (compres
 
 \usage{
 \S4method{move}{connection,missing,missing,missing,missing}(x, removeDuplicatedTimestamps=F, ...)
-\S4method{move}{numeric,numeric,POSIXct,data.frame,ANY}(x, y, time, data, proj, sensor='unknown',animal='unnamed',...)
+\S4method{move}{numeric,numeric,POSIXct,data.frame,CRS}(x, y, time, data, proj, sensor='unknown',animal='unnamed',...)
 }
 
 \arguments{
