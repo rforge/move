@@ -9,4 +9,7 @@ if(F){
                  executionfiles='testthat/test.smallFunctions.R')
   tmp<-reportCoverage(sourcefiles=list.files('../R', full.names = T),
                       executionfiles='test-all.R')
+  #require(covr)
+  #require(shiny)
+  cov<-package_coverage(); shine(cov)
 }

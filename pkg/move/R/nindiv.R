@@ -6,7 +6,7 @@ setMethod("n.indiv", "Move", function(obj){
 })
 
 setMethod("n.indiv", ".MoveTrackStack", function(obj){
-	  nrow(idData(obj))
+	  nrow(idData(obj, drop=F))
 })
 
 #setMethod("n.locs", ".unUsedRecordsStack", function(obj){

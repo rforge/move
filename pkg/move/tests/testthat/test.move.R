@@ -4,6 +4,7 @@ test_that('move',
 	expect_error(move())
 	#expect_error(move(x=1:10, y=1:10, time=as.POSIXct(1:10, origin="1970-1-1"))) #we now allow projection to be NA
 	 data <- move(file<-system.file("extdata","leroy.csv.gz",package="move"))
+  expect_equal(n.indiv(data),1)
 	cvs<-na.omit(read.csv(file)[,c('location.long','location.lat')])
 	expect_equivalent(coordinates(data),as.matrix(cvs))
 	data2<-move(file(file))

@@ -22,7 +22,9 @@ test_that('interpolateTime',{
 	crd2<-coordinates(interpolateTime(d, timestamps(d)[-40]+ (timestamps(d)[-1]-timestamps(d)[-40])/2, spaceMethod='g'))
 	
 	expect_equal(c(crd), c(crd2))
-
-
+expect_warning(a<-interpolateTime(data, as.difftime(1,units='days')),'Euclidean interpolation seems unsuitable for the longitude latitude projection')
+expect_equal(unique(timeLag(a, units='days')),1)
+expect_equal(floor(sum(timeLag(data,'days'))),
+             sum(timeLag(a,'days')))
 }
 )

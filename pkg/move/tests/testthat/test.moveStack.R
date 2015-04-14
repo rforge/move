@@ -23,8 +23,8 @@ test_that('moveStack',
 
 	a<-move(x=1:10,y=1:10,time=at,proj=CRS('+proj=longlat +ellps=WGS84'),animal="AAA")
 	a2<-move(x=1:10,y=1:10,time=at,proj=CRS('+proj=longlat +ellps=WGS84'),animal="AAA")  
-	expect_warning(moveStack(list(a,a2)),'Detected duplicated names. Renamed the duplicated individuals accordingly.')# warn about duplicate ids
-	
+	expect_warning(uuu<-moveStack(list(a,a2)),'Detected duplicated names. Renamed the duplicated individuals accordingly.')# warn about duplicate ids
+	expect_equal(n.indiv(uuu), 2)
 
 	projection(a2) <- CRS(as.character(NA))
 	expect_error(moveStack(list(a,a2,a2)))
@@ -36,6 +36,9 @@ test_that('moveStack',
 
 	m<-lapply(1:5, function(x){m<-move(rnorm(5), rnorm(5), Sys.time()+1:5);idData(m)<-data.frame(groupID=sample(letters,1), groupDay=round(rnorm(1))); m})
 	expect_warning(mm<-moveStack(m))
+	expect_true(all(grepl('^............: ',capture.output(print(mm)))))
+  expect_equal(kk<-capture.output(print(mm)), kl<-capture.output(show(mm)))
+	expect_equal(unique(timeLag(mm,units='mins')), list(c(1,1,1,1)/60))
   expect_identical(names(idData(mm)),c('groupID','groupDay'))
 }
 )

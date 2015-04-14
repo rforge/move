@@ -26,3 +26,12 @@ test_that('unUsed',{
   b<-ricky
   expect_error(unUsedRecords(b)<-T,'Selection length does not match with number of locations')
 })
+
+test_that('linemidpoint',{
+  a<-destPoint(4:5,5,1000)
+  b<-destPoint(unlist(a), 123,2000)
+  d<-destPoint(unlist(b), 13,1000)
+  spdf<-SpatialPointsDataFrame(rbind(4:5,a,b,d),,data = data.frame(a=4:7),proj4string = CRS('+proj=longlat +ellps=WGS84'),match.ID = F)
+  expect_equal(u<-move:::lineMidpoint(spdf),
+  uu<-move:::lineMidpoint(spdf[2:3,]))
+  })
