@@ -127,6 +127,13 @@ setMethod(f="move",
 )
 
 setMethod(f="move",
+          signature=c(x="numeric", y="numeric", time="POSIXct", data="data.frame", proj="missing"),
+          definition = function(x,y,time,data,proj, ...){
+            move(x=x,y=y,time=time,proj=CRS(),data=data,...)
+          }
+)
+
+setMethod(f="move",
 	  signature=c(x="numeric", y="numeric", time="POSIXct", data="data.frame", proj="CRS"),
 	  definition = function(x,y,time,data,proj,sensor='unknown',animal='unnamed', ...){
 		  data$location.long <- x

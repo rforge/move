@@ -7,6 +7,7 @@
 \alias{move,connection,missing,missing,missing,missing-method}
 \alias{move,numeric,numeric,POSIXct,data.frame,character-method}
 \alias{move,numeric,numeric,POSIXct,data.frame,CRS-method}
+\alias{move,numeric,numeric,POSIXct,data.frame,missing-method}
 \alias{move,numeric,numeric,POSIXct,missing,ANY-method}
 %\alias{move,character-method}
 %\alias{move,numeric,numeric,POSIXct,data.frame,CRS-method}
