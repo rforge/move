@@ -1,8 +1,7 @@
 context('Brownian bridge dyn')
 test_that('dbbmm error handling',{
-		  data <- move(system.file("extdata","leroy.csv.gz",package="move"))
-		 
-      expect_error(
+		 data <- move(system.file("extdata","leroy.csv.gz",package="move"))
+		 expect_error(
 			       brownian.bridge.dyn(object=leroy, location.error=23.5, dimSize=150, ext=.3, time.step=600), "Error: object 'leroy' not found"
 			       )
 		  data2<-spTransform(data[1:50,], center=T)
@@ -28,11 +27,13 @@ test_that('brownian bridge dyn for bursted',{
 		  data <- move(system.file("extdata","leroy.csv.gz",package="move"))
 		  dataP<-spTransform(data[1:100,], center=T)
 		  dataPB<-move::burst(dataP, round((1:(n.locs(dataP)-1)/50)))
-		  udS<-brownian.bridge.dyn(dataPB, dimSize=150, location.error=23, ext=.3, time.step=4, window.size=29)
+		  expect_message(udS<-brownian.bridge.dyn(dataPB, dimSize=150, location.error=23, ext=.3, time.step=4, window.size=29), 'Computational size')
 		  expect_is(udS,"DBBMMBurstStack")
-		  ud<-brownian.bridge.dyn(dataP, dimSize=150, location.error=23, ext=.3, time.step=4, window.size=29)
+      expect_true(validObject(udS))
+		  expect_message(ud<-brownian.bridge.dyn(dataP, dimSize=150, location.error=23, ext=.3, time.step=4, window.size=29), 'Computational size')
 		  expect_equal(udS@DBMvar@means, 
 			       ud@DBMvar@means)
+		  expect_true(validObject(ud))
 		  b<-as.numeric(getZ(udS))
 		  expect_equal(colSums(values(udS)), 
 			       b/sum(b), check.attributes=F)
@@ -41,8 +42,8 @@ test_that('brownian bridge dyn value comparison bursted',{
 		  p<-seq(0, 2*pi, length.out=49)
 		  tmp<-move(sin(p), cos(p), as.POSIXct(1:length(p), origin='1970-1-1'), proj='+proj=aeqd +ellps=WGS84')
 		  t<-.05
-		  u<-brownian.bridge.dyn(tmp, dimSize=200, location.error=.1, time.step=t)
-		  us<-brownian.bridge.dyn(move::burst(tmp, round(1:length(p[-1])/30)), dimSize=200, location.error=.1, time.step=t)
+		  expect_message(u<-brownian.bridge.dyn(tmp, dimSize=200, location.error=.1, time.step=t), 'Computational size')
+		  expect_message(us<-brownian.bridge.dyn(move::burst(tmp, round(1:length(p[-1])/30)), dimSize=200, location.error=.1, time.step=t), 'Computational size')
 		  expect_equal(values(u), 
 			       c(values(u)))
 		  p<-seq(0, 2*pi, length.out=199)
@@ -53,13 +54,13 @@ test_that('brownian bridge dyn value comparison bursted',{
 				       origin='1970-1-1'), 
 			    proj='+proj=aeqd +ellps=WGS84')
 		  t<-.25
-		  u<-brownian.bridge.dyn(tmp, dimSize=500, 
+		  expect_message(u<-brownian.bridge.dyn(tmp, dimSize=500, 
 					 location.error=.01, time.step=t, 
-					 ext=.2, margin=15)
-		  us<-brownian.bridge.dyn(move::burst(tmp, 
+					 ext=.2, margin=15), 'Computational size')
+					 expect_message(us<-brownian.bridge.dyn(move::burst(tmp, 
 						      round(1:length(p[-1])/30)), 
 					  dimSize=500, location.error=.01, 
-					  time.step=t, ext=.2, margin=15)
+					  time.step=t, ext=.2, margin=15), 'Computational size')
 		  expect_true(all(abs(values(sum(us))-values(u))< .Machine$double.eps)  )
 })
 test_that('Brownian bridge, running with character and vector input to location error',{
@@ -67,23 +68,23 @@ test_that('Brownian bridge, running with character and vector input to location 
 		  data2<-data
 		  lc<-6.54
 		  data2$asdf<-lc
-		  a<-brownian.bridge.dyn(data, location.error=lc, ext=2, dimSize=50)
+		  expect_message(a<-brownian.bridge.dyn(data, location.error=lc, ext=2, dimSize=50), 'Computational size')
 		  a@DBMvar$asdf<-lc
 		  expect_equal(a,
-			       brownian.bridge.dyn(data2, 
+			       suppressMessages(brownian.bridge.dyn(data2, 
 						   location.error="asdf", 
-						   ext=2, dimSize=50)
+						   ext=2, dimSize=50))
 			       )
 		  set.seed(3245)
 		  lc<-rweibull(n.locs(data),2,3)
 		  data2$asdf<-lc
-		  a<-brownian.bridge.dyn(data, location.error=lc, ext=2, dimSize=50)
+		  expect_message(a<-brownian.bridge.dyn(data, location.error=lc, ext=2, dimSize=50), 'Computational size')
 		  a@DBMvar$asdf<-lc
-		  expect_equal(a,
-			       brownian.bridge.dyn(data2, 
-						   location.error="asdf", 
-						   ext=2, dimSize=50)
-			       )
+		  expect_message(xx<-brownian.bridge.dyn(data2, 
+		                                                    location.error="asdf", 
+		                                                    ext=2, dimSize=50), 'Computational size')
+		  
+      expect_equal(a, xx)
 })
 
 test_that('Brownian bridge, running with character and vector input to location error for stacks',{
@@ -92,25 +93,27 @@ test_that('Brownian bridge, running with character and vector input to location 
 		  data2<-data
 		  lc<-6.54
 		  data2$asdf<-lc
-		  a<-brownian.bridge.dyn(data, location.error=lc, ext=2, dimSize=50)
+		  expect_message(a<-brownian.bridge.dyn(data, location.error=lc, ext=2, dimSize=50), 'Computational size')
+		  expect_true(validObject(a))
+		  
 		  a@DBMvar$asdf<-lc
-		  expect_equal(a,
+		  expect_equal(a,suppressMessages(
 			       brownian.bridge.dyn(data2, 
 						   location.error="asdf", 
-						   ext=2, dimSize=50)
+						   ext=2, dimSize=50))
 			       )
 		  set.seed(3245)
 		  lc<-rweibull(sum(n.locs(data)),2,3)
 		  data2$asdf<-lc
-		  a<-brownian.bridge.dyn(data, location.error=lc, ext=2, dimSize=50)
+		  expect_message(a<-brownian.bridge.dyn(data, location.error=lc, ext=2, dimSize=50), 'Computational size')
 		  a@DBMvar$asdf<-lc
 		  expect_equal(a,
-			       brownian.bridge.dyn(data2, 
+			       suppressMessages(brownian.bridge.dyn(data2, 
 						   location.error="asdf", 
-						   ext=2, dimSize=50)
+						   ext=2, dimSize=50))
 			       )
-		  expect_error(brownian.bridge.dyn(data, 
-						   location.error=lc[-1], ext=2, dimSize=50),
-			       'The location error vector has not the same length as the move object')
+		  expect_error(suppressMessages(brownian.bridge.dyn(data, 
+						   location.error=lc[-1], ext=2, dimSize=50)),
+						   'Location error needs to be the same length as the number of locations')
 })
 

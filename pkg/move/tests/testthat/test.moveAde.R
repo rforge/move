@@ -8,7 +8,7 @@ test_that('moveAde',
 	expect_equivalent(coordinates(dataSp), coordinates(dataBack))
 	expect_equal(timestamps(dataSp), timestamps(dataBack))
 	spLtraj<-move2ade(dataSp)
-	require(adehabitatLT)
+	suppressMessages(require(adehabitatLT))
 	a<-as(simm.crw(1:100),'Move')
 	expect_true(validObject(a))
 	a<-as(a, 'ltraj')

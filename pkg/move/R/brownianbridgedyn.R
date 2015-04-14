@@ -157,6 +157,8 @@ setMethod(f = "brownian.bridge.dyn",
 			  location.error<-split(rep(location.error,sum(n.locs(object))), 
 						rep(levels(trackId(object)),n.locs(object)))
 		  }else{
+        if(length(location.error)!=sum(n.locs(object)))
+          stop('Location error needs to be the same length as the number of locations')
 			  location.error<-split(location.error, 
 						rep(levels(trackId(object)),n.locs(object)))
 		  }

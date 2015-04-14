@@ -11,6 +11,7 @@ test_that('moveStack',
 	expect_identical(coordinates(a), coordinates(b))
 	#	DEACTIVATED("Need to look what we want here")
 	bb<-split(d<-moveStack(list(a,b)))
+  expect_true(validObject(d))
 	aa<-list(unnamed=a,a=b)
 	row.names(aa[[2]])<-1:10
 	row.names(bb[[2]])<-1:10
@@ -22,9 +23,8 @@ test_that('moveStack',
 
 	a<-move(x=1:10,y=1:10,time=at,proj=CRS('+proj=longlat +ellps=WGS84'),animal="AAA")
 	a2<-move(x=1:10,y=1:10,time=at,proj=CRS('+proj=longlat +ellps=WGS84'),animal="AAA")  
-	tmp<-options(warn=2)$warn
-	expect_error(moveStack(list(a,a2)))# warn about duplicate ids
-	options(warn=tmp)
+	expect_warning(moveStack(list(a,a2)),'Detected duplicated names. Renamed the duplicated individuals accordingly.')# warn about duplicate ids
+	
 
 	projection(a2) <- CRS(as.character(NA))
 	expect_error(moveStack(list(a,a2,a2)))
@@ -35,6 +35,7 @@ test_that('moveStack',
 
 
 	m<-lapply(1:5, function(x){m<-move(rnorm(5), rnorm(5), Sys.time()+1:5);idData(m)<-data.frame(groupID=sample(letters,1), groupDay=round(rnorm(1))); m})
-	expect_identical(names(idData(moveStack(m))),c('groupID','groupDay'))
+	expect_warning(mm<-moveStack(m))
+  expect_identical(names(idData(mm)),c('groupID','groupDay'))
 }
 )

@@ -11,9 +11,11 @@ setMethod(f = "moveStack",
 
 		  if(!equalProj(x)) stop("All objects need to be equally projected.") 
 
-		  if(any(duplicated(unlist(lapply(lapply(x, slot, "idData"), rownames))))){
+		  if(any(duplicated(unlist(lapply(lapply(x, slot, "idData"), rownames)))))
+        {
 			  nnames <- make.names(unlist(lapply(lapply(x, slot, "idData"), rownames)),unique=T)
-			  lapply(1:length(nnames), function(z, nnames, x) {rownames(x[[z]]@idData)<-nnames[z]
+			  lapply(1:length(nnames), function(z, nnames, x) {
+          rownames(x[[z]]@idData)<-nnames[z]
 				 return(x[[z]])}, x=x, nnames=nnames)
 			  warning("Detected duplicated names. Renamed the duplicated individuals accordingly.")
 		  }
@@ -34,7 +36,8 @@ setMethod(f = "moveStack",
 		  IDDATA <- do.call("rbind", lapply(allidData, FUN = function(entry) {
 						    missingColumns <- allidColumns[which(!allidColumns %in% names(entry))]
 						    entry[, missingColumns] <- NA
-						    entry[,allidColumns, drop=F]}))
+						    entry[,allidColumns, drop=F]}
+                ))
 		  rownames(IDDATA)<-validNames(rownames(IDDATA))
 
 		  spdftmp<-SpatialPointsDataFrame(do.call(rbind, lapply(x, as,'SpatialPoints')), data=DATA)

@@ -9,10 +9,10 @@ test_that("dbgb vs dbbmm variance",{
 })
 test_that('dbgb error handling in relation to projections',{
 	data <- move(system.file("extdata","leroy.csv.gz",package="move"))
-	expect_error(
+	expect_warning(expect_error(
 		     dynBGB(data[1:40,], locErr=.0005, raster=.00150, ext=17.3, margin=15, windowSize=31)
 		     ,'You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function'
-		     )
+		     ),'Optimized to zero')
 	r <- raster(nrows=100, ncols=100, xmn=0, xmx=10)
 	expect_error(
 		     dynBGB(spTransform(data[1:40,], center=T), locErr=.0005, raster=r, ext=17.3, margin=15, windowSize=31),'The projection of the raster and the Move object are not equal'
@@ -28,7 +28,7 @@ test_that("dbgb vs dbbmm",{
 	 res(r)<-.025
 	 tss<-.00110523/60
 	 bgb<-dynBGB(m,r ,locErr=l, windowSize=23, margin=9,  timeStep=(tss<-.00110523/60) ) 
-	 bbmm<-brownian.bridge.dyn(m,raster=bgb ,location.error=l, window.size=23, margin=9 , time.step=tss)
+	 suppressMessages(bbmm<-brownian.bridge.dyn(m,raster=bgb ,location.error=l, window.size=23, margin=9 , time.step=tss))
 #	 par(mfrow=c(2:1));plot(bgb); lines(m); points(m);plot(bbmm); lines(m); points(m)
 #	 plot(bgb-bbmm); lines(m)
 #	 plot((bgb-bbmm)/(bgb+bbmm), zlim=c(-.1,.1)); lines(m)

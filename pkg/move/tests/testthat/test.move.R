@@ -19,11 +19,10 @@ test_that('move',
 fileR<-system.file("extdata","ricky.csv.gz",package="move")
 if(class(try(move(pipe(paste0('zcat ',fileR, " | sed ''")))))=='Move'){
 	dataR<-move(pipe(paste0('zcat ',fileR)))
-	expect_error(move(pipe(paste0('zcat ',fileR,"| sed 'p;'"))))
-	tmp<-options(warn=2)$warn
-	expect_error(move(pipe(paste0('zcat ',fileR,"| sed '1!p;'"))))
-	options(warn=tmp)
-	dataR2<-(move(pipe(paste0('zcat ',fileR,"| sed '1!p;'"))))
+	p<-pipe(paste0('zcat ',fileR," | head | sed 'p;' "))
+	expect_error(move(p))
+	expect_warning(move(pipe(paste0('zcat ',fileR,"| sed '1!p;'"))),'Exact duplicate records removed')
+	dataR2<-suppressWarnings(move(pipe(paste0('zcat ',fileR,"| sed '1!p;'"))))
 	dataR@dateCreation<- dataR2@dateCreation
 	rownames(dataR@data)<- as.character(rownames(dataR2@data))
 	rownames(dataR2@data)<- as.character(rownames(dataR2@data))
@@ -35,7 +34,8 @@ if(class(try(move(pipe(paste0('zcat ',fileR, " | sed ''")))))=='Move'){
 	expect_error(move(pipe(paste0('zcat ',fileR,"| sed '3p; 3s/\"A\"/\"B\"/'")), removeDuplicatedTimestamps=F))
 	expect_error(move(pipe(paste0('zcat ',fileR,"| sed '4p; 4s/9025698/9023698/'")), removeDuplicatedTimestamps=F))
 	expect_equal(n.locs(move(pipe(paste0('zcat ',fileR,"| sed '5p; 5s/28.999/29.000/'")), removeDuplicatedTimestamps=F)), n.locs(dataR2)+1)
-	suppressMessages(dataR3<-move(pipe(paste0('zcat ',fileR,"| sed '3p; 3s/292.95/293.95/'")), removeDuplicatedTimestamps=T))
+	expect_warning(suppressMessages(dataR3<-move(pipe(paste0('zcat ',fileR,"| sed '3p; 3s/292.95/293.95/'")), removeDuplicatedTimestamps=T)),
+                 ". location.s. is/are removed by removeDuplicatedTimestamps")
 	dataR@dateCreation<- dataR3@dateCreation
 	rownames(dataR@data)<- as.character(rownames(dataR3@data))
 	rownames(dataR3@data)<- as.character(rownames(dataR3@data))

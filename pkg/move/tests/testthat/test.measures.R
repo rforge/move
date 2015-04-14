@@ -11,9 +11,9 @@ test_that('measures',
 	expect_equal(timeLag(x), t)
 	expect_equal(timeLag(x, 'secs'), t)
 	expect_equal(timeLag(x, 'mins'), t/60)
-	xx<-moveStack(list(x,x))
+	expect_warning(xx<-moveStack(list(x,x)))
 	expect_equal(distance(xx),list(unnamed=d,unnamed1=d))
-	expect_equal(timeLag(xx),list(unnamed=t,unnamed1=t))
+	expect_warning(expect_equal(timeLag(xx),list(unnamed=t,unnamed1=t)),'Units not specified this could lead to different units for the time differences between individuals')
 	expect_equal(speed(xx),list(unnamed=d/t,unnamed1=d/t))
 	proj4string(x)<-'+proj=longlat +ellps=WGS84'
 	expect_equal(distance(x),(dd<-distHaversine( cbind(dx,dx)[-n.locs(x),], cbind(dx,dx)[-1,])))
