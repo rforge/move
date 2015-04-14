@@ -21,7 +21,7 @@ setMethod(f = "move",
 setMethod(f = "move", 
 	  signature = c(x="connection",y='missing',time='missing', data='missing', proj='missing'), 
 	  definition = function(x, removeDuplicatedTimestamps=F,...){
-		  df <- read.csv(x, header=TRUE, sep=",", dec=".", stringsAsFactors=T, colClasses=c(location.long='numeric', location.lat='numeric', utm.easting='numeric', utm.northing='numeric'))
+		  df <- read.csv(x, header=TRUE, sep=",", dec=".", stringsAsFactors=T, colClasses=c(location.long='numeric', location.lat='numeric'))
 
 		  if (!all(c("timestamp", 
 			     "location.long",  
