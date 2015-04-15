@@ -32,6 +32,8 @@ test_that('linemidpoint',{
   b<-destPoint(unlist(a), 123,2000)
   d<-destPoint(unlist(b), 13,1000)
   spdf<-SpatialPointsDataFrame(rbind(4:5,a,b,d),,data = data.frame(a=4:7),proj4string = CRS('+proj=longlat +ellps=WGS84'),match.ID = F)
-  expect_equal(u<-move:::lineMidpoint(spdf),
-  uu<-move:::lineMidpoint(spdf[2:3,]))
+  
+  u<-move:::lineMidpoint(spdf)
+  uu<-move:::lineMidpoint(spdf[2:3,])
+  expect_equal(u,uu)
   })
