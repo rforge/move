@@ -38,13 +38,16 @@ setMethod(f = "corridor",
 		  corrPointsTmp <- which(nPoint>2 & (nBehav>(nPoint-nBehav)))
 
 		  if(length(corrPointsTmp)==0) warning("No corridor points found!")
-		  corrPoints <- segMid[corrPointsTmp,]
-		  maxPoints <- max(nBehav[corrPointsTmp])
-		  corrPointsCol <- apply(data.frame(corrPointsTmp), 1,function(i, tmp){rgb(length(unlist(tmp[i]))/maxPoints, 1-length(unlist(tmp[i]))/maxPoints,1)}, tmp=inCircleCorrBehav)
 		  if(plot){
-			  plot(coordinates(x), col="darkgrey", type="l")
-			  points(corrPoints[,1], corrPoints[,2], col=corrPointsCol, pch=20, ...)
-		  }
+
+		    plot(coordinates(x), col="darkgrey", type="l")
+		    if(length(corrPointsTmp)!=0){
+		      corrPoints <- segMid[corrPointsTmp,, drop=F]
+		      maxPoints <- max(nBehav[corrPointsTmp])
+		      corrPointsCol <- apply(data.frame(corrPointsTmp), 1,function(i, tmp){rgb(length(unlist(tmp[i]))/maxPoints, 1-length(unlist(tmp[i]))/maxPoints,1)}, tmp=inCircleCorrBehav)
+		      
+		      points(corrPoints[,1], corrPoints[,2], col=corrPointsCol, pch=20, ...)
+		    }}
 		  ##create a MoveBurst object, thus all information (speed, azimuth, ...) are stored in a way, that the actual segment midpoint is represented by the first coordinate of the segement
 		  x$segMid_x <- c(segMid[,1], NA) #not elegant to add a zero again
 		  x$segMid_y <- c(segMid[,2], NA) 
