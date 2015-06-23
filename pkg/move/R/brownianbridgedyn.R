@@ -206,7 +206,7 @@ setMethod(f = "brownian.bridge.dyn", signature = c(object = "dBMvarianceBurst", 
 	varList<-varList[sel]
 	}
 	if (missing(time.step)) {
-		time.step <- min(unlist(lapply(varList, time.lag, units = "mins")))/15
+		time.step <- min(unlist(lapply(varList, timeLag, units = "mins")))/15
 	}
 	locErrSplit<-lapply(mapply('%in%', MoreArgs=list(row.names(object)), table=lapply(varList, row.names),SIMPLIFY=F),function(x,i)x[i], x=location.error)
 	t<-mapply(brownian.bridge.dyn,varList,
