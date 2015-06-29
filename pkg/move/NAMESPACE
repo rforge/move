@@ -4,6 +4,13 @@ import(methods)
 import(geosphere)
 import(raster)
 import(rgdal)
+importFrom(stats, sd)
+importFrom(stats, var)
+importFrom(stats, optim)
+importFrom(stats, optimize)
+importFrom(utils, read.csv)
+importFrom(utils, unzip)
+importFrom(utils, capture.output)
 exportClasses(
 	DBBMM,
 	DBBMMStack,
@@ -32,6 +39,7 @@ exportMethods(
 	angleSummary,
 	brownian.bridge.dyn,
 	burst,
+	burstId,
 	citations,
 	"citations<-",
 	contour,
