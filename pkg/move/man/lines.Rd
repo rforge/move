@@ -19,8 +19,8 @@
 
 \arguments{
   \item{x}{Move object}
-  \item{col}{a vector of colors (same length as the number of objects)}
-  \item{...}{arguments to be passed on, e.g. \code{col} for color, or \code{add} to add the lines to a plot.}
+  \item{col}{a vector of colors (same length as the number of individual for a stack or number of burst levels or segments for a burst object, or one)}
+  \item{...}{arguments to be passed on, e.g. \code{lty} or \code{lwd}.}
 }
 
 
