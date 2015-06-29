@@ -5,7 +5,9 @@ setMethod("hrBootstrap",
 		  if (class(x)=="SpatialPoints") nlocs <- length(x) else nlocs <- n.locs(x)
 		  j <- round(exp(log(10)*seq(log10(5),log10(nlocs),by=0.1)))
 		  message(paste(j, collapse=" "))
-		  locs <- lapply(j, function(js,coords) {replicate(n=rep,SpatialPoints(coords[sample(1:nlocs,size=js,replace=T),]) )}, coords=coordinates(x))
+		  crds<-coordinates(x)
+		  dimnames(crds)<-NULL
+		  locs <- lapply(j, function(js,coords) {replicate(n=rep,SpatialPoints(coords[sample(1:nlocs,size=js,replace=T),]) )}, coords=crds)
 		  if (requireNamespace("adehabitatHR", quietly = TRUE)) {
 			  mcps <- lapply(locs, lapply, adehabitatHR::mcp.area, percent=level, plotit=F,unin=unin,unout=unout)
 			  quant <- lapply(lapply(mcps, unlist), quantile, probs=seq(0,1,.25))
