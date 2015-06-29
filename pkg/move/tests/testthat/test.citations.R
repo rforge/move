@@ -5,8 +5,6 @@ test_that('citations',{
 	citations(a)<-"bla"
 	expect_equal(citations(a),"bla")
 	expect_error(citations(a)<-factor("a"))
-	tmp<-options(warn=2)$warn
-	expect_error(citations(a)<-c("a","a"))
-	options(warn=tmp)
+	expect_warning(citations(a)<-c("a","a"))
 }
 )
