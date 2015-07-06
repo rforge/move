@@ -25,7 +25,7 @@
 }
 
 \value{
-All values are returned in meters if the projection of the coordinates is longlat, otherwise their in map units mostly meters as well. For longlat distance on a sphere is calculated else on a plane. Check and set the projection of your Move or MoveStack object using the proj4string() function.
+All values are returned in meters if the projection of the coordinates is longlat, otherwise their in map units mostly meters as well. For longlat distance on a sphere is calculated using the ellipsoid else on a plane using Pythagoras. Check and set the projection of your Move or MoveStack object using the proj4string() function.
 }
 
 \author{Marco Smolla}

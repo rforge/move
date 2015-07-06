@@ -16,9 +16,7 @@ test_that('measures',
 	expect_warning(expect_equal(timeLag(xx),list(unnamed=t,unnamed1=t)),'Units not specified this could lead to different units for the time differences between individuals')
 	expect_equal(speed(xx),list(unnamed=d/t,unnamed1=d/t))
 	proj4string(x)<-'+proj=longlat +ellps=WGS84'
-	expect_equal(distance(x),(dd<-distHaversine( cbind(dx,dx)[-n.locs(x),], cbind(dx,dx)[-1,])))
+	expect_equal(distance(x),(dd<-distGeo( cbind(dx,dx)[-n.locs(x),], cbind(dx,dx)[-1,])))
 	expect_equal(speed(x),dd/t)
-
-
 }
 )
