@@ -16,12 +16,12 @@ checkSrc:
 checkRdevel:
 	/home/bart/bmisc/small_projects/rDevel/svn/R/bin/R CMD check --as-cran move*.tar.gz
 
-cl:
+changeLog:
 	svn2cl -r head:380 --stdout --group-by-day pkg/move/ --strip-prefix='move/' | grep -v '* $$' > pkg/move/ChangeLog
 
 release:
 	make clean
-	make cl
+	make changeLog
 	make build
 	make check
 	make checkRdevel

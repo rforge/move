@@ -21,7 +21,7 @@ setMethod("lines", ".MoveTrackStack", function(x,col=NA,...){
 	  }
 	  res <- lapply(names(s), function(Id, x, ...) {
 			coords <- coordinates(x)[x@trackId==Id,] 
-			segments(x0=coords[-nrow(coords),1], 
+			graphics::segments(x0=coords[-nrow(coords),1], 
 				 y0=coords[-nrow(coords),2], 
 				 x1=coords[-1,1], 
 				 y1=coords[-1,2], 
@@ -44,5 +44,5 @@ setMethod("lines", ".MoveTrackSingleBurst", function(x,col=NA,...){
 		  }
 	  }
 	  if(length(levels(x@burstId))>8) warning("There are more burst IDs than colors (recycling colors).")
-	  segments(x0=coords[-nrow(coords),1], y0=coords[-nrow(coords),2], x1=coords[-1,1], y1=coords[-1,2], col=col, ...)
+	  graphics::segments(x0=coords[-nrow(coords),1], y0=coords[-nrow(coords),2], x1=coords[-1,1], y1=coords[-1,2], col=col, ...)
 }) 

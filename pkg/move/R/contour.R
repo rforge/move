@@ -10,6 +10,6 @@ setMethod(f = "contour",
 setMethod(f = "contour", 
           signature = c(x = ".UDStack"), 
           definition = function(x, ...){  
-	   par(mfrow=rep(ceiling(sqrt(nlayers(x))), 2))
+		  graphics::par(mfrow=rep(ceiling(sqrt(nlayers(x))), 2))
             lapply(split(x), contour, ...) 
           })

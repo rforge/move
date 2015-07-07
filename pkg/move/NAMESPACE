@@ -11,6 +11,11 @@ importFrom(stats, optimize)
 importFrom(utils, read.csv)
 importFrom(utils, unzip)
 importFrom(utils, capture.output)
+importFrom(graphics, par)
+importFrom(graphics, abline)
+importFrom(graphics, segments)
+importFrom(grDevices, rgb)
+importFrom(parallel, parLapply)
 exportClasses(
 	DBBMM,
 	DBBMMStack,
@@ -80,7 +85,7 @@ exportMethods(
 	summary,
 	searchMovebankStudies,
 	timeSummary,
-	time.lag,
+	#time.lag,
 	timeLag,
 	trackId,
 	brownian.motion.variance.dyn,

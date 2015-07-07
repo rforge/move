@@ -44,7 +44,7 @@ setMethod(f = "corridor",
 		    if(length(corrPointsTmp)!=0){
 		      corrPoints <- segMid[corrPointsTmp,, drop=F]
 		      maxPoints <- max(nBehav[corrPointsTmp])
-		      corrPointsCol <- apply(data.frame(corrPointsTmp), 1,function(i, tmp){rgb(length(unlist(tmp[i]))/maxPoints, 1-length(unlist(tmp[i]))/maxPoints,1)}, tmp=inCircleCorrBehav)
+		      corrPointsCol <- apply(data.frame(corrPointsTmp), 1,function(i, tmp){grDevices::rgb(length(unlist(tmp[i]))/maxPoints, 1-length(unlist(tmp[i]))/maxPoints,1)}, tmp=inCircleCorrBehav)
 		      
 		      points(corrPoints[,1], corrPoints[,2], col=corrPointsCol, pch=20, ...)
 		    }}

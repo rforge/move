@@ -12,7 +12,8 @@ setGeneric("movebankLogin", function(username, password,...) standardGeneric("mo
 setMethod(f="movebankLogin", 
 	  signature=c(username="character", password="character"), 
 	  definition = function(username, password){
-		  if(any(grepl("RCurl", installed.packages()))) {rcurl <- TRUE} else {rcurl <- FALSE}
+#		  if(any(grepl("RCurl", installed.packages()))) {rcurl <- TRUE} else {rcurl <- FALSE}
+		  rcurl<-requireNamespace("RCurl",quietly=T)
 		  if (!rcurl) warning("You are using an unsecure connection via http. To use https install RCurl.")
 		  return(new("MovebankLogin", username=username, password=password, rcurl=rcurl))
 	  })

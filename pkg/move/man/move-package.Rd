@@ -69,7 +69,7 @@ Maintainer: Bart Kranstauber \email{bart.kranstauber@uni-konstanz.de}, Marco Smo
 
 \references{
 \href{http://computational-ecology.com/images/Move_Package/move.pdf}{Move package vignette} \cr
-\href{http://cran.r-project.org/web/packages/move/index.html}{move on CRAN}
+\href{http://cran.r-project.org/package=move}{move on CRAN}
 }
 
 \keyword{package}

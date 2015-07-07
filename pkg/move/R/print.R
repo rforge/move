@@ -20,7 +20,7 @@ setMethod("print", ".MoveTrackStack", function(x){
 	  callNextMethod()
 	  cat("min ID Data :", paste(apply(x@idData, 2,min)),"\n")
 	  cat("max ID Data :", paste(apply(x@idData, 2,max)),"\n")
-	  cat("individuals :", paste(as.character(na.omit(unique(x@trackId)[1:15])), collapse=", "),"\n")
+	  cat("individuals :", paste(as.character((unique(x@trackId)[1:min(c(15,n.indiv(x)))])), collapse=", "),"\n")
 	  print(unUsedRecords(x))
 })
 setMethod('print','.unUsedRecords', function(x){
