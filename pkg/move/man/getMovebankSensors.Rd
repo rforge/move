@@ -34,8 +34,11 @@ See the 'browseMovebank' vignette (\href{http://computational-ecology.com/images
 
 \author{Marco Smolla}
 
+\seealso{\code{\link{movebankLogin}}}
 \examples{
 \dontrun{
+#obtain a login
+login<-movebankLogin()
 getMovebankSensors(study=123413, login=login)
 }
 }

@@ -31,6 +31,8 @@ See the 'browseMovebank' vignette (\href{http://computational-ecology.com/images
 
 \examples{
 \dontrun{
+#obtain a login
+login<-movebankLogin()
 getMovebankStudies(login=login)
 }
 }

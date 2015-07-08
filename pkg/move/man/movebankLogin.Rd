@@ -35,12 +35,12 @@ If you do not have the RCurl package installed \code{movebankLogin} will store y
 }
 
 
-\author{Marco Smolla }
+\author{Marco Smolla}
 
 \examples{
 \dontrun{
 ##first create the login object 
-login <- movebankLogin{username="xxx", password="zzz"}
+login <- movebankLogin(username="xxx", password="zzz")
 
 ##and than use it with Movebank browsing functions
 getMovebankStudies(login)

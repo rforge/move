@@ -31,8 +31,11 @@ See the 'browseMovebank' vignette (\href{http://computational-ecology.com/images
 
 \author{Marco Smolla}
 
+\seealso{\code{\link{movebankLogin}}}
 \examples{
 \dontrun{
+#obtain a login
+login<-movebankLogin()
 getMovebankAnimals(study=82207, login=login)
 }
 }

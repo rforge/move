@@ -8,7 +8,7 @@
 
 \title{Study ID}
 
-\description{Returns the numeric study ID that corresponds to the character study NAME stored on Movebank}
+\description{Returns the numeric study ID that corresponds to the character study name stored on Movebank}
 
 \usage{
   getMovebankID(study,login)
@@ -23,6 +23,7 @@
   \code{getMovebankID} belongs to the Movebank browsing functions and returns the ID of a study as it is stored on Movebank.org.
 }
 
+\seealso{\code{\link{movebankLogin}}}
 \note{
 See the 'browseMovebank' vignette (\href{http://computational-ecology.com/images/Move_Package/browseMovebank.pdf}{move website download section}) for more information about security and how to use Movebank from within R. 
 }
@@ -32,6 +33,8 @@ See the 'browseMovebank' vignette (\href{http://computational-ecology.com/images
 
 \examples{
 \dontrun{
+#obtain a login
+login<-movebankLogin()
 getMovebankID(study="BCI Ocelot", login=login)
 }
 }

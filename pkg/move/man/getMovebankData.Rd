@@ -39,8 +39,12 @@ It his possible to add the argument \code{removeDuplictedTimestamps=TRUE} and se
 
 \author{Marco Smolla}
 
+\seealso{\code{\link{movebankLogin}}}
+
 \examples{
 \dontrun{
+#obtain a login
+login<-movebankLogin()
 getMovebankData(study="BCI Ocelot", login=login) 
 #returns a MoveStack object from the specified study
 getMovebankData(study="BCI Agouti", login=login) 
