@@ -21,8 +21,11 @@ setMethod(f = "move",
 setMethod(f = "move", 
 	  signature = c(x="connection",y='missing',time='missing', data='missing', proj='missing'), 
 	  definition = function(x, removeDuplicatedTimestamps=F,...){
+		  if(version$major=='3' & version$minor=='1.0'){# exception to type convert back then that got reverted, setting colclasses causes problems with quoted downloads from envData
 		  df <- read.csv(x, header=TRUE, sep=",", dec=".", stringsAsFactors=T, colClasses=c(location.long='numeric', location.lat='numeric'))
-
+		  }else{
+		  df <- read.csv(x, header=TRUE, sep=",", dec=".", stringsAsFactors=T)
+		  }
 		  if (!all(c("timestamp", 
 			     "location.long",  
 			     "location.lat", 
