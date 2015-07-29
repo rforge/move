@@ -36,11 +36,14 @@ setMethod('unUsedRecords<-', c(obj='.MoveTrackStack', value='logical'), function
 	  }else{
 		  df3<-df2
 	  }
+	  ts<-ifelse(is.null(timestamps(unUsed)), list(timestamps(xOld)),list(c(timestamps(unUsed), timestamps(xOld))))[[1]]
+	  id<-factor(c(as.character(trackId(unUsed)), as.character(trackId(xOld))))
+	  o<-order(id,ts)
 	  unUsedNew<-new('.unUsedRecordsStack', 
-		      timestampsUnUsedRecords=ifelse(is.null(unUsed@timestampsUnUsedRecords), list(xOld@timestamps),list(c(unUsed@timestampsUnUsedRecords, xOld@timestamps)))[[1]],   
-		      sensorUnUsedRecords=factor(c(as.character(unUsed@sensorUnUsedRecords), as.character(xOld@sensor))),
-		      trackIdUnUsedRecords=factor(c(as.character(unUsed@trackIdUnUsedRecords), as.character(xOld@trackId))),
-		      dataUnUsedRecords=df3
+		      timestampsUnUsedRecords=ts[o],   
+		      sensorUnUsedRecords=factor(c(as.character(unUsed@sensorUnUsedRecords), as.character(xOld@sensor)))[o],
+		      trackIdUnUsedRecords=id[o],
+		      dataUnUsedRecords=df3[o,]
 		      ) 
 	  new(class(obj),  unUsedNew, xNew)
 })

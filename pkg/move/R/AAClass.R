@@ -51,10 +51,14 @@ setClass(Class='.unUsedRecordsStack',contains='.unUsedRecords',# maybe at somest
 		 if(length(object@trackIdUnUsedRecords)!=nrow(object@dataUnUsedRecords))
 			 stop("TrackId and data length for unused records do not match")
 		 if(length(object@timestampsUnUsedRecords)>0)
-		 if(!all(unlist(tapply(object@timestampsUnUsedRecords, list(object@trackIdUnUsedRecords, droplevels(object@sensorUnUsedRecords)),diff))>0))
+		 if(!all((diffs<-unlist(tapply(object@timestampsUnUsedRecords, list(object@trackIdUnUsedRecords, droplevels(object@sensorUnUsedRecords)),diff)))>0))
 		 {
-			 tmp<-duplicated(cbind(object@timestampsUnUsedRecords, object@trackIdUnUsedRecords, object@sensorUnUsedRecords))# made new test in check for higher speed but have this one still here for more clear reporting
+			 if(any(diffs==0)){
+		   tmp<-duplicated(cbind(object@timestampsUnUsedRecords, object@trackIdUnUsedRecords, object@sensorUnUsedRecords))# made new test in check for higher speed but have this one still here for more clear reporting
 			 stop("The data set includes double timestamps per ID in the unused records (first one:", object@trackIdUnUsedRecords[tmp][1]," ",object@sensorUnUsedRecords[tmp][1]," ",object@timestampsUnUsedRecords[tmp][1], ")")
+		   }else{
+			 stop('The data set includes un ordered timestamps in the unUsedRecordsStack')
+			   }
 		 }
 		 return(TRUE)
 	 }
