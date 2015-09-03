@@ -13,8 +13,11 @@ check:
 checkSrc:
 	time R CMD check --as-cran pkg/move
 
+dockerSetup:
+	docker build -t bart/rdevel .
+
 checkRdevel:
-	/home/bart/bmisc/small_projects/rDevel/svn/R/bin/R CMD check --as-cran move*.tar.gz
+	docker run -it -v /home/bart/bmisc/small_projects/move/:/tmp bart/rdevel Rdevel CMD check --as-cran /tmp/move_1.5.515.tar.gz -o /tmp
 
 changeLog:
 	svn2cl -r head:380 --stdout --group-by-day pkg/move/ --strip-prefix='move/' | grep -v '* $$' > pkg/move/ChangeLog

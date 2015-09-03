@@ -1,3 +1,13 @@
+2015-07-15  bart
+
+	* Fix reading of envdata files (related to R version 3.1.0 that had
+	  an other type convert)
+
+2015-07-08  bart
+
+	* Update help of download functions
+	* clarified removeduplicatedtimestamps option for getmovebankdata
+
 2015-07-07  bart
 
 	* the time.lag function is removed
