@@ -1,17 +1,17 @@
 context('extent calculations')
 test_that('extent calculations',{
-	data <- move(system.file("extdata","leroy.csv.gz",package="move"))
-	expect_equal(
-		extent(data),
-		extent(move:::.extcalc(data,0))
+data(leroy)
+  expect_equal(
+		extent(leroy),
+		extent(move:::.extcalc(leroy,0))
 	)
 	expect_equal(
-		extent(data)*2,
-		extent(move:::.extcalc(data,0.5))
+		extent(leroy)*2,
+		extent(move:::.extcalc(leroy,0.5))
 	)
 	expect_equal(
-		extent(data)*1:2,
-		extent(move:::.extcalc(data,c(0,0.5)))
+		extent(leroy)*1:2,
+		extent(move:::.extcalc(leroy,c(0,0.5)))
 	)
 })
 test_that('extent calculations between bgb and dbbmm',{

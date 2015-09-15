@@ -43,20 +43,19 @@ test_that('spatialLines',{
   expect_equal(coordinates(leroy), coordinates(as(leroy,'SpatialLines'))[[1]][[1]])
   expect_equal(coordinates(ricky), coordinates(as(ricky,'SpatialLinesDataFrame'))[[1]][[1]])
   
-  stk<-moveStack(list(leroy, ricky))
-  expect_equal(lapply(split(stk), coordinates),lapply(coordinates(spldf<-as(stk,'SpatialLinesDataFrame')),'[[',1))
-  expect_equal(idData(stk), data.frame(spldf))
-  expect_equal(as(stk,'SpatialLines'), as(spldf,'SpatialLines'))
+data(stack)
+expect_equal(lapply(split(stack), coordinates),lapply(coordinates(spldf<-as(stack,'SpatialLinesDataFrame')),'[[',1))
+  expect_equal(idData(stack), data.frame(spldf))
+  expect_equal(as(stack,'SpatialLines'), as(spldf,'SpatialLines'))
   })
 
 test_that('data.frame',{
-  load(system.file("extdata", "move.RData", package="move"))
-  
+data(leroy)  
     d<-slot(leroy,name = 'data')
     expect_equivalent(d, as(leroy,'data.frame')[,names(d)])
-    stk<-moveStack(list(leroy,ricky))
-    dd<-slot(stk,name = 'data')
-    expect_equivalent(dd, as(stk,'data.frame')[,names(dd)])
+    data(stack)
+    dd<-slot(stack,name = 'data')
+    expect_equivalent(dd, as(stack,'data.frame')[,names(dd)])
     
   })
 
