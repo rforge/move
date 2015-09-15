@@ -18,5 +18,8 @@ test_that('measures',
 	proj4string(x)<-'+proj=longlat +ellps=WGS84'
 	expect_equal(distance(x),(dd<-distGeo( cbind(dx,dx)[-n.locs(x),], cbind(dx,dx)[-1,])))
 	expect_equal(speed(x),dd/t)
+	expect_warning(turnAngleGc(x),"turnAngleGc is probably not a valid calculation on this projection")
+	xx<-x;proj4string(x)<-"+proj=longlat"
+	expect_equal(length(turnAngleGc(xx)), n.locs(xx)-2)
 }
 )

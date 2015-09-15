@@ -10,3 +10,10 @@ setMethod("turnAngleGc",
 		 t<-(b-((fb)))
 		 return(((t+180)%%360)-180)
           })
+setMethod("turnAngleGc", 
+          signature=".MoveTrackStack",
+          definition=function(x){
+            if(!isLonLat(x))
+              warning('turnAngleGc is probably not a valid calculation on this projection')
+            return(lapply(split(x), turnAngleGc))
+          })
