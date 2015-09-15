@@ -30,7 +30,7 @@ data <- move(system.file("extdata","leroy.csv.gz",package="move"))[99:150,]
 head(df <- as.data.frame(data))
 \dontshow{
 load(system.file("extdata","move.RData",package="move"))
-b <- moveStack(list(data,data,ricky, leroy))
+b <- moveStack(list(ricky, leroy))
 head(data.frame(b))
 }
 }

@@ -24,12 +24,12 @@ Returns a matrix with the coordinates of the track in a Move or MoveStack object
 
 \examples{
 ## create a move object
-data <- move(system.file("extdata","leroy.csv.gz",package="move"))
+load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 
 ## extract the coordinates
-coords <- coordinates(data)
+coords <- coordinates(leroy)
 \dontshow{
-coordinates(moveStack(list(data,data)))
+coordinates(moveStack(list(leroy,ricky)))
 }}
 
 \author{Marco Smolla}

@@ -15,11 +15,11 @@ test_that('measures',
 	expect_equal(distance(xx),list(unnamed=d,unnamed1=d))
 	expect_warning(expect_equal(timeLag(xx),list(unnamed=t,unnamed1=t)),'Units not specified this could lead to different units for the time differences between individuals')
 	expect_equal(speed(xx),list(unnamed=d/t,unnamed1=d/t))
-	proj4string(x)<-'+proj=longlat +ellps=WGS84'
-	expect_equal(distance(x),(dd<-distGeo( cbind(dx,dx)[-n.locs(x),], cbind(dx,dx)[-1,])))
-	expect_equal(speed(x),dd/t)
 	expect_warning(turnAngleGc(x),"turnAngleGc is probably not a valid calculation on this projection")
-	xx<-x;proj4string(x)<-"+proj=longlat"
+	xx<-x;proj4string(xx)<-"+proj=longlat +ellps=WGS84"
+	
+	expect_equal(distance(xx),(dd<-distGeo( cbind(dx,dx)[-n.locs(xx),], cbind(dx,dx)[-1,])))
+	expect_equal(speed(xx),dd/t)
 	expect_equal(length(turnAngleGc(xx)), n.locs(xx)-2)
 }
 )

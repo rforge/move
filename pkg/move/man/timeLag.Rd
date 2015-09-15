@@ -31,9 +31,9 @@
 
 \examples{
 load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-stack <- moveStack(list(leroy,leroy))
+stack <- moveStack(list(leroy,ricky))
 
-head(timeLag(leroy)) #calculate timelags for a Move object
-head(timeLag(stack)) #calculate timelags for a MoveStack object
+head(timeLag(leroy,units="mins")) #calculate timelags for a Move object
+head(timeLag(stack,units="mins")) #calculate timelags for a MoveStack object
 head(timeLag(stack, units="hours")) #calculate timelags in different units
 }

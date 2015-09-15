@@ -2,6 +2,8 @@
 
 \alias{turnAngleGc}
 \alias{turnAngleGc,.MoveTrackSingle-method}
+\alias{turnAngleGc,.MoveTrackStack-method}
+
 
 \docType{methods}
 
