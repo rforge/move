@@ -65,16 +65,15 @@
 
 \examples{
 ## create a move object
-data <- move(system.file("extdata","leroy.csv.gz",package="move"))[1:90,]
-
+data(leroy)
 ## change projection method to aeqd and center the coordinate system to the track
-data2 <- spTransform(data, CRSobj="+proj=aeqd +ellps=WGS84", center=TRUE)
+data2 <- spTransform(leroy[1:90,], CRSobj="+proj=aeqd +ellps=WGS84", center=TRUE)
 
 ## create a DBBMM object
 dbbmm <- brownian.bridge.dyn(object=data2, location.error=12, dimSize=45, ext=.3, 
 			     time.step=600, margin=15)
 \dontshow{
-  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
+data(ricky)
   leroy <- leroy[1:50]
   ricky <- ricky[1:50]
   stack <- moveStack(list(leroy,ricky))

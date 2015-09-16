@@ -32,7 +32,8 @@
 }
 
 \examples{
-  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)  
-  getMotionVariance(leroydbbmm)
+data(leroydbbmm)
+data(dbbmmstack)
+getMotionVariance(leroydbbmm)
   getMotionVariance(dbbmmstack)
 }

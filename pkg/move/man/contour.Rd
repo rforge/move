@@ -29,8 +29,7 @@ You can also add the contour lines to a plot by adding \code{add = TRUE}.
 \author{Marco Smolla}
 
 \examples{
-load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-
+data(leroydbbmm)
 ## to add a 50\% and 95\% contour to a plot from DBBMM object dbbmm
 plot(leroydbbmm)
 contour(leroydbbmm, levels=c(.5,.95), add=TRUE)

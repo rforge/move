@@ -29,8 +29,8 @@
 }
 
 \examples{
-load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-
+data(leroydbbmm)
+data(dbbmmstack)
 getVolumeUD(leroydbbmm) #for a single object
 getVolumeUD(dbbmmstack)
 getVolumeUD(leroydbbmm, leroydbbmm, leroydbbmm) #for several objects 

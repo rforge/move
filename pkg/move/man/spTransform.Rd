@@ -29,8 +29,7 @@
 
 \examples{
 ## create a Move object
-leroy <- move(system.file("extdata","leroy.csv.gz",package="move"))
-
+data(leroy)
 ## transform the Move object by default into "+aeqd" projection method 
 ## and center the coordinate system
 spTransform(leroy, center=TRUE)
@@ -42,9 +41,8 @@ spTransform(leroy, CRSobj="+proj=moll +ellps=WGS84")
 proj4string(leroy)
 \dontshow{
 spTransform(leroy, CRSobj=CRS("+proj=moll +ellps=WGS84"))
-load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-stack <- moveStack(list(leroy,ricky))
-spTransform(stack, center=TRUE)
+data(fishers)
+spTransform(fishers, center=TRUE)
 }
 }
 

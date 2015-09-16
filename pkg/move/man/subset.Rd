@@ -37,12 +37,15 @@
 
 
 \examples{
-load(system.file("extdata", "move.RData", package="move"))
-st <- moveStack(list(leroy[50:100,],ricky=ricky[90:170,]))
-st[1]
-st[['ricky']]
-st[[2]]
-st[[c(TRUE,FALSE)]]
+data(leroy)
+leroy[1:20,]
+leroy[c(TRUE,FALSE),]
+data(fishers)
+fishers[1:300,]
+fishers[1]
+fishers[['Ricky.T']]
+fishers[[2]]
+fishers[[c(TRUE,FALSE)]]
 }
 
 \author{Bart Kranstauber}

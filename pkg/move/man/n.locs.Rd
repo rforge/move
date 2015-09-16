@@ -22,9 +22,9 @@
 \author{Marco Smolla}
 
 \examples{
-load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-stack <- moveStack(list(leroy,leroy))
+data(leroy)
+data(fishers)
 
-n.locs(ricky) #number of locations of Move object
-n.locs(stack) #number of locations of MoveStack object
+n.locs(leroy) #number of locations of Move object
+n.locs(fishers) #number of locations of MoveStack object
 }

@@ -45,8 +45,9 @@
   m <- move(x=rnorm(70), y=rnorm(70), time=as.POSIXct(1:70, origin="1970-1-1"), 
 	    proj=CRS("+proj=aeqd +ellps=WGS84"))    
   hrBootstrap(m,rep=5, level=99, unout="m2", plot=TRUE) #for a Move object
-  
-  mstack <- moveStack(list(m,m))
+    m2 <- move(x=rnorm(70), y=rnorm(70), time=as.POSIXct(1:70, origin="1970-1-1"), 
+	    proj=CRS("+proj=aeqd +ellps=WGS84")) 
+  mstack <- moveStack(list(m,m2))
   hrBootstrap(mstack,rep=5, unout="m2", plot=FALSE) #for a MoveStack object
   
   hrBootstrap(as(m,"SpatialPoints"),rep=5, unout="m2", plot=TRUE) #for a SpatialPoints object

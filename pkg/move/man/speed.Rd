@@ -31,11 +31,11 @@
 }
 
 \examples{
-  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)  
-  stack <- moveStack(list(leroy,leroy))
+data(leroy)
+data(fishers)
   
-  speed(ricky) #speeds from a Move object 
-  speed(stack) #speeds from a MoveStack object
+  speed(leroy) #speeds from a Move object 
+  speed(fishers) #speeds from a MoveStack object
   speedSummary(leroy) # summary of speed measures of a Move object
-  speedSummary(stack) # summary of speed measures of a MoveStack object
+  speedSummary(fishers) # summary of speed measures of a MoveStack object
 }

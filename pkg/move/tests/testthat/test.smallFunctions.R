@@ -20,11 +20,10 @@ expect_equivalent(n.locs(m), as.array(c(a=4,b=6)))
 }
   )
 test_that('unUsed',{
-  load(system.file("extdata", "move.RData", package="move"))
+data(leroy)
   expect_is(unUsedRecords(leroy),".unUsedRecords")
   expect_true(validObject(unUsedRecords(leroy)))
-  b<-ricky
-  expect_error(unUsedRecords(b)<-T,'Selection length does not match with number of locations')
+  expect_error(unUsedRecords(leroy)<-T,'Selection length does not match with number of locations')
 })
 
 test_that('linemidpoint',{
@@ -39,24 +38,26 @@ test_that('linemidpoint',{
   })
 
 test_that('spatialLines',{
-  load(system.file("extdata", "move.RData", package="move"))
+data(leroy)
   expect_equal(coordinates(leroy), coordinates(as(leroy,'SpatialLines'))[[1]][[1]])
-  expect_equal(coordinates(ricky), coordinates(as(ricky,'SpatialLinesDataFrame'))[[1]][[1]])
+  expect_equal(coordinates(leroy), coordinates(as(leroy,'SpatialLinesDataFrame'))[[1]][[1]])
   
-data(stack)
-expect_equal(lapply(split(stack), coordinates),lapply(coordinates(spldf<-as(stack,'SpatialLinesDataFrame')),'[[',1))
-  expect_equal(idData(stack), data.frame(spldf))
-  expect_equal(as(stack,'SpatialLines'), as(spldf,'SpatialLines'))
+data(fishers)
+
+
+expect_equal(lapply(split(fishers), coordinates),lapply(coordinates(spldf<-as(fishers,'SpatialLinesDataFrame')),'[[',1))
+  expect_equal(idData(fishers), data.frame(spldf))
+  expect_equal(as(fishers,'SpatialLines'), as(spldf,'SpatialLines'))
   })
 
 test_that('data.frame',{
 data(leroy)  
     d<-slot(leroy,name = 'data')
     expect_equivalent(d, as(leroy,'data.frame')[,names(d)])
-    data(stack)
-    dd<-slot(stack,name = 'data')
-    expect_equivalent(dd, as(stack,'data.frame')[,names(dd)])
+    data(fishers)
+    dd<-slot(fishers,name = 'data')
+    expect_equivalent(dd, as(fishers,'data.frame')[,names(dd)])
     
   })
-
+context("examples")
 test_examples()

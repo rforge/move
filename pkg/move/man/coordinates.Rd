@@ -28,8 +28,8 @@ data(leroy)
 ## extract the coordinates
 coords <- coordinates(leroy)
 \dontshow{
-data(stack)
-coordinates(stack)
+data(fishers)
+coordinates(fishers)
 }}
 
 \author{Marco Smolla}

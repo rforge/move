@@ -27,11 +27,13 @@
 \author{Marco Smolla}
 
 \examples{
-  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-  stack <- moveStack(list(leroy,leroy))
+data(leroy)
+data(fishers)
   
   timestamps(leroy) #get the timestamps from a Move object
-  timestamps(stack) #get the timestamps from a MoveStack object
-  timestamps(leroy) <- timestamps(leroy)+60 #change the timestamps and set it for a Move object
-  timestamps(stack) <- timestamps(stack)+60 #change the timestamps and set it for a MoveStack object
+  timestamps(fishers) #get the timestamps from a MoveStack object
+  #change the timestamps and set it for a Move object
+  timestamps(leroy) <- timestamps(leroy)+60 
+  #change the timestamps and set it for a MoveStack object
+  timestamps(fishers) <- timestamps(fishers)+60 
 }

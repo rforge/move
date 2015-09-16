@@ -31,12 +31,12 @@
 }
 
 \examples{
-load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-
+data(leroydbbmm)
+data(leroy)
 plot(leroydbbmm)
 points(spTransform(leroy, center=TRUE), col=3) # add a track from a Move object to a plot
 \dontshow{
-stack <- moveStack(list(leroy,ricky))
-points(stack, col=3:4, pch=4) #just test whether MoveStacks can be plotted
+data(fishers)
+points(fishers, col=3:4, pch=4) #just test whether MoveStacks can be plotted
 }
 }

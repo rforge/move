@@ -24,11 +24,10 @@
 \author{Marco Smolla}
 
 \examples{
-  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-  stack <- moveStack(list(leroy,leroy))
-  
+  data(leroy)
   citations(leroy) #get the citation from a Move object
-  citations(stack) #get the citation from a MoveStack object
   citations(leroy) <- "No paper available" #change the citation and set it for a Move object
-  citations(stack) <- "Nothing to cite" #change the citation and set it for a MoveStack object
+  data(fishers)
+  citations(fishers) #get the citation from a MoveStack object
+  citations(fishers) <- "Nothing to cite" #change the citation and set it for a MoveStack object
 }

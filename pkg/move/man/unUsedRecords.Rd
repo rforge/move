@@ -26,11 +26,11 @@
   \item{...}{Not used at the moment}
 }
 \examples{
-data <- move(system.file("extdata","leroy.csv.gz",package="move"))
+data(leroy)
 par(mfrow=2:1)
-plot(data, type='b')
-unUsedRecords(data)<-as.logical((1:n.locs(data))\%\%2)
-plot(data, type='b')
+plot(leroy, type='b')
+unUsedRecords(leroy)<-as.logical((1:n.locs(leroy))\%\%2)
+plot(leroy, type='b')
 }
 
 

@@ -24,13 +24,14 @@
 
 \examples{
 ## create a move object
-data <- move(system.file("extdata","leroy.csv.gz",package="move"))[99:150,]
+data(leroy)
+data <- leroy[99:150,]
 
 ## returns a data.frame with all information stored in the spatial data frame of the move object
 head(df <- as.data.frame(data))
 \dontshow{
-data(stack)
-head(data.frame(stack))
+data(fishers)
+head(data.frame(fishers))
 }
 }
 

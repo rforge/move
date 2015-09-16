@@ -30,8 +30,7 @@ numeric value for a single DBBMM object, or a list of numeric values for a DBBMM
 }
 
 \examples{
-load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-
+data(leroydbbmm)
 #calculate the probabilities of 20\% of the raster at the border from a DBBMM
 outerProbability(leroydbbmm, border=.2)
 

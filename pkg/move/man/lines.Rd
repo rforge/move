@@ -32,13 +32,13 @@
 }
 
 \examples{
-load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-
+data(leroy)
+data(leroydbbmm)
 plot(leroydbbmm)
 lines(spTransform(leroy, center=TRUE), col=3) # add a track from a Move object to a plot
 \dontshow{
-stack <- moveStack(list(leroy,leroy))
-plot(stack, type='p')
-lines(stack, col=3:4, pch=4) %just test whether MoveStacks can be plotted
+data(fishers)
+plot(fishers, type='p')
+lines(fishers, col=3:4, pch=4) %just test whether MoveStacks can be plotted
 }
 }

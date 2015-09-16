@@ -26,8 +26,7 @@
 \author{Bart Kranstauber}
 
 \examples{
-  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-  stack <- moveStack(list(leroy,leroy))
-  trackId(stack)
+data(fishers)
+  trackId(fishers)
   
 }

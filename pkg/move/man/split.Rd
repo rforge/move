@@ -32,9 +32,8 @@
 \author{Marco Smolla}
 
 \examples{
-load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-movestack <- moveStack(list(leroy,ricky))
-
-split(movestack) #splitting a MoveStack
+data(dbbmmstack)
+data(fishers)
+split(fishers) #splitting a MoveStack
 split(dbbmmstack) #splitting a DBBMMStack
 }

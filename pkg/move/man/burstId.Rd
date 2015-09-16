@@ -25,8 +25,7 @@
 \author{Bart Kranstauber}
 
 \examples{
-  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-  burstTrack <- burst(leroy,months(timestamps(leroy))[-1])
-  burstId(burstTrack)
-  
+data(leroy)
+burstTrack <- burst(leroy,months(timestamps(leroy))[-1])
+burstId(burstTrack)
 }

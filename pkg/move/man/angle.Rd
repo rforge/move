@@ -31,12 +31,12 @@ Angles in degrees
 }
 
 \examples{
-  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
 \dontrun{  
-  stack <- moveStack(list(leroy,leroy))
+data(leroy)
+data(fishers)
   angle(leroy) #angles from a Move object 
-  angle(stack) #angles from a MoveStack object
+  angle(fishers) #angles from a MoveStack object
   angleSummary(leroy) # summary of angle measures of a Move object
-  angleSummary(stack) # summary of angle measures of a MoveStack object
+  angleSummary(fishers) # summary of angle measures of a MoveStack object
 }# failed on cran build
 }

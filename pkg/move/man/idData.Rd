@@ -33,6 +33,6 @@
 }
 
 \examples{
-  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-	idData(leroy)
+data(leroy)
+idData(leroy)
 }

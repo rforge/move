@@ -31,8 +31,9 @@
 }
 
 \examples{
-	load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-	raster2contour(leroydbbmm)
+data(leroydbbmm)
+data(dbbmmstack)
+raster2contour(leroydbbmm)
 	raster2contour(dbbmmstack)
 	raster2contour(dbbmmstack, level=c(.5,.95))
 }

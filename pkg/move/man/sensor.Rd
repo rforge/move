@@ -22,8 +22,8 @@
 \author{Bart Kranstauber}
 
 \examples{
-  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-  stack <- moveStack(list(leroy,leroy))
+  data(leroy)
   sensor(leroy) #get the sensor from a Move object
-  sensor(stack) #get the sensor from a MoveStack object
+  data(fishers)
+  sensor(fishers) #get the sensor from a MoveStack object
 }

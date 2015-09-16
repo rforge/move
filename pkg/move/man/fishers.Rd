@@ -1,11 +1,11 @@
-\name{stack}
-\alias{stack}
+\name{fishers}
+\alias{fishers}
 \docType{data}
 \title{
 A MoveStack}
 \description{
 An MoveStack consisting of two animals, Leroy and Ricky.T}
-\usage{data(stack)}
+\usage{data(fishers)}
 \format{
  An object of the class MoveStack
 }
@@ -16,6 +16,6 @@ https://www.datarepository.movebank.org/handle/10255/move.330
 LaPoint, Scott, Paul Gallery, Martin Wikelski, and Roland Kays. Animal Behavior, Cost-Based Corridor Models, and Real Corridors. Landscape Ecology 28, 8: 1615???30. doi:10.1007/s10980-013-9910-0.
 }
 \examples{
-data(stack)
+data(fishers)
 }
 \keyword{datasets}

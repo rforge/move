@@ -31,11 +31,10 @@ All values are returned in meters if the projection of the coordinates is longla
 \author{Marco Smolla}
 
 \examples{
-  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-  stack <- moveStack(list(leroy,leroy))
-  
+  data(fishers)
+  data(leroy)
   distance(leroy) #distances from a Move object 
-  distance(stack) #distances from a MoveStack object
+  distance(fishers) #distances from a MoveStack object
   distanceSummary(leroy) # summary of distance measures of a Move object
-  distanceSummary(stack) # summary of distance measures of a MoveStack object
+  distanceSummary(fishers) # summary of distance measures of a MoveStack object
 }

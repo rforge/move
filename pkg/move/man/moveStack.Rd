@@ -31,8 +31,8 @@ All animal names are converted into 'good names' which means, that spaces are re
 \author{Marco Smolla}
 
 \examples{
-load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-
+data(leroy)
+data(ricky)
 l <- list(ricky[200:270,], leroy[200:270,])
 moveStack(l)
 

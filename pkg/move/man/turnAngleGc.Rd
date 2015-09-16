@@ -30,6 +30,6 @@
 }
 
 \examples{
-  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)  
-  turnAngleGc(leroy)
+data(leroy)
+turnAngleGc(leroy)
 }

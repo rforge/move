@@ -24,8 +24,10 @@
 \author{Bart Kranstauber}
 
 \examples{
-  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-  equalProj(list(leroydbbmm,leroydbbmm))
+data(ricky)
+data(leroy)
+data(leroydbbmm)
+equalProj(list(leroydbbmm,leroydbbmm))
   equalProj(list(leroy,leroydbbmm))
   equalProj(list(leroy,ricky))
 }

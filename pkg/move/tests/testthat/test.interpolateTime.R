@@ -1,7 +1,8 @@
 context('interpolate time')
 test_that('interpolateTime',{
-	data <- move(system.file("extdata","leroy.csv.gz",package="move"))
-	dataP<-spTransform(data, center=T)
+data(leroy)
+  data<-leroy
+dataP<-spTransform(data, center=T)
 	expect_equal(data, interpolateTime(data, timestamps(data), spaceMethod='gr'))
 	expect_equal(data, interpolateTime(data, timestamps(data), spaceMethod='rh'))
 	expect_equal(dataP, interpolateTime(dataP, timestamps(dataP), spaceMethod='eu'))

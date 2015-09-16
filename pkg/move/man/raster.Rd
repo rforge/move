@@ -30,8 +30,8 @@
 \author{Marco Smolla}
 
 \examples{
-load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-
+data(leroydbbmm)
+data(dbbmmstack)
 raster(leroydbbmm) #returns the raster of a DBBMM object
 raster(dbbmmstack) # returns the raster of a DBBMMStack object
 

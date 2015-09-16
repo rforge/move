@@ -18,6 +18,6 @@
 }
 \author{Bart Kranstauber}
 \examples{
-  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-	plot(interpolateTime(ricky[1:200,], 700,'gr'))
+  data(leroy)
+  plot(interpolateTime(leroy[1:200,], 700,'gr'))
 }

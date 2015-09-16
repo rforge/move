@@ -51,11 +51,9 @@
 }
 
 \examples{
-  load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-  
+data(leroy)  
   tmp <- corridor(leroy, plot=TRUE)
   head(tmp) #if assigned to a variable, the coordinates are exported
-  
-  stack <- moveStack(list(leroy[1:400,], ricky[1:500,]))
-  stacktmp <- corridor(stack) #working with a stack
+  data(fishers)
+  stacktmp <- corridor(fishers[c(1:400,sum(n.locs(fishers))-(400:1)),]) #working with a stack
 }

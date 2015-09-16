@@ -29,10 +29,11 @@
 	Kranstauber, B., Safi, K., Bartumeus, F.. (2014), Bivariate Gaussian bridges: directional factorization of diffusion in Brownian bridge models. Movement Ecology 2:5. doi:10.1186/2051-3933-2-5.
 }
 \examples{
-data <- move(system.file("extdata","leroy.csv.gz",package="move")) [230:265,]
+data(leroy)
+leroy <- leroy[230:265,]
 
 ## change projection method to aeqd and center the coordinate system to the track
-dataAeqd <- spTransform(data, CRSobj="+proj=aeqd +ellps=WGS84", center=TRUE)
+dataAeqd <- spTransform(leroy, CRSobj="+proj=aeqd +ellps=WGS84", center=TRUE)
 
 dBGB <- dynBGB(dataAeqd, locErr=9, raster=10, ext=2.15, windowSize=31, timeStep=6, margin=15)
 plot(dBGB, col=hsv(sqrt(1:700/1000)))

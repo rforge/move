@@ -22,9 +22,8 @@
 \author{Bart Kranstauber}
 
 \examples{
-load(system.file("extdata", "move.RData", package="move"), .GlobalEnv)
-stack <- moveStack(list(leroy,leroy))
-
-n.indiv(ricky)
-n.indiv(stack)
+data(leroy)
+n.indiv(leroy)
+data(fishers)
+n.indiv(fishers)
 }

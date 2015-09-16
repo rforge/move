@@ -1,10 +1,10 @@
 context('Brownian bridge dyn')
 test_that('dbbmm error handling',{
-		 data <- move(system.file("extdata","leroy.csv.gz",package="move"))
-		 expect_error(
-			       brownian.bridge.dyn(object=leroy, location.error=23.5, dimSize=150, ext=.3, time.step=600), "Error: object 'leroy' not found"
+data(leroy)
+  		 expect_error(
+			       brownian.bridge.dyn(object=leroy2, location.error=23.5, dimSize=150, ext=.3, time.step=600), "Error: object 'leroy' not found"
 			       )
-		  data2<-spTransform(data[1:50,], center=T)
+		  data2<-spTransform(leroy[1:50,], center=T)
 		  expect_error(
 			       brownian.bridge.dyn(data2, dimSize=150 ,location.error='2346'), 'column indicated for location error probably does not exist'
 			       )# character loc
@@ -13,8 +13,9 @@ test_that('dbbmm error handling',{
 			       )
 })
 test_that('dbbmm error handling in relation to projections',{
-		  data <- move(system.file("extdata","leroy.csv.gz",package="move"))
-		  expect_error(
+data(leroy)
+  data<-leroy
+  expect_error(
 			       brownian.bridge.dyn(object=data, location.error=23.5, dimSize=150, ext=.3, time.step=600)
 			       , 'You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function.'
 			       )
@@ -24,8 +25,9 @@ test_that('dbbmm error handling in relation to projections',{
 			       )# equal projection
 })
 test_that('brownian bridge dyn for bursted',{
-		  data <- move(system.file("extdata","leroy.csv.gz",package="move"))
-		  dataP<-spTransform(data[1:100,], center=T)
+data(leroy)
+  data<-leroy
+  dataP<-spTransform(data[1:100,], center=T)
 		  dataPB<-move::burst(dataP, round((1:(n.locs(dataP)-1)/50)))
 		  expect_message(udS<-brownian.bridge.dyn(dataPB, dimSize=150, location.error=23, ext=.3, time.step=4, window.size=29), 'Computational size')
 		  expect_is(udS,"DBBMMBurstStack")
@@ -64,7 +66,8 @@ test_that('brownian bridge dyn value comparison bursted',{
 		  expect_true(all(abs(values(sum(us))-values(u))< .Machine$double.eps)  )
 })
 test_that('Brownian bridge, running with character and vector input to location error',{
-		  data <- spTransform(move(system.file("extdata","leroy.csv.gz",package="move"))[1:51,], center=T)
+  data(leroy)
+		  data <- spTransform(leroy[1:51,], center=T)
 		  data2<-data
 		  lc<-6.54
 		  data2$asdf<-lc
@@ -88,8 +91,9 @@ test_that('Brownian bridge, running with character and vector input to location 
 })
 
 test_that('Brownian bridge, running with character and vector input to location error for stacks',{
-		  load(system.file("extdata", "move.RData", package="move"))
-		  data<-spTransform(moveStack(list(leroy[1:75,], ricky[1:73,])), center=T)
+data(leroy)
+  data(ricky)
+  data<-spTransform(moveStack(list(leroy[1:75,], ricky[1:73,])), center=T)
 		  data2<-data
 		  lc<-6.54
 		  data2$asdf<-lc

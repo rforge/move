@@ -8,15 +8,15 @@ test_that("dbgb vs dbbmm variance",{
 	 expect_equal(vBBMM$BMvar, prod(vBGB[1:2]), tolerance=2e-5)
 })
 test_that('dbgb error handling in relation to projections',{
-	data <- move(system.file("extdata","leroy.csv.gz",package="move"))
-# 	expect_warning(
+data(leroy)
+  # 	expect_warning(
     expect_error(
-		     suppressWarnings(dynBGB(data[1:40,], locErr=.0005, raster=.00150, ext=17.3, margin=15, windowSize=31))
+		     suppressWarnings(dynBGB(leroy[1:40,], locErr=.0005, raster=.00150, ext=17.3, margin=15, windowSize=31))
 		     ,'You can not use longitude latitude projection for this function. To transform your coordinates use the spTransform function')
 # 		     ,'Optimized to zero')
 	r <- raster(nrows=100, ncols=100, xmn=0, xmx=10)
 	expect_error(
-		     dynBGB(spTransform(data[1:40,], center=T), locErr=.0005, raster=r, ext=17.3, margin=15, windowSize=31),'The projection of the raster and the Move object are not equal'
+		     dynBGB(spTransform(leroy[1:40,], center=T), locErr=.0005, raster=r, ext=17.3, margin=15, windowSize=31),'The projection of the raster and the Move object are not equal'
 		     )# equal projection
 })
 test_that("dbgb vs dbbmm",{
@@ -46,8 +46,8 @@ test_that("deltaParaOrth",{
 	  
 })
 test_that("dyn bgb basics",{
-	  data <- move(system.file("extdata","leroy.csv.gz",package="move"))
-	  dataC<-spTransform(data, center=T)
+data(leroy)
+  dataC<-spTransform(leroy, center=T)
 	  resUd<-5.3
 	  ud<-dynBGB(dataC[1:45,], windowSize=31, margin=15, locErr=4, raster=resUd, ext=9)
 	  ud2<-dynBGB(dynBGBvariance(dataC[1:45,], windowSize=31, margin=15, locErr=l<-rep(4, n.locs(dataC))), raster=resUd, ext=9, locErr=l)
