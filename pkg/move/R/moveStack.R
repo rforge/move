@@ -40,7 +40,7 @@ setMethod(f = "moveStack",
                 ))
 		  rownames(IDDATA)<-validNames(rownames(IDDATA))
 		  o<-lapply(x, as,'SpatialPoints')
-		  o<-mapply("row.names<-", x=o,mapply(paste,lapply(lapply(x, idData), row.names),lapply(o, row.names), sep='.', SIMPLIFY = F))
+		  o<-mapply("row.names<-", x=o,mapply(paste,lapply(lapply(x, idData, drop=F), row.names),lapply(o, row.names), sep='.', SIMPLIFY = F))
 		  spdftmp<-SpatialPointsDataFrame(do.call(rbind, o), data=DATA)
 
 		  # unused records

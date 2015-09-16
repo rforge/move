@@ -27,6 +27,6 @@
   data(leroy)
   timeLag(leroy)
   timeLag(fishers)
-  timeSummary(ricky) # summary of time measures of a Move object
+  timeSummary(leroy) # summary of time measures of a Move object
   timeSummary(fishers, units="hours") # summary of time measures of a MoveStack object
 }

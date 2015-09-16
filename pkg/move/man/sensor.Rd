@@ -22,8 +22,8 @@
 \author{Bart Kranstauber}
 
 \examples{
-  data(leroy)
-  sensor(leroy) #get the sensor from a Move object
-  data(fishers)
-  sensor(fishers) #get the sensor from a MoveStack object
+data(leroy)
+sensor(leroy) #get the sensor from a Move object
+data(fishers)
+sensor(fishers) #get the sensor from a MoveStack object
 }

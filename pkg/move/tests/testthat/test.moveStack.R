@@ -34,7 +34,11 @@ test_that('moveStack',
 	expect_error(moveStack(list(a2,a,a2)))
 
 
-	m<-lapply(1:5, function(x){m<-move(rnorm(5), rnorm(5), Sys.time()+1:5);idData(m)<-data.frame(groupID=sample(letters,1), groupDay=round(rnorm(1))); m})
+	m<-lapply(1:5, function(x){
+	  m<-move(rnorm(5), rnorm(5), Sys.time()+1:5)
+	  idData(m)<-data.frame(groupID=sample(letters,1), groupDay=round(rnorm(1)))
+	  m
+	  })
 	expect_warning(mm<-moveStack(m))
 	expect_true(all(grepl('^............: ',capture.output(print(mm)))))
   expect_equal(kk<-capture.output(print(mm)), kl<-capture.output(show(mm)))

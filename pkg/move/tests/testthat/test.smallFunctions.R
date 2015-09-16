@@ -59,5 +59,3 @@ data(leroy)
     expect_equivalent(dd, as(fishers,'data.frame')[,names(dd)])
     
   })
-context("examples")
-test_examples()

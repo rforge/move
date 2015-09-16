@@ -34,6 +34,6 @@
 data(leroydbbmm)
 data(dbbmmstack)
 raster2contour(leroydbbmm)
-	raster2contour(dbbmmstack)
-	raster2contour(dbbmmstack, level=c(.5,.95))
+raster2contour(dbbmmstack)
+raster2contour(dbbmmstack, level=c(.5,.95))
 }

@@ -34,8 +34,8 @@
 data(leroy)
 data(fishers)
   
-  speed(leroy) #speeds from a Move object 
-  speed(fishers) #speeds from a MoveStack object
-  speedSummary(leroy) # summary of speed measures of a Move object
-  speedSummary(fishers) # summary of speed measures of a MoveStack object
+speed(leroy) #speeds from a Move object 
+speed(fishers) #speeds from a MoveStack object
+speedSummary(leroy) # summary of speed measures of a Move object
+speedSummary(fishers) # summary of speed measures of a MoveStack object
 }

@@ -14,8 +14,8 @@ setMethod(f = "corridor",
 		  #Bart mid points works on spatialpoints* so we can omit the coordinates function here
 		  ##Marco that is right, but how can you hand over the coordinates once cut at the end and once at the beginning
 		  segRadius <- segLength/2
-
-		  if ( requireNamespace("maptools", quietly = TRUE) & requireNamespace("circular", quietly = TRUE)) {
+pkgLoad<-requireNamespace("maptools", quietly = TRUE) & requireNamespace("circular", quietly = TRUE)
+		  if (pkgLoad ) {
 			  tAzimuth <- maptools::trackAzimuth(coordinates(x))
 			  pAzimuth <- ((180+tAzimuth)*2)%%360
 
@@ -23,9 +23,12 @@ setMethod(f = "corridor",
 
 			  inpAzimuth <- lapply(inCircle, function(i, pAzimuth) pAzimuth[i], pAzimuth=pAzimuth)
 			  circVar <- lapply(lapply(inpAzimuth, circular::circular, units="degrees"), circular::var.circular)
-		  } else {stop("Both the packages maptools and circular need to be installed")}
+		  } else {
+		    stop("Both the packages maptools and circular need to be installed")
+		    }
 
 		  if (length(unique(circVar))==1) {
+		    
 			  stop('There were less than the required 2 midpoints within the buffer along the whole track to calculate a variance.')
 		  }else{circVar <- unlist(circVar)}
 

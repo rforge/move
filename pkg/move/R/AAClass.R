@@ -144,9 +144,9 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack", ".unUsedRecordsSt
 	 validity = function(object){
 		 if(length(object@trackId)!=nrow(object@coords))
 			 stop("Length of trackId does not match the number of coordinates")
-		 if(!all(unlist(tapply(object@timestamps, list(object@trackId, droplevels(object@sensor)),diff))>0))
+		 if(!all(unlist(tapply(object@timestamps, list(trackId(object), droplevels(object@sensor)),diff))>0))
 		 {
-			 tmp<-duplicated(cbind(object@timestamps, object@trackId, object@sensor))# made new test in check for higher speed but have this one still here for more clear reporting
+			 tmp<-duplicated(cbind(object@timestamps, trackId(object), object@sensor))# made new test in check for higher speed but have this one still here for more clear reporting
 			 stop("The data set includes double timestamps per ID (first one:", object@trackId[tmp][1]," ",object@sensor[tmp][1]," ",object@timestamps[tmp][1], ")")
 		 }
 		 if(any(unlist(lapply(tapply(object@timestamps,object@trackId, order),diff))!=1))
@@ -172,15 +172,15 @@ setClass(Class = ".MoveTrackStack", contains = c(".MoveTrack", ".unUsedRecordsSt
 		 	if (any(dups <- duplicated(t<-cbind(
 							  format(c(object@timestamps, object@timestampsUnUsedRecords)[s],"%Y %m %d %H %M %OS4"), 
 							  c(as.character(object@sensor), as.character(object@sensorUnUsedRecords))[s], 
-							  c(as.character(object@trackId),as.character( object@trackIdUnUsedRecords))[s]))))
+							  c(as.character(trackId(object)),as.character( object@trackIdUnUsedRecords))[s]))))
 				 stop("A timestamps of a unused record coincides with a normal timestamps")
 
 		 }
-		 if(sum(diff(as.numeric(object@trackId))!=0)!=(nrow(idData(object, drop=F))-1))
+		 if(sum(diff(as.numeric(trackId(object)))!=0)!=(nrow(idData(object, drop=F))-1))
 			 stop('The data in the MoveStack object are not grouped per individual')
-		 if(any(as.character(unique(object@trackId))!= rownames(idData(object, drop=F))))
+		 if(any(as.character(unique(trackId(object)))!= rownames(idData(object, drop=F))))
 			 stop('Order of objects in the idData is not the same as in the trackId')
-		 if(!identical(as.character(unique(object@trackId)), levels(object@trackId)))
+		 if(!identical(as.character(unique(trackId(object))), levels(object@trackId)))
 			 stop('Order of levels in the trackId should be same as order of individuals') 
 		 #this check cant work since coordinates columns are not present in data
 		# if(any(names(object@data)!=names(object@dataUnUsedRecords)))
