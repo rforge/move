@@ -210,3 +210,16 @@ setMethod(f="move",
 		  }
 	  }
 	  )
+setMethod(
+  f = "move",
+  signature = c(
+    x = "ltraj",y = 'missing',time = 'missing', data = 'missing', proj = 'missing'
+  ),
+  definition = function(x, ...) {
+    if (length(x) == 1) {
+      return(as(x,"Move"))
+    }else{
+      return(as(x,"MoveStack"))
+    }
+  }
+)

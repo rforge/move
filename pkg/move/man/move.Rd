@@ -1,16 +1,13 @@
 \name{move}
 
 \alias{move}
-%\alias{move,character,ANY,ANY,ANY,ANY,ANY-method}
-%\alias{move,character,ANY,ANY,ANY,ANY-method}
 \alias{move,character,missing,missing,missing,missing-method}
 \alias{move,connection,missing,missing,missing,missing-method}
+\alias{move,ltraj,missing,missing,missing,missing-method}
 \alias{move,numeric,numeric,POSIXct,data.frame,character-method}
 \alias{move,numeric,numeric,POSIXct,data.frame,CRS-method}
 \alias{move,numeric,numeric,POSIXct,data.frame,missing-method}
 \alias{move,numeric,numeric,POSIXct,missing,ANY-method}
-%\alias{move,character-method}
-%\alias{move,numeric,numeric,POSIXct,data.frame,CRS-method}
 
 \docType{methods}
 
@@ -25,10 +22,12 @@ The move method creates Move or MoveStack object from Movebank or other (compres
 \usage{
 \S4method{move}{connection,missing,missing,missing,missing}(x, removeDuplicatedTimestamps=F, ...)
 \S4method{move}{numeric,numeric,POSIXct,data.frame,CRS}(x, y, time, data, proj, sensor='unknown',animal='unnamed',...)
+\S4method{move}{ltraj,missing,missing,missing,missing}(x,  ...)
+
 }
 
 \arguments{
-\item{x}{Full path to the file location, OR a vector with x coordinates if non-Movebank data are provided (e.g. \code{data$x})}
+\item{x}{Full path to the file location, OR a vector with x coordinates if non-Movebank data are provided (e.g. \code{data$x}). Alternatively if no move other arguments are provided an ltraj object}
 \item{y}{vector of y coordinates if non-Movebank data are provided}
 \item{time}{column indicator for non-Movebank data for the time stamps, with POSIXct conversion, i.e. \code{as.POSIXct(data$timestamp, format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC")}}
 \item{data}{Optional extra data associated with the relocation, if empty it is filled with the coordinates and timestamps}
@@ -46,15 +45,16 @@ Another way is to read in your data using \code{\link{read.csv}}. Then the colum
 
 \note{
 The imported data set is checked whether it is in a Movebank format. If this is not the case, you have to use the alternative import for non-Movebank data (see above). 
-Because the SpatialPointsDataFrame function that creates the spatial data frame (\code{sdf}) of the \code{Move} object can not process NA location values, all rows with NA locations are omitted. A list of the omitted timestamps is stored in the \code{timesMissedFixes} slot of the \code{Move} object. \cr
-If the data include double timestamps check your data for validity. You may want to consider a function to delete double timestamps, like: \cr \code{data <- data[which(!duplicated(data$timestamp)), ]}
+Because the SpatialPointsDataFrame function that creates the spatial data frame of the \code{Move} object can not process NA location values, all rows with NA locations are stored as unused records. 
+
+If the data include double timestamps check your data for validity. You may want to consider a function to delete double timestamps, like: \code{data <- data[which(!duplicated(data$timestamp)), ]} or use the removeDuplicatedTimestamps argument but this does no attempt to retain the most likely location.
 
 Due to convention all names are turned into 'good names' which means, without spaces ('Ricky T' becomes 'Ricky.T').
 
 }
 
 
-\author{Marco Smolla}
+\author{Marco Smolla \& Bart Kranstauber}
 
 \examples{
 ## create a move object from a Movebank csv file

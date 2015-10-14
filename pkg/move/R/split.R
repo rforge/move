@@ -24,10 +24,6 @@ setMethod(f = "split",
 			  moveObj <- new(Class=".MoveTrackSingle", 
 					 mt,
 					 idData=x@idData[row.names(x@idData)==ID, ,drop=F],
-	#				 dateCreation=x@dateCreation,
-	#				 study=x@study,
-	#				 citation=x@citation,
-	#				 license=x@license,
 					 unUsedSub)
 			  moveList[[ID]]  <- moveObj
 		  }
@@ -62,7 +58,7 @@ setMethod(f = "split",
 setMethod(f = "split",
 	  signature = c(x=".UDStack", f="missing"),
 	  definition = function(x, f, ...){
-		  xx<-unstack(x)
+		  xx<-lapply(unstack(x), new, Class=".UD")
 		  names(xx)<-names(x)
 		  return(xx)
 	  })
