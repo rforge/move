@@ -10,5 +10,5 @@ License: GPL (>=3)
 URL: http://computational-ecology.com/main-move.html
 LazyLoad: yes
 LazyData: yes
-Depends: geosphere (>= 1.4-3), methods, sp, raster (>= 2.4-15), rgdal, R (>= 2.15.0), httr
+Depends: geosphere (>= 1.4-3), methods, sp, raster (>= 2.4-15), rgdal, R (>= 2.15.0)
 Suggests: RCurl, adehabitatHR, adehabitatLT, circular, ggmap, mapproj, maptools, testthat

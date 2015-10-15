@@ -3,7 +3,7 @@ build:
 	
 clean:
 	rm -rf move*.tar.gz move.Rcheck .Rd2pdf* pkg/move.Rcheck
-	svn status --no-ignore | grep '^[I?]' | cut -c 9- | xargs -d"\n" -I{} rm {}
+	#svn status --no-ignore | grep '^[I?]' | cut -c 9- | xargs -d"\n" -I{} rm {} # fix to not remove project
 
 
 check:
@@ -14,6 +14,7 @@ checkSrc:
 	time R CMD check --as-cran pkg/move
 
 dockerSetup:
+	docker pull rocker/r-devel
 	docker build -t bart/rdevel .
 
 checkRdevel:

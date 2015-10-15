@@ -18,16 +18,16 @@ setMethod(f="movebankLogin",
 		  return(new("MovebankLogin", username=username, password=password, rcurl=rcurl))
 	  })
 
-setMethod(f="movebankLogin", 
-	  signature=c(username="character", password="missing"),
-	  definition = function(username, password){
-
-		  pwd<-readline("password1:")
-		  requireNamespace('httr')
-		  set_config(add_headers(user=username, password=pwd))
-		  
-		  return(movebankLogin(username=username, password=pwd))
-	  })
+# setMethod(f="movebankLogin", 
+# 	  signature=c(username="character", password="missing"),
+# 	  definition = function(username, password){
+# 
+# 		  pwd<-readline("password1:")
+# 		  requireNamespace('httr')
+# 		  set_config(add_headers(user=username, password=pwd))
+# 		  
+# 		  return(movebankLogin(username=username, password=pwd))
+# 	  })
 
 setMethod(f="movebankLogin", 
 	  signature=c(username="missing", password="missing"),
