@@ -4,6 +4,7 @@ import(methods)
 import(geosphere)
 import(raster)
 import(rgdal)
+import(httr)
 importFrom(stats, sd)
 importFrom(stats, var)
 importFrom(stats, optim)
@@ -29,9 +30,6 @@ exportClasses(
 	.MoveTrackSingleBurst,
 	.MoveGeneral,
 	dBMvarianceTmp,
-#	dBMvarianceBurst,
-#	dBMvarianceStack,
-#	dBMvariance,
 	dBGBvariance,
 	dBGBvarianceTmp,
 	dynBGB, 
@@ -97,8 +95,8 @@ exportMethods(
 	unUsedRecords,
 	idData,
 	'idData<-',
-    "dynBGB",
-    "dynBGBvariance",
+  "dynBGB",
+  "dynBGBvariance",
 	interpolateTime
 )
 useDynLib(move)

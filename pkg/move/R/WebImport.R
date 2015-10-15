@@ -22,7 +22,10 @@ setMethod(f="movebankLogin",
 	  signature=c(username="character", password="missing"),
 	  definition = function(username, password){
 
-		  pwd<-readline("password:")
+		  pwd<-readline("password1:")
+		  requireNamespace('httr')
+		  set_config(add_headers(user=username, password=pwd))
+		  
 		  return(movebankLogin(username=username, password=pwd))
 	  })
 
