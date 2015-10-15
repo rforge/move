@@ -44,7 +44,12 @@ test_that('brownian bridge dyn for bursted',{
   dataPB <- move::burst(dataP, round((1:(n.locs(
     dataP
   ) - 1) / 50)))
-  expect_message(
+  expect_error(brownian.bridge.dyn(
+    dataPB, dimSize = 150, location.error = 23, ext = .3, time.step = 4, window.size =29, burstType="l"), 'none of the burstTypes is in the data')
+  expect_equivalent(class(brownian.bridge.dyn(
+    dataPB, dimSize = 150, location.error = 23, ext = .3, time.step = 4, window.size =29, burstType=c("l","X1"))), 'DBBMMBurstStack')
+  
+    expect_message(
     udS <-
       brownian.bridge.dyn(
         dataPB, dimSize = 150, location.error = 23, ext = .3, time.step = 4, window.size =
@@ -79,6 +84,13 @@ test_that('brownian bridge dyn value comparison bursted',{
         tmp, dimSize = 200, location.error = .1, time.step = t
       ), 'Computational size'
   )
+  expect_message(
+    u <-
+      brownian.bridge.dyn(
+        tmp, dimSize = 200, location.error = .1, time.step = t
+      , verbose=T), 'Computational size'
+  )
+  expect_equal(capture.output(brownian.bridge.dyn(tmp, dimSize = 200, location.error = .1, time.step = t, verbose=F), type="message"), character(0))
   expect_message(
     us <-
       brownian.bridge.dyn(

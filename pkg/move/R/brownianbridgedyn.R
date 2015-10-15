@@ -86,7 +86,7 @@ setMethod(f = "brownian.bridge.dyn",
 
 setMethod(f = "brownian.bridge.dyn", 
 	  signature = c(object = "dBMvariance", raster = "RasterLayer", dimSize = "missing", location.error = "numeric"), 
-	  definition = function(object, raster, location.error,  ext, time.step,...) {
+	  definition = function(object, raster, location.error,  ext, time.step, verbose=TRUE,...) {
 		  if(n.locs(object)!= length(location.error))
 			  stop("The location error vector has not the same length as the move object")
 		  if(any(is.na(location.error)))
@@ -109,7 +109,8 @@ setMethod(f = "brownian.bridge.dyn",
 		  T.Total <- sum(time.lag[object@interest])
 
 		  compsize <- ncell(raster) * (sum(time.lag[object@interest])/time.step)
-		  message(paste("Computational size:", sprintf("%.1e", compsize)))
+if(verbose)
+		  		  message(paste("Computational size:", sprintf("%.1e", compsize)))
 
 		  interest <- (c(object@interest, 0) + c(0, object@interest))[1:length(object@interest)] != 0
 		  # Fortran agguments n.locs gridSize timeDiff total time x track y track
@@ -197,6 +198,10 @@ setMethod(f = "brownian.bridge.dyn", signature = c(object = "dBMvarianceBurst", 
 						   raster, location.error, ext, time.step, burstType, ...) {
 	burstVarList <- split(object)
 	if (!missing(burstType)) {
+	  if(!any(burstType %in% names(burstVarList)))
+	  {
+	    stop("none of the burstTypes is in the data")
+	    }
 		burstVarList <- burstVarList[names(burstVarList) %in% burstType]
 	}
 	varList <- lapply(burstVarList, as, "dBMvariance")
