@@ -72,6 +72,24 @@ test_that('brownian bridge dyn for bursted',{
   expect_equal(colSums(values(udS)),
                b / sum(b), check.attributes = F)
 })
+test_that("verbosity brownian bridge works",{
+  skip("will only work with testthat .11")
+  p <- seq(0, 2 * pi, length.out = 49)
+  tmp <-
+    move(sin(p), cos(p), as.POSIXct(1:length(p), origin = '1970-1-1'), proj =
+           '+proj=aeqd +ellps=WGS84')
+  t <- .05
+  expect_message(
+    u <-
+      brownian.bridge.dyn(
+        tmp, dimSize = 200, location.error = .1, time.step = t
+        , verbose = T
+      ), 'Computational size'
+  )
+  expect_silent(brownian.bridge.dyn(
+    tmp, dimSize = 200, location.error = .1, time.step = t, verbose = F
+  ))
+})
 test_that('brownian bridge dyn value comparison bursted',{
   p <- seq(0, 2 * pi, length.out = 49)
   tmp <-
@@ -84,13 +102,7 @@ test_that('brownian bridge dyn value comparison bursted',{
         tmp, dimSize = 200, location.error = .1, time.step = t
       ), 'Computational size'
   )
-  expect_message(
-    u <-
-      brownian.bridge.dyn(
-        tmp, dimSize = 200, location.error = .1, time.step = t
-      , verbose=T), 'Computational size'
-  )
-  expect_equal(capture.output(brownian.bridge.dyn(tmp, dimSize = 200, location.error = .1, time.step = t, verbose=F), type="message"), character(0))
+
   expect_message(
     us <-
       brownian.bridge.dyn(
