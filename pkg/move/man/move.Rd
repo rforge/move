@@ -22,7 +22,6 @@ The move method creates Move or MoveStack object from Movebank or other (compres
 \usage{
 \S4method{move}{connection,missing,missing,missing,missing}(x, removeDuplicatedTimestamps=F, ...)
 \S4method{move}{numeric,numeric,POSIXct,data.frame,CRS}(x, y, time, data, proj, sensor='unknown',animal='unnamed',...)
-\S4method{move}{ltraj,missing,missing,missing,missing}(x,  ...)
 
 }
 
