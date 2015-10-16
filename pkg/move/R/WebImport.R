@@ -1,6 +1,6 @@
 setOldClass("request")
 setClass(Class = "MovebankLogin",
-7	 contains="request",
+	 contains="request",
 	 validity = function(object){
 		 if(nchar(object$headers['user'])==0 || nchar(object$headers['password']==0))
 			 return(TRUE)
