@@ -1,7 +1,7 @@
 Package: move
 Type: Package
 Title: Visualizing and Analyzing Animal Track Data
-Version: 1.5.515
+Version: 1.6.515
 Date: 2015-07-06
 Author: Bart Kranstauber <bart.kranstauber@uni-konstanz.de>, Marco Smolla <marco.smolla@postgrad.manchester.ac.uk>
 Maintainer: Bart Kranstauber <bart.kranstauber@uni-konstanz.de>
@@ -11,4 +11,5 @@ URL: http://computational-ecology.com/main-move.html
 LazyLoad: yes
 LazyData: yes
 Depends: geosphere (>= 1.4-3), methods, sp, raster (>= 2.4-15), rgdal, R (>= 2.15.0)
-Suggests: RCurl, adehabitatHR, adehabitatLT, circular, ggmap, mapproj, maptools, testthat
+Suggests: adehabitatHR, adehabitatLT, circular, ggmap, mapproj, maptools, testthat
+Imports: httr

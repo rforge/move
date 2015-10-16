@@ -1,9 +1,8 @@
-## Class to login without using RCurl
+setOldClass("request")
 setClass(Class = "MovebankLogin",
-	 representation = representation(username = "character", password = "character", rcurl = "logical"),
-	 prototype = prototype(username = as.character(), password = as.character()),
+7	 contains="request",
 	 validity = function(object){
-		 if(nchar(object@username)==0 || nchar(object@password==0))
+		 if(nchar(object$headers['user'])==0 || nchar(object$headers['password']==0))
 			 return(TRUE)
 	 }
 	 )
@@ -12,27 +11,19 @@ setGeneric("movebankLogin", function(username, password,...) standardGeneric("mo
 setMethod(f="movebankLogin", 
 	  signature=c(username="character", password="character"), 
 	  definition = function(username, password){
-#		  if(any(grepl("RCurl", installed.packages()))) {rcurl <- TRUE} else {rcurl <- FALSE}
-		  rcurl<-requireNamespace("RCurl",quietly=T)
-		  if (!rcurl) warning("You are using an unsecure connection via http. To use https install RCurl.")
-		  return(new("MovebankLogin", username=username, password=password, rcurl=rcurl))
+		  return(new("MovebankLogin", add_headers(user=username, password=password)))
 	  })
 
-# setMethod(f="movebankLogin", 
-# 	  signature=c(username="character", password="missing"),
-# 	  definition = function(username, password){
-# 
-# 		  pwd<-readline("password1:")
-# 		  requireNamespace('httr')
-# 		  set_config(add_headers(user=username, password=pwd))
-# 		  
-# 		  return(movebankLogin(username=username, password=pwd))
-# 	  })
+setMethod(f="movebankLogin", 
+	  signature=c(username="character", password="missing"),
+	  definition = function(username, password){
+		  pwd<-readline("password:")
+		  return(movebankLogin(username=username, password=pwd))
+	  })
 
 setMethod(f="movebankLogin", 
 	  signature=c(username="missing", password="missing"),
 	  definition = function(username, password){
-
 		  user<-readline("username:")
 		  return(movebankLogin(username=user))
 	  })
@@ -44,25 +35,16 @@ setMethod(f="getMovebank",
 	  signature=c(entity_type="character", login="MovebankLogin"), 
 	  definition = function(entity_type, login, ...){
 		  tmp <- list(...)
-		  url <- paste("://www.movebank.org/movebank/service/direct-read?entity_type=",entity_type  ,sep="")
+		  url <- paste("https://www.movebank.org/movebank/service/direct-read?entity_type=",entity_type  ,sep="")
 		  if(length(tmp)!=0){
 			  tmp <- lapply(tmp, paste, collapse='%2C')
 			  url <- paste(url, sep="&",paste(names(tmp),tmp, collapse="&", sep="="))
 		  }
-		  if (login@rcurl){
-			  if (requireNamespace("RCurl", quietly = TRUE)) {
-				  curl  <- RCurl::getCurlHandle()
-				  RCurl::curlSetOpt( .opts = list(httpheader = c(user = login@username, password = login@password),verbose=FALSE), curl=curl)
-				  url <- paste("https", url, sep="")  
-				  web <- RCurl::getURL(url, curl=curl, verbose=F, .encoding="UTF-8")
-			  } else { stop("The package RCurl can't be loaded, probably it needs to be installed") }
-			  if(grepl(pattern="The requested download may contain copyrighted material", x=web)) stop("You need a permission to access this data set. Go to www.movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
-			  if(entity_type=='event'){cols<-c(location_long='numeric', location_lat='numeric')}else{cols<-NA}
-			  data <- read.csv(textConnection(web), colClasses=cols)
-		  } else {
-			  url <- paste(paste("http",url, sep=""), sep="&",paste("user=",login@username,"&password=",login@password, sep=""))
-			  data <- read.csv(url, header=T, sep=",", as.is=T)
-		  }
+		  f<-GET(url, config = login)
+		  if(entity_type=='event'){cols<-c(location_long='numeric', location_lat='numeric')}else{cols<-NA}
+		  
+		  data <- read.csv(textConnection(content(f, as='text', encoding = "UTF-8")), colClasses=cols)
+		  
 		  if(grepl(pattern="You.may.only.download.it.if.you.agree.with.the.terms", x=names(data)[1])) stop("You need a permission to access this data set. Go to www.movebank.org and accept the license terms when downloading the data set (you only have to do this once per data set).")
 		  if (grepl(pattern="X.html..head..title.Apache.Tomcat", capture.output(data)[1])) stop("It looks like you are not allowed to download this data set. Or there is a sensor for which no attributes are available.")
 		  if (grepl(pattern="are.not.available.for.download", capture.output(data)[1])) stop("You have no permission to download this data set.")
