@@ -11,11 +11,19 @@ test_that('moveAde',
 	#suppressMessages(require(adehabitatLT))
 	a<-as(adehabitatLT::simm.crw(1:100),'Move')
 	expect_true(validObject(a))
-	a<-as(a, 'ltraj')
+	aa<-as(a, 'ltraj')
+	ma<-move(aa)
+	ma$sensor<-NULL
+	idData(ma)<-idData(a)
+	expect_equal(a,ma)
 	expect_true(validObject(a))
 	a<-as(adehabitatLT::simm.crw(1:100, id=gl(25,4)),'MoveStack')
 	expect_true(validObject(a))
-	a<-as(a, 'ltraj')
-	expect_true(validObject(a))
+	aa<-as(a, 'ltraj')
+	expect_true(validObject(aa))
+	ma<-move(aa)
+	ma$sensor<-NULL
+	idData(ma)<-idData(a)
+	expect_equal(a,ma)
 }
 )
