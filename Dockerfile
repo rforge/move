@@ -7,5 +7,5 @@ RUN apt-get update \
 	libproj-dev \ 
 	ghostscript \
 	qpdf
-RUN Rdevel -e 'install.packages(c("sp","raster","testthat","ggmap","geosphere","adehabitatLT", "adehabitatHR","mapproj","RCurl","rgdal","lattice","maptools","circular","MASS","boot","foreign"))'
+RUN Rdevel -e 'install.packages(c("sp","raster","testthat","ggmap","geosphere","adehabitatLT", "adehabitatHR","mapproj","httr","rgdal","lattice","maptools","circular","MASS","boot","foreign"))'
 

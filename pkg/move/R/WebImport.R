@@ -276,7 +276,7 @@ setMethod(f="getMovebankData",
 		  sensorTypes <- getMovebank("tag_type", login=login)
 		  rownames(sensorTypes)<-sensorTypes$id
 		  locSen <- sensorTypes[as.logical(sensorTypes$is_location_sensor),"id"] #reduce track to location only sensors & only the correct animals
-
+		  
 		  attribs <- unique(c(as.character(getMovebankSensorsAttributes(study, login)$short_name),"sensor_type_id","deployment_id",'event_id'))
 
 		  trackDF <- getMovebank("event", login=login, study_id=study, attributes = attribs , deployment_id=new$id, sensor_type_id=locSen)

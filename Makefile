@@ -18,7 +18,7 @@ dockerSetup:
 	docker build -t bart/rdevel .
 
 checkRdevel:
-	docker run -it -v /home/bart/bmisc/small_projects/move/:/tmp bart/rdevel Rdevel CMD check --as-cran /tmp/move_1.5.515.tar.gz -o /tmp
+	docker run -it -v /home/bart/bmisc/small_projects/move/:/tmp bart/rdevel Rdevel CMD check --as-cran /tmp/move_1.6.515.tar.gz -o /tmp
 
 changeLog:
 	svn2cl -r head:380 --stdout --group-by-day pkg/move/ --strip-prefix='move/' | grep -v '* $$' > pkg/move/ChangeLog
