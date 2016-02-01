@@ -7,7 +7,7 @@ test_that('dbbmm error handling',{
     brownian.bridge.dyn(
       object = leroy2, location.error = 23.5, dimSize = 150, ext = .3, time.step =
         600
-    ), "Error: object 'leroy2' not found"
+    ), "object 'leroy2' not found"
   )
   data2 <- spTransform(leroy[1:50,], center = T)
   expect_error(

@@ -38,14 +38,16 @@ test_that('linemidpoint',{
   })
 
 test_that('spatialLines',{
-data(leroy)
-  expect_equal(coordinates(leroy), coordinates(as(leroy,'SpatialLines'))[[1]][[1]])
-  expect_equal(coordinates(leroy), coordinates(as(leroy,'SpatialLinesDataFrame'))[[1]][[1]])
+  data(leroy)
+  crds<-coordinates(leroy)
+  rownames(crds)<-NULL # coordinates methods for lines removes rownames
+    expect_equal(crds, coordinates(as(leroy,'SpatialLines'))[[1]][[1]])
+    expect_equal(crds, coordinates(as(leroy,'SpatialLinesDataFrame'))[[1]][[1]])
   
 data(fishers)
 
 
-expect_equal(lapply(split(fishers), coordinates),lapply(coordinates(spldf<-as(fishers,'SpatialLinesDataFrame')),'[[',1))
+expect_equal(lapply(lapply(split(fishers), coordinates), function(x) {rownames(x)<-NULL;x}),lapply(coordinates(spldf<-as(fishers,'SpatialLinesDataFrame')),'[[',1))
   expect_equal(idData(fishers), data.frame(spldf))
   expect_equal(as(fishers,'SpatialLines'), as(spldf,'SpatialLines'))
   })

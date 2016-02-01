@@ -1,8 +1,8 @@
 Package: move
 Type: Package
 Title: Visualizing and Analyzing Animal Track Data
-Version: 1.6.515
-Date: 2015-07-06
+Version: 1.6.539
+Date: 2016-02-01
 Author: Bart Kranstauber <bart.kranstauber@uni-konstanz.de>, Marco Smolla <marco.smolla@postgrad.manchester.ac.uk>
 Maintainer: Bart Kranstauber <bart.kranstauber@uni-konstanz.de>
 Description: Contains functions to access movement data stored in movebank.org as well as tools to visualize and statistically analyze animal movement data, among others functions to calculate dynamic Brownian Bridge Movement Models. Move helps addressing movement ecology questions.

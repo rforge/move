@@ -75,11 +75,11 @@ If data sets are not published on Movebank but stored on the hard drive they can
 Import of a non-Movebank csv file that is attached to this package:
 
 <<importNonMovebank>>=
-data <- read.csv(system.file("extdata","ricky.csv.gz",package="move"))
-ricky <- move(x=data$location.long, y=data$location.lat, time=as.POSIXct(data$timestamp, 
+data <- read.csv(system.file("extdata","leroy.csv.gz",package="move"))
+leroy <- move(x=data$location.long, y=data$location.lat, time=as.POSIXct(data$timestamp, 
             format="%Y-%m-%d %H:%M:%OS", tz="UTC"), proj=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"), 
             data=data, animal=data$individual.local.identifier, sensor=data$sensor)
-ricky 
+leroy
 @
 
 Entering the object name calls the \fct{show} function of \class{Move} objects. This function provides an overview of the object. It returns the object class (\class{Move}), the animal ID (ricky), number of coordinates (8961), the extent of the coordinates, the coordinates reference system (or projection, here longitude-latitude), the number of columns of the imported data.frame, and the names of the columns of the data.frame, as well as the first and last timestamp and the duration of the observation. The \fct{show} works in a similar way for all other object types.\\
@@ -90,6 +90,8 @@ If the data-set includes more than one animal, it is necessary to indicate the c
 Sometimes it is desirable to work with stacked Move objects. Most functions of the Move package are capable of working with stacks. Stacks are either created when .csv files with multiple animal IDs are imported, or when a \class(list) of \class(Move) objects is passed on to the stacking function \fct{moveStack}.
 
 <<StackMoveObjects>>=
+data(ricky)
+data(leroy)
 list <- list(leroy, ricky)
 stack <- moveStack(list)
 stack

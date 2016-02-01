@@ -1,7 +1,8 @@
 context('move ade')
 test_that('moveAde',
 {
-	data <- move(system.file("extdata","ricky.csv.gz",package="move"))
+data(ricky)
+data<-ricky
 	dataSp<-spTransform(data, center=T)
 	dataLtraj<-as(dataSp, 'ltraj')
 	dataBack<-as(dataLtraj, 'Move')
@@ -24,6 +25,8 @@ test_that('moveAde',
 	ma<-move(aa)
 	ma$sensor<-NULL
 	idData(ma)<-idData(a)
+	ma@trackId<-trackId(a)
+	levels(ma@trackIdUnUsedRecords)<-levels(trackId(unUsedRecords(a)))
 	expect_equal(a,ma)
 }
 )

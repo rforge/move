@@ -1,3 +1,58 @@
+2015-12-09  bart
+
+
+2015-10-22  bart
+
+	* Test ltraj move function a bit
+
+2015-10-20  bart
+
+	* dont require package in test
+	* Documentation update
+
+2015-10-16  bart
+
+	* typo
+	* Switch download to httr away from rcurl
+
+2015-10-15  bart
+
+	* Make sure ltraj is recoginized as a class
+	* Fix test so they are neatly implemented but need new testthat so
+	  currently skipped
+	* Fix documentation
+	* Allow non verbose brownian bridge
+
+2015-10-14  bart
+
+	* Make move function work for ltraj objects and fix split for ud
+	  stacks
+
+2015-09-16  bart
+
+	* Seg length was accidentally calculating a square matrix, further
+	  small fixes and updates to examples and tests
+	* Seglength calculated a square matrix for stacks which was not
+	  intended
+	* Moved all example data to data folder and adjusted examples and
+	  tests accordingly, also update plotBurst for multispatial points
+
+2015-09-15  bart
+
+	* adding data in the data folder
+	* Make idData deal with sp MultiPoints
+	* update checks and the spatial lines function which was broken
+	* Added turnAngleGc for stacks and some checks for turnAngleGc
+
+2015-09-03  bart
+
+	* Update make procedures
+	* reformat and generalized test
+
+2015-07-29  bart
+
+	* Update checking of unused records stack and subsetting function
+
 2015-07-15  bart
 
 	* Fix reading of envdata files (related to R version 3.1.0 that had
