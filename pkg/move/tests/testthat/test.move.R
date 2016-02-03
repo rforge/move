@@ -15,7 +15,7 @@ test_that('move',
 		  data3@dateCreation<- data2@dateCreation
 		  expect_equal(data, data3)
 		  expect_warning( suppressMessages(data3<-move(file(fileUri), removeDuplicatedTimestamps=T)))
-		  fileR<-system.file("extdata","ricky.csv.gz",package="move")
+		  fileR<-system.file("extdata","leroy.csv.gz",package="move")
 		  if((class(p<-pipe(''))!='pipeWin32')[1])
 		  {  if(class(try(move(pipe(paste0('zcat ',fileR, " | sed ''")))))=='Move'){
 			  dataR<-move(pipe(paste0('zcat ',fileR)))
@@ -37,11 +37,11 @@ test_that('move',
 			  rownames(dataR2@dataUnUsedRecords)<- as.character(rownames(dataR2@dataUnUsedRecords))
 			  rownames(dataR2@coords)<- rownames(dataR@coords)
 			  expect_equal(dataR, dataR2)
-			  expect_error(dataR3<-(move(pipe(paste0('zcat ',fileR,"| sed '3p; 3s/Martes/Maggg/'")))))
-			  expect_error(move(pipe(paste0('zcat ',fileR,"| sed '3p; 3s/\"A\"/\"B\"/'")), removeDuplicatedTimestamps=F))
-			  expect_error(move(pipe(paste0('zcat ',fileR,"| sed '4p; 4s/9025698/9023698/'")), removeDuplicatedTimestamps=F))
-			  expect_equal(n.locs(move(pipe(paste0('zcat ',fileR,"| sed '5p; 5s/28.999/29.000/'")), removeDuplicatedTimestamps=F)), n.locs(dataR2)+1)
-			  expect_warning(suppressMessages(dataR3<-move(pipe(paste0('zcat ',fileR,"| sed '3p; 3s/292.95/293.95/'")), removeDuplicatedTimestamps=T)),
+			  expect_error(dataR3<-(move(pipe(paste0('zcat ',fileR,"| sed '48p; 48s/Martes/Maggg/'")))))
+			  expect_error(move(pipe(paste0('zcat ',fileR,"| sed '48p; 48s/\"A\"/\"B\"/'")), removeDuplicatedTimestamps=F))
+			  expect_error(move(pipe(paste0('zcat ',fileR,"| sed '56p; 56s/8986618/8886618/'")), removeDuplicatedTimestamps=F))
+			  expect_equal(n.locs(move(pipe(paste0('zcat ',fileR,"| sed '55p; 55s/49.001/49.002/'")), removeDuplicatedTimestamps=F)), n.locs(dataR2)+1)
+			  expect_warning(suppressMessages(dataR3<-move(pipe(paste0('zcat ',fileR,"| sed '53p; 53s/10.49/10.48/'")), removeDuplicatedTimestamps=T)),
 					 ". location.s. is/are removed by removeDuplicatedTimestamps")
 			  dataR@dateCreation<- dataR3@dateCreation
 			  rownames(dataR@data)<- as.character(rownames(dataR3@data))

@@ -15,10 +15,12 @@ checkSrc:
 
 dockerSetup:
 	docker pull rocker/r-devel
-	docker build -t bart/rdevel .
+	docker --dns="8.8.8.8" build -t bart/rdevel .
+	# case of network problems try restarting docker sudo service docker restart
 
 checkRdevel:
-	docker run -it -v /home/bart/bmisc/small_projects/move/:/tmp bart/rdevel Rdevel CMD check --as-cran /tmp/move_1.6.539.tar.gz -o /tmp
+	cp `ls move*.tar.gz | sort -V | tail -n 1`  dockerOutput/move.tar.gz
+	docker run -it -v /home/bart/bmisc/small_projects/move/dockerOutput:/tmp bart/rdevel Rdevel CMD check --as-cran /tmp/move.tar.gz -o /tmp
 
 changeLog:
 	svn2cl -r head:380 --stdout --group-by-day pkg/move/ --strip-prefix='move/' | grep -v '* $$' > pkg/move/ChangeLog
