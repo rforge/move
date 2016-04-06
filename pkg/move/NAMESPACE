@@ -96,6 +96,7 @@ exportMethods(
 	"unUsedRecords<-",
 	unUsedRecords,
 	idData,
+	UDStack,
 	'idData<-',
   "dynBGB",
   "dynBGBvariance",
