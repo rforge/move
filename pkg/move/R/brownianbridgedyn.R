@@ -113,22 +113,33 @@ if(verbose)
 		  		  message(paste("Computational size:", sprintf("%.1e", compsize)))
 
 		  interest <- (c(object@interest, 0) + c(0, object@interest))[1:length(object@interest)] != 0
-		  # Fortran agguments n.locs gridSize timeDiff total time x track y track
-		  # variance estimates loc error x raster y raster interpolation time step prop
-		  # vector filled
-		  ans <- .Fortran("dBBMM", as.integer(1 + sum(object@interest)), 
-				  as.integer(ncell(raster)), 
-				  as.double(c(time.lag[object@interest], 0)), 
-				  as.double(T.Total), 
-				  as.double(coordinates(object)[interest, 1]), 
-				  as.double(coordinates(object)[interest, 2]), 
-				  as.double(c(object@means[object@interest],0)), 
-				  as.double(location.error[interest]), 
-				  as.double(coordinates(raster)[, 1]), 
-				  as.double(coordinates(raster)[, 2]), 
-				  as.double(time.step), as.double(rep(0, ncell(raster))))
-
-		  raster <- setValues(raster, ans[[12]])
+	ans<-.Call('dbbmm2', coordinates(object)[interest, 1],
+			coordinates(object)[interest, 2], 
+			c(object@means[object@interest],0),
+			(as.numeric(timestamps(object)[interest])-min(as.numeric(timestamps(object)[interest])))/60,
+			location.error[interest], 
+			xFromCol(raster,1:ncol(raster)), 
+			yFromRow(raster,nrow(raster):1), 
+			time.step, 4)# last argument is how many sds away one want to calculate
+    
+		ans<-ans/sum(ans)
+    raster <- setValues(raster, ans)
+#		  # Fortran agguments n.locs gridSize timeDiff total time x track y track
+#		  # variance estimates loc error x raster y raster interpolation time step prop
+#		  # vector filled
+#		  ans <- .Fortran("dBBMM", as.integer(1 + sum(object@interest)), 
+#				  as.integer(ncell(raster)), 
+#				  as.double(c(time.lag[object@interest], 0)), 
+#				  as.double(T.Total), 
+#				  as.double(coordinates(object)[interest, 1]), 
+#				  as.double(coordinates(object)[interest, 2]), 
+#				  as.double(c(object@means[object@interest],0)), 
+#				  as.double(location.error[interest]), 
+#				  as.double(coordinates(raster)[, 1]), 
+#				  as.double(coordinates(raster)[, 2]), 
+#				  as.double(time.step), as.double(rep(0, ncell(raster))))
+#
+#		  raster <- setValues(raster, ans[[12]])
 
 		  dBBMM <- new("DBBMM", DBMvar = object, method = "Dynamic Brownian Bridge Movement Model", 
 			       raster, ext = ext)
