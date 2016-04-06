@@ -1,5 +1,3 @@
-
-
 context('Brownian bridge dyn')
 test_that('dbbmm error handling',{
   data(leroy)
@@ -47,12 +45,12 @@ test_that('brownian bridge dyn for bursted',{
   expect_error(brownian.bridge.dyn(
     dataPB, dimSize = 150, location.error = 23, ext = .3, time.step = 4, window.size =29, burstType="l"), 'none of the burstTypes is in the data')
   expect_equivalent(class(brownian.bridge.dyn(
-    dataPB, dimSize = 150, location.error = 23, ext = .3, time.step = 4, window.size =29, burstType=c("l","X1"))), 'DBBMMBurstStack')
+    dataPB, dimSize = 150, location.error = 23, ext = 1.3, time.step = 4, window.size =29, burstType=c("l","X1"))), 'DBBMMBurstStack')
   
     expect_message(
     udS <-
       brownian.bridge.dyn(
-        dataPB, dimSize = 150, location.error = 23, ext = .3, time.step = 4, window.size =
+        dataPB, dimSize = 150, location.error = 23, ext = 1.3, time.step = 4, window.size =
           29
       ), 'Computational size'
   )
@@ -61,7 +59,7 @@ test_that('brownian bridge dyn for bursted',{
   expect_message(
     ud <-
       brownian.bridge.dyn(
-        dataP, dimSize = 150, location.error = 23, ext = .3, time.step = 4, window.size =
+        dataP, dimSize = 150, location.error = 23, ext = 1.3, time.step = 4, window.size =
           29
       ), 'Computational size'
   )
@@ -121,25 +119,24 @@ test_that('brownian bridge dyn value comparison bursted',{
                origin = '1970-1-1'),
     proj = '+proj=aeqd +ellps=WGS84'
   )
-  t <- .25
+  t <- .000025213
   expect_message(
     u <- brownian.bridge.dyn(
-      tmp, dimSize = 500,
+      tmp, dimSize = 400,
       location.error = .01, time.step = t,
-      ext = .2, margin = 15
+      ext = .1, margin = 15
     ), 'Computational size'
   )
   expect_message(
     us <- brownian.bridge.dyn(
-      move::burst(tmp,
-                  round(1:length(p[-1]) / 30)),
-      dimSize = 500, location.error = .01,
-      time.step = t, ext = .2, margin = 15
+      b<-move::burst(tmp,
+                  round(1:length(p[-1]) / 79)),
+      dimSize = 400, location.error = .01,
+      time.step = t, ext = .1, margin = 15
     ), 'Computational size'
   )
-  expect_true(all(abs(values(sum(
-    us
-  )) - values(u)) < .Machine$double.eps))
+  expect_equal(values(u), values(sum(us)), tolerance=5e-5)
+
 })
 test_that('Brownian bridge, running with character and vector input to location error',{
   data(leroy)
