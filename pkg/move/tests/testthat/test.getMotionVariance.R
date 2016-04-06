@@ -13,6 +13,6 @@ test_that("dbgb vs dbbmm variance",{
 	 x<-c(1,1.5,3,3.5,5,5.5,7,7.5,9,9.5,11);y<-c(0,.5,0,.5,0,.5,0,.5,0,.5,0)
 	 yy<-move(x,y, Sys.time()+1:11*60)
 	 expect_warning(p<-moveStack(list(yy,yy)))
-	 expect_message(pp<-brownian.bridge.dyn(p, win=7, mar=3, raster=.1, ext=2, lo=.1))
+	 expect_message(pp<-brownian.bridge.dyn(p, win=7, mar=3, raster=.1, ext=3, lo=.1))
 	 expect_is(getMotionVariance(pp),'list')
 })
