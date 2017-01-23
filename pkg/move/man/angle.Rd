@@ -11,7 +11,7 @@
 
 \title{angle information from a track or track stack}
 
-\description{This function returns a summary about angle related measurements of a track or track stack. These are: average azimuth, variance of azimuth, standard error of azimuth. }
+\description{This function returns a summary about angle related measurements of a track or a track stack. These are: average azimuth, variance of azimuth, standard error of azimuth. }
 
 \usage{
   \S4method{angle}{.MoveTrackSingle}(x)
